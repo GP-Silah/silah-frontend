@@ -117,7 +117,7 @@ const resources = {
                 },
             },
             login: {
-                title: 'Log In',
+                title: 'Welcome to Silah!',
                 email: 'Email',
                 password: 'Password',
                 submit: 'Log In',
@@ -219,7 +219,7 @@ const resources = {
                 },
             },
             login: {
-                title: 'تسجيل الدخول',
+                title: 'مرحبا في صلة',
                 email: 'البريد الإلكتروني',
                 password: 'كلمة المرور',
                 submit: 'دخول',
