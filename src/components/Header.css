@@ -1,0 +1,108 @@
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header-left,
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.product-select {
+    padding: 6px 12px;
+    border-radius: 24px;
+    border: none;
+    background-color: #faf7fc;
+    font-size: 14px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: #f4eef9;
+    border-radius: 32px;
+    padding: 6px 12px;
+    width: 550px;
+    max-width: 100%;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.search-icon {
+    margin-right: 8px;
+    color: #555;
+}
+
+.language-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.login-btn {
+    border: 1px solid #543361;
+    color: #543361;
+    background: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.signup-btn {
+    background-color: #543361;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.category-select {
+    padding: 8px 40px;
+    font-size: 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #333;
+    outline: none;
+    appearance: none; /* يخفي السهم الافتراضي */
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 6px;
+    cursor: pointer;
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.category-select:hover {
+    border-color: #888;
+}
+
+.category-select:focus {
+    border-color: #7c3aed; /* بنفسجي فاتح */
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+}

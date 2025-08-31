@@ -1,0 +1,136 @@
+.signup-page {
+    font-family: sans-serif;
+    padding: 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    height: 40px;
+    cursor: pointer;
+    display: block;
+}
+
+.lang-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: black;
+}
+
+.signup-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-left: 200px;
+    margin-top: 100px;
+}
+
+.signup-form {
+    width: 400px;
+    flex-shrink: 0;
+}
+
+.signup-form h2 {
+    font-size: 28px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.signup-form input,
+.signup-form select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.terms-link {
+    color: #b68cb8;
+    text-decoration: none;
+}
+
+.terms-link:hover {
+    text-decoration: underline;
+}
+
+.form-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.nav-btn,
+.submit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.nav-btn {
+    background-color: #e0e0e0;
+    color: #543361;
+}
+
+.submit-btn {
+    background-color: #543361;
+    color: white;
+}
+
+.submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.signup-image img {
+    width: 180px;
+    max-height: 180px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+.error {
+    border: 1px solid red !important;
+}
+
+.error-message {
+    color: red;
+    font-size: 13px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+.login-text {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.login-link {
+    color: #b68cb8;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,61 @@
+.explore-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.explore-section h2 {
+    font-size: 33px;
+    margin-bottom: 10px;
+    color: #324669;
+}
+
+.subtitle {
+    font-size: 26px;
+    color: #324669;
+    margin-bottom: 40px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.active-tab {
+    background-color: #324669 !important;
+    color: white !important;
+    border-color: #324669 !important;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.filter-btn {
+    padding: 8px 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
