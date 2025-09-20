@@ -3,6 +3,7 @@ import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import Footer from '../components/Footer';
 
 function Login() {
     const { t, i18n } = useTranslation();
@@ -17,7 +18,6 @@ function Login() {
 
     const handleLogin = () => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
-
         if (
             storedUser &&
             storedUser.email === email &&
@@ -71,7 +71,30 @@ function Login() {
                 >
                     {t('login.enter')}
                 </button>
+
+                {/* الروابط تحت الباسوورد */}
+                <div className="login-options">
+                    <span
+                        className="text-link reset-link"
+                        onClick={() => navigate('/reset-password')}
+                    >
+                        {t('login.resetPassword')}
+                    </span>
+
+                    <p className="create-account">
+                        {t('login.noAccount')}{' '}
+                        <span
+                            className="text-link"
+                            onClick={() => navigate('/signup')}
+                        >
+                            {t('login.createOne')}
+                        </span>
+                    </p>
+                </div>
             </div>
+
+            {/* استدعاء الفوتر ككمبوننت */}
+            <Footer />
         </div>
     );
 }

@@ -62,3 +62,55 @@
     font-size: 14px;
     margin-top: 8px;
 }
+.login-options {
+    margin-top: 12px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.text-link {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.text-link:hover {
+    opacity: 0.85;
+}
+
+.reset-link {
+    display: inline-block;
+    margin-bottom: 6px; /* يكون سطر مستقل فوق "No account?" */
+}
+
+.create-account {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* إن كنتِ تدعمين العربية، يراعي الاتجاه */
+html[dir='rtl'] .login-options {
+    text-align: center;
+}
+/* تخلي صفحة اللوق إن تاخذ طول الشاشة كامل */
+.login-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* ارتفاع الشاشة كامل */
+}
+
+/* الجزء اللي فوق (الفورم) */
+.login-container {
+    flex: 1; /* ياخذ المساحة المتبقية ويدز الفوتر تحت */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* الفوتر */
+.login-page footer,
+.login-page .Footer {
+    /* إذا كمبوننتك اسمها Footer */
+    margin-top: auto; /* يلتصق أسفل */
+    width: 100%;
+}
