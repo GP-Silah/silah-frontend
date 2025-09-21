@@ -90,7 +90,7 @@ const resources = {
                 back: 'Back',
                 done: 'Done',
             },
-            Signup: {
+            signup: {
                 step1Title: 'Join us!',
                 step2Title: 'Join us!',
                 step3Title: 'Join us!',
@@ -117,40 +117,13 @@ const resources = {
                 },
             },
             login: {
-                title: 'Log In',
+                title: 'Welcome to Silah!',
                 email: 'Email',
                 password: 'Password',
-                enter: 'login.enter',
-                resetPassword: 'Reset Password',
-                noAccount: 'No account?',
-                createOne: 'Create one',
-                success: 'Logged in successfully',
-                error: 'Email or password is incorrect',
-                rightsReserved: 'All Rights Reserved.',
-            },
-            reset: {
-                requestTitle: 'Reset your password',
-                requestDesc:
-                    'Enter your email address and we’ll send you a link to reset your password',
-                emailLabel: 'Email',
-                sendLink: 'Send reset link',
-                remembered: 'Remembered your password?',
-                login: 'Log in',
-
-                resetTitle: 'Reset your password',
-                newPw: 'New Password',
-                confirmPw: 'Confirm New Password',
-                save: 'Save',
-
-                bannerSuccess:
-                    'Your Password Has Been Reset. Try logging in with your new password.',
-                bannerExpired:
-                    'The reset link has expired. Sorry, we can’t reset your password.',
-
-                emailRequired: 'Please enter your email address',
-                pwRequired: 'Please fill both password fields',
-                pwTooShort: 'Password must be at least 6 characters',
-                pwMismatch: 'Passwords do not match',
+                submit: 'Log In',
+                errors: {
+                    invalidCredentials: 'Invalid email or password',
+                },
             },
         },
     },
@@ -246,41 +219,15 @@ const resources = {
                 },
             },
             login: {
-                title: 'تسجيل الدخول',
-                email: 'البريد الإلكتروني/السجل التجاري',
+                title: 'مرحبا في صلة',
+                email: 'البريد الإلكتروني',
                 password: 'كلمة المرور',
-                enter: 'دخول',
-                resetPassword: 'إعادة تعيين كلمة المرور',
-                noAccount: 'ما عندك حساب؟',
-                createOne: 'أنشئ واحدًا',
-                success: 'تم تسجيل الدخول بنجاح',
-                error: 'البريد الإلكتروني أو كلمة المرور غير صحيحة',
-                rightsReserved: 'جميع الحقوق محفوظة.',
+                submit: 'دخول',
+                errors: {
+                    invalidCredentials:
+                        'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+                },
             },
-        },
-        reset: {
-            requestTitle: 'إعادة تعيين كلمة المرور',
-            requestDesc:
-                'أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور',
-            emailLabel: 'البريد الإلكتروني',
-            sendLink: 'إرسال رابط التعيين',
-            remembered: 'تذكّرت كلمة المرور؟',
-            login: 'تسجيل الدخول',
-
-            resetTitle: 'إعادة تعيين كلمة المرور',
-            newPw: 'كلمة المرور الجديدة',
-            confirmPw: 'تأكيد كلمة المرور الجديدة',
-            save: 'حفظ',
-
-            bannerSuccess:
-                'تمت إعادة تعيين كلمة المرور. جرّب تسجيل الدخول بكلمتك الجديدة.',
-            bannerExpired:
-                'انتهت صلاحية رابط التعيين. عذرًا، لا يمكن إعادة تعيين كلمة المرور.',
-
-            emailRequired: 'فضلاً أدخل بريدك الإلكتروني',
-            pwRequired: 'فضلاً املأ حقلي كلمة المرور',
-            pwTooShort: 'كلمة المرور يجب ألا تقل عن 6 أحرف',
-            pwMismatch: 'كلمتا المرور غير متطابقتان',
         },
     },
 };
