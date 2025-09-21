@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Landing from './pages/Landing';
 import Signup from './pages/Signup';
 import Login from './pages/Login'; // ✅ مهم جدًا
+import NotFound from './pages/NotFound';
 
 function App() {
     const { i18n } = useTranslation();
@@ -22,6 +23,9 @@ function App() {
                     path="/login"
                     element={<Login />}
                 />
+
+
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </div>
     );
