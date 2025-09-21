@@ -113,7 +113,6 @@
     color: #8a1d17;
 }
 
-/* RTL دعم */
 html[dir='rtl'] .reset-label {
     text-align: right;
 }

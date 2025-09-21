@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
-import { FaGlobe } from 'react-icons/fa';
 
 function Signup() {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
+
     const [formData, setFormData] = useState({
         businessName: '',
         commercialRegister: '',
@@ -27,38 +27,26 @@ function Signup() {
         const { name, value, type, checked } = e.target;
         const updatedValue = type === 'checkbox' ? checked : value;
 
-        setFormData({
-            ...formData,
-            [name]: updatedValue,
-        });
+        setFormData({ ...formData, [name]: updatedValue });
 
         let error = '';
         if (
             (name === 'commercialRegister' || name === 'nationalId') &&
             updatedValue
         ) {
-            if (!/^\d+$/.test(updatedValue)) {
+            if (!/^\d+$/.test(updatedValue))
                 error = t('signup.errors.numbersOnly');
-            }
         }
-
         if (name === 'email' && updatedValue) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(updatedValue)) {
+            if (!emailRegex.test(updatedValue))
                 error = t('signup.errors.invalidEmail');
-            }
         }
-
         if (name === 'confirmPassword' && updatedValue) {
-            if (updatedValue !== formData.password) {
+            if (updatedValue !== formData.password)
                 error = t('signup.errors.passwordMismatch');
-            }
         }
-
-        setFormErrors({
-            ...formErrors,
-            [name]: error,
-        });
+        setFormErrors({ ...formErrors, [name]: error });
     };
 
     const isStepValid = () => {
@@ -106,30 +94,11 @@ function Signup() {
         }
     };
 
-    const prevStep = () => {
-        setStep((prev) => prev - 1);
-    };
-
-    const toggleLanguage = () => {
-        i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
-    };
+    const prevStep = () => setStep((prev) => prev - 1);
 
     return (
         <div className="signup-page">
-            <div className="signup-header">
-                <img
-                    src="/logo.png"
-                    alt="Logo"
-                    className="logo"
-                    onClick={() => navigate('/')}
-                />
-                <button
-                    className="lang-btn"
-                    onClick={toggleLanguage}
-                >
-                    <FaGlobe />
-                </button>
-            </div>
+            {/* تم إزالة الهيدر هنا؛ الهيدر الأصلي من App.jsx هو المستخدم */}
 
             <div className="signup-container">
                 <div className="signup-form">
@@ -185,7 +154,6 @@ function Signup() {
                                 <option>Activity 2</option>
                             </select>
 
-                            {/* Log in link */}
                             <p className="login-text">
                                 {t('signup.haveAccount')}{' '}
                                 <span

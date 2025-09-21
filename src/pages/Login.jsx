@@ -1,20 +1,14 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
-import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import Footer from '../components/Footer';
 
 function Login() {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
-    const toggleLanguage = () => {
-        i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
-    };
 
     const handleLogin = () => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -32,21 +26,6 @@ function Login() {
 
     return (
         <div className="login-page">
-            <div className="login-header">
-                <img
-                    src="/logo.png"
-                    alt="Logo"
-                    className="logo"
-                    onClick={() => navigate('/')}
-                />
-                <button
-                    className="lang-btn"
-                    onClick={toggleLanguage}
-                >
-                    <FaGlobe />
-                </button>
-            </div>
-
             <div className="login-container">
                 <h2>{t('login.title')}</h2>
 
@@ -72,7 +51,6 @@ function Login() {
                     {t('login.enter')}
                 </button>
 
-                {/* الروابط تحت الباسوورد */}
                 <div className="login-options">
                     <span
                         className="text-link reset-link"
@@ -92,9 +70,6 @@ function Login() {
                     </p>
                 </div>
             </div>
-
-            {/* استدعاء الفوتر ككمبوننت */}
-            <Footer />
         </div>
     );
 }

@@ -12,7 +12,7 @@ import PasswordReset from './pages/PasswordReset';
 
 import AboutUs from './pages/AboutUs';
 import TermsOfService from './pages/TermsOfService';
-import Privacy from './pages/Privacy';
+import Privacy from './pages/PrivacyPolicy';
 
 function App() {
     const { i18n } = useTranslation();

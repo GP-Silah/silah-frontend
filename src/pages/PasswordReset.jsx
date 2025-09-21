@@ -3,7 +3,6 @@ import './Reset.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import Footer from '../components/Footer';
 
 function PasswordReset() {
     const { t, i18n } = useTranslation();
@@ -19,7 +18,6 @@ function PasswordReset() {
         i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
     };
 
-    // مثال: نحدد حالة الرابط من كويري سترنق (?status=expired|success)
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const status = params.get('status');
@@ -42,9 +40,8 @@ function PasswordReset() {
             return;
         }
 
-        // عادة هنا تنادين API /reset
         setBanner('success');
-        // ممكن ترجعي المستخدم للـ Login بعد ثواني
+
         setTimeout(() => navigate('/login'), 2000);
     };
 
@@ -104,8 +101,6 @@ function PasswordReset() {
                     {t('reset.save')}
                 </button>
             </div>
-
-            <Footer />
         </div>
     );
 }

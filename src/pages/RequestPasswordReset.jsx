@@ -3,9 +3,8 @@ import './Reset.css';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import Footer from '../components/Footer';
 
-const COUNTDOWN_SECONDS = 300; // 5 دقائق
+const COUNTDOWN_SECONDS = 300;
 
 function RequestPasswordReset() {
     const { t, i18n } = useTranslation();
@@ -25,7 +24,7 @@ function RequestPasswordReset() {
             setError(t('reset.emailRequired'));
             return;
         }
-        // هنا عادةً تنادين API للإرسال
+
         setSent(true);
         setSecondsLeft(COUNTDOWN_SECONDS);
     };
@@ -81,7 +80,6 @@ function RequestPasswordReset() {
                     {t('reset.sendLink')}
                 </button>
 
-                {/* العداد يظهر بعد الإرسال */}
                 {sent && (
                     <div className="timer">
                         {mm}:{ss}
@@ -97,13 +95,7 @@ function RequestPasswordReset() {
                         {t('reset.login')}
                     </span>
                 </p>
-
-                {/* أمثلة رسائل جاهزة (نجاح/انتهاء الرابط) — بتستخدمينها بالصفحة الثانية فعليًا */}
-                {/* <div className="alert success">{t('reset.bannerSuccess')}</div>
-        <div className="alert danger">{t('reset.bannerExpired')}</div> */}
             </div>
-
-            <Footer />
         </div>
     );
 }
