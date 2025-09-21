@@ -1,0 +1,118 @@
+.reset-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.reset-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+}
+
+.logo {
+    height: 28px;
+    cursor: pointer;
+}
+.lang-btn {
+    background: transparent;
+    border: 1px solid #d7d7d7;
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.reset-container {
+    flex: 1;
+    max-width: 520px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.reset-desc {
+    color: #666;
+    font-size: 0.95rem;
+    margin-top: -4px;
+}
+
+.reset-label {
+    text-align: left;
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.reset-container input {
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0 12px;
+    outline: none;
+}
+
+.primary-btn {
+    margin-top: 10px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: #4e2c5a; /* بنفسجي زي تصميمكم */
+    color: #fff;
+    cursor: pointer;
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.timer {
+    margin-top: 10px;
+    color: #8f6a9a;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.back-to-login {
+    margin-top: 6px;
+}
+
+.text-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.error-message {
+    color: #b3261e;
+    font-size: 0.9rem;
+}
+
+.alert {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    text-align: left;
+}
+
+.alert.success {
+    background: #f1f8f4;
+    border-color: #cfe9d9;
+    color: #245e35;
+}
+
+.alert.danger {
+    background: #fff4f3;
+    border-color: #f3d0cd;
+    color: #8a1d17;
+}
+
+html[dir='rtl'] .reset-label {
+    text-align: right;
+}

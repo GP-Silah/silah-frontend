@@ -4,11 +4,6 @@ import { FaGlobe, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-<img
-    src={logo}
-    alt="Logo"
-/>;
-
 const Header = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
@@ -25,6 +20,8 @@ const Header = () => {
                     src="/logo.png"
                     alt="Logo"
                     className="logo"
+                    onClick={() => navigate('/')} // ✅ ينقلك للـ Landing page
+                    style={{ cursor: 'pointer' }} // يخلي شكل الماوس "يد"
                 />
 
                 <select className="category-select">
@@ -67,7 +64,6 @@ const Header = () => {
                     <FaGlobe />
                 </button>
 
-                {/* ✅ زر Login يوديك لصفحة /login */}
                 <button
                     className="login-btn"
                     onClick={() => navigate('/login')}
