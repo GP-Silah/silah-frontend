@@ -1,0 +1,16 @@
+name: PR branch check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  enforce-dev-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR source branch
+        if: github.event.pull_request.head.ref != 'dev'
+        run: |
+          echo "❌ Only PRs from 'dev' are allowed to merge into 'main'."
+          exit 1

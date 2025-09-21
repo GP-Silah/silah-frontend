@@ -74,7 +74,7 @@ const resources = {
                 contact: 'Contact Us',
                 rights: 'All Rights Reserved.',
             },
-            signup: {
+            Signup: {
                 join: 'Join us!',
                 businessName: 'Business Name',
                 register: 'Commercial Register',
@@ -90,7 +90,7 @@ const resources = {
                 back: 'Back',
                 done: 'Done',
             },
-            signup: {
+            Signup: {
                 step1Title: 'Join us!',
                 step2Title: 'Join us!',
                 step3Title: 'Join us!',
@@ -116,7 +116,7 @@ const resources = {
                     passwordMismatch: 'Passwords do not match',
                 },
             },
-            login: {
+            Login: {
                 title: 'Welcome to Silah!',
                 email: 'Email',
                 password: 'Password',
