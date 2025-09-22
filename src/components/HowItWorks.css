@@ -3,18 +3,18 @@
 /* components/HowItWorks.css */
 
 .how-it-works-section {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%); /* يكسر الكونتينر ويخلي الخلفية تمتد */
-    /* background-color: #3f245c; /* البنفسجي من الصورة */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%); /* يكسر الكونتينر ويخلي الخلفية تمتد */
+  /* background-color: #3f245c; /* البنفسجي من الصورة */
 
-    margin-top: 70px;
-    background-color: #543361;
-    display: flex;
-    justify-content: center;
+  margin-top: 70px;
+  background-color: #543361;
+  display: flex;
+  justify-content: center;
 }
 
 .how-it-works-image img {
-    max-width: 1000px;
-    height: auto;
-    border-radius: 0px; /* اختياري */
+  max-width: 1000px;
+  height: auto;
+  border-radius: 0px; /* اختياري */
 }

@@ -1,0 +1,29 @@
+body,
+html,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.legal-container {
+  max-width: 900px;
+  margin: 50px auto; /* centers container */
+  padding: 40px;
+  line-height: 1.8;
+  font-family: Arial, sans-serif;
+  color: #000;
+  background: none; /* no floating box */
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.lang-ar .legal-container {
+  direction: rtl;
+  text-align: right;
+}
+
+.lang-en .legal-container {
+  direction: ltr;
+  text-align: left;
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Terms of Service Agreement",
+  "intro": "Welcome to Sila (\"we,\" \"our,\" or \"us\"). These Terms of Service (\"Terms\") govern your access to and use of our platform, sila.site (the \"Platform\"). By accessing or using the Platform, you agree to be bound by these Terms. If you do not agree to these Terms, you must not use the Platform.",
+  "eligibility": {
+    "title": "Eligibility and Account Registration",
+    "text": "To access certain features of the Platform, users must create an account. Guests may browse the Platform, search for products and services, and add items to their cart without registering. However, an account is required to complete purchases and use direct messaging. By registering for an account, you represent that:",
+    "point1": "You are a legally registered business entity.",
+    "point2": "You provide accurate and complete information, including your Commercial Registration Number.",
+    "point3": "You will maintain the confidentiality of your account credentials and accept responsibility for all activities under your account.",
+    "note": "Sila reserves the right to suspend or terminate accounts that provide false information or violate these Terms."
+  },
+  "services": {
+    "title": "Services Provided",
+    "text": "Sila is a B2B platform that enables businesses to list, browse, and purchase products and services. Suppliers may list their products, and buyers may place orders. Direct messaging is available for business communication. The Platform also provides invoicing for completed transactions. Sila may introduce additional features or modify existing ones at its discretion, including premium plans for suppliers with enhanced functionalities."
+  },
+  "payments": {
+    "title": "Payments and Fees",
+    "text": "Buyers may use the Platform free of charge. Suppliers have access to both free and premium subscription plans. Payments for transactions between buyers and suppliers are processed through Tap Payments, an independent third-party payment provider. Sila does not store or process any payment information directly."
+  },
+  "content": {
+    "title": "User-Generated Content",
+    "text": "Suppliers are responsible for ensuring that their product listings, including descriptions, images, and prices, are accurate and do not violate any applicable laws. Buyers may submit reviews and ratings, which must be truthful and respectful. Sila reserves the right to remove content that is misleading, fraudulent, or violates these Terms. Comments and discussions outside of the provided rating and review system are not permitted on the Platform."
+  },
+  "retention": {
+    "title": "Account and Data Retention",
+    "text": "Users cannot delete their accounts or remove submitted data from the Platform. Sila retains user data indefinitely unless required by law to modify or delete it."
+  },
+  "liability": {
+    "title": "Limitation of Liability",
+    "text": "Sila acts as an intermediary between buyers and suppliers and does not guarantee the quality, delivery, or accuracy of listed products or services. Users are solely responsible for verifying product details, payment terms, and order fulfillment. Sila is not liable for any disputes between buyers and suppliers. By using the Platform, users acknowledge that transactions occur directly between businesses."
+  },
+  "law": {
+    "title": "Governing Law",
+    "text": "These Terms are governed by and construed in accordance with the laws of Saudi Arabia. Any disputes arising from or relating to these Terms shall be subject to the exclusive jurisdiction of the courts of Saudi Arabia."
+  },
+  "modifications": {
+    "title": "Modifications to These Terms",
+    "text": "Sila reserves the right to update or modify these Terms at any time. Any changes will be effective upon posting on the Platform. Continued use of the Platform after changes have been posted constitutes acceptance of the revised Terms."
+  },
+  "contact": {
+    "title": "Contact Information",
+    "text": "If you have any questions about these Terms, please contact us at info@sila.site."
+  }
+}
