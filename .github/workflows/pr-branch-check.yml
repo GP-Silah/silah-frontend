@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR source branch
-        if: github.event.pull_request.head.ref != 'dev'
         run: |
-          echo "❌ Only PRs from 'dev' are allowed to merge into 'main'."
-          exit 1
+          if [ "${{ github.event.pull_request.head.ref }}" != "dev" ]; then
+            echo "❌ Only PRs from 'dev' are allowed to merge into 'main'."
+            exit 1
+          else
+            echo "✅ PR source branch is dev. All good!"
+          fi
