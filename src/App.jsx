@@ -13,9 +13,9 @@ import Login from './pages/Login';
 import RequestPasswordReset from './pages/RequestPasswordReset';
 import PasswordReset from './pages/PasswordReset';
 
-import AboutUs from './pages/AboutUs';
-import TermsOfService from './pages/TermsOfService';
-import Privacy from './pages/PrivacyPolicy';
+import AboutUs from './pages/AboutUs/AboutUs';
+import TermsOfService from './pages/LegalPages/TermsOfService';
+import Privacy from './pages/LegalPages/PrivacyPolicy';
 
 function App() {
   const { i18n } = useTranslation();
