@@ -19,5 +19,10 @@
     "it": "Software & IT Solutions",
     "energy": "Energy & Sustainability",
     "business": "Business & Marketing Services"
+  },
+  "tabs": {
+    "products": "Products",
+    "services": "Services",
+    "suppliers": "Suppliers"
   }
 }

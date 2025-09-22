@@ -19,6 +19,8 @@ function PasswordReset() {
   };
 
   useEffect(() => {
+    document.title = 'Password Reset';
+
     const params = new URLSearchParams(location.search);
     const status = params.get('status');
     if (status === 'expired') setBanner('expired');

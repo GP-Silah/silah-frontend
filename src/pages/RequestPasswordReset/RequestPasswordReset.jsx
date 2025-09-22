@@ -30,6 +30,8 @@ function RequestPasswordReset() {
   };
 
   useEffect(() => {
+    document.title = 'Request Password Reset';
+
     if (!sent) return;
     const timer = setInterval(() => {
       setSecondsLeft((s) => (s > 0 ? s - 1 : 0));

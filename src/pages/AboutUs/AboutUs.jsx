@@ -7,6 +7,8 @@ const AboutUs = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
+    document.title = 'About Us';
+
     const sections = document.querySelectorAll('.fade-section');
 
     const observer = new IntersectionObserver(

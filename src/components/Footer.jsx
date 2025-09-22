@@ -8,11 +8,11 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-links">
-        <Link to="/about">{t('about')}</Link>
+        <Link to="/about-us">{t('about')}</Link>
         <span>|</span>
-        <Link to="/terms">{t('terms')}</Link>
+        <Link to="/terms-of-service">{t('terms')}</Link>
         <span>|</span>
-        <Link to="/privacy">{t('privacy')}</Link>
+        <Link to="/privacy-policy">{t('privacy')}</Link>
         <span>|</span>
         <a href="mailto:info@silah.site">{t('contact')}: info@silah.site</a>
       </div>

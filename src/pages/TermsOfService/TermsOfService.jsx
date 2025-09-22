@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import './LegalPages.css'; // ملف CSS مشترك للشروط والخصوصية
+import '../PrivacyPolicy/LegalPages.css'; // ملف CSS مشترك للشروط والخصوصية
 
 const TermsOfService = () => {
+  useEffect(() => {
+    document.title = 'Terms of Service';
+  }, []);
+
   const { t } = useTranslation();
 
   return (

@@ -50,6 +50,7 @@ const Header = () => {
         <select className="product-select">
           <option>{t('tabs.products')}</option>
           <option>{t('tabs.services')}</option>
+          <option>{t('tabs.suppliers')}</option>
         </select>
       </div>
 

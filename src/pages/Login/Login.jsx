@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function Login() {
+  useEffect(() => {
+    document.title = 'Login';
+  }, []);
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');

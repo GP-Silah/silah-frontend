@@ -1,56 +1,68 @@
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-import Landing from './pages/Landing';
-import Signup from './pages/Signup/Signup';
-import VerifyEmail from './pages/VerifyEmail/VerifyEmail';
-import EmailSuccess from './pages/VerifyEmail/EmailSuccess';
-import ResendVerificationEmail from './pages/VerifyEmail/ResendVerificationEmail';
-import Login from './pages/Login/Login';
-import RequestPasswordReset from './pages/ResetPassword/RequestPasswordReset';
-import PasswordReset from './pages/ResetPassword/PasswordReset';
-
-import AboutUs from './pages/AboutUs/AboutUs';
-import TermsOfService from './pages/LegalPages/TermsOfService';
-import Privacy from './pages/LegalPages/PrivacyPolicy';
+// Automatically import all .jsx pages in /pages
+const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
 
+  const routeElements = Object.entries(pages).map(([filePath, resolver]) => {
+    // Remove ./pages prefix and .jsx extension
+    let routePath = filePath.replace('./pages', '').replace('.jsx', '');
+
+    // Split into parts
+    const parts = routePath.split('/').filter(Boolean);
+
+    // Drop last part if it matches folder name (AboutUs/AboutUs.jsx -> AboutUs)
+    if (
+      parts.length > 1 &&
+      parts[parts.length - 1].toLowerCase() ===
+        parts[parts.length - 2].toLowerCase()
+    ) {
+      parts.pop();
+    }
+
+    // Convert to kebab-case
+    routePath =
+      '/' +
+      parts
+        .map((part) =>
+          part
+            .replace(/([a-z0-9])([A-Z])/g, '$1-$2') // aB -> a-B
+            .replace(/([A-Z]{2,})([A-Z][a-z]+)/g, '$1-$2') // HTMLParser -> HTML-Parser
+            .toLowerCase(),
+        )
+        .join('/');
+
+    // Special case: Landing page
+    if (routePath === '/landing') routePath = '/';
+
+    // Lazy load component
+    const PageComponent = React.lazy(() =>
+      resolver().then((mod) => ({ default: mod.default })),
+    );
+
+    return (
+      <Route
+        key={routePath}
+        path={routePath}
+        element={
+          <React.Suspense fallback={<div>Loading...</div>}>
+            <PageComponent />
+          </React.Suspense>
+        }
+      />
+    );
+  });
+
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      {/* TODO: this header is for guest users only, need to create
-      another header for logged in users and use react-router-dom to show the
-      correct header based on authentication status */}
       <Header />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/email-success" element={<EmailSuccess />} />
-        <Route
-          path="/resend-verification-email"
-          element={<ResendVerificationEmail />}
-        />
-
-        {/* صفحات إعادة تعيين كلمة المرور */}
-        <Route path="/reset-password" element={<RequestPasswordReset />} />
-        <Route path="/reset-password/confirm" element={<PasswordReset />} />
-
-        {/* صفحات ثابتة (احذفيها إذا ما عندك الملفات) */}
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/privacy" element={<Privacy />} />
-
-        {/* مسار احتياطي 
-        No here fayrouz add here 404 page if I understood correctly*/}
-        <Route path="*" element={<Landing />} />
-      </Routes>
+      <Routes>{routeElements}</Routes>
       <Footer />
     </div>
   );
