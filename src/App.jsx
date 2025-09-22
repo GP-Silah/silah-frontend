@@ -5,13 +5,13 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 import Landing from './pages/Landing';
-import Signup from './pages/Signup';
-import VerifyEmail from './pages/VerifyEmail';
-import EmailSuccess from './pages/EmailSuccess';
-import ResendVerificationEmail from './pages/ResendVerificationEmail';
-import Login from './pages/Login';
-import RequestPasswordReset from './pages/RequestPasswordReset';
-import PasswordReset from './pages/PasswordReset';
+import Signup from './pages/Signup/Signup';
+import VerifyEmail from './pages/VerifyEmail/VerifyEmail';
+import EmailSuccess from './pages/VerifyEmail/EmailSuccess';
+import ResendVerificationEmail from './pages/VerifyEmail/ResendVerificationEmail';
+import Login from './pages/Login/Login';
+import RequestPasswordReset from './pages/ResetPassword/RequestPasswordReset';
+import PasswordReset from './pages/ResetPassword/PasswordReset';
 
 import AboutUs from './pages/AboutUs/AboutUs';
 import TermsOfService from './pages/LegalPages/TermsOfService';

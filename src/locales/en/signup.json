@@ -1,0 +1,30 @@
+{
+  "join": "Join us!",
+  "businessName": "Business Name",
+  "register": "Commercial Register",
+  "activity": "Business Activity",
+  "selectCategory": "Select a Category",
+  "name": "Name",
+  "nationalId": "National ID",
+  "city": "City",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+  "step1Title": "Join us!",
+  "step2Title": "Join us!",
+  "step3Title": "Join us!",
+  "commercialRegister": "Commercial Register",
+  "businessActivity": "Business Activity",
+  "agree": "I agree on the",
+  "terms": "terms and conditions",
+  "haveAccount": "Already have an account?",
+  "login": "Log in",
+  "errors": {
+    "numbersOnly": "Please enter numbers only",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordMismatch": "Passwords do not match"
+  }
+}

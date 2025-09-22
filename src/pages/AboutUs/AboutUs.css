@@ -1,179 +1,179 @@
 .about-page {
-    font-family: Arial, sans-serif;
-    color: #000;
-    line-height: 1.6;
+  font-family: Arial, sans-serif;
+  color: #000;
+  line-height: 1.6;
 }
 
 .about-header {
-    background-color: #2f3c73;
-    color: #fff;
-    padding: 80px 20px;
-    text-align: center;
+  background-color: #2f3c73;
+  color: #fff;
+  padding: 80px 20px;
+  text-align: center;
 }
 
 .section-label {
-    font-size: 30px;
-    margin-bottom: 20px;
-    color: #ffffff;
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: #ffffff;
 }
 
 .about-header h1 {
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .subtitle {
-    font-size: 18px;
-    font-weight: normal;
-    margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: normal;
+  margin-bottom: 20px;
 }
 
 .about-header blockquote {
-    font-size: 16px;
-    font-style: italic;
-    color: #dcdcdc;
-    margin-top: 15px;
+  font-size: 16px;
+  font-style: italic;
+  color: #dcdcdc;
+  margin-top: 15px;
 }
 
 /* Story/Mission/Vision */
 .story-mission-vision {
-    background: #fff;
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  background: #fff;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 .smv-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 30px;
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
 }
 .smv-item h2 {
-    flex: 1;
-    text-align: left;
-    font-size: 25px;
-    margin: 0;
-    padding-left: 100px;
-    margin-top: 20px;
-    color: #2f3c73;
+  flex: 1;
+  text-align: left;
+  font-size: 25px;
+  margin: 0;
+  padding-left: 100px;
+  margin-top: 20px;
+  color: #2f3c73;
 }
 .smv-item p {
-    flex: 3;
-    margin: 0;
-    text-align: left;
-    padding-right: 40px;
+  flex: 3;
+  margin: 0;
+  text-align: left;
+  padding-right: 40px;
 }
 
 .core-values {
-    background: #562c72;
-    color: #fff;
-    padding: 40px 20px;
+  background: #562c72;
+  color: #fff;
+  padding: 40px 20px;
 }
 .core-values h2 {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 .core-values ul {
-    list-style: none;
-    padding: 0;
-    max-width: 800px;
-    margin: 0 auto;
+  list-style: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
 }
 .core-values li {
-    margin: 12px 0;
+  margin: 12px 0;
 }
 
 .cta {
-    background: #fff;
-    text-align: center;
-    padding: 40px 20px;
+  background: #fff;
+  text-align: center;
+  padding: 40px 20px;
 }
 .cta h3 {
-    color: #562c72;
-    font-size: 20px;
-    margin-bottom: 15px;
+  color: #562c72;
+  font-size: 20px;
+  margin-bottom: 15px;
 }
 .cta p {
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: #333;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #333;
 }
 .cta-btn {
-    background-color: #562c72;
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
+  background-color: #562c72;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
 }
 .cta-btn:hover {
-    background-color: #45245b;
+  background-color: #45245b;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .smv-item {
-        flex-direction: column;
-    }
-    .smv-item h2 {
-        margin-bottom: 10px;
-    }
+  .smv-item {
+    flex-direction: column;
+  }
+  .smv-item h2 {
+    margin-bottom: 10px;
+  }
 }
 
 .fade-section {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 1s ease-out;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s ease-out;
 }
 
 .fade-section.visible {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* يخلي كل السكشنات RTL لما تكون لغة عربية */
 .lang-ar .story-mission-vision {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 .lang-ar .smv-item {
-    text-align: right; /* يخلي النصوص يمين */
+  text-align: right; /* يخلي النصوص يمين */
 }
 
 .lang-ar .smv-item h2 {
-    margin-bottom: 0.5rem;
-    text-align: right;
-    /*margin-right: 400px;*/
-    transform: translateX(-170px);
+  margin-bottom: 0.5rem;
+  text-align: right;
+  /*margin-right: 400px;*/
+  transform: translateX(-170px);
 }
 
 .lang-ar .smv-item p {
-    text-align: right;
-    line-height: 1.8;
-    transform: translateX(-10px);
+  text-align: right;
+  line-height: 1.8;
+  transform: translateX(-10px);
 }
 
 .lang-en .smv-item {
-    text-align: left;
+  text-align: left;
 }
 .lang-en .smv-item h2 {
-    text-align: left;
+  text-align: left;
 }
 .lang-en .smv-item p {
-    text-align: left;
+  text-align: left;
 }
 
 .lang-ar .about-page {
-    direction: rtl;
-    text-align: right;
+  direction: rtl;
+  text-align: right;
 }
 
 .lang-en .about-page {
-    direction: ltr;
-    text-align: left;
+  direction: ltr;
+  text-align: left;
 }

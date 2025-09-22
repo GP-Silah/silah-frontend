@@ -1,5 +1,5 @@
-import React from "react";
-import EmailDialog from "../components/EmailDialog";
+import React from 'react';
+import EmailDialog from '../../components/EmailDialog';
 
 const EmailSuccess = () => {
   return (

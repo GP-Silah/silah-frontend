@@ -1,69 +1,69 @@
 .legal-container {
-    max-width: 900px;
-    margin: 50px auto;
-    padding: 40px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    line-height: 1.8;
-    font-family: Arial, sans-serif;
-    color: #000;
+  max-width: 900px;
+  margin: 50px auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  line-height: 1.8;
+  font-family: Arial, sans-serif;
+  color: #000;
 }
 
 .legal-container h1 {
-    font-size: 2.2rem;
-    text-align: center;
-    margin-bottom: 25px;
+  font-size: 2.2rem;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .legal-container h2 {
-    font-size: 1.4rem;
-    margin-top: 25px;
-    margin-bottom: 10px;
+  font-size: 1.4rem;
+  margin-top: 25px;
+  margin-bottom: 10px;
 }
 
 .legal-container p {
-    font-size: 1rem;
-    margin-bottom: 15px;
+  font-size: 1rem;
+  margin-bottom: 15px;
 }
 
 .legal-container ul {
-    margin-left: 25px;
-    margin-bottom: 20px;
-    list-style-type: disc;
-    font-size: 1rem;
+  margin-left: 25px;
+  margin-bottom: 20px;
+  list-style-type: disc;
+  font-size: 1rem;
 }
 
 .legal-container li {
-    margin-bottom: 8px;
-    font-size: 1rem;
+  margin-bottom: 8px;
+  font-size: 1rem;
 }
 
 @media (max-width: 768px) {
-    .legal-container {
-        padding: 20px;
-        margin: 20px;
-    }
+  .legal-container {
+    padding: 20px;
+    margin: 20px;
+  }
 
-    .legal-container h1 {
-        font-size: 1.8rem;
-    }
+  .legal-container h1 {
+    font-size: 1.8rem;
+  }
 
-    .legal-container h2 {
-        font-size: 1.2rem;
-    }
+  .legal-container h2 {
+    font-size: 1.2rem;
+  }
 }
 
 .lang-ar .legal-container {
-    direction: rtl;
-    text-align: right;
-    padding-right: 40px;
-    padding-left: 20px;
+  direction: rtl;
+  text-align: right;
+  padding-right: 40px;
+  padding-left: 20px;
 }
 
 .lang-en .legal-container {
-    direction: ltr;
-    text-align: left;
-    padding-left: 40px;
-    padding-right: 20px;
+  direction: ltr;
+  text-align: left;
+  padding-left: 40px;
+  padding-right: 20px;
 }

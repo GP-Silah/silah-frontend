@@ -1,5 +1,5 @@
-import React from "react";
-import EmailDialog from "../components/EmailDialog";
+import React from 'react';
+import EmailDialog from '../../components/EmailDialog';
 
 const ResendVerificationEmail = () => {
   return (
@@ -11,4 +11,4 @@ const ResendVerificationEmail = () => {
   );
 };
 
-export default ResendVerificationEmail ;
+export default ResendVerificationEmail;
