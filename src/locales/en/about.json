@@ -1,0 +1,30 @@
+{
+  "label": "About Us",
+  "title": "Silah believes in the power of seamless business connections. Our platform is designed to help companies find the right partners, optimize supply chains, and grow efficiently.",
+  "quote": "Connecting Businesses, Empowering Growth.",
+  "story": {
+    "title": "Our Story",
+    "text": "In today's fast-paced business world, companies struggle to find reliable partners and suppliers. Silah was born from the need for a smarter, more efficient B2B marketplace that makes it easy to connect, collaborate, and grow. Founded as part of our graduation project, Silah has evolved into a vision for the future—a digital ecosystem where businesses can thrive together."
+  },
+  "mission": {
+    "title": "Our Mission",
+    "text": "Our mission is to simplify and enhance B2B connections through an intelligent, user-friendly platform. We empower businesses by providing tools that help them find the right partners, streamline operations, and unlock new opportunities. We are committed to building a trusted digital ecosystem that fosters growth, efficiency, and collaboration."
+  },
+  "vision": {
+    "title": "Our Vision",
+    "text": "Our vision is to become the leading B2B networking platform, transforming how businesses connect, collaborate, and grow. We aim to build a seamless digital ecosystem where companies can find the right partners, optimize their supply chains, and create endless opportunities—driving innovation and economic growth."
+  },
+  "values": {
+    "title": "Our Core Values",
+    "connectivity": "💡 Connectivity & Collaboration - We believe in strong business connections that foster partnerships.",
+    "innovation": "🚀 Innovation & Growth - We continuously innovate to help businesses scale faster and smarter.",
+    "trust": "🔍 Trust & Reliability - Transparency and trust are at the heart of every connection on Silah.",
+    "efficiency": "⚡ Efficiency & Optimization - Our goal is to simplify processes, save time, and enhance productivity.",
+    "empowerment": "🌍 Empowerment - We give businesses the tools and insights to grow with confidence."
+  },
+  "cta": {
+    "title": "Be part of the future of business networking!",
+    "text": "Whether you're a startup, supplier, or a growing enterprise, Silah helps you find the right partners, opportunities, and success. Join us today and start connecting!",
+    "button": "Get Started"
+  }
+}

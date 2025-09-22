@@ -1,0 +1,116 @@
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+.login-header {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 40px;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  width: 100%;
+  gap: 12px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.enter-btn {
+  background-color: #543361;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.enter-btn:hover {
+  background-color: #6a4381;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 8px;
+}
+.login-options {
+  margin-top: 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.text-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.text-link:hover {
+  opacity: 0.85;
+}
+
+.reset-link {
+  display: inline-block;
+  margin-bottom: 6px; /* يكون سطر مستقل فوق "No account?" */
+}
+
+.create-account {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* إن كنتِ تدعمين العربية، يراعي الاتجاه */
+html[dir='rtl'] .login-options {
+  text-align: center;
+}
+/* تخلي صفحة اللوق إن تاخذ طول الشاشة كامل */
+.login-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* ارتفاع الشاشة كامل */
+}
+
+/* الجزء اللي فوق (الفورم) */
+.login-container {
+  flex: 1; /* ياخذ المساحة المتبقية ويدز الفوتر تحت */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* الفوتر */
+.login-page footer,
+.login-page .Footer {
+  /* إذا كمبوننتك اسمها Footer */
+  margin-top: auto; /* يلتصق أسفل */
+  width: 100%;
+}

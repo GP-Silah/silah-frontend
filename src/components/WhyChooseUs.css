@@ -1,46 +1,46 @@
 /* WhyChooseUs.css */
 
 .why-title {
-    text-align: center;
-    font-size: 30px;
-    margin-bottom: 48px;
-    color: #543361;
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 48px;
+  color: #543361;
 }
 
 /* هذا هو الكونتينر اللي يصير full width */
 .why-choose-fullwidth {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 
-    gap: 40px;
-    flex-wrap: wrap;
+  gap: 40px;
+  flex-wrap: wrap;
 
-    /* هذا يخلي القسم ياخذ العرض الكامل */
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    padding: 0px;
-    box-sizing: border-box;
+  /* هذا يخلي القسم ياخذ العرض الكامل */
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  padding: 0px;
+  box-sizing: border-box;
 }
 
 .why-choose-image img {
-    width: 600px;
-    max-width: 100%;
-    border-radius: 6px;
+  width: 600px;
+  max-width: 100%;
+  border-radius: 6px;
 }
 
 .why-choose-content {
-    max-width: 600px;
+  max-width: 600px;
 }
 
 .why-text {
-    flex: 1;
-    min-width: 300px;
+  flex: 1;
+  min-width: 300px;
 }
 .why-choose-content li {
-    font-size: 22px;
-    margin-bottom: 35px;
-    padding: 0px;
-    white-space: normal; /* مهم: يسمح بتكملة السطر */
-    word-break: break-word;
-    color: #324669;
+  font-size: 22px;
+  margin-bottom: 35px;
+  padding: 0px;
+  white-space: normal; /* مهم: يسمح بتكملة السطر */
+  word-break: break-word;
+  color: #324669;
 }
