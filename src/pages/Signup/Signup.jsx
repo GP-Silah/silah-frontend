@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 function Signup() {
-  useEffect(() => {
-    document.title = 'Signup';
-  }, []);
-
-  const { t, i18n } = useTranslation();
+const { t, i18n } = useTranslation('signup');
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    document.title = t('pageTitle.signup', {ns: 'common'});
+  }, [t, i18n.language]);
 
   const [formData, setFormData] = useState({
     businessName: '',
@@ -103,7 +103,7 @@ function Signup() {
 
       <div className="signup-container">
         <div className="signup-form">
-          <h2>{t(`signup.step${step}Title`)}</h2>
+          <h2>{t(`step${step}Title`)}</h2>
 
           {step === 1 && (
             <>
@@ -111,7 +111,7 @@ function Signup() {
                 name="businessName"
                 value={formData.businessName}
                 onChange={handleChange}
-                placeholder={t('signup.businessName')}
+                placeholder={t('businessName')}
                 className={formErrors.businessName ? 'error' : ''}
               />
               {formErrors.businessName && (
@@ -122,7 +122,7 @@ function Signup() {
                 name="commercialRegister"
                 value={formData.commercialRegister}
                 onChange={handleChange}
-                placeholder={t('signup.commercialRegister')}
+                placeholder={t('commercialRegister')}
                 className={formErrors.commercialRegister ? 'error' : ''}
               />
               {formErrors.commercialRegister && (
@@ -136,16 +136,16 @@ function Signup() {
                 className={formErrors.businessActivity ? 'error' : ''}
               >
                 <option value="" hidden>
-                  {t('signup.businessActivity')}
+                  {t('businessActivity')}
                 </option>
                 <option>Activity 1</option>
                 <option>Activity 2</option>
               </select>
 
               <p className="login-text">
-                {t('signup.haveAccount')}{' '}
+                {t('haveAccount')}{' '}
                 <span className="login-link" onClick={() => navigate('/login')}>
-                  {t('signup.login')}
+                  {t('login')}
                 </span>
               </p>
             </>
@@ -157,7 +157,7 @@ function Signup() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder={t('signup.name')}
+                placeholder={t('name')}
                 className={formErrors.name ? 'error' : ''}
               />
               {formErrors.name && (
@@ -168,7 +168,7 @@ function Signup() {
                 name="nationalId"
                 value={formData.nationalId}
                 onChange={handleChange}
-                placeholder={t('signup.nationalId')}
+                placeholder={t('nationalId')}
                 className={formErrors.nationalId ? 'error' : ''}
               />
               {formErrors.nationalId && (
@@ -179,7 +179,7 @@ function Signup() {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                placeholder={t('signup.city')}
+                placeholder={t('city')}
                 className={formErrors.city ? 'error' : ''}
               />
               {formErrors.city && (
@@ -195,7 +195,7 @@ function Signup() {
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder={t('signup.email')}
+                placeholder={t('email')}
                 className={formErrors.email ? 'error' : ''}
               />
               {formErrors.email && (
@@ -207,7 +207,7 @@ function Signup() {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder={t('signup.password')}
+                placeholder={t('password')}
                 className={formErrors.password ? 'error' : ''}
               />
 
@@ -216,7 +216,7 @@ function Signup() {
                 type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder={t('signup.confirmPassword')}
+                placeholder={t('confirmPassword')}
                 className={formErrors.confirmPassword ? 'error' : ''}
               />
               {formErrors.confirmPassword && (
@@ -232,7 +232,7 @@ function Signup() {
                 />
                 {t('signup.agree')}{' '}
                 <a href="/terms" className="terms-link">
-                  {t('signup.terms')}
+                  {t('terms')}
                 </a>
               </label>
             </>
@@ -241,7 +241,7 @@ function Signup() {
           <div className="form-navigation">
             {step > 1 && (
               <button className="nav-btn" onClick={prevStep}>
-                {t('signup.back')}
+                {t('back')}
               </button>
             )}
             <button
@@ -249,7 +249,7 @@ function Signup() {
               disabled={!isStepValid()}
               onClick={nextStep}
             >
-              {step === 3 ? t('signup.done') : t('signup.next')}
+              {step === 3 ? t('done') : t('next')}
             </button>
           </div>
         </div>

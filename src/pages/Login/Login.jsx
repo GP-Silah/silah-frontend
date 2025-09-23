@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function Login() {
-  useEffect(() => {
-    document.title = 'Login';
-  }, []);
-
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation('login');
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.title = t('pageTitle.login', {ns: 'common'});
+  }, [t, i18n.language]);
 
   const handleLogin = () => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -21,27 +21,27 @@ function Login() {
       storedUser.email === email &&
       storedUser.password === password
     ) {
-      alert(t('login.success'));
+      alert(t('success'));
       navigate('/');
     } else {
-      setError(t('login.error'));
+      setError(t('error'));
     }
   };
 
   return (
     <div className="login-page">
       <div className="login-container">
-        <h2>{t('login.title')}</h2>
+        <h2>{t('title')}</h2>
 
         <input
           type="email"
-          placeholder={t('login.email')}
+          placeholder={t('email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
-          placeholder={t('login.password')}
+          placeholder={t('password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -49,7 +49,7 @@ function Login() {
         {error && <p className="error-message">{error}</p>}
 
         <button className="enter-btn" onClick={handleLogin}>
-          {t('login.submit')}
+          {t('submit')}
         </button>
 
         <div className="login-options">
@@ -57,13 +57,13 @@ function Login() {
             className="text-link reset-link"
             onClick={() => navigate('/reset-password')}
           >
-            {t('login.resetPassword')}
+            {t('resetPassword')}
           </span>
 
           <p className="create-account">
-            {t('login.noAccount')}{' '}
+            {t('noAccount')}{' '}
             <span className="text-link" onClick={() => navigate('/signup')}>
-              {t('login.createOne')}
+              {t('createOne')}
             </span>
           </p>
         </div>

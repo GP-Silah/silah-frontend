@@ -1,17 +1,18 @@
-//import GuestHeader from "../components/Header";
-//import Footer from "../components/Footer";
 import React, { useEffect } from 'react';
 import HeroSection from '../../components/HeroSection';
 import WhyChooseUs from '../../components/WhyChooseUs';
 import HowItWorks from '../../components/HowItWorks';
 import ExploreCategories from '../../components/ExploreCategories'; // أو './ExploreCategories' حسب المسار
+import { useTranslation } from 'react-i18next';
 
 import '../../App.css';
 
 function Landing() {
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
-    document.title = 'Silah - Landing Page';
-  }, []);
+    document.title = t('pageTitle.landing', {ns: 'common'});
+  }, [t, i18n.language]);
 
   return (
     <div className="landing-page">
