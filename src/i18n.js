@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+import commonEn from './locales/en/common.json?raw';
+import commonAr from './locales/ar/common.json?raw';
 import landingEn from './locales/en/landing.json?raw';
 import landingAr from './locales/ar/landing.json?raw';
 import headerEn from './locales/en/header.json?raw';
@@ -21,28 +23,26 @@ import loginAr from './locales/ar/login.json?raw';
 
 const resources = {
   en: {
+    common: JSON.parse(commonEn),
     landing: JSON.parse(landingEn),
     header: JSON.parse(headerEn),
     footer: JSON.parse(footerEn),
-    translation: {
-      about: JSON.parse(aboutEn),
-      terms: JSON.parse(termsEn),
-      privacy: JSON.parse(privacyEn),
-      signup: JSON.parse(signupEn),
-      login: JSON.parse(loginEn),
-    },
+    about: JSON.parse(aboutEn),
+    terms: JSON.parse(termsEn),
+    privacy: JSON.parse(privacyEn),
+    signup: JSON.parse(signupEn),
+    login: JSON.parse(loginEn),
   },
   ar: {
+    common: JSON.parse(commonAr),
     landing: JSON.parse(landingAr),
     header: JSON.parse(headerAr),
     footer: JSON.parse(footerAr),
-    translation: {
-      about: JSON.parse(aboutAr),
-      terms: JSON.parse(termsAr),
-      privacy: JSON.parse(privacyAr),
-      signup: JSON.parse(signupAr),
-      login: JSON.parse(loginAr),
-    },
+    about: JSON.parse(aboutAr),
+    terms: JSON.parse(termsAr),
+    privacy: JSON.parse(privacyAr),
+    signup: JSON.parse(signupAr),
+    login: JSON.parse(loginAr),
   },
 };
 i18n
@@ -51,6 +51,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
+    defaultNS: 'common',
     interpolation: {
       escapeValue: false,
     },

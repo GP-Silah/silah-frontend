@@ -1,9 +1,7 @@
 name: PR branch check
 
 on:
-  pull_request:
-    branches:
-      - main
+  pull_request:   # run on all PRs
 
 jobs:
   enforce-dev-pr:
@@ -11,9 +9,13 @@ jobs:
     steps:
       - name: Check PR source branch
         run: |
-          if [ "${{ github.event.pull_request.head.ref }}" != "dev" ]; then
-            echo "❌ Only PRs from 'dev' are allowed to merge into 'main'."
-            exit 1
+          if [ "${{ github.event.pull_request.base.ref }}" = "main" ]; then
+            if [ "${{ github.event.pull_request.head.ref }}" != "dev" ]; then
+              echo "❌ Only PRs from 'dev' are allowed to merge into 'main'."
+              exit 1
+            else
+              echo "✅ PR source branch is dev. All good!"
+            fi
           else
-            echo "✅ PR source branch is dev. All good!"
+            echo "ℹ️ Target branch is not main, skipping check."
           fi
