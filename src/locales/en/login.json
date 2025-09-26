@@ -1,0 +1,9 @@
+{
+  "title": "Welcome to Silah!",
+  "email": "Email",
+  "password": "Password",
+  "submit": "Log In",
+  "errors": {
+    "invalidCredentials": "Invalid email or password"
+  }
+}
