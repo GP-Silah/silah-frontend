@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Reset.css';
+import '../PasswordReset/Reset.css';
 import { useNavigate } from 'react-router-dom';
 import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';

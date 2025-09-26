@@ -1,8 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+
+
+import NotFound from './pages/NotFound/NotFound';
 import { useTranslation } from 'react-i18next';
 import Header from './components/Header';
 import Footer from './components/Footer';
+
 
 // Automatically import all .jsx pages in /pages
 const pages = import.meta.glob('./pages/**/*.jsx');
@@ -21,7 +25,7 @@ function App() {
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
-        parts[parts.length - 2].toLowerCase()
+      parts[parts.length - 2].toLowerCase()
     ) {
       parts.pop();
     }
@@ -61,10 +65,13 @@ function App() {
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      <Header />
-      <Routes>{routeElements}</Routes>
-      <Footer />
+      {/* <Header />*/}
+      <Routes>{routeElements}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {/* <Footer />*/}
     </div>
+
   );
 }
 
