@@ -1,26 +1,28 @@
 :root {
   --bg-404: #E9DCF2;
-  --purple-950:#31173B;
-  --purple-900:#31173B;
-  --purple-800:#543361;
-  --text-dark:#3A2E3B;
-  --white:#fff;
-  --error:#E74C3C;
+  --purple-950: #31173B;
+  --purple-900: #31173B;
+  --purple-800: #543361;
+  --text-dark: #3A2E3B;
+  --white: #fff;
+  --error: #E74C3C;
 }
 
 /* ===== الهيدر ===== */
 .nf-header {
-  position: absolute;
+  position: fixed;
   top: 16px;
   left: 16px;
   right: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 1000;
+  background: transparent;
 }
 
 .nf-header__logo {
-  height: 40px;          
+  height: 40px;
   width: auto;
   display: block;
   user-select: none;
@@ -30,13 +32,15 @@
 }
 
 .nf-header__lang {
-  height: 28px;           /* حجم أيقونة اللغة */
+  height: 32px;
+  /* حجم أيقونة اللغة */
   width: auto;
   display: block;
   background: transparent;
   border: none;
   outline: none;
-  -webkit-tap-highlight-color: transparent; /* يشيل الهايلايت في الجوال */
+  -webkit-tap-highlight-color: transparent;
+  /* يشيل الهايلايت في الجوال */
   cursor: pointer;
 }
 
@@ -54,11 +58,15 @@
 
 /* ===== الخلفية والـgrid ===== */
 .notfound {
+  position: relative;
   min-height: 100vh;
   background: var(--bg-404);
   display: grid;
   place-items: start center;
-  padding-top: 200px;   /* نترك فراغ للهيدر */
+  padding-top: 200px;
+  /* نترك فراغ للهيدر */
+
+
 }
 
 .notfound__inner {
@@ -111,7 +119,7 @@
   color: var(--white);
   font-weight: 600;
   text-decoration: none;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
   transition: background 0.3s;
 }
 
@@ -124,16 +132,30 @@
   direction: rtl;
   font-family: "Tajawal", system-ui, sans-serif;
 }
+
 .notfound--ar .notfound__title,
 .notfound--ar .notfound__lead,
 .notfound--ar .notfound__text {
-  text-align: center; /* نحافظ على التوسيط */
+  text-align: center;
+  /* نحافظ على التوسيط */
 }
 
 /* موبايل */
 @media (max-width: 480px) {
-  .notfound { padding-top: 120px; }    /* كان 96px، زدناه لأن عندنا هيدر */
-  .notfound__code { font-size: 88px; }
-  .notfound__title { font-size: 44px; }
-  .notfound__lead { font-size: 24px; }
+  .notfound {
+    padding-top: 120px;
+  }
+
+  /* كان 96px، زدناه لأن عندنا هيدر */
+  .notfound__code {
+    font-size: 88px;
+  }
+
+  .notfound__title {
+    font-size: 44px;
+  }
+
+  .notfound__lead {
+    font-size: 24px;
+  }
 }
