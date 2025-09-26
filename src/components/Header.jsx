@@ -4,6 +4,7 @@ import { FaGlobe, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
+
 const Header = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
