@@ -1,87 +1,140 @@
-:root{
-  --bg-404: #E9DCF2;        /* الخلفية */
+:root {
+  --bg-404: #E9DCF2;
   --purple-950:#31173B;
-  --purple-900:#543361;
-  --purple-800:#5F3771;      /* لون الزر */
+  --purple-900:#31173B;
+  --purple-800:#543361;
   --text-dark:#3A2E3B;
   --white:#fff;
-  --error:#E74C3C;           /* 404 */
+  --error:#E74C3C;
 }
 
-/* الخلفية والـgrid */
-.notfound{
-  min-height:100vh;
-  background:var(--bg-404);
-  display:grid;
-  place-items:start center; 
-  padding-top: 200px;         /* أفقيًا بالمنتصف وعموديًا من الأعلى */
+/* ===== الهيدر ===== */
+.nf-header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-/* اللفّ الداخلي */
-.notfound__inner{
+.nf-header__logo {
+  height: 40px;          
+  width: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  border: 0;
+  outline: 0;
+}
+
+.nf-header__lang {
+  height: 28px;           /* حجم أيقونة اللغة */
+  width: auto;
+  display: block;
+  background: transparent;
+  user-select: none;
+  -webkit-user-drag: none;
+  border: 0;
+  outline: 0;
+  -webkit-tap-highlight-color: transparent; /* يشيل الهايلايت في الجوال */
+}
+
+/* نتأكد ما يظهر أي إطار (outline) عند hover/focus/active */
+.nf-header__lang:hover,
+.nf-header__lang:focus,
+.nf-header__lang:active,
+.nf-header__logo:hover,
+.nf-header__logo:focus,
+.nf-header__logo:active {
+  outline: none;
+  box-shadow: none;
+  border: 0;
+}
+
+/* ===== الخلفية والـgrid ===== */
+.notfound {
+  min-height: 100vh;
+  background: var(--bg-404);
+  display: grid;
+  place-items: start center;
+  padding-top: 200px;   /* نترك فراغ للهيدر */
+}
+
+.notfound__inner {
   width: min(720px, calc(100% - 48px));
-  text-align:center;
-}
-
-/* لو في هيدر فوق، نضيف مسافة علوية كبيرة */
-.notfound__inner--withHeader{
-  margin-top: 220px;                 /* نزّل المحتوى (عدّلي الرقم لو تبغين) */
+  text-align: center;
 }
 
 /* العناصر */
-.notfound__code{
+.notfound__code {
   font-family: "Tajawal", system-ui, sans-serif;
-  font-weight:800;
-  font-size:128px;
-  line-height:1;
-  color:var(--error);
-  margin-bottom:29px;
+  font-weight: 800;
+  font-size: 128px;
+  line-height: 0.2;
+  color: var(--error);
 }
 
-.notfound__title{
+.notfound__title {
   font-family: "Tajawal", system-ui, sans-serif;
-  font-weight:800;
-  font-size:64px;
-  line-height:1.1;
-  color:var(--purple-900);
-  margin-bottom:5px;
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+  color: var(--purple-900);
+  margin-bottom: 5px;
 }
 
-/* ⬅️ نخلي السطر العريض نفس لون Oops! */
-.notfound__lead{
+.notfound__lead {
   font-family: "Tajawal", system-ui, sans-serif;
-  font-weight:800;
-  font-size:36px;
-  line-height:1.2;
-  color:var(--purple-900);
-  margin: 0 0 15px 0;               /* 15px فوق النص الصغير */
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 1.2;
+  color: var(--purple-900);
+  margin: 0 0 15px 0;
 }
 
-.notfound__text{
+.notfound__text {
   font-family: "Tajawal", system-ui, sans-serif;
-  font-weight:500;
-  font-size:16px;
-  line-height:1.5;
-  color:#6B5E6E;
-  max-width:540px;
-  margin: 0 auto 20px;              /* 20px تحت النص الصغير */
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--purple-800);
+  max-width: 540px;
+  margin: 0 auto 20px;
 }
 
-.notfound__btn{
-  display:inline-block;
-  padding:10px 18px;
-  border-radius:8px;
-  background:var(--purple-800);
-  color:var(--white);
-  font-weight:600;
-  text-decoration:none;
-  box-shadow:0 4px 0 rgba(0,0,0,0.15); /* حافة خفيفة مثل التصميم */
+.notfound__btn {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: var(--purple-800);
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+  transition: background 0.3s;
 }
 
-/* تكييف بسيط للجوال */
-@media (max-width:480px){
-  .notfound__inner--withHeader{ margin-top: 96px; }
-  .notfound__code{ font-size:88px; }
-  .notfound__title{ font-size:44px; }
-  .notfound__lead{ font-size:24px; }
+.notfound__btn:hover {
+  background: #452a5f;
+}
+
+/* عربي محلي لصفحة 404 فقط */
+.notfound--ar {
+  direction: rtl;
+  font-family: "Tajawal", system-ui, sans-serif;
+}
+.notfound--ar .notfound__title,
+.notfound--ar .notfound__lead,
+.notfound--ar .notfound__text {
+  text-align: center; /* نحافظ على التوسيط */
+}
+
+/* موبايل */
+@media (max-width: 480px) {
+  .notfound { padding-top: 120px; }    /* كان 96px، زدناه لأن عندنا هيدر */
+  .notfound__code { font-size: 88px; }
+  .notfound__title { font-size: 44px; }
+  .notfound__lead { font-size: 24px; }
 }
