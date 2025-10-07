@@ -1,0 +1,154 @@
+/* ====== الحاوية العامة ====== */
+.sidebar-container {
+  width: 260px;
+  min-width: 260px;
+  background: #ffffff;
+  border-inline-end: 1px solid #e9e9ee;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif; /* EN */
+  font-size: 0.95rem; /* توحيد الحجم */
+}
+
+.lang-ar .sidebar-container {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Tajawal', sans-serif; /* AR */
+}
+
+/* ====== اللوجو ====== */
+.logo {
+  text-align: center;
+  padding: 20px 10px 12px;
+  background: #fff;
+}
+.logo img {
+  width: 70px;
+  height: auto;
+  margin-bottom: 8px;
+}
+.logo .tagline {
+  color: #6f4e9e;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ✅ فاصل واضح تحت اللوغو يمنع تداخل خلفية أول عنصر */
+.sidebar-divider {
+  height: 1px;
+  background: #eee;
+  margin: 8px 16px 6px;
+}
+
+/* ====== الروابط ====== */
+.sidebar-links {
+  list-style: none;
+  padding: 0 8px 10px;
+  margin: 0;
+  position: relative;
+}
+
+/* ✅ أول عنصر ياخذ مسافة بسيطة من فوق عشان ما يلم الشعار */
+.sidebar-links li:first-child a {
+  margin-top: 6px;
+}
+
+.sidebar-links li + li {
+  margin-top: 4px;
+}
+
+.sidebar-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: #2f3c73;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 10px;
+  transition:
+    background 0.25s,
+    color 0.25s;
+  line-height: 1.25; /* توحيد الارتفاع */
+  min-height: 42px; /* كل العناصر نفس الارتفاع */
+}
+
+.sidebar-links a:hover {
+  background: #f3eefb;
+  color: #6f4e9e;
+}
+
+.sidebar-links svg {
+  font-size: 1.05rem;
+}
+
+/* ====== "Change Role to Buyer" بلا تكسّر */
+.change-role a span,
+.change-role a .buyer {
+  white-space: nowrap;
+}
+.sidebar-links .buyer {
+  margin-inline-start: 4px;
+  font-weight: 600;
+  color: #6f4e9e;
+  font-size: 0.92rem;
+}
+
+/* ====== الملف الشخصي ====== */
+.profile {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f8f8fc;
+  border-top: 1px solid #e0e0e5;
+}
+.profile-icon {
+  font-size: 1.9rem;
+  margin-inline-end: 10px;
+  color: #6f4e9e;
+}
+.company {
+  font-weight: 600;
+  color: #2f3c73;
+  margin: 0;
+  font-size: 0.95rem;
+}
+.role {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* ====== زر اللغة (إن كنتِ تستخدمينه) ====== */
+.language-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0;
+  cursor: pointer;
+  color: #2f3c73;
+  background: #f8f8fc;
+  border-top: 1px solid #e0e0e5;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.3s;
+}
+.language-switch:hover {
+  background: #f3eefb;
+}
+
+/* ====== سكروول لطيف ====== */
+.sidebar-container::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-container::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}

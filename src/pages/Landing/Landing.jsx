@@ -11,11 +11,11 @@ function Landing() {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    document.title = t('pageTitle.landing', {ns: 'common'});
+    document.title = t('pageTitle.landing', { ns: 'common' });
   }, [t, i18n.language]);
 
   return (
-    <div className="landing-page">
+    <div className={`landing-page ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}>
       <HeroSection />
       <div className="container">
         <WhyChooseUs />
