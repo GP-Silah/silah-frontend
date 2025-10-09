@@ -1,10 +1,11 @@
 {
-    "pageTitle": {
-        "landing": "Landing",
-        "login": "Login",
-        "signup": "Sign Up",
-        "about": "About Us",
-        "privacy": "Privacy Policy",
-        "terms": "Terms Of Service"
-    }
+  "pageTitle": {
+    "landing": "Landing",
+    "login": "Login",
+    "signup": "Sign Up",
+    "about": "About Us",
+    "privacy": "Privacy Policy",
+    "terms": "Terms Of Service",
+    "bids": "Bids"
+  }
 }

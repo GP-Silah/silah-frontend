@@ -69,3 +69,14 @@ html {
 .lang-ar {
   font-family: 'Tajwal', sans-serif;
 }
+
+/* .landing-page.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+.landing-page.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Tajawal', sans-serif; 
+} */

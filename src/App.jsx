@@ -1,18 +1,30 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 import NotFound from './pages/NotFound/NotFound';
 import { useTranslation } from 'react-i18next';
 import Header from './components/Header';
 import Footer from './components/Footer';
-
+import Sidebar from './components/Sidebar/Sidebar';
 
 // Automatically import all .jsx pages in /pages
 const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
+
+  //  LocalStorage لجلب معلومات المستخدم من
+  const user = JSON.parse(localStorage.getItem('user')) || null;
+
+  //  الصفحات اللي ما نبي فيها السايدبار (زي login/signup)
+  const location = useLocation();
+  const hideSidebarPaths = ['/login', '/signup'];
+
+  // Supplier منطق التحقق: يخفي السايدبار إذا المستخدم مو
+  const shouldHideSidebar =
+    hideSidebarPaths.includes(location.pathname) ||
+    !user ||
+    user.role?.toLowerCase() !== 'supplier';
 
   const routeElements = Object.entries(pages).map(([filePath, resolver]) => {
     // Remove ./pages prefix and .jsx extension
@@ -25,7 +37,7 @@ function App() {
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
-      parts[parts.length - 2].toLowerCase()
+        parts[parts.length - 2].toLowerCase()
     ) {
       parts.pop();
     }
@@ -65,13 +77,19 @@ function App() {
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      {/* <Header />*/}
-      <Routes>{routeElements}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      {/* <Footer />*/}
-    </div>
+      <div style={{ display: 'flex', minHeight: '100vh' }}>
+        {!shouldHideSidebar && <Sidebar />}
+        <div style={{ flex: 1, padding: '20px' }}>
+          {/* <Header />*/}
+          <Routes>
+            {routeElements}
 
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          {/* <Footer />*/}
+        </div>
+      </div>
+    </div>
   );
 }
 

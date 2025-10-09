@@ -1,0 +1,16 @@
+{
+  "title": "Recent Biddings",
+  "pubDate": "Date of publication",
+  "activity": "Main Activity",
+  "refNumber": "Reference Number",
+  "deadline": "Submission Deadline",
+  "viewDetails": "View Details",
+  "bid1": {
+    "title": "Supply and Installation of Smart Street Lighting Systems",
+    "activity": "Electrical Works & Lighting - Installation and Maintenance of Electrical Systems"
+  },
+  "bid2": {
+    "title": "Supply and Furnishing of a Tourist Hotel, Including Furniture and Hotel Equipment",
+    "activity": "Hotel & Hospitality Equipment - Supply and Installation of Furniture and Operational Equipment"
+  }
+}
