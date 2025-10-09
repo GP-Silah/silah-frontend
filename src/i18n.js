@@ -20,6 +20,10 @@ import signupEn from './locales/en/signup.json?raw';
 import signupAr from './locales/ar/signup.json?raw';
 import loginEn from './locales/en/login.json?raw';
 import loginAr from './locales/ar/login.json?raw';
+import sidebarEn from './locales/en/sidebar.json?raw';
+import sidebarAr from './locales/ar/sidebar.json?raw';
+import bidsEn from './locales/en/bids.json?raw';
+import bidsAr from './locales/ar/bids.json?raw';
 
 const resources = {
   en: {
@@ -32,6 +36,8 @@ const resources = {
     privacy: JSON.parse(privacyEn),
     signup: JSON.parse(signupEn),
     login: JSON.parse(loginEn),
+    sidebar: JSON.parse(sidebarEn),
+    bids: JSON.parse(bidsEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -43,6 +49,8 @@ const resources = {
     privacy: JSON.parse(privacyAr),
     signup: JSON.parse(signupAr),
     login: JSON.parse(loginAr),
+    sidebar: JSON.parse(sidebarAr),
+    bids: JSON.parse(bidsAr),
   },
 };
 i18n

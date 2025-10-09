@@ -1,0 +1,75 @@
+/* ====== الهيكل العام ====== */
+.bids-layout {
+  display: flex; /* ✅ يخلي السايدبار والصفحة جنب بعض */
+  flex-direction: row; /* ✅ يثبت ترتيبهم يسار -> يمين */
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+/* ====== الصفحة الرئيسية ====== */
+.bids-container {
+  flex: 1;
+  padding: 30px;
+  background: #f9f9f9;
+}
+
+/* الاتجاه حسب اللغة فقط داخل الصفحة */
+.bids-container.rtl {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.bids-container.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* ====== العنوان ====== */
+.bids-title {
+  font-size: 1.8rem;
+  color: #2f3c73;
+  margin-bottom: 25px;
+}
+
+/* ====== قائمة العطاءات ====== */
+.bids-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ====== كروت العطاء ====== */
+.bid-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-inline-start: 5px solid #6f4e9e;
+}
+
+.bid-card h3 {
+  margin: 10px 0;
+  color: #333;
+}
+
+.bid-card p {
+  margin: 6px 0;
+  color: #555;
+}
+
+/* ====== الزر ====== */
+.view-details-btn {
+  margin-top: 10px;
+  background: #6f4e9e;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.view-details-btn:hover {
+  background: #5b3f84;
+}
