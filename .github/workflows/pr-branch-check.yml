@@ -2,6 +2,7 @@ name: PR branch check
 
 on:
   pull_request:   # run on all PRs
+    types: [opened, synchronize, edited]
 
 jobs:
   enforce-dev-pr:
