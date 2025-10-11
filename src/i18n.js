@@ -26,6 +26,8 @@ import bidsEn from './locales/en/bids.json?raw';
 import bidsAr from './locales/ar/bids.json?raw';
 import bidDetailsEn from './locales/en/bidDetails.json?raw';
 import bidDetailsAr from './locales/ar/bidDetails.json?raw';
+import bidOfferEn from './locales/en/bidOffer.json?raw';
+import bidOfferAr from './locales/ar/bidOffer.json?raw';
 
 const resources = {
   en: {
@@ -41,6 +43,7 @@ const resources = {
     sidebar: JSON.parse(sidebarEn),
     bids: JSON.parse(bidsEn),
     bidDetails: JSON.parse(bidDetailsEn),
+    bidOffer: JSON.parse(bidOfferEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -55,6 +58,7 @@ const resources = {
     sidebar: JSON.parse(sidebarAr),
     bids: JSON.parse(bidsAr),
     bidDetails: JSON.parse(bidDetailsAr),
+    bidOffer: JSON.parse(bidOfferAr),
   },
 };
 i18n

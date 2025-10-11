@@ -30,7 +30,7 @@ const BidDetails = () => {
       <Sidebar />
 
       <main className="bid-details-content">
-        {/* ✅ تعديل 1: العنوان يكون محاذي يمين بالعربية */}
+        {/* العنوان يكون محاذي يمين بالعربي */}
         <h1
           className="bid-details-title"
           style={{ textAlign: i18n.language === 'ar' ? 'right' : 'left' }}
@@ -61,7 +61,7 @@ const BidDetails = () => {
             </span>
           </div>
 
-          {/* ✅ تعديل 2: ترجمة refNumber */}
+          {/* تعديل 2: ترجمة refNumber */}
           <div className="detail-row">
             <span className="label">{t('reference')}:</span>
             <span className="value" dir={valueDir}>
@@ -90,7 +90,7 @@ const BidDetails = () => {
             </span>
           </div>
 
-          {/* ✅ تعديل 3: ترجمة response */}
+          {/*  تعديل 3: ترجمة response */}
           <div className="detail-row no-sep">
             <span className="label">{t('responseTime')}:</span>
             <span className="value" dir={valueDir}>

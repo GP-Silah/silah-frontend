@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar/Sidebar';
 import BidDetails from './pages/BidDetails/BidDetails';
+import BidOffer from './pages/BidOffer/BidOffer';
 
 // Automatically import all .jsx pages in /pages
 const pages = import.meta.glob('./pages/**/*.jsx');
@@ -92,6 +93,15 @@ function App() {
               element={
                 <React.Suspense fallback={<div>Loading...</div>}>
                   <BidDetails />
+                </React.Suspense>
+              }
+            />
+
+            <Route
+              path="/bid-offer"
+              element={
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <BidOffer />
                 </React.Suspense>
               }
             />
