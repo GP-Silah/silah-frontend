@@ -1,0 +1,13 @@
+{
+  "title": "Bid Details",
+  "name": "Bid Name",
+  "mainActivity": "Main Activity",
+  "organization": "Organization Name",
+  "reference": "Reference Number",
+  "remaining": "Time Remaining",
+  "publication": "Publication Date",
+  "deadline": "Submission Deadline",
+  "responseTime": "Expected Response Time",
+  "back": "Back",
+  "participate": "Participate"
+}

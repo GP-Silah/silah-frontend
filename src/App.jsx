@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar/Sidebar';
+import BidDetails from './pages/BidDetails/BidDetails';
 
 // Automatically import all .jsx pages in /pages
 const pages = import.meta.glob('./pages/**/*.jsx');
@@ -85,6 +86,15 @@ function App() {
             {routeElements}
 
             <Route path="*" element={<NotFound />} />
+
+            <Route
+              path="/bid-details/:id"
+              element={
+                <React.Suspense fallback={<div>Loading...</div>}>
+                  <BidDetails />
+                </React.Suspense>
+              }
+            />
           </Routes>
           {/* <Footer />*/}
         </div>

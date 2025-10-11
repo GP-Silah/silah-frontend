@@ -27,7 +27,7 @@ const Sidebar = () => {
     role: t('profile.defaultRole'),
   };
 
-  // ✅ دالة لتبديل اللغة
+  //  دالة لتبديل اللغة
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
@@ -40,13 +40,16 @@ const Sidebar = () => {
         i18n.language === 'ar' ? 'rtl' : 'ltr'
       }`}
     >
-      {/* ====== اللوجو ====== */}
-      <div className="logo">
+      {/*  اللوغو  */}
+      <div className="sidebar-logo">
         <img src="/logo.png" alt="Silah Logo" />
-        <p className="tagline"> Connecting Businesses </p>
+        <div className="logo-text">
+          <span>Connecting</span>
+          <span>Businesses</span>
+        </div>
       </div>
 
-      {/* ====== الروابط ====== */}
+      {/*  الروابط  */}
       <ul className="sidebar-links">
         <li>
           <Link to="/overview">
@@ -102,7 +105,7 @@ const Sidebar = () => {
         </li>
       </ul>
 
-      {/* ====== البروفايل + اللغة ====== */}
+      {/*  البروفايل + اللغة */}
       <div className="profile">
         <FaUserCircle className="profile-icon" />
         <div>
@@ -111,7 +114,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* ====== زر اللغة ====== */}
+      {/*  زر اللغة  */}
       <div className="language-switch" onClick={toggleLanguage}>
         <FaGlobe />
         <span>{i18n.language === 'ar' ? 'English' : 'العربية'}</span>

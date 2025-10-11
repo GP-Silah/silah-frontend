@@ -1,0 +1,13 @@
+{
+  "title": "تفاصيل المناقصة",
+  "name": "اسم المناقصة",
+  "mainActivity": "النشاط الرئيسي",
+  "organization": "اسم الجهة",
+  "reference": "رقم المرجع",
+  "remaining": "المدة المتبقية",
+  "publication": "تاريخ النشر",
+  "deadline": "آخر موعد للتقديم",
+  "responseTime": "المدة المتوقعة للرد",
+  "back": "رجوع",
+  "participate": "المشاركة"
+}

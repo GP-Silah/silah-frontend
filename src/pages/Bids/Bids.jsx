@@ -3,9 +3,15 @@ import { useTranslation } from 'react-i18next';
 import '../../App.css';
 import './Bids.css';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import { useNavigate } from 'react-router-dom';
 
 function Bids() {
   const { t, i18n } = useTranslation('bids');
+  const navigate = useNavigate();
+
+  const handleViewDetails = (id) => {
+    navigate('/bid-details/${id}');
+  };
 
   useEffect(() => {
     document.title = t('pageTitle.bids', { ns: 'common' });
@@ -56,8 +62,8 @@ function Bids() {
                 <strong>{t('deadline')}:</strong> {bid.deadline}
               </p>
               <button
-                onClick={() => alert(t('details.soon'))}
                 className="view-details-btn"
+                onClick={() => handleViewDetails(bid.id)}
               >
                 {t('viewDetails')}
               </button>

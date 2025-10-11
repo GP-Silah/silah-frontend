@@ -1,0 +1,109 @@
+/* صفحة التفاصيل + المحتوى */
+.bid-details-page {
+  display: flex;
+  background-color: #fafafa;
+  min-height: 100vh;
+}
+.bid-details-content {
+  flex: 1;
+  padding: 40px 60px;
+  font-family: 'Tajawal', sans-serif;
+  color: #2f3c73;
+}
+.bid-details-content h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2f3c73;
+  margin-bottom: 24px;
+}
+
+/* الكارد */
+.bid-details-card {
+  background-color: #fff;
+  border: 1px solid #dcdce3;
+  border-radius: 10px;
+  padding: 26px 28px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* صف التفاصيل: ليبل + قيمة */
+.detail-row {
+  display: grid;
+  grid-template-columns: 260px 1fr; /* عرض ثابت لليبل، والباقي للقيمة */
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ececf2;
+}
+.detail-row.no-sep {
+  border-bottom: 0;
+}
+
+.label {
+  font-weight: 700;
+  color: #1e2a58;
+  /* نتأكد من مكان النقطتين بارتياح */
+  white-space: nowrap;
+}
+.value {
+  color: #2f3c73;
+  /* إصلاح bidi للقيم المختلطة (إنجليزي داخل RTL) */
+  unicode-bidi: plaintext;
+}
+
+/* RTL: الواجهة عربية – الليبل يكون يمين والقيمة يساره */
+.rtl .bid-details-card {
+  direction: rtl;
+}
+.rtl .detail-row {
+  grid-template-columns: 1fr 260px; /* نعكس الأعمدة */
+}
+.rtl .label {
+  text-align: right;
+}
+.rtl .value {
+  direction: ltr; /* القيم تبقى LTR (أسماء/تواريخ إنجليزية) */
+  text-align: left;
+}
+
+/* الأزرار داخل الكارد وبالمنتصف مثل Figma */
+.bid-details-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 26px;
+}
+
+/* زر الرجوع */
+.back-btn {
+  background-color: #2f3c73;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 28px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.back-btn:hover {
+  background-color: #232e5a;
+  transform: translateY(-1px);
+}
+
+/* زر المشاركة */
+.participate-btn {
+  background-color: #5f408c;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.participate-btn:hover {
+  background-color: #472d6f;
+  transform: translateY(-1px);
+}
