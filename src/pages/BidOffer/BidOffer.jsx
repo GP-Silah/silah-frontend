@@ -3,9 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import './BidOffer.css';
+import { useEffect } from 'react';
 
 const BidOffer = () => {
   const { t, i18n } = useTranslation('bidOffer');
+
+  useEffect(() => {
+    document.title = t('pageTitle.bidOffer', { ns: 'common' });
+  }, [t, i18n.language]);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
