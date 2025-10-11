@@ -1,0 +1,104 @@
+.bid-offer-page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f8fc;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.bid-offer-content {
+  flex: 1;
+  padding: 40px;
+}
+
+.bid-offer-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2f3c73;
+  margin-bottom: 8px;
+}
+
+.bid-offer-instructions {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.bid-offer-card {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+}
+
+.offer-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+.offer-field label {
+  font-weight: 600;
+  color: #2f3c73;
+  margin-bottom: 6px;
+}
+
+.offer-field input,
+.offer-field textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.offer-field input:focus,
+.offer-field textarea:focus {
+  border-color: #5f408c;
+}
+
+.offer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.submit-btn {
+  background-color: #5f408c;
+  color: white;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #472d6f;
+}
+
+.back-btn {
+  background-color: #2f3c73;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #232e5a;
+}
+
+/* RTL Support */
+.rtl .offer-field label {
+  text-align: right;
+}
+
+.rtl .offer-actions {
+  flex-direction: row-reverse;
+}

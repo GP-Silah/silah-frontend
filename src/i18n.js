@@ -24,6 +24,8 @@ import sidebarEn from './locales/en/sidebar.json?raw';
 import sidebarAr from './locales/ar/sidebar.json?raw';
 import bidsEn from './locales/en/bids.json?raw';
 import bidsAr from './locales/ar/bids.json?raw';
+import bidDetailsEn from './locales/en/bidDetails.json?raw';
+import bidDetailsAr from './locales/ar/bidDetails.json?raw';
 
 const resources = {
   en: {
@@ -38,6 +40,7 @@ const resources = {
     login: JSON.parse(loginEn),
     sidebar: JSON.parse(sidebarEn),
     bids: JSON.parse(bidsEn),
+    bidDetails: JSON.parse(bidDetailsEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -51,6 +54,7 @@ const resources = {
     login: JSON.parse(loginAr),
     sidebar: JSON.parse(sidebarAr),
     bids: JSON.parse(bidsAr),
+    bidDetails: JSON.parse(bidDetailsAr),
   },
 };
 i18n
