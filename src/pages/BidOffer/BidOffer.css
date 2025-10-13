@@ -1,104 +1,195 @@
+/* ===== الصفحة العامة ===== */
 .bid-offer-page {
   display: flex;
+  background-color: #fafafa;
   min-height: 100vh;
-  background-color: #f8f8fc;
-  font-family: 'Tajawal', sans-serif;
 }
 
+/* ===== المحتوى ===== */
 .bid-offer-content {
   flex: 1;
-  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 0px;
+  background-color: #fafafa;
+  font-family: 'Tajawal', sans-serif !important;
+  color: #2f3c73;
+  font-size: 18px !important; /* ✅ حجم مريح وواضح */
+  line-height: 1.8;
 }
 
-.bid-offer-title {
-  font-size: 22px;
+/* ===== توسيط بصري فعلي ===== */
+.bid-offer-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 120px;
+  width: 100%;
+  /*justify-content: center;*/
+}
+
+.bid-offer-wrapper h1 {
+  font-size: 2.2rem;
   font-weight: 700;
   color: #2f3c73;
-  margin-bottom: 8px;
-}
-
-.bid-offer-instructions {
-  font-size: 15px;
-  color: #555;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
 
 .bid-offer-card {
   background-color: #fff;
+  border: 1px solid #dcdce3;
   border-radius: 10px;
-  padding: 25px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-  max-width: 700px;
+  padding: 45px 60px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 1100px; /* ✅ أكبر شوي يعطي توازن بصري */
+  font-size: 1.05rem;
 }
 
-.offer-field {
+/* ===== العنوان ===== */
+.bid-offer-content h1 {
+  font-size: 2.3rem; /* ✅ نفس حجم عناوين Bid Details */
+  font-weight: 700;
+  color: #2f3c73;
+  margin-bottom: 26px;
+  text-align: left;
+  margin-left: 80px;
+}
+/* ===== توسيط الكارد ===== */
+.bid-offer-center {
+  display: flex;
+  justify-content: center; /* توسيط أفقي */
+  align-items: flex-start; /* يبقى في الأعلى مو بالنص العمودي */
+  width: 100%;
+}
+
+/* ===== الكارد ===== */
+.bid-offer-card {
+  background-color: #fff;
+  border: 1px solid #dcdce3;
+  border-radius: 10px;
+  padding: 40px 50px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  max-width: 900px; /* ✅ حجم متوازن تمامًا */
+  /*margin-top: 10px; /* مسافة بسيطة بين العنوان والكارد */
+}
+
+/* ===== التعليمات ===== */
+.instructions {
+  color: #333;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+/* ===== الحقول ===== */
+.form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
-.offer-field label {
-  font-weight: 600;
+.form-group label {
+  font-weight: 700;
+  color: #1e2a58;
+  margin-bottom: 10px;
+  font-size: 1.05rem;
+}
+
+.form-group input,
+.form-group textarea {
+  border: 1px solid #dcdce3;
+  border-radius: 8px;
+  padding: 13px 16px;
+  font-size: 1rem;
   color: #2f3c73;
-  margin-bottom: 6px;
-}
-
-.offer-field input,
-.offer-field textarea {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
   outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.25s ease;
 }
 
-.offer-field input:focus,
-.offer-field textarea:focus {
+.form-group input:focus,
+.form-group textarea:focus {
   border-color: #5f408c;
 }
 
-.offer-actions {
+/* ===== الأزرار ===== */
+.bid-offer-actions {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 25px;
+  gap: 20px;
+  margin-top: 35px;
 }
 
+.back-btn,
 .submit-btn {
-  background-color: #5f408c;
-  color: white;
   border: none;
-  padding: 10px 26px;
+  padding: 12px 34px; /* ✅ زر أوضح وأنسب */
   border-radius: 6px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.submit-btn:hover {
-  background-color: #472d6f;
+  color: #fff;
+  transition: all 0.25s ease;
 }
 
 .back-btn {
   background-color: #2f3c73;
-  color: white;
-  border: none;
-  padding: 10px 24px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
 }
-
 .back-btn:hover {
   background-color: #232e5a;
+  transform: translateY(-1px);
 }
 
-/* RTL Support */
-.rtl .offer-field label {
+.submit-btn {
+  background-color: #5f408c;
+}
+.submit-btn:hover {
+  background-color: #472d6f;
+  transform: translateY(-1px);
+}
+
+/* ===== RTL (العربية) ===== */
+.rtl .bid-offer-content h1,
+.rtl .instructions,
+.rtl .form-group label {
+  text-align: right;
+  text-align: right;
+  direction: rtl;
+}
+
+.rtl .bid-offer-card {
+  direction: rtl;
+}
+
+.rtl .form-group input,
+.rtl .form-group textarea {
   text-align: right;
 }
 
-.rtl .offer-actions {
-  flex-direction: row-reverse;
+/* ===== للجوال ===== */
+@media (max-width: 768px) {
+  .bid-offer-content {
+    padding: 25px;
+    font-size: 16px !important;
+  }
+
+  .bid-offer-card {
+    padding: 25px 20px;
+    max-width: 95%;
+  }
+
+  .bid-offer-actions {
+    flex-direction: column;
+  }
+
+  .back-btn,
+  .submit-btn {
+    width: 100%;
+  }
 }
