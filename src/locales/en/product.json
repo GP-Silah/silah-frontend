@@ -1,0 +1,99 @@
+{
+  "pageTitle": "Product Details",
+  "loading": "Loading…",
+  "save": "Save",
+  "saving": "Saving…",
+  "yes": "Yes",
+  "no": "No",
+  "createdOn": "Created On {{date}}",
+  "productStatus": "Product Status",
+  "status": {
+    "published": "Published",
+    "unpublished": "Unpublished"
+  },
+
+  "actions": {
+    "updateStock": "Update Stock",
+    "unpublish": "Unpublish",
+    "publish": "Publish",
+    "predictDemand": "Predict Demand",
+    "delete": "Delete"
+  },
+
+  "sections": {
+    "basicInfo": "Basic Information",
+    "images": "Images",
+    "price": "Price",
+    "orderReq": "Order Requirements",
+    "group": "Group Purchasing Settings"
+  },
+
+  "basic": {
+    "productDetails": "Product Details",
+    "productDetailsHelp": "Build buyers confidence with a clear, detailed product listing.",
+    "name": "Name",
+    "description": "Description",
+    "productCategory": "Product Category",
+    "productCategoryHelp": "This information will help us categorize your product.",
+    "category": "Category",
+    "selectCategory": "Select a Category",
+    "willAppearIn": "This Product will appear to buyers in:"
+  },
+
+  "placeholders": {
+    "name": "Enter product name",
+    "description": "Write a clear, detailed description"
+  },
+
+  "images": {
+    "tipsTitle": "Image Tips",
+    "t1": "Use at least 1050px by 1050px.",
+    "t2": "Use a white or natural background.",
+    "t3": "Ensure bright lighting with minimal shadows.",
+    "t4": "Include front, side, and close-up views.",
+    "upload": "Upload Image",
+    "remove": "Remove image"
+  },
+
+  "price": {
+    "pricePerUnit": "Price Per Unit"
+  },
+
+  "order": {
+    "caseQty": "Case Quantity",
+    "caseHint": "Buyers purchase multiples of this case quantity (e.g., 4 → 8, 12, 20…).",
+    "minOrderQty": "Minimum Order Quantity",
+    "minHint": "Smallest number of units a buyer must order from you.",
+    "maxOrderQty": "Maximum Order Quantity",
+    "maxHint": "Upper limit per one-time purchase to manage inventory."
+  },
+
+  "group": {
+    "enable": "Would you like to enable group purchasing?",
+    "help": "Buyers from the same city can collectively place a bulk order to access discount pricing.",
+    "minQty": "Minimum Group Orders Quantity",
+    "deadline": "Order Deadline",
+    "afterXDays": "After {{n}} days",
+    "pricePerUnit": "Group Purchase Price Per Unit"
+  },
+
+  "messages": {
+    "saved": "Changes saved (mock).",
+    "published": "Product is now published.",
+    "unpublished": "Product is now unpublished."
+  },
+
+  "errors": {
+    "fetch": "Failed to load product.",
+    "save": "Failed to save."
+  },
+
+  "stock": {
+    "title": "Update Stock Levels",
+    "current": "Current Stock Level",
+    "newQty": "New Stock Quantity",
+    "update": "Update",
+    "cancel": "Cancel",
+    "updated": "Stock quantity updated."
+  }
+}

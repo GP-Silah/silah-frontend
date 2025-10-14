@@ -57,7 +57,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/products">
+          <Link to="/supplier-product-details">
             <FaCube /> {t('products')}
           </Link>
         </li>
