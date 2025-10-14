@@ -1,3 +1,4 @@
+// src/i18n.js
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -29,6 +30,9 @@ import bidDetailsAr from './locales/ar/bidDetails.json?raw';
 import bidOfferEn from './locales/en/bidOffer.json?raw';
 import bidOfferAr from './locales/ar/bidOffer.json?raw';
 
+import productEn from './locales/en/product.json?raw';
+import productAr from './locales/ar/product.json?raw';
+
 const resources = {
   en: {
     common: JSON.parse(commonEn),
@@ -44,6 +48,8 @@ const resources = {
     bids: JSON.parse(bidsEn),
     bidDetails: JSON.parse(bidDetailsEn),
     bidOffer: JSON.parse(bidOfferEn),
+    // 👇 namespace المنتج
+    product: JSON.parse(productEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -59,8 +65,11 @@ const resources = {
     bids: JSON.parse(bidsAr),
     bidDetails: JSON.parse(bidDetailsAr),
     bidOffer: JSON.parse(bidOfferAr),
+
+    product: JSON.parse(productAr),
   },
 };
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -68,8 +77,11 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    interpolation: {
-      escapeValue: false,
+    interpolation: { escapeValue: false },
+    detection: {
+      // يخلي اللغة تتبع آخر اختيار/المتصفح
+      order: ['querystring', 'localStorage', 'navigator'],
+      caches: ['localStorage'],
     },
   });
 
