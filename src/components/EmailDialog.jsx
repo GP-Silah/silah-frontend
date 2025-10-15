@@ -1,12 +1,19 @@
-import React from 'react';
+import React from "react";
+import "./EmailDialog.css"; // ✅ نربطه بملفه الخاص
 
-const EmailDialog = ({ icon, title, message }) => {
+const EmailDialog = ({ icon, title, message, lang, onToggleLang, children }) => {
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-96 text-center">
-        <div className="text-5xl mb-4">{icon}</div>
-        <h2 className="text-xl font-semibold mb-2">{title}</h2>
-        <p className="text-gray-600 text-sm">{message}</p>
+    <div className="email-container">
+      <div className={`email-card ${lang === "ar" ? "rtl" : ""}`}>
+        <div className="email-icon">{icon}</div>
+        <h2 className="email-title">{title}</h2>
+        <p className="email-message">{message}</p>
+
+        {children && <div className="email-actions">{children}</div>}
+
+        <button className="toggle-btn" onClick={onToggleLang}>
+          {lang === "en" ? "العربية" : "English"}
+        </button>
       </div>
     </div>
   );
