@@ -33,6 +33,10 @@ import bidOfferAr from './locales/ar/bidOffer.json?raw';
 import productEn from './locales/en/product.json?raw';
 import productAr from './locales/ar/product.json?raw';
 
+import EmailFlowEn from "./locales/en/EmailFlow.json?raw";
+import EmailFlowAr from "./locales/ar/EmailFlow.json?raw";
+
+
 const resources = {
   en: {
     common: JSON.parse(commonEn),
@@ -50,6 +54,8 @@ const resources = {
     bidOffer: JSON.parse(bidOfferEn),
     // 👇 namespace المنتج
     product: JSON.parse(productEn),
+
+    EmailFlow: JSON.parse(EmailFlowEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -67,6 +73,8 @@ const resources = {
     bidOffer: JSON.parse(bidOfferAr),
 
     product: JSON.parse(productAr),
+
+    EmailFlow: JSON.parse(EmailFlowAr),
   },
 };
 
