@@ -1,0 +1,13 @@
+/* ملف بسيط خاص بالصفحة */
+body {
+  background-color: #f9f9f9;
+  justify-content: center;
+}
+
+.email-success {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: green;
+  font-weight: 500;
+}

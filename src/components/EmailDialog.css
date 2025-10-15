@@ -1,0 +1,79 @@
+.email-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f9f9f9;
+  font-family: "Tajawal", "Inter", sans-serif;
+}
+
+.email-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  text-align: center;
+  width: 380px;
+  direction: ltr;
+}
+
+.email-card.rtl {
+  direction: rtl;
+}
+
+.email-icon {
+  font-size: 48px;
+  margin-bottom: 1rem;
+}
+
+.email-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.email-message {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.email-actions {
+  margin-top: 1.5rem;
+}
+
+.resend-btn {
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.resend-btn:hover {
+  background: #3730a3;
+}
+
+.toggle-btn {
+  margin-top: 1rem;
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.toggle-btn:hover {
+  background: #f3f4f6;
+}
+
+.email-success {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: green;
+  font-weight: 500;
+}
