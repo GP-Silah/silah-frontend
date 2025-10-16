@@ -82,7 +82,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/settings">
+          <Link to="/settings-page/settings">
             <FaCog /> {t('settings')}
           </Link>
         </li>

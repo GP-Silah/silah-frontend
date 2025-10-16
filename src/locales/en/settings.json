@@ -1,0 +1,72 @@
+{
+  "userInfo": {
+    "title": "User Info",
+    "name": "Name",
+    "nid": "NID"
+  },
+  "businessInfo": {
+    "title": "Business Info",
+    "businessName": "Business Name",
+    "crn": "CRN",
+    "activity": "Business Activity"
+  },
+  "account": {
+    "title": "Account Info",
+    "email": "Email",
+    "password": "Password",
+    "changePassword": "Change Password"
+  },
+  "subscription": {
+    "title": "Subscription Plan",
+    "current": "Current Plan:",
+    "manage": "Manage Plan"
+  },
+  "plans": {
+    "basic": "Basic",
+    "premium": "Premium"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "allow": "Allow Notifications",
+    "select": "Select what you'd like to be notified about:",
+    "messages": "New Messages",
+    "orders": "New Orders",
+    "reviews": "New Reviews",
+    "biddings": "Biddings Updates",
+    "invoices": "Invoices Updates"
+  },
+  "store": {
+    "title": "Store Settings",
+    "closeTemp": "Close Store Temporarily",
+    "closeMsg": "Closing Message",
+    "city": "City",
+    "deliveryFees": "Delivery Fees",
+    "uploadProfile": "Upload Store Profile Picture",
+    "uploadBanner": "Upload Store Banner",
+    "storeBio": "Store Bio"
+  },
+  "support": {
+    "title": "Support",
+    "helpTitle": "Need Help?",
+    "paragraph1": "If you have any questions or need assistance, feel free to contact us.",
+    "paragraph2": "We're here to help!",
+    "emailLabel": "Email:",
+    "email": "support@silah.site",
+    "paragraph3": "Our support team is ready to assist you."
+  },
+  "placeholders": {
+    "name": "Enter your name",
+    "nid": "National ID",
+    "businessName": "Business name",
+    "crn": "Commercial Registration",
+    "activity": "Business activity",
+    "email": "Your email",
+    "closeMsg": "Type message shown when store is closed",
+    "city": "Enter your city",
+    "fees": "Enter fees",
+    "bio": "Write something about your store..."
+  },
+  "actions": {
+    "demo": "This is a demo action."
+  }
+}
