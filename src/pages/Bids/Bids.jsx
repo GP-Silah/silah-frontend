@@ -38,9 +38,9 @@ function Bids() {
 
   return (
     <div className="bids-layout">
-      {/* ✅ السايدبار يظل يسار دائمًا */}
+      {/* السايدبار يظل يسار دائمًا */}
       <Sidebar />
-      {/* ✅ الصفحة الرئيسية */}
+      {/* الصفحة الرئيسية */}
       <main
         className={`bids-container ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}
       >

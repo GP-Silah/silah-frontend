@@ -29,13 +29,14 @@ import bidDetailsEn from './locales/en/bidDetails.json?raw';
 import bidDetailsAr from './locales/ar/bidDetails.json?raw';
 import bidOfferEn from './locales/en/bidOffer.json?raw';
 import bidOfferAr from './locales/ar/bidOffer.json?raw';
+import settingsEn from './locales/en/settings.json?raw';
+import settingsAr from './locales/ar/settings.json?raw';
 
 import productEn from './locales/en/product.json?raw';
 import productAr from './locales/ar/product.json?raw';
 
-import EmailFlowEn from "./locales/en/EmailFlow.json?raw";
-import EmailFlowAr from "./locales/ar/EmailFlow.json?raw";
-
+import EmailFlowEn from './locales/en/EmailFlow.json?raw';
+import EmailFlowAr from './locales/ar/EmailFlow.json?raw';
 
 const resources = {
   en: {
@@ -56,6 +57,7 @@ const resources = {
     product: JSON.parse(productEn),
 
     EmailFlow: JSON.parse(EmailFlowEn),
+    settings: JSON.parse(settingsEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -71,6 +73,7 @@ const resources = {
     bids: JSON.parse(bidsAr),
     bidDetails: JSON.parse(bidDetailsAr),
     bidOffer: JSON.parse(bidOfferAr),
+    settings: JSON.parse(settingsAr),
 
     product: JSON.parse(productAr),
 
