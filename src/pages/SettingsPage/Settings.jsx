@@ -37,11 +37,15 @@ export default function Settings() {
   return (
     <div className="dashboard-container">
       {/*السايدبار على اليسار */}
-      <Sidebar />
+      <div className="page-fixed">
+        <Sidebar />
+      </div>
       {/* محتوى الإعدادات */}
-      <div className="page-content">
+      <div className="page-content" dir={i18n.dir()}>
         <div className="settings-container">
-          <h2 className="settings-title">{t('pageTitle')}</h2>
+          <h2 className="settings-title">
+            {t('pageTitle.settings', { ns: 'common' })}
+          </h2>
 
           {/* User Info */}
           <section className="settings-box">

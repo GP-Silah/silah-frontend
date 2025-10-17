@@ -1,0 +1,78 @@
+{
+  "pageTitle": "Your Settings",
+  "tabs": {
+    "general": "General",
+    "account": "Account",
+    "notifications": "Notifications",
+    "payment": "Payment Method",
+    "support": "Support"
+  },
+
+  "userInfo": {
+    "title": "User Info",
+    "name": "Name",
+    "nid": "National ID"
+  },
+
+  "businessInfo": {
+    "title": "Business Info",
+    "businessName": "Business Name",
+    "crn": "Commercial Registration",
+    "city": "City",
+    "activity": "Business Activity"
+  },
+
+  "account": {
+    "title": "Account Info",
+    "email": "Email",
+    "password": "Password",
+    "changePassword": "Change Password",
+    "upload": "Upload Your Profile Picture"
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "allow": "Allow Notifications",
+    "select": "Select what you’d like to be notified about:",
+    "messages": "New Messages Notifications",
+    "invoices": "New Invoices Notifications",
+    "bids": "New Bid Offers Notifications",
+    "orders": "Order Status Notifications",
+    "groups": "Group Purchase Status Notifications"
+  },
+
+  "payment": {
+    "title": "Payment Method",
+    "name": "Cardholder Name",
+    "number": "Card Number",
+    "expiry": "Expiry Date",
+    "cvv": "CVV",
+    "save": "Save Card"
+  },
+
+  "support": {
+    "helpTitle": "Need Help?",
+    "paragraph1": "If you have any questions or need assistance, feel free to contact us.",
+    "paragraph2": "We’re here to help!",
+    "paragraph3": "Our support team is ready to assist you.",
+    "emailLabel": "Email:",
+    "email": "support@silah.site"
+  },
+
+  "placeholders": {
+    "name": "Enter your name",
+    "nid": "National ID",
+    "businessName": "Business name",
+    "crn": "Commercial Registration",
+    "city": "City",
+    "activity": "Business activity",
+    "email": "Your email",
+    "closeMsg": "Reason for temporary closure",
+    "fees": "Delivery fees",
+    "bio": "Write a short description about your store"
+  },
+
+  "actions": {
+    "demo": "This feature is coming soon"
+  }
+}
