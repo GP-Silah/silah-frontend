@@ -1,4 +1,14 @@
 {
+  "pageTitle": {
+    "settings": "الإعدادات"
+  },
+  "tabs": {
+    "general": "عام",
+    "account": "الحساب",
+    "notifications": "الإشعارات",
+    "store": "إعدادات المتجر",
+    "support": "الدعم"
+  },
   "userInfo": {
     "title": "معلومات المستخدم",
     "name": "الاسم",
