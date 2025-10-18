@@ -1,0 +1,147 @@
+:root {
+  --purple: #6e46ae;
+  --purple-light: #c5b8e7;
+  --text: #2e2e2e;
+  --muted: #777;
+  --border: #e3e3e3;
+  --bg: #fff;
+}
+
+/* الحاوية العامة */
+.payment-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 10px 5px;
+}
+
+.payment-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.payment-hint {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* شبكة إدخال البطاقة */
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid var(--purple-light);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.payment-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.payment-grid input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.payment-grid input:focus {
+  border-color: var(--purple);
+}
+
+/* زر الحفظ */
+.payment-button {
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  width: 110px;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 10px;
+  transition: background 0.25s ease;
+}
+
+.payment-button:hover {
+  background: #5b3a99;
+}
+
+/* البطاقة المحفوظة (المحاذاة بالنص والمنتصف) */
+.saved-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 22px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  width: 420px;
+  margin: 20px auto; /* يخليها بالنص */
+}
+
+/* محتوى البطاقة */
+.saved-card-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* شعار مدى */
+.mada-logo {
+  width: 70px;
+  height: auto;
+  display: inline-block;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+/*  رقم البطاقة */
+.saved-card-number {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 1px;
+}
+
+/*  زر الحذف (رمز × واضح أحمر) */
+.remove-card {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+
+.remove-card:hover {
+  color: #a3261a;
+  transform: scale(1.2);
+}
+/* استجابة للجوال */
+@media (max-width: 700px) {
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .saved-card {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}
