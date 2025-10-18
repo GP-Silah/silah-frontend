@@ -43,11 +43,24 @@
 
   "payment": {
     "title": "Payment Method",
-    "name": "Cardholder Name",
+    "hint": "You don't have a saved card yet. Add one to make your payments easier.",
+    "owner": "Cardholder Name",
     "number": "Card Number",
-    "expiry": "Expiry Date",
+    "expiry": "MM/YY",
     "cvv": "CVV",
-    "save": "Save Card"
+    "save": "Save",
+    "saving": "Saving...",
+    "remove": "Remove Card",
+    "errors": {
+      "fillAll": "Please fill all card fields.",
+      "saveFailed": "Failed to save card. Try again."
+    },
+    "placeholders": {
+      "owner": "Cardholder Name",
+      "number": "Card Number",
+      "expiry": "MM/YY",
+      "cvv": "CVV"
+    }
   },
 
   "support": {

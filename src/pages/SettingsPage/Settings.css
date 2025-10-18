@@ -56,11 +56,20 @@
 
 /* البوكسات */
 .settings-box {
+  display: flex;
+  flex-direction: column;
   border: 1px solid var(--purple-light);
   border-radius: 8px;
   padding: 20px;
   background: var(--bg);
   margin-bottom: 24px;
+}
+
+.settings-box .btn-primary {
+  align-self: center;
+  margin-top: 16px;
+  width: 200px;
+  text-align: center;
 }
 
 /* العناوين الفرعية */
@@ -344,7 +353,7 @@ textarea:focus {
   order: 1;
 }
 
-‎/* 🎯 تبويبات الإعدادات */
+/* 🎯 تبويبات الإعدادات */
 .settings-tabs {
   display: flex;
   gap: 6px;

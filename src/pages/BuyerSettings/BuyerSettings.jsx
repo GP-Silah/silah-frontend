@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import './BuyerSettings.css';
+import BuyerSettingsPayment from './BuyerSettingsPayment';
+import TapCardForm from '../../components/TapCardForm';
 
 export default function BuyerSettings() {
   const { t, i18n } = useTranslation('buyerSettings');
@@ -206,28 +208,8 @@ export default function BuyerSettings() {
           {/* Payment Tab */}
           {activeTab === 'payment' && (
             <section className="settings-box">
-              <h3>{t('payment.title')}</h3>
-              <div className="grid-2">
-                <label>
-                  <span>{t('payment.name')}</span>
-                  <input placeholder={t('payment.name')} />
-                </label>
-                <label>
-                  <span>{t('payment.number')}</span>
-                  <input placeholder={t('payment.number')} />
-                </label>
-                <label>
-                  <span>{t('payment.expiry')}</span>
-                  <input placeholder={t('payment.expiry')} />
-                </label>
-                <label>
-                  <span>{t('payment.cvv')}</span>
-                  <input placeholder={t('payment.cvv')} />
-                </label>
-              </div>
-              <button type="button" className="btn-primary mt-16">
-                {t('payment.save')}
-              </button>
+              <h3>Payment Method</h3>
+              <TapCardForm />
             </section>
           )}
           {/* Support Tab */}

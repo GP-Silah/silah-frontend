@@ -1,4 +1,15 @@
 {
+  "pageTitle": {
+    "settings": "Settings"
+  },
+  "tabs": {
+    "general": "General",
+    "account": "Account",
+    "notifications": "Notifications",
+    "store": "Store Settings",
+    "support": "Support"
+  },
+
   "userInfo": {
     "title": "User Info",
     "name": "Name",
