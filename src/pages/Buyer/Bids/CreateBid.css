@@ -1,0 +1,89 @@
+.create-bid-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #f6f6f8;
+  min-height: 100vh;
+  padding: 40px 20px;
+  margin-left: 250px;
+}
+
+.bid-card {
+  background: #fff;
+  padding: 50px 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  max-width: 700px;
+  width: 100%;
+}
+
+.bid-title {
+  text-align: center;
+  color: var(--purple);
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 40px;
+}
+
+.bid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.bid-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bid-field label {
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+}
+
+.bid-field input,
+.bid-field select {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  font-size: 15px;
+  outline: none;
+  background: transparent;
+}
+
+.bid-field input:focus,
+.bid-field select:focus {
+  border-bottom: 1px solid var(--purple);
+}
+
+.date-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-input i {
+  color: var(--purple);
+  font-size: 18px;
+}
+
+.publish-btn {
+  display: block;
+  margin: 30px auto 0;
+  background-color: var(--purple);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.publish-btn:hover {
+  background-color: #5e3585;
+}

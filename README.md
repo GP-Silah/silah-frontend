@@ -134,7 +134,7 @@ function Landing() {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    document.title = t('pageTitle.landing', { ns: 'common' });
+    document.title = t('pageTitle');
   }, [t, i18n.language]);
 
   return <div>Landing Page</div>;
