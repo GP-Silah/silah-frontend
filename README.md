@@ -1,6 +1,6 @@
 # Silah Frontend
 
-_Last Updated: September 2025_
+_Last Updated: October 2025_
 
 This is the frontend application for [Silah](https://github.com/GP-Silah), an AI-augmented full-stack B2B platform that connects suppliers and buyers. Built using [React](https://reactjs.org/) and [Vite](https://vitejs.dev/), it features fast hot-module reloading (HMR), code splitting, and automatic route detection.
 
