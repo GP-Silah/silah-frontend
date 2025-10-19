@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../App.css';
+import '../../../App.css';
 import './Bids.css';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar from '../../../components/Sidebar/Sidebar';
 import { useNavigate } from 'react-router-dom';
 
 function Bids() {
