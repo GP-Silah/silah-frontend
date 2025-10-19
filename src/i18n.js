@@ -33,6 +33,8 @@ import settingsEn from './locales/en/settings.json?raw';
 import settingsAr from './locales/ar/settings.json?raw';
 import buyerSettingsEn from './locales/en/buyerSettings.json?raw';
 import buyerSettingsAr from './locales/ar/buyerSettings.json?raw';
+import createBidEn from './locales/en/createBid.json?raw';
+import createBidAr from './locales/ar/createBid.json?raw';
 
 import productEn from './locales/en/product.json?raw';
 import productAr from './locales/ar/product.json?raw';
@@ -58,6 +60,7 @@ const resources = {
     bids: JSON.parse(bidsEn),
     bidDetails: JSON.parse(bidDetailsEn),
     bidOffer: JSON.parse(bidOfferEn),
+    createBid: JSON.parse(createBidEn),
 
     product: JSON.parse(productEn),
 
@@ -83,6 +86,7 @@ const resources = {
     bidOffer: JSON.parse(bidOfferAr),
     settings: JSON.parse(settingsAr),
     buyerSettings: JSON.parse(buyerSettingsAr),
+    createBid: JSON.parse(createBidAr),
 
     product: JSON.parse(productAr),
 
