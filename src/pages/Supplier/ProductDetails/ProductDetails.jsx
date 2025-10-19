@@ -39,15 +39,15 @@ export default function SupplierProductDetails() {
   const [search] = useSearchParams();
   const productId = search.get('id') || 'demo-1';
 
-  // الصفحة للمورّد فقط
-  useEffect(() => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      const role = (user?.role || user?.type || '').toLowerCase();
-      if (role !== 'supplier')
-        navigate('/SupplierOverview (Home)', { replace: true });
-    } catch (_) {}
-  }, [location.pathname, navigate]);
+  // // الصفحة للمورّد فقط
+  // useEffect(() => {
+  //   try {
+  //     const user = JSON.parse(localStorage.getItem('user') || 'null');
+  //     const role = (user?.role || user?.type || '').toLowerCase();
+  //     if (role !== 'supplier')
+  //       navigate('/SupplierOverview (Home)', { replace: true });
+  //   } catch (_) {}
+  // }, [location.pathname, navigate]);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

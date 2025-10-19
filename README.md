@@ -124,21 +124,26 @@ The App will automatically pick up this path without modifying `App.jsx`.
 
 ## Page Titles
 
-Each page can set its own browser title using `useEffect`:
+Each page can set its own browser title dynamically, based on the current language, using the `useTranslation` hook from i18next.
 
 ```jsx
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 function Landing() {
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
-    document.title = 'Silah - Landing Page';
-  }, []);
+    document.title = t('pageTitle.landing', { ns: 'common' });
+  }, [t, i18n.language]);
 
   return <div>Landing Page</div>;
 }
 
 export default Landing;
 ```
+
+This ensures the page title updates automatically whenever the user changes the language.
 
 ---
 

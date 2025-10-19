@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar from '../../../components/Sidebar/Sidebar';
 import './BidOffer.css';
 import { useEffect } from 'react';
 

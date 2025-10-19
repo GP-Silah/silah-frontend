@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Sidebar from '../../../components/Sidebar/Sidebar';
 import './BuyerSettings.css';
 import BuyerSettingsPayment from './BuyerSettingsPayment';
-import TapCardForm from '../../components/TapCardForm';
+import TapCardForm from '../../../components/TapCardForm';
 
 export default function BuyerSettings() {
   const { t, i18n } = useTranslation('buyerSettings');
