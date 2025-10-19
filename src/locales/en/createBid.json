@@ -1,0 +1,14 @@
+{
+  "title": "Create a New Bid",
+  "bidName": "Bid Name",
+  "bidNamePlaceholder": "Supply and Installation of Smart Street Lighting Systems",
+  "mainActivity": "Main Activity",
+  "mainActivityPlaceholder": "Electrical Works & Lighting - Installation and Maintenance of Electrical Systems",
+  "submissionDeadline": "Submission Deadline",
+  "responseDeadline": "Response Deadline for Offers",
+  "responsePlaceholder": "Select response deadline",
+  "week1": "1 week after the submission deadline",
+  "week2": "2 weeks after the submission deadline",
+  "week3": "3 weeks after the submission deadline",
+  "publish": "Publish Bid"
+}

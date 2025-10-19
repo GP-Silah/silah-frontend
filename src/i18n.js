@@ -41,6 +41,8 @@ import serviceEn from './locales/en/service.json?raw';
 import serviceAr from './locales/ar/service.json?raw';
 import notFoundEn from './locales/en/notFound.json?raw';
 import notFoundAr from './locales/ar/notFound.json?raw';
+import createBidEn from './locales/en/createBid.json?raw';
+import createBidAr from './locales/ar/createBid.json?raw';
 
 const resources = {
   en: {
@@ -63,6 +65,7 @@ const resources = {
     buyerSettings: JSON.parse(buyerSettingsEn),
     service: JSON.parse(serviceEn),
     notFound: JSON.parse(notFoundEn),
+    createBid: JSON.parse(createBidEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -84,6 +87,7 @@ const resources = {
     EmailFlow: JSON.parse(EmailFlowAr),
     service: JSON.parse(serviceAr),
     notFound: JSON.parse(notFoundAr),
+    createBid: JSON.parse(createBidAr),
   },
 };
 
