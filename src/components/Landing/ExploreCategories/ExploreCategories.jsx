@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { useTranslation } from 'react-i18next';
-import Button from './Button';
+import Button from '../../Button/Button';
 import './ExploreCategories.css';
 
 function ExploreCategories() {
