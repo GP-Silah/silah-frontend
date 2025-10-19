@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import HeroSection from '../../components/HeroSection';
-import WhyChooseUs from '../../components/WhyChooseUs';
-import HowItWorks from '../../components/HowItWorks';
-import ExploreCategories from '../../components/ExploreCategories'; // أو './ExploreCategories' حسب المسار
+import HeroSection from '../../components/Landing/HeroSection/HeroSection';
+import WhyChooseUs from '../../components/Landing/WhyChooseUs/WhyChooseUs';
+import HowItWorks from '../../components/Landing/HowItWorks/HowItWorks';
+import ExploreCategories from '../../components/Landing/ExploreCategories/ExploreCategories'; // أو './ExploreCategories' حسب المسار
 import { useTranslation } from 'react-i18next';
 
 import '../../App.css';

@@ -1,11 +1,15 @@
 :root {
-  --bg-404: #E9DCF2;
-  --purple-950: #31173B;
-  --purple-900: #31173B;
+  --bg-404: #e9dcf2;
+  --purple-950: #31173b;
+  --purple-900: #31173b;
   --purple-800: #543361;
-  --text-dark: #3A2E3B;
+  --text-dark: #3a2e3b;
   --white: #fff;
-  --error: #E74C3C;
+  --error: #e74c3c;
+}
+
+body.notfound-page {
+  display: block; /* override flex for 404 page */
 }
 
 /* ===== الهيدر ===== */
@@ -58,25 +62,20 @@
 
 /* ===== الخلفية والـgrid ===== */
 .notfound {
-  position: relative;
-  min-height: 100vh;
-  background: var(--bg-404);
   display: grid;
   place-items: start center;
+  width: 100vw; /* full viewport width */
   padding-top: 200px;
-  /* نترك فراغ للهيدر */
-
-
 }
 
 .notfound__inner {
-  width: min(720px, calc(100% - 48px));
+  width: min(720px, 90%); /* responsive max width */
   text-align: center;
 }
 
 /* العناصر */
 .notfound__code {
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: 'Tajawal', system-ui, sans-serif;
   font-weight: 800;
   font-size: 128px;
   line-height: 0.2;
@@ -84,7 +83,7 @@
 }
 
 .notfound__title {
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: 'Tajawal', system-ui, sans-serif;
   font-weight: 800;
   font-size: 64px;
   line-height: 1;
@@ -93,7 +92,7 @@
 }
 
 .notfound__lead {
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: 'Tajawal', system-ui, sans-serif;
   font-weight: 800;
   font-size: 36px;
   line-height: 1.2;
@@ -102,7 +101,7 @@
 }
 
 .notfound__text {
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: 'Tajawal', system-ui, sans-serif;
   font-weight: 500;
   font-size: 20px;
   line-height: 1.5;
@@ -130,7 +129,7 @@
 /* عربي محلي لصفحة 404 فقط */
 .notfound--ar {
   direction: rtl;
-  font-family: "Tajawal", system-ui, sans-serif;
+  font-family: 'Tajawal', system-ui, sans-serif;
 }
 
 .notfound--ar .notfound__title,

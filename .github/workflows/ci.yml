@@ -1,39 +1,39 @@
 name: Frontend Build Check
 
 on:
-    pull_request:
-        branches: [main, dev]
+  pull_request:
+    types: [opened, synchronize, edited]
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Run build command
-              run: |
-                  echo "Running build process..."
-                  if ! npm run build; then
-                    echo ""
-                    echo "❌ Build failed!"
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    echo "To fix this issue:"
-                    echo "1. Run this command locally:  npm run build"
-                    echo "2. Check the error message shown above."
-                    echo "3. Fix any missing imports, syntax errors, or configuration issues."
-                    echo "4. Once it builds successfully, push your changes again."
-                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                    echo ""
-                    exit 1
-                  else
-                    echo "✅ Build succeeded! Great job 🎉"
-                  fi
+      - name: Run build command
+        run: |
+          echo "Running build process..."
+          if ! npm run build; then
+            echo ""
+            echo "❌ Build failed!"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "To fix this issue:"
+            echo "1. Run this command locally:  npm run build"
+            echo "2. Check the error message shown above."
+            echo "3. Fix any missing imports, syntax errors, or configuration issues."
+            echo "4. Once it builds successfully, push your changes again."
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            exit 1
+          else
+            echo "✅ Build succeeded! Great job 🎉"
+          fi
