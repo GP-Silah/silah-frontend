@@ -1,0 +1,76 @@
+{
+  "pageTitle": "Service Details",
+  "loading": "Loading…",
+  "save": "Save",
+  "saving": "Saving…",
+  "createdOn": "Created On {{date}}",
+  "serviceStatus": "Service Status",
+
+  "status": {
+    "published": "Published",
+    "unpublished": "Unpublished"
+  },
+
+  "actions": {
+    "unpublish": "Unpublish",
+    "publish": "Publish",
+    "delete": "Delete"
+  },
+
+  "sections": {
+    "basicInfo": "Basic Information",
+    "images": "Images",
+    "price": "Price",
+    "serviceDetails": "Service Details"
+  },
+
+  "basic": {
+    "serviceDetails": "Service Details",
+    "serviceDetailsHelp": "Build buyers confidence with a clear, detailed service listing.",
+    "name": "Service Name",
+    "description": "Description",
+
+    "serviceCategory": "Service Category",
+    "serviceCategoryHelp": "This information will help us categorize your service.",
+    "category": "Category",
+    "selectCategory": "Select a Category",
+    "willAppearIn": "This Service will appear to buyers in:"
+  },
+
+  "placeholders": {
+    "name": "Enter service name",
+    "description": "Write a clear, detailed description"
+  },
+
+  "images": {
+    "tipsTitle": "Image Tips",
+    "t1": "Use at least 1050px by 1050px.",
+    "t2": "Use a white or natural background.",
+    "t3": "Ensure bright lighting with minimal shadows.",
+    "t4": "Include front, side, and close-up views.",
+    "upload": "Upload Image",
+    "remove": "Remove image"
+  },
+
+  "price": {
+    "price": "Price",
+    "negotiable": "Price negotiable",
+    "note": "Price negotiable based on project scope."
+  },
+
+  "service": {
+    "availability": "Service Availability",
+    "availabilityHelp": "Let buyers know when the service is available (e.g., 24/7, weekdays only)."
+  },
+
+  "messages": {
+    "saved": "Changes saved (mock).",
+    "published": "Service is now published.",
+    "unpublished": "Service is now unpublished."
+  },
+
+  "errors": {
+    "fetch": "Failed to load service.",
+    "save": "Failed to save."
+  }
+}
