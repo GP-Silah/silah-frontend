@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 
 function Signup() {
-const { t, i18n } = useTranslation('signup');
+  const { t, i18n } = useTranslation('signup');
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
 
   useEffect(() => {
-    document.title = t('pageTitle.signup', {ns: 'common'});
+    document.title = t('pageTitle.signup', { ns: 'common' });
   }, [t, i18n.language]);
 
   const [formData, setFormData] = useState({

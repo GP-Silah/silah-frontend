@@ -1,11 +1,10 @@
 import React from 'react';
-import './Header.css';
+import './GuestHeader.css';
 import { FaGlobe, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-
-const Header = () => {
+const GuestHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
 
@@ -72,4 +71,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default GuestHeader;

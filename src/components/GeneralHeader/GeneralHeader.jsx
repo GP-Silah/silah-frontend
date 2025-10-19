@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import './SignupHeader.css'; // لو تبين ننسقه
 
-function SignupHeader() {
+function GeneralHeader() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -31,4 +31,4 @@ function SignupHeader() {
   );
 }
 
-export default SignupHeader;
+export default GeneralHeader;

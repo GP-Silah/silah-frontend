@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next';
 import '../PrivacyPolicy/LegalPages.css'; // ملف CSS مشترك للشروط والخصوصية
 
 const TermsOfService = () => {
-
   const { t, i18n } = useTranslation('terms');
 
   useEffect(() => {
-    document.title = t('pageTitle.terms', {ns: 'common'});
+    document.title = t('pageTitle.terms', { ns: 'common' });
   }, [t, i18n.language]);
 
   return (

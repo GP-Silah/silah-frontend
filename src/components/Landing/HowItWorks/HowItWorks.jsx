@@ -9,7 +9,7 @@ function HowItWorks() {
 
   // نختار الصورة حسب اللغة الحالية
   const imageSrc =
-    i18n.language === 'ar' ? 'Howitworkspic-ar.jpg' : 'Howitworkspic.jpg';
+    i18n.language === 'ar' ? '/Howitworkspic-ar.jpg' : '/Howitworkspic.jpg';
 
   return (
     <section className="how-it-works-section">

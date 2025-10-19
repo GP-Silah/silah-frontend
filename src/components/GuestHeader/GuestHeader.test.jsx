@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import GuestHeader from './Header';
+import GuestHeader from './GuestHeader';
 
 test('renders GuestHeader with logo and buttons', () => {
   render(<GuestHeader />);
