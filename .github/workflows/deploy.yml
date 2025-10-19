@@ -1,0 +1,42 @@
+name: Deploy Frontend to Server
+
+on:
+    push:
+        branches:
+            - main # Trigger only when pushing to main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Deploy via SSH
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USER }}
+                  key: ${{ secrets.SERVER_SSH_KEY }}
+                  script: |
+                      set -euo pipefail
+                      cd /root/silah-frontend
+
+                      echo "Fetching latest changes..."
+                      git fetch origin main --prune
+                      git reset --hard origin/main
+
+                      echo "Installing dependencies..."
+                      npm ci --prefer-offline
+
+                      echo "Building frontend..."
+                      npm run build
+
+                      echo "Deploying build to /var/www/silah-frontend..."
+                      rm -rf /var/www/silah-frontend/*
+                      cp -r dist/* /var/www/silah-frontend/
+
+                      echo "Setting permissions..."
+                      chown -R www-data:www-data /var/www/silah-frontend
+                      chmod -R 755 /var/www/silah-frontend
