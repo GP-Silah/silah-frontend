@@ -19,7 +19,7 @@ function WhyChooseUs() {
         viewport={{ once: true }}
       >
         <div className="why-choose-image">
-          <img src="whychoosepic.jpg" alt="Why Choose Us" />
+          <img src="/whychoosepic.jpg" alt="Why Choose Us" />
         </div>
         <div className="why-choose-content">
           <ul>

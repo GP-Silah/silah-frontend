@@ -3,8 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 
 import NotFound from './pages/NotFound/NotFound';
 import { useTranslation } from 'react-i18next';
-import Header from './components/Header';
-import Footer from './components/Footer';
+import GuestHeader from './components/GuestHeader/GuestHeader';
+import Footer from './components/Footer/Footer';
 import Sidebar from './components/Sidebar/Sidebar';
 
 // Automatically import all .jsx pages in /pages

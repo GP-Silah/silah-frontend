@@ -33,17 +33,16 @@ import settingsEn from './locales/en/settings.json?raw';
 import settingsAr from './locales/ar/settings.json?raw';
 import buyerSettingsEn from './locales/en/buyerSettings.json?raw';
 import buyerSettingsAr from './locales/ar/buyerSettings.json?raw';
-import createBidEn from './locales/en/createBid.json?raw';
-import createBidAr from './locales/ar/createBid.json?raw';
-
 import productEn from './locales/en/product.json?raw';
 import productAr from './locales/ar/product.json?raw';
-
 import EmailFlowEn from './locales/en/EmailFlow.json?raw';
 import EmailFlowAr from './locales/ar/EmailFlow.json?raw';
-
 import serviceEn from './locales/en/service.json?raw';
 import serviceAr from './locales/ar/service.json?raw';
+import notFoundEn from './locales/en/notFound.json?raw';
+import notFoundAr from './locales/ar/notFound.json?raw';
+import createBidEn from './locales/en/createBid.json?raw';
+import createBidAr from './locales/ar/createBid.json?raw';
 
 const resources = {
   en: {
@@ -60,15 +59,13 @@ const resources = {
     bids: JSON.parse(bidsEn),
     bidDetails: JSON.parse(bidDetailsEn),
     bidOffer: JSON.parse(bidOfferEn),
-    createBid: JSON.parse(createBidEn),
-
     product: JSON.parse(productEn),
-
     EmailFlow: JSON.parse(EmailFlowEn),
     settings: JSON.parse(settingsEn),
     buyerSettings: JSON.parse(buyerSettingsEn),
     service: JSON.parse(serviceEn),
-    service: JSON.parse(serviceAr),
+    notFound: JSON.parse(notFoundEn),
+    createBid: JSON.parse(createBidEn),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -86,11 +83,11 @@ const resources = {
     bidOffer: JSON.parse(bidOfferAr),
     settings: JSON.parse(settingsAr),
     buyerSettings: JSON.parse(buyerSettingsAr),
-    createBid: JSON.parse(createBidAr),
-
     product: JSON.parse(productAr),
-
     EmailFlow: JSON.parse(EmailFlowAr),
+    service: JSON.parse(serviceAr),
+    notFound: JSON.parse(notFoundAr),
+    createBid: JSON.parse(createBidAr),
   },
 };
 
