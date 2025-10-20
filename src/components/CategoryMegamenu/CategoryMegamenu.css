@@ -1,0 +1,125 @@
+.category-megamenu {
+  position: relative;
+}
+
+.category-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.megamenu-panel {
+  position: absolute;
+  top: 200%;
+  left: -200%;
+  width: 100vw; /* full width */
+  background: #fff;
+  padding: 20px 60px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.megamenu-panel.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* 3 columns layout: Products / Services / Subcategories */
+.categories-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.5fr; /* last column is tighter */
+  gap: 40px;
+}
+
+/* Columns */
+.megamenu-column h4 {
+  margin-bottom: 10px;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 12px 20px;
+}
+
+.main-category {
+  white-space: nowrap; /* Keep text on a single line */
+  overflow: hidden; /* Hide any overflow if too long */
+  text-overflow: ellipsis; /* Add "..." if it overflows */
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.main-category:hover {
+  background-color: #fafafa;
+}
+
+.subcategories-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 62px; /* increase this to move the subcategories down */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.subcategory {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px 12px;
+  margin-top: 4px; /* adds extra space above each subcategory */
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.subcategory:hover {
+  background-color: #fafafa;
+}
+
+.divider {
+  width: 1px;
+  background-color: #eee;
+}
+
+/* RTL fix */
+.category-megamenu.rtl .megamenu-panel {
+  left: auto; /* ignore LTR left */
+  right: -200%; /* mirror position for RTL */
+}
+
+.category-megamenu.rtl .subcategories-column {
+  text-align: right;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1024px) {
+  .megamenu-panel {
+    flex-direction: column;
+    width: 100%;
+    padding: 10px;
+  }
+  .categories-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .subcategories-column {
+    position: static;
+    transform: none;
+    opacity: 1;
+    padding-left: 0;
+  }
+  .category-grid {
+    grid-template-columns: 1fr;
+    gap: 10px 0;
+  }
+}

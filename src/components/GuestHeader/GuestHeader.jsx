@@ -1,47 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './GuestHeader.css';
 import { FaGlobe, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 
 const GuestHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
   };
 
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
+        params: { lang: i18n.language },
+      })
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.error('Failed to load categories', err));
+  }, [i18n.language]);
+
   return (
-    <header className="header">
+    <header className={`header ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}>
       <div className="header-left">
         <img
           src="/logo.png"
           alt="Logo"
           className="logo"
-          onClick={() => navigate('/')} // ✅ ينقلك للـ Landing page
-          style={{ cursor: 'pointer' }} // يخلي شكل الماوس "يد"
+          onClick={() => navigate('/')}
+          style={{ cursor: 'pointer' }}
         />
 
-        <select className="category-select">
-          <option hidden>{t('category')}</option>
-          <option>{t('filters.agriculture')}</option>
-          <option>{t('filters.beauty')}</option>
-          <option>{t('filters.fashion')}</option>
-          <option>{t('filters.food')}</option>
-          <option>{t('filters.home')}</option>
-          <option>{t('filters.hardware')}</option>
-          <option>{t('filters.packaging')}</option>
-          <option>{t('filters.energy')}</option>
-          <option>{t('filters.business')}</option>
-          <option>{t('filters.it')}</option>
-          <option>{t('filters.shipping')}</option>
-          <option>{t('filters.design')}</option>
-          <option>{t('filters.manufacturing')}</option>
-          <option>{t('filters.technical')}</option>
-          <option>{t('filters.legal')}</option>
-        </select>
+        <CategoryMegamenu categories={categories} lang={i18n.language} />
       </div>
 
       <div className="search-bar">
