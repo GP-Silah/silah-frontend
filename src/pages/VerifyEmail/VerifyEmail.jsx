@@ -33,6 +33,7 @@ const EmailFlow = () => {
           setLoading(true);
           const res = await axios.post(
             `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-email`,
+            { withCredentials: true },
             null,
             {
               params: { token },
@@ -60,6 +61,7 @@ const EmailFlow = () => {
         `${
           import.meta.env.VITE_BACKEND_URL
         }/api/auth/resend-verification-email`,
+        { withCredentials: true },
         {
           email,
         },
