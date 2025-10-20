@@ -4,6 +4,7 @@ import WhyChooseUs from '../../components/Landing/WhyChooseUs/WhyChooseUs';
 import HowItWorks from '../../components/Landing/HowItWorks/HowItWorks';
 import ExploreCategories from '../../components/Landing/ExploreCategories/ExploreCategories'; // أو './ExploreCategories' حسب المسار
 import { useTranslation } from 'react-i18next';
+import './Landing.css';
 
 import '../../App.css';
 

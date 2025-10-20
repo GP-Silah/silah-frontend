@@ -13,24 +13,24 @@ function ExploreCategories() {
   const tabs = ['products', 'services'];
 
   const productFilters = [
-    t('filter.agriculture'),
-    t('filter.beauty'),
-    t('filter.fashion'),
-    t('filter.food'),
-    t('filter.home'),
-    t('filter.hardware'),
-    t('filter.packaging'),
-    t('filter.energy'),
+    t('filters.agriculture'),
+    t('filters.beauty'),
+    t('filters.fashion'),
+    t('filters.food'),
+    t('filters.home'),
+    t('filters.hardware'),
+    t('filters.packaging'),
+    t('filters.energy'),
   ];
 
   const serviceFilters = [
-    t('filter.shipping'),
-    t('filter.design'),
-    t('filter.legal'),
-    t('filter.technical'),
-    t('filter.manufacturing'),
-    t('filter.it'),
-    t('filter.business'),
+    t('filters.shipping'),
+    t('filters.design'),
+    t('filters.legal'),
+    t('filters.technical'),
+    t('filters.manufacturing'),
+    t('filters.it'),
+    t('filters.business'),
   ];
 
   const filtersToShow =
