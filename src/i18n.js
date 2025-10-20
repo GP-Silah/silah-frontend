@@ -6,7 +6,8 @@ const resources = {};
 
 const modules = import.meta.glob('./locales/*/*.json', {
   eager: true,
-  as: 'raw',
+  query: '?raw',
+  import: 'default',
 });
 
 for (const path in modules) {

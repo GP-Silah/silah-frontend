@@ -33,16 +33,6 @@ export default function SupplierServiceDetails() {
   const [search] = useSearchParams();
   const serviceId = search.get('id') || 'demo-svc-1';
 
-  // // السماح فقط للمورّد
-  // useEffect(() => {
-  //   try {
-  //     const user = JSON.parse(localStorage.getItem('user') || 'null');
-  //     const role = (user?.role || user?.type || '').toLowerCase();
-  //     if (role !== 'supplier')
-  //       navigate('/SupplierOverview (Home)', { replace: true });
-  //   } catch (_) {}
-  // }, [location.pathname, navigate]);
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
