@@ -15,7 +15,8 @@
     "button": "Resend Email",
     "success": "Email has been resent successfully ✅",
     "alreadyVerified": "This email is already verified.",
-    "userNotFound": "No account found with this email."
+    "userNotFound": "No account found with this email.",
+    "error": "An error occured"
   },
   "success": {
     "icon": "✔️",

@@ -134,6 +134,7 @@ function Signup() {
         const response = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
           payload,
+          { withCredentials: true }, // << important, used to store the token cookie
         );
 
         // if we reach here → signup succeeded
