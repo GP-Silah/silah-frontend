@@ -10,6 +10,23 @@
   "whyPoint5": "Enjoy a seamless experience with a user-friendly platform.",
   "exploreTitle": "All You Need in One Place",
   "exploreSubtitle": "Explore Our Categories and Source with Confidence!",
+  "filters": {
+    "agriculture": "Agricultural & Pet Supplies",
+    "beauty": "Beauty & Personal Care",
+    "fashion": "Fashion & Accessories",
+    "food": "Food, Beverages & Health",
+    "home": "Home & Living",
+    "hardware": "Hardware & Tools",
+    "packaging": "Packaging & Raw Materials",
+    "shipping": "Shipping & Logistics",
+    "design": "Design Services",
+    "legal": "Legal & Compliance Services",
+    "technical": "Technical & Repair Services",
+    "manufacturing": "Manufacturing & Packaging",
+    "it": "Software & IT Solutions",
+    "energy": "Energy & Sustainability",
+    "business": "Business & Marketing Services"
+  },
   "tabs": {
     "products": "Products",
     "services": "Services"

@@ -1,0 +1,20 @@
+.landing-page {
+  background-color: transparent;
+}
+
+/* Hero Section spacing */
+.landing-page > *:first-child {
+  margin-top: 60px;
+}
+
+/* Section spacing */
+.landing-page .container > * {
+  margin-bottom: 80px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .landing-page .container > * {
+    margin-bottom: 40px;
+  }
+}
