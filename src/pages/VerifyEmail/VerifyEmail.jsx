@@ -59,7 +59,7 @@ const EmailFlow = () => {
         `${
           import.meta.env.VITE_BACKEND_URL
         }/api/auth/resend-verification-email`,
-        { email },
+        { email: email.trim() }, // removes any extra spaces
       );
       setStatus(t('resend.success'));
       setTimeout(() => {
