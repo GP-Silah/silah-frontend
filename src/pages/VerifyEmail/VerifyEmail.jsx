@@ -38,7 +38,6 @@ const EmailFlow = () => {
               params: { token },
             },
           );
-          console.log(res.data);
           setStep('success');
         } catch (err) {
           console.error(err);
@@ -56,15 +55,12 @@ const EmailFlow = () => {
     if (!email) return;
     try {
       setLoading(true);
-      const res = await axios.post(
+      await axios.post(
         `${
           import.meta.env.VITE_BACKEND_URL
         }/api/auth/resend-verification-email`,
-        {
-          email,
-        },
+        { email },
       );
-      console.log(res.data);
       setStatus(t('resend.success'));
       setTimeout(() => {
         setStatus('');
@@ -72,7 +68,21 @@ const EmailFlow = () => {
       }, 1500);
     } catch (err) {
       console.error(err);
-      setStatus(t('resend.error'));
+
+      if (err.response) {
+        const { status, data } = err.response;
+
+        if (status === 400 && data.message === 'Email already verified') {
+          setStatus(t('resend.alreadyVerified'));
+          setStep('success'); // email already verified → treat as success
+        } else if (status === 404 && data.message === 'User not found') {
+          setStatus(t('resend.userNotFound'));
+        } else {
+          setStatus(t('resend.error'));
+        }
+      } else {
+        setStatus(t('resend.error'));
+      }
     } finally {
       setLoading(false);
     }

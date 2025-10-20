@@ -13,7 +13,9 @@
     "title": "Resend Verification Email",
     "message": "Didn’t receive the email? Click below to resend verification.",
     "button": "Resend Email",
-    "success": "Email has been resent successfully ✅"
+    "success": "Email has been resent successfully ✅",
+    "alreadyVerified": "This email is already verified.",
+    "userNotFound": "No account found with this email."
   },
   "success": {
     "icon": "✔️",
