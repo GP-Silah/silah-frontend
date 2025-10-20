@@ -20,6 +20,7 @@ const GuestHeader = () => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
         params: { lang: i18n.language },
+        withCredentials: true,
       })
       .then((res) => setCategories(res.data))
       .catch((err) => console.error('Failed to load categories', err));
