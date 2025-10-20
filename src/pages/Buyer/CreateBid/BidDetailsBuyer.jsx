@@ -1,6 +1,5 @@
 // src/pages/Buyer/Bids/BidDetailsBuyer.jsx
 import React from 'react';
-import Sidebar from '../../../components/Sidebar/Sidebar';
 import { useTranslation } from 'react-i18next';
 import './BidDetailsBuyer.css';
 
