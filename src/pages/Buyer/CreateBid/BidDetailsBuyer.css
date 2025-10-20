@@ -1,0 +1,85 @@
+:root {
+  --purple: #6e46ae;
+  --purple-light: #c5b8e7;
+  --text: #2e2e2e;
+  --bg: #fff;
+}
+
+.bid-details-container {
+  margin-left: 250px; /* نفس عرض السايدبار */
+  padding: 40px;
+  max-width: calc(100% - 250px);
+  color: var(--text);
+  background-color: var(--bg);
+}
+
+.bid-details-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--purple);
+  margin-bottom: 24px;
+}
+
+.bid-details-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 26px 30px;
+  max-width: 820px;
+  margin-bottom: 40px;
+}
+
+.bid-detail-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #eaeaea;
+  padding: 10px 0;
+  font-size: 15px;
+}
+
+.bid-detail-row strong {
+  color: #111;
+  font-weight: 600;
+}
+
+.bid-detail-row span {
+  color: #555;
+  text-align: right;
+  max-width: 65%;
+}
+
+/* Footer */
+.bid-footer {
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.bid-footer a {
+  color: var(--purple);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.bid-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bid-details-container {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .bid-detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bid-detail-row span {
+    text-align: left;
+    max-width: 100%;
+  }
+}
