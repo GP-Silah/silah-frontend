@@ -8,26 +8,45 @@ import './Signup.css';
 function Signup() {
   const { t, i18n } = useTranslation('signup');
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     document.title = t('pageTitle.signup', { ns: 'common' });
   }, [t, i18n.language]);
 
-  const [formData, setFormData] = useState({
-    businessName: '',
-    commercialRegister: '',
-    businessActivity: '',
-    name: '',
-    nationalId: '',
-    city: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    termsAccepted: false,
-    prefferedLanguage: i18n.language.toUpperCase(),
+  // Load initial state from localStorage
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('signupForm');
+    return saved
+      ? JSON.parse(saved)
+      : {
+          businessName: '',
+          commercialRegister: '',
+          businessActivity: '',
+          name: '',
+          nationalId: '',
+          city: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          termsAccepted: false,
+          prefferedLanguage: i18n.language.toUpperCase(),
+        };
   });
+
+  // Save on every change
+  useEffect(() => {
+    localStorage.setItem('signupForm', JSON.stringify(formData));
+  }, [formData]);
+
+  const [step, setStep] = useState(() => {
+    const savedStep = localStorage.getItem('signupStep');
+    return savedStep ? Number(savedStep) : 1;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('signupStep', step);
+  }, [step]);
 
   const [formErrors, setFormErrors] = useState({});
 
@@ -129,16 +148,19 @@ function Signup() {
               ...prev,
               nationalId: t('errors.nidExists'),
             }));
+            setStep(2); // go back to the NID step
           } else if (msg.includes('CRN already exists')) {
             setFormErrors((prev) => ({
               ...prev,
               commercialRegister: t('errors.crnExists'),
             }));
+            setStep(1); // go back to the CRN step
           } else if (msg.includes('Email already exists')) {
             setFormErrors((prev) => ({
               ...prev,
               email: t('errors.emailExists'),
             }));
+            setStep(3); // user is already on step 3
           } else {
             // fallback generic error
             alert(t('errors.unknownError'));
