@@ -1,0 +1,172 @@
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import EmailDialog from '../../components/EmailDialog/EmailDialog';
+import './EmailFlow.css';
+import '../../i18n';
+
+const EmailFlow = () => {
+  const { t, i18n } = useTranslation('EmailFlow');
+  const [step, setStep] = useState('verify'); // verify | resend | success | error
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email;
+  const token = new URLSearchParams(location.search).get('token');
+
+  useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t, i18n.language]);
+
+  const handleLangToggle = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
+  };
+
+  // ------------- 🟢 Case 1: verifying email from token -----------------
+  useEffect(() => {
+    if (token) {
+      const verifyEmail = async () => {
+        try {
+          setLoading(true);
+          const res = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-email`,
+            null,
+            {
+              params: { token },
+            },
+          );
+          console.log(res.data);
+          setStep('success');
+        } catch (err) {
+          console.error(err);
+          setStep('error');
+        } finally {
+          setLoading(false);
+        }
+      };
+      verifyEmail();
+    }
+  }, [token]);
+
+  // ------------- 🔁 resend verification email -----------------
+  const handleResend = async () => {
+    if (!email) return;
+    try {
+      setLoading(true);
+      const res = await axios.post(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/auth/resend-verification-email`,
+        {
+          email,
+        },
+      );
+      console.log(res.data);
+      setStatus(t('resend.success'));
+      setTimeout(() => {
+        setStatus('');
+        setStep('success');
+      }, 1500);
+    } catch (err) {
+      console.error(err);
+      setStatus(t('resend.error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ------------- ⚠️ no email in state -----------------
+  if (!email && !token) {
+    return (
+      <EmailDialog
+        icon="⚠️"
+        title={t('missingEmailTitle')}
+        message={t('missingEmailMessage')}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      />
+    );
+  }
+
+  // ------------- ✅ verify from signup (no token) -----------------
+  if (step === 'verify' && !token) {
+    return (
+      <EmailDialog
+        icon={t('verify.icon')}
+        title={t('verify.title')}
+        message={t('verify.message', { email })}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      >
+        <button
+          className="resend-btn"
+          onClick={() => setStep('resend')}
+          disabled={loading}
+        >
+          {loading ? t('loading') : t('verify.button')}
+        </button>
+      </EmailDialog>
+    );
+  }
+
+  // ------------- 🔁 resend -----------------
+  if (step === 'resend') {
+    return (
+      <EmailDialog
+        icon={t('resend.icon')}
+        title={t('resend.title')}
+        message={t('resend.message')}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      >
+        <button
+          className="resend-btn"
+          onClick={handleResend}
+          disabled={loading}
+        >
+          {loading ? t('loading') : t('resend.button')}
+        </button>
+        {status && <p className="email-success">{status}</p>}
+      </EmailDialog>
+    );
+  }
+
+  // ------------- 🎉 success -----------------
+  if (step === 'success') {
+    return (
+      <EmailDialog
+        icon={t('success.icon')}
+        title={t('success.title')}
+        message={t('success.message')}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      >
+        <button className="resend-btn" onClick={() => navigate('/login')}>
+          {t('success.button')}
+        </button>
+      </EmailDialog>
+    );
+  }
+
+  // ------------- ❌ error -----------------
+  if (step === 'error') {
+    return (
+      <EmailDialog
+        icon="❌"
+        title={t('error.title')}
+        message={t('error.message')}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      >
+        <button className="resend-btn" onClick={() => navigate('/signup')}>
+          {t('error.button')}
+        </button>
+      </EmailDialog>
+    );
+  }
+};
+
+export default EmailFlow;

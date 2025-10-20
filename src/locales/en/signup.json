@@ -1,7 +1,7 @@
 {
   "join": "Join us!",
   "businessName": "Business Name",
-  "register": "Commercial Register",
+  "register": "Commercial Registert",
   "activity": "Business Activity",
   "selectCategory": "Select a Category",
   "name": "Name",
@@ -16,7 +16,7 @@
   "step1Title": "Join us!",
   "step2Title": "Join us!",
   "step3Title": "Join us!",
-  "commercialRegister": "Commercial Register",
+  "commercialRegister": "Commercial Registertion Number",
   "businessActivity": "Business Activity",
   "agree": "I agree on the",
   "terms": "terms and conditions",
@@ -25,6 +25,14 @@
   "errors": {
     "numbersOnly": "Please enter numbers only",
     "invalidEmail": "Please enter a valid email address",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "invalidCRN": "CRN must be 10 digits",
+    "invalidNID": "National ID must be 10 digits",
+    "weakPassword": "Password must include uppercase, lowercase, number. Must be 8-28 characters long. Optionally (@, #, !, $)",
+    "nidExists": "A user with this National ID already exists.",
+    "crnExists": "A company with this Commercial Register already exists.",
+    "emailExists": "An account with this email already exists.",
+    "unknownError": "An unknown error occurred. Please try again.",
+    "networkError": "Could not connect to the server. Please check your connection."
   }
 }
