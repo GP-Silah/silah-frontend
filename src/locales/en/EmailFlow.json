@@ -1,4 +1,7 @@
 {
+  "pageTitle": "Verify Email",
+  "missingEmailTitle": "Missing Email",
+  "missingEmailMessage": "We couldn't find your email information. Please go back to the signup page and try again.",
   "verify": {
     "icon": "📧",
     "title": "Verify Your Email",

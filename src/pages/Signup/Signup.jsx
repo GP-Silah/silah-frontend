@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import SignupBusinessActivity from '@/components/SingupBusinessActivity/SignupBusinessActivity';
 import './Signup.css';
 
 function Signup() {
   const { t, i18n } = useTranslation('signup');
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     document.title = t('pageTitle.signup', { ns: 'common' });
@@ -23,6 +26,7 @@ function Signup() {
     password: '',
     confirmPassword: '',
     termsAccepted: false,
+    prefferedLanguage: i18n.language.toUpperCase(),
   });
 
   const [formErrors, setFormErrors] = useState({});
@@ -30,25 +34,36 @@ function Signup() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const updatedValue = type === 'checkbox' ? checked : value;
-
     setFormData({ ...formData, [name]: updatedValue });
 
     let error = '';
-    if (
-      (name === 'commercialRegister' || name === 'nationalId') &&
-      updatedValue
-    ) {
-      if (!/^\d+$/.test(updatedValue)) error = t('signup.errors.numbersOnly');
+
+    switch (name) {
+      case 'commercialRegister':
+        if (!/^\d{10}$/.test(updatedValue)) error = t('errors.invalidCRN');
+        break;
+      case 'nationalId':
+        if (!/^\d{10}$/.test(updatedValue)) error = t('errors.invalidNID');
+        break;
+      case 'email':
+        if (updatedValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedValue))
+          error = t('errors.invalidEmail');
+        break;
+      case 'password':
+        if (
+          updatedValue &&
+          !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#!$]{8,28}$/.test(
+            updatedValue,
+          )
+        )
+          error = t('errors.weakPassword');
+        break;
+      case 'confirmPassword':
+        if (updatedValue !== formData.password)
+          error = t('errors.passwordMismatch');
+        break;
     }
-    if (name === 'email' && updatedValue) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(updatedValue))
-        error = t('signup.errors.invalidEmail');
-    }
-    if (name === 'confirmPassword' && updatedValue) {
-      if (updatedValue !== formData.password)
-        error = t('signup.errors.passwordMismatch');
-    }
+
     setFormErrors({ ...formErrors, [name]: error });
   };
 
@@ -77,21 +92,66 @@ function Signup() {
     return false;
   };
 
-  const nextStep = () => {
-    if (isStepValid()) {
-      if (step === 3) {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-            name: formData.name,
-          }),
+  const nextStep = async () => {
+    if (!isStepValid()) return;
+
+    // Step 3 means time to call backend
+    if (step === 3) {
+      setLoading(true);
+      try {
+        const payload = {
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          crn: formData.commercialRegister,
+          businessName: formData.businessName,
+          city: formData.city,
+          nid: formData.nationalId,
+          categories: formData.businessActivity,
+          agreedToTerms: formData.termsAccepted,
+          preferredLanguage: i18n.language.toUpperCase(),
+        };
+
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
+          payload,
         );
-        navigate('/login');
-      } else {
-        setStep((prev) => prev + 1);
+
+        // if we reach here → signup succeeded
+        navigate('/verify-email', { state: { email: formData.email } });
+      } catch (err) {
+        if (err.response?.data?.message) {
+          const msg = err.response.data.message;
+
+          // handle known backend messages
+          if (msg.includes('NID already exists')) {
+            setFormErrors((prev) => ({
+              ...prev,
+              nationalId: t('errors.nidExists'),
+            }));
+          } else if (msg.includes('CRN already exists')) {
+            setFormErrors((prev) => ({
+              ...prev,
+              commercialRegister: t('errors.crnExists'),
+            }));
+          } else if (msg.includes('Email already exists')) {
+            setFormErrors((prev) => ({
+              ...prev,
+              email: t('errors.emailExists'),
+            }));
+          } else {
+            // fallback generic error
+            alert(t('errors.unknownError'));
+          }
+        } else {
+          alert(t('errors.networkError'));
+        }
+      } finally {
+        setLoading(false);
       }
+    } else {
+      // move to next step normally
+      setStep((prev) => prev + 1);
     }
   };
 
@@ -99,8 +159,6 @@ function Signup() {
 
   return (
     <div className="signup-page">
-      {/* تم إزالة الهيدر هنا؛ الهيدر الأصلي من App.jsx هو المستخدم */}
-
       <div className="signup-container">
         <div className="signup-form">
           <h2>{t(`step${step}Title`)}</h2>
@@ -129,18 +187,12 @@ function Signup() {
                 <p className="error-message">{formErrors.commercialRegister}</p>
               )}
 
-              <select
-                name="businessActivity"
-                value={formData.businessActivity}
-                onChange={handleChange}
-                className={formErrors.businessActivity ? 'error' : ''}
-              >
-                <option value="" hidden>
-                  {t('businessActivity')}
-                </option>
-                <option>Activity 1</option>
-                <option>Activity 2</option>
-              </select>
+              <SignupBusinessActivity
+                value={formData.businessActivity} // array of selected category IDs
+                onChange={(selectedIds) =>
+                  setFormData({ ...formData, businessActivity: selectedIds })
+                }
+              />
 
               <p className="login-text">
                 {t('haveAccount')}{' '}
@@ -210,6 +262,9 @@ function Signup() {
                 placeholder={t('password')}
                 className={formErrors.password ? 'error' : ''}
               />
+              {formErrors.password && (
+                <p className="error-message">{formErrors.password}</p>
+              )}
 
               <input
                 name="confirmPassword"
@@ -230,7 +285,7 @@ function Signup() {
                   checked={formData.termsAccepted}
                   onChange={handleChange}
                 />
-                {t('signup.agree')}{' '}
+                {t('agree')}{' '}
                 <a href="/terms" className="terms-link">
                   {t('terms')}
                 </a>
