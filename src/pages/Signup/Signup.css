@@ -57,11 +57,23 @@
 }
 
 .checkbox {
+  white-space: nowrap; /* Keep text on a single line */
+  overflow: hidden; /* Hide any overflow if too long */
+  text-overflow: ellipsis; /* Add "..." if it overflows */
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px; /* space between checkbox and text */
   font-size: 14px;
   margin-bottom: 20px;
+}
+
+.signup-form input[type='checkbox'] {
+  width: auto; /* default size */
+  height: auto; /* default size */
+  padding: 0; /* remove input padding */
+  margin: 0; /* remove input margin */
+  margin-inline-start: 8px; /* spacing before checkbox */
+  accent-color: #543361; /* optional: theme color for checkbox */
 }
 
 .terms-link {
