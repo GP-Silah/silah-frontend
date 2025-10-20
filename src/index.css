@@ -46,6 +46,13 @@ h1 {
   line-height: 1.1;
 }
 
+.loader-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;

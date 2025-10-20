@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../../../components/Sidebar/Sidebar';
 import './BidDetails.css';
 
 const BidDetails = () => {

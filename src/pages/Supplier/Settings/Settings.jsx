@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Sidebar from '../../../components/Sidebar/Sidebar';
 import './Settings.css';
 
 export default function SupplierSettings() {

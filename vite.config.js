@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import json from '@rollup/plugin-json'; // ← أضفناها هنا
+import json from '@rollup/plugin-json';
+import path from 'path';
 
 export default defineConfig({
-  plugins: [react(), json()], // ← أضفنا البلجن هنا
+  plugins: [react(), json()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

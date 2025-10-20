@@ -1,11 +1,10 @@
-// components/SignupHeader.jsx
 import React from 'react';
 import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import './SignupHeader.css'; // لو تبين ننسقه
+import './SimpleHeader.css';
 
-function GeneralHeader() {
+export default function SimpleHeader() {
   const { i18n } = useTranslation();
   const navigate = useNavigate();
 
@@ -15,20 +14,20 @@ function GeneralHeader() {
   };
 
   return (
-    <div className="signup-header">
+    <header className="simple-header">
       <img
         src="/logo.png"
         alt="Logo"
-        className="signup-logo"
+        className="simple-header__logo"
         onClick={() => navigate('/')}
-        style={{ cursor: 'pointer' }}
       />
-
-      <button className="language-toggle" onClick={toggleLanguage}>
+      <button
+        className="simple-header__lang-btn"
+        onClick={toggleLanguage}
+        aria-label="Change language"
+      >
         <FaGlobe />
       </button>
-    </div>
+    </header>
   );
 }
-
-export default GeneralHeader;
