@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import Sidebar from '../../../components/Sidebar/Sidebar';
 import './BuyerSettings.css';
 import BuyerSettingsPayment from './BuyerSettingsPayment';
 import TapCardForm from '../../../components/TapCardForm';

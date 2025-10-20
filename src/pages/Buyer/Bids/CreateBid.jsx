@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Sidebar from '../../../components/Sidebar/Sidebar';
 import './CreateBid.css';
 
 export default function CreateBid() {

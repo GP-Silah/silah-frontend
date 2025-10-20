@@ -16,9 +16,9 @@ import {
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
-import './Sidebar.css';
+import './SupplierSidebar.css';
 
-const Sidebar = () => {
+const SupplierSidebar = () => {
   const { t, i18n } = useTranslation('sidebar');
 
   // بيانات المستخدم من LocalStorage (مؤقت)
@@ -123,4 +123,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default SupplierSidebar;

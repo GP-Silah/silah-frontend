@@ -1,39 +1,38 @@
 import React from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
-
-import NotFound from './pages/NotFound/NotFound';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import GuestHeader from './components/GuestHeader/GuestHeader';
-import Footer from './components/Footer/Footer';
-import Sidebar from './components/Sidebar/Sidebar';
+import { ClipLoader } from 'react-spinners';
 
-// Automatically import all .jsx pages in /pages
+// Layouts
+import BuyerLayout from './layouts/BuyerLayout';
+import SupplierLayout from './layouts/SupplierLayout';
+import GuestLayout from './layouts/GuestLayout';
+import PublicLayout from './layouts/PublicLayout';
+
+// Pages
+import NotFound from './pages/NotFound/NotFound';
+import RedirectHome from './pages/RedirectHome';
+
 const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  //  LocalStorage لجلب معلومات المستخدم من
-  const user = JSON.parse(localStorage.getItem('user')) || null;
+  // Group routes by layout type
+  const layoutRoutes = {
+    public: [],
+    guest: [],
+    buyer: [],
+    supplier: [],
+  };
 
-  //  الصفحات اللي ما نبي فيها السايدبار (زي login/signup)
-  const location = useLocation();
-  const hideSidebarPaths = ['/login', '/signup'];
-
-  // Supplier منطق التحقق: يخفي السايدبار إذا المستخدم مو
-  const shouldHideSidebar =
-    hideSidebarPaths.includes(location.pathname) ||
-    !user ||
-    user.role?.toLowerCase() !== 'supplier';
-
-  const routeElements = Object.entries(pages).map(([filePath, resolver]) => {
-    // Remove ./pages prefix and .jsx extension
+  // Dynamically map pages to routes + assign layout group
+  Object.entries(pages).forEach(([filePath, resolver]) => {
     let routePath = filePath.replace('./pages', '').replace('.jsx', '');
-
-    // Split into parts
     const parts = routePath.split('/').filter(Boolean);
 
-    // Drop last part if it matches folder name (AboutUs/AboutUs.jsx -> AboutUs)
+    // Drop duplicate folder name if repeated (AboutUs/AboutUs.jsx)
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
@@ -42,53 +41,96 @@ function App() {
       parts.pop();
     }
 
-    // Convert to kebab-case
     routePath =
       '/' +
       parts
         .map((part) =>
           part
-            .replace(/([a-z0-9])([A-Z])/g, '$1-$2') // aB -> a-B
-            .replace(/([A-Z]{2,})([A-Z][a-z]+)/g, '$1-$2') // HTMLParser -> HTML-Parser
+            .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+            .replace(/([A-Z]{2,})([A-Z][a-z]+)/g, '$1-$2')
             .toLowerCase(),
         )
         .join('/');
 
-    // Special case: Landing page
-    if (routePath === '/landing') routePath = '/';
+    if (routePath === '/landing') routePath = '/landing';
+    if (routePath === '/not-found') routePath = '*';
 
-    // Lazy load component
     const PageComponent = React.lazy(() =>
       resolver().then((mod) => ({ default: mod.default })),
     );
 
-    return (
-      <Route
-        key={routePath}
-        path={routePath}
-        element={
-          <React.Suspense fallback={<div>Loading...</div>}>
-            <PageComponent />
-          </React.Suspense>
-        }
-      />
-    );
+    // Layout detection based on folder
+    if (routePath.startsWith('/buyer/'))
+      layoutRoutes.buyer.push({ path: routePath, Component: PageComponent });
+    else if (routePath.startsWith('/supplier/'))
+      layoutRoutes.supplier.push({ path: routePath, Component: PageComponent });
+    else if (['/login', '/signup', '/verify-email', '*'].includes(routePath))
+      layoutRoutes.public.push({ path: routePath, Component: PageComponent });
+    else layoutRoutes.guest.push({ path: routePath, Component: PageComponent });
   });
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        {!shouldHideSidebar && <Sidebar />}
-        <div style={{ flex: 1, padding: '20px' }}>
-          {/* <Header />*/}
-          <Routes>
-            {routeElements}
+      <React.Suspense
+        fallback={
+          <div className="loader-center">
+            <ClipLoader color="#543361" size={60} />
+          </div>
+        }
+      >
+        {' '}
+        <Routes>
+          {/* Public pages */}
+          <Route element={<PublicLayout />}>
+            {layoutRoutes.public.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
+          </Route>
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          {/* <Footer />*/}
-        </div>
-      </div>
+          {/* Guest pages */}
+          <Route element={<GuestLayout />}>
+            {layoutRoutes.guest.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
+          </Route>
+
+          {/* Buyer pages */}
+          <Route
+            element={
+              user?.role === 'buyer' ? (
+                <BuyerLayout />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          >
+            {layoutRoutes.buyer.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
+          </Route>
+
+          {/* Supplier pages */}
+          <Route
+            element={
+              user?.role === 'supplier' ? (
+                <SupplierLayout />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          >
+            {layoutRoutes.supplier.map(({ path, Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
+          </Route>
+
+          {/* Redirect root */}
+          <Route path="/" element={<RedirectHome />} />
+
+          {/* Fallback 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </React.Suspense>
     </div>
   );
 }
