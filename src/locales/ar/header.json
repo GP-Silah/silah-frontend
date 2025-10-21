@@ -7,5 +7,11 @@
     "products": "المنتجات",
     "services": "الخدمات",
     "suppliers": "الموردين"
-  }
+  },
+  "cart": "السلة",
+  "profile": "الملف الشخصي",
+  "notifications": "الإشعارات",
+  "viewAll": "عرض الكل",
+  "markAllRead": "تحديد الكل كمقروء",
+  "noNotifications": "لا توجد إشعارات حتى الآن"
 }

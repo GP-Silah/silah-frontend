@@ -1,0 +1,195 @@
+.buyer-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Scoped elements */
+.buyer-header .header-left,
+.buyer-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  height: 40px;
+}
+
+.buyer-header .language-toggle,
+.buyer-header .icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #2563eb; /* main blue */
+  transition: color 0.2s;
+}
+
+.buyer-header .language-toggle:hover,
+.buyer-header .icon-btn:hover {
+  color: #1e40af; /* darker blue on hover */
+}
+
+.buyer-header .search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #e3edf6; /* lighter blue background */
+  border-radius: 32px;
+  padding: 6px 12px;
+  width: 550px;
+  max-width: 100%;
+}
+
+.buyer-header .search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.buyer-header .search-icon {
+  margin-right: 8px;
+  color: #3b82f6; /* medium blue */
+}
+
+.buyer-header .product-select {
+  padding: 6px 12px;
+  border-radius: 24px;
+  border: none;
+  background-color: #f0f6fc;
+  font-size: 14px;
+  color: #333;
+}
+
+.buyer-header.rtl .search-icon {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.buyer-header.rtl .search-bar input {
+  text-align: right;
+}
+
+/* ===== Notifications Wrapper & Dot ===== */
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-wrapper .dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #2563eb; /* main blue */
+  border-radius: 50%;
+}
+
+/* Notification dropdown stays largely the same, but allow scroll and add mark-all-read button */
+.notification-dropdown {
+  position: absolute;
+  right: -200%;
+  top: 160%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  padding: 12px;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+}
+
+.notif-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item.unread {
+  background-color: #f0f6fc; /* light blue for unread */
+}
+
+.notif-icon {
+  color: #2563eb;
+  font-size: 16px;
+  min-width: 20px;
+}
+
+/* Buttons */
+.view-all-btn,
+.mark-read-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px 0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.view-all-btn {
+  background-color: #2563eb;
+}
+
+.view-all-btn:hover {
+  background-color: #1e40af;
+}
+
+.mark-read-btn {
+  background-color: #1e40af;
+  margin-top: 6px;
+}
+
+.mark-read-btn:hover {
+  background-color: #1b3a91;
+}
+
+/* Fade-in animation for dropdown */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
