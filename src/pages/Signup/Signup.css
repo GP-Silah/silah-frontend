@@ -4,26 +4,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.signup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.logo {
-  height: 40px;
-  cursor: pointer;
-  display: block;
-}
-
-.lang-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  color: black;
+  background-color: white;
 }
 
 .signup-container {
