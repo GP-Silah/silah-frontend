@@ -2,8 +2,17 @@
   "title": "Welcome to Silah!",
   "email": "Email",
   "password": "Password",
+  "emailOrCRN": "Email or CRN",
   "submit": "Log In",
+  "loading": "Logging in...",
+  "resetPassword": "Forgot Password?",
+  "noAccount": "Don't have an account?",
+  "createOne": "Create one",
   "errors": {
-    "invalidCredentials": "Invalid email or password"
+    "emptyFields": "Please fill in all fields",
+    "invalidEmailOrCRN": "Enter a valid email or 10-digit CRN",
+    "userNotFound": "User not found",
+    "invalidCredentials": "Invalid credentials",
+    "network": "Network error, please try again"
   }
 }
