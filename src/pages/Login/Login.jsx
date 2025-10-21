@@ -2,29 +2,65 @@ import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { useAuth } from '@/context/AuthContext';
 
 function Login() {
   const { t, i18n } = useTranslation('login');
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState(''); // email or CRN
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
-    document.title = t('pageTitle.login', {ns: 'common'});
+    document.title = t('pageTitle.login', { ns: 'common' });
   }, [t, i18n.language]);
 
-  const handleLogin = () => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (
-      storedUser &&
-      storedUser.email === email &&
-      storedUser.password === password
-    ) {
-      alert(t('success'));
-      navigate('/');
-    } else {
-      setError(t('error'));
+  const handleLogin = async () => {
+    setError('');
+    if (!identifier || !password) {
+      setError(t('errors.emptyFields'));
+      return;
+    }
+
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+    const isCRN = /^\d{10}$/.test(identifier);
+
+    if (!isEmail && !isCRN) {
+      setError(t('errors.invalidEmailOrCRN'));
+      return;
+    }
+
+    const payload = {
+      password,
+      ...(isEmail ? { email: identifier } : { crn: identifier }),
+    };
+
+    try {
+      setLoading(true);
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        payload,
+        { withCredentials: true }, // important to receive cookie
+      );
+
+      // If successful, backend sets the cookie automatically
+      await refreshUser(); // force fetch /me
+      navigate('/'); // redirect to homepage
+    } catch (err) {
+      console.log('Login error:', err); // <--- add this
+      const msg = err.response?.data?.message;
+      if (msg === 'User not found') {
+        setError(t('errors.userNotFound'));
+      } else if (msg === 'Invalid credentials') {
+        setError(t('errors.invalidCredentials'));
+      } else {
+        setError(t('errors.network'));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,11 +70,12 @@ function Login() {
         <h2>{t('title')}</h2>
 
         <input
-          type="email"
-          placeholder={t('email')}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder={t('emailOrCRN')}
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
         />
+
         <input
           type="password"
           placeholder={t('password')}
@@ -48,8 +85,8 @@ function Login() {
 
         {error && <p className="error-message">{error}</p>}
 
-        <button className="enter-btn" onClick={handleLogin}>
-          {t('submit')}
+        <button className="enter-btn" onClick={handleLogin} disabled={loading}>
+          {loading ? t('loading') : t('submit')}
         </button>
 
         <div className="login-options">

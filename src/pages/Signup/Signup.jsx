@@ -64,6 +64,11 @@ function Signup() {
       case 'nationalId':
         if (!/^\d{10}$/.test(updatedValue)) error = t('errors.invalidNID');
         break;
+      case 'city':
+        if (updatedValue && !/^[A-Za-z\s]+$/.test(updatedValue)) {
+          error = t('errors.invalidCity');
+        }
+        break;
       case 'email':
         if (updatedValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedValue))
           error = t('errors.invalidEmail');
@@ -143,27 +148,28 @@ function Signup() {
         if (err.response?.data?.message) {
           const msg = err.response.data.message;
 
-          // handle known backend messages
           if (msg.includes('NID already exists')) {
             setFormErrors((prev) => ({
               ...prev,
               nationalId: t('errors.nidExists'),
             }));
-            setStep(2); // go back to the NID step
+            setStep(2);
+            return; // ✅ stop here to let React re-render
           } else if (msg.includes('CRN already exists')) {
             setFormErrors((prev) => ({
               ...prev,
               commercialRegister: t('errors.crnExists'),
             }));
-            setStep(1); // go back to the CRN step
+            setStep(1);
+            return;
           } else if (msg.includes('Email already exists')) {
             setFormErrors((prev) => ({
               ...prev,
               email: t('errors.emailExists'),
             }));
-            setStep(3); // user is already on step 3
+            setStep(3);
+            return;
           } else {
-            // fallback generic error
             alert(t('errors.unknownError'));
           }
         } else {

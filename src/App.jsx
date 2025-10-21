@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ClipLoader } from 'react-spinners';
+import { useAuth } from './context/AuthContext';
 
 // Layouts
 import BuyerLayout from './layouts/BuyerLayout';
@@ -11,15 +12,14 @@ import PublicLayout from './layouts/PublicLayout';
 
 // Pages
 import NotFound from './pages/NotFound/NotFound';
-import RedirectHome from './pages/RedirectHome';
+import Landing from './pages/Landing/Landing';
 
 const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const { user, role, loading } = useAuth(); // use new AuthContext
 
-  // Group routes by layout type
   const layoutRoutes = {
     public: [],
     guest: [],
@@ -27,12 +27,10 @@ function App() {
     supplier: [],
   };
 
-  // Dynamically map pages to routes + assign layout group
   Object.entries(pages).forEach(([filePath, resolver]) => {
     let routePath = filePath.replace('./pages', '').replace('.jsx', '');
     const parts = routePath.split('/').filter(Boolean);
 
-    // Drop duplicate folder name if repeated (AboutUs/AboutUs.jsx)
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
@@ -52,14 +50,12 @@ function App() {
         )
         .join('/');
 
-    if (routePath === '/landing') routePath = '/landing';
     if (routePath === '/not-found') routePath = '*';
 
     const PageComponent = React.lazy(() =>
       resolver().then((mod) => ({ default: mod.default })),
     );
 
-    // Layout detection based on folder
     if (routePath.startsWith('/buyer/'))
       layoutRoutes.buyer.push({ path: routePath, Component: PageComponent });
     else if (routePath.startsWith('/supplier/'))
@@ -68,6 +64,14 @@ function App() {
       layoutRoutes.public.push({ path: routePath, Component: PageComponent });
     else layoutRoutes.guest.push({ path: routePath, Component: PageComponent });
   });
+
+  if (loading) {
+    return (
+      <div className="loader-center">
+        <ClipLoader color="#543361" size={60} />
+      </div>
+    );
+  }
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
@@ -78,17 +82,17 @@ function App() {
           </div>
         }
       >
-        {' '}
         <Routes>
-          {/* Public pages */}
+          {/* Public pages (login/signup/etc) */}
           <Route element={<PublicLayout />}>
             {layoutRoutes.public.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
           </Route>
 
-          {/* Guest pages */}
+          {/* Guest pages (non-logged-in browsing, landing, products) */}
           <Route element={<GuestLayout />}>
+            <Route path="/landing" element={<Landing />} />
             {layoutRoutes.guest.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
@@ -97,11 +101,7 @@ function App() {
           {/* Buyer pages */}
           <Route
             element={
-              user?.role === 'buyer' ? (
-                <BuyerLayout />
-              ) : (
-                <Navigate to="/login" />
-              )
+              role === 'buyer' ? <BuyerLayout /> : <Navigate to="/landing" />
             }
           >
             {layoutRoutes.buyer.map(({ path, Component }) => (
@@ -112,10 +112,10 @@ function App() {
           {/* Supplier pages */}
           <Route
             element={
-              user?.role === 'supplier' ? (
+              role === 'supplier' ? (
                 <SupplierLayout />
               ) : (
-                <Navigate to="/login" />
+                <Navigate to="/landing" />
               )
             }
           >
@@ -124,10 +124,21 @@ function App() {
             ))}
           </Route>
 
-          {/* Redirect root */}
-          <Route path="/" element={<RedirectHome />} />
+          {/* Root / redirect */}
+          <Route
+            path="/"
+            element={
+              role === 'buyer' ? (
+                <Navigate to="/buyer/homepage" replace />
+              ) : role === 'supplier' ? (
+                <Navigate to="/supplier/homepage" replace />
+              ) : (
+                <Navigate to="/landing" replace />
+              )
+            }
+          />
 
-          {/* Fallback 404 */}
+          {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </React.Suspense>

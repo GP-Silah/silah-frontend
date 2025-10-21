@@ -8,27 +8,61 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState('guest');
   const [loading, setLoading] = useState(true);
 
+  const hasToken = () => document.cookie.includes('token');
+
   useEffect(() => {
-    // check current user from backend
-    axios;
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/users/me`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        const userData = res.data;
-        setUser(userData);
-        setRole(userData.role.toLowerCase() || 'guest');
-      })
-      .catch(() => {
+    const fetchUser = async () => {
+      if (!hasToken()) {
         setUser(null);
         setRole('guest');
-      })
-      .finally(() => setLoading(false));
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+          {
+            withCredentials: true,
+          },
+        );
+        setUser(res.data);
+        setRole(res.data.role?.toLowerCase() || 'guest');
+      } catch {
+        setUser(null);
+        setRole('guest');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
+  const refreshUser = async () => {
+    if (!hasToken()) {
+      setUser(null);
+      setRole('guest');
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+        {
+          withCredentials: true,
+        },
+      );
+      setUser(res.data);
+      setRole(res.data.role?.toLowerCase());
+    } catch {
+      setUser(null);
+      setRole('guest');
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, role, loading }}>
+    <AuthContext.Provider value={{ user, role, loading, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
