@@ -18,7 +18,7 @@ const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
-  const { user, role, loading } = useAuth();
+  const { role, loading } = useAuth();
 
   const layoutRoutes = {
     public: [],
@@ -73,6 +73,14 @@ function App() {
     );
   }
 
+  // Central redirect logic for both `/` and `/landing`
+  const redirectByRole = () => {
+    if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
+    if (role === 'supplier')
+      return <Navigate to="/supplier/homepage" replace />;
+    return <Navigate to="/landing" replace />;
+  };
+
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
       <React.Suspense
@@ -92,7 +100,7 @@ function App() {
 
           {/* Guest pages (non-logged-in browsing, landing, products) */}
           <Route element={<GuestLayout />}>
-            <Route path="/landing" element={<Landing />} />
+            <Route path="/landing" element={redirectByRole()} />
             {layoutRoutes.guest.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
@@ -125,18 +133,7 @@ function App() {
           </Route>
 
           {/* Root / redirect */}
-          <Route
-            path="/"
-            element={
-              role === 'buyer' ? (
-                <Navigate to="/buyer/homepage" replace />
-              ) : role === 'supplier' ? (
-                <Navigate to="/supplier/homepage" replace />
-              ) : (
-                <Navigate to="/landing" replace />
-              )
-            }
-          />
+          <Route path="/" element={redirectByRole()} />
 
           {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />

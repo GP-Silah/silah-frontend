@@ -8,27 +8,22 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState('guest');
   const [loading, setLoading] = useState(true);
 
-  const hasToken = () => document.cookie.includes('token');
-
+  // Fetch current user from backend
   useEffect(() => {
     const fetchUser = async () => {
-      if (!hasToken()) {
-        setUser(null);
-        setRole('guest');
-        setLoading(false);
-        return;
-      }
-
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-          {
-            withCredentials: true,
-          },
+          { withCredentials: true },
         );
+        console.log('Fetched user successfully:', res.data);
         setUser(res.data);
         setRole(res.data.role?.toLowerCase() || 'guest');
-      } catch {
+      } catch (err) {
+        console.warn(
+          'Failed to fetch user:',
+          err.response?.data || err.message,
+        );
         setUser(null);
         setRole('guest');
       } finally {
@@ -39,22 +34,15 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, []);
 
+  // Allow manual refresh (after login/signup)
   const refreshUser = async () => {
-    if (!hasToken()) {
-      setUser(null);
-      setRole('guest');
-      return;
-    }
-
     try {
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-        {
-          withCredentials: true,
-        },
+        { withCredentials: true },
       );
       setUser(res.data);
-      setRole(res.data.role?.toLowerCase());
+      setRole(res.data.role?.toLowerCase() || 'guest');
     } catch {
       setUser(null);
       setRole('guest');
