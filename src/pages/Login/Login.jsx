@@ -50,12 +50,28 @@ function Login() {
       await refreshUser(); // force fetch /me
       navigate('/'); // redirect to homepage
     } catch (err) {
-      console.log('Login error:', err); // <--- add this
-      const msg = err.response?.data?.message;
-      if (msg === 'User not found') {
+      console.log('Login error:', err);
+
+      // Handle real + swagger formats, and handle arrays safely
+      let backendMessage =
+        err.response?.data?.error?.message || err.response?.data?.message;
+
+      // If the backend sent an array (e.g. ["Password must be at least 8 characters"])
+      if (Array.isArray(backendMessage)) {
+        backendMessage = backendMessage.join(', ');
+      }
+
+      if (backendMessage === 'User not found') {
         setError(t('errors.userNotFound'));
-      } else if (msg === 'Invalid credentials') {
+      } else if (backendMessage === 'Invalid credentials') {
         setError(t('errors.invalidCredentials'));
+      } else if (
+        typeof backendMessage === 'string' &&
+        backendMessage.toLowerCase().includes('token')
+      ) {
+        setError(t('errors.sessionExpired'));
+      } else if (backendMessage) {
+        setError(backendMessage); // show backend message directly
       } else {
         setError(t('errors.network'));
       }

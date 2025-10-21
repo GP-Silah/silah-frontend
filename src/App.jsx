@@ -18,7 +18,7 @@ const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
-  const { user, role, loading } = useAuth(); // use new AuthContext
+  const { user, role, loading } = useAuth();
 
   const layoutRoutes = {
     public: [],

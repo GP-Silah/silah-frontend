@@ -145,8 +145,14 @@ function Signup() {
         // if we reach here → signup succeeded
         navigate('/verify-email', { state: { email: formData.email } });
       } catch (err) {
-        if (err.response?.data?.message) {
-          const msg = err.response.data.message;
+        console.log(err);
+
+        // Handle real + swagger formats, and handle arrays safely
+        let backendMessage =
+          err.response?.data?.error?.message || err.response?.data?.message;
+
+        if (backendMessage) {
+          const msg = backendMessage;
 
           if (msg.includes('NID already exists')) {
             setFormErrors((prev) => ({
