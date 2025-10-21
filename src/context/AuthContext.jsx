@@ -16,7 +16,6 @@ export function AuthProvider({ children }) {
           `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
           { withCredentials: true },
         );
-        console.log('Fetched user successfully:', res.data);
         setUser(res.data);
         setRole(res.data.role?.toLowerCase() || 'guest');
       } catch (err) {
