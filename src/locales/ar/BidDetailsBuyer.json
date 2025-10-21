@@ -1,15 +1,11 @@
 {
-  "title": "تفاصيل المناقصة",
-  "bidName": "اسم المناقصة:",
+  "title": "فيما يلي تفاصيل العطاء الخاص بك:",
+  "bidName": "اسم العطاء:",
   "mainActivity": "النشاط الرئيسي:",
   "organizationName": "اسم الجهة:",
-  "referenceNumber": "الرقم المرجعي:",
-  "timeRemaining": "المدة المتبقية:",
+  "referenceNumber": "رقم المرجع:",
+  "timeRemaining": "الوقت المتبقي:",
   "publicationDate": "تاريخ النشر:",
   "submissionDeadline": "آخر موعد للتقديم:",
-  "expectedResponse": "المدة المتوقعة للرد:",
-  "about": "من نحن",
-  "terms": "شروط الاستخدام",
-  "privacy": "سياسة الخصوصية",
-  "contact": "تواصل معنا"
+  "expectedResponse": "المدة المتوقعة للرد:"
 }
