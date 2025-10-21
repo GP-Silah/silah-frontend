@@ -1,5 +1,5 @@
 {
-  "title": "Bid Details",
+  "title": "Here are the details of your bid:",
   "bidName": "Bid Name:",
   "mainActivity": "Main Activity:",
   "organizationName": "Organization Name:",
@@ -7,9 +7,5 @@
   "timeRemaining": "Time Remaining:",
   "publicationDate": "Publication Date:",
   "submissionDeadline": "Submission Deadline:",
-  "expectedResponse": "Expected Response Time:",
-  "about": "About Us",
-  "terms": "Terms of Service",
-  "privacy": "Privacy Policy",
-  "contact": "Contact Us"
+  "expectedResponse": "Expected Response Time:"
 }

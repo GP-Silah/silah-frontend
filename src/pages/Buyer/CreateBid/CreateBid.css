@@ -1,89 +1,157 @@
-.create-bid-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  background-color: #f6f6f8;
-  min-height: 100vh;
-  padding: 40px 20px;
-  margin-left: 250px;
+:root {
+  --silah-purple: #5a2a6e;
+  --silah-purple-press: #4d235f;
+  --card-border: #e5e5ea;
+  --text: #1c1c1e;
+  --muted: #6b7280;
+  --bg: #f7f7fb;
+  --white: #ffffff;
 }
 
-.bid-card {
-  background: #fff;
-  padding: 50px 60px;
+html,
+body,
+#root {
+  height: 100%;
+  background: var(--bg);
+}
+
+.cb-page {
+  display: grid;
+  place-items: start center;
+  min-height: 100dvh;
+  padding: 40px 16px 80px;
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Tajawal',
+    sans-serif;
+}
+
+.cb-card {
+  width: min(860px, 100%);
+  background: var(--white);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  max-width: 700px;
-  width: 100%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  padding: 28px 32px 32px;
 }
 
-.bid-title {
+.cb-title {
   text-align: center;
-  color: var(--purple);
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 40px;
+  color: var(--silah-purple);
+  margin: 4px 0 20px;
 }
 
-.bid-form {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+.cb-form {
+  display: grid;
+  gap: 18px;
 }
 
-.bid-field {
-  display: flex;
-  flex-direction: column;
+.cb-field {
+  display: grid;
   gap: 8px;
 }
 
-.bid-field label {
-  font-weight: 600;
-  color: #333;
+.cb-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cb-input,
+.cb-select {
+  width: 100%;
   font-size: 15px;
-}
-
-.bid-field input,
-.bid-field select {
-  border: none;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-  font-size: 15px;
-  outline: none;
-  background: transparent;
-}
-
-.bid-field input:focus,
-.bid-field select:focus {
-  border-bottom: 1px solid var(--purple);
-}
-
-.date-input {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.date-input i {
-  color: var(--purple);
-  font-size: 18px;
-}
-
-.publish-btn {
-  display: block;
-  margin: 30px auto 0;
-  background-color: var(--purple);
-  color: white;
-  border: none;
+  padding: 12px 14px;
+  border: 1px solid var(--card-border);
   border-radius: 8px;
-  padding: 12px 30px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
+  background: var(--white);
+  outline: none;
 }
 
-.publish-btn:hover {
-  background-color: #5e3585;
+.cb-input:focus,
+.cb-select:focus {
+  border-color: var(--silah-purple);
+  box-shadow: 0 0 0 3px rgba(90, 42, 110, 0.12);
+}
+
+.cb-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cb-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cb-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.cb-btn {
+  appearance: none;
+  border: none;
+  background: var(--silah-purple);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+  padding: 12px 22px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cb-btn:hover {
+  background: var(--silah-purple-press);
+}
+.cb-btn:active {
+  transform: translateY(1px);
+}
+
+.cb-footer {
+  margin-top: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cb-footer-links {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.cb-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.cb-footer a:hover {
+  text-decoration: underline;
+}
+
+/*  RTL/LTR handling  */
+/* We rely on [data-dir] so the component works even if the app doesn't set html[dir] */
+.cb-page[data-dir='rtl'] .cb-label,
+.cb-page[data-dir='rtl'] .cb-hint,
+.cb-page[data-dir='rtl'] input,
+.cb-page[data-dir='rtl'] select {
+  text-align: right;
+}
+
+.cb-page[data-dir='rtl'] .cb-row {
+  flex-direction: row-reverse;
+}
+.cb-page[data-dir='rtl'] .cb-footer-links {
+  direction: rtl;
+}
+
+/* Use logical properties so spacing flips automatically */
+.cb-input,
+.cb-select {
+  padding-inline: 14px;
 }
