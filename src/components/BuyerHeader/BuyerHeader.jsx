@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  FaGlobe,
   FaSearch,
-  FaShoppingCart,
   FaBell,
-  FaUser,
   FaEnvelope,
+  FaGavel,
+  FaShoppingCart,
   FaFileInvoice,
-  FaClipboardList,
+  FaHeart,
+  FaCog,
+  FaExchangeAlt,
+  FaSignOutAlt,
+  FaUser,
+  FaGlobe,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -18,17 +22,21 @@ import './BuyerHeader.css';
 const BuyerHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
+
   const [categories, setCategories] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const dropdownRef = useRef(null);
+  const profileRef = useRef(null);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
   };
 
-  // Fetch categories
+  // === Fetch Categories ===
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
@@ -39,9 +47,8 @@ const BuyerHeader = () => {
       .catch((err) => console.error('Failed to load categories', err));
   }, [i18n.language]);
 
-  // Fetch unread notifications and set up SSE
+  // === Notifications (Fetch + SSE) ===
   useEffect(() => {
-    // Initial fetch
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`, {
         params: { lang: i18n.language },
@@ -50,7 +57,6 @@ const BuyerHeader = () => {
       .then((res) => setNotifications(res.data))
       .catch((err) => console.error('Failed to load notifications', err));
 
-    // SSE for live notifications
     const eventSource = new EventSource(
       `${import.meta.env.VITE_BACKEND_URL}/api/notifications/stream`,
       { withCredentials: true },
@@ -58,7 +64,7 @@ const BuyerHeader = () => {
 
     eventSource.onmessage = (e) => {
       try {
-        const parsed = JSON.parse(JSON.parse(e.data).data); // double parse
+        const parsed = JSON.parse(JSON.parse(e.data).data);
         setNotifications((prev) => [parsed, ...prev]);
       } catch (err) {
         console.error('Failed to parse notification', err);
@@ -68,18 +74,19 @@ const BuyerHeader = () => {
     return () => eventSource.close();
   }, [i18n.language]);
 
-  // Handle outside click to close dropdown
+  // === Close dropdowns when clicking outside ===
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
 
   const markAllAsRead = async () => {
     const unreadIds = notifications
@@ -125,7 +132,7 @@ const BuyerHeader = () => {
       </div>
 
       <div className="header-right">
-        {/* Cart Icon */}
+        {/* === Cart === */}
         <button
           className="icon-btn"
           onClick={() => navigate('/buyer/cart')}
@@ -134,11 +141,11 @@ const BuyerHeader = () => {
           <FaShoppingCart />
         </button>
 
-        {/* Notifications Icon */}
+        {/* === Notifications === */}
         <div className="notification-wrapper" ref={dropdownRef}>
           <button
             className="icon-btn"
-            onClick={toggleDropdown}
+            onClick={() => setDropdownOpen((prev) => !prev)}
             title={t('notifications')}
           >
             <FaBell />
@@ -163,7 +170,6 @@ const BuyerHeader = () => {
                         n.isRead ? '' : 'unread'
                       }`}
                     >
-                      {/* Optional: Icon based on n.notificationType */}
                       <div className="notification-content">
                         <strong>{n.title}</strong>
                         <p>{n.content}</p>
@@ -190,12 +196,66 @@ const BuyerHeader = () => {
           )}
         </div>
 
-        {/* Profile Icon */}
-        <button className="icon-btn" title={t('profile')}>
-          <FaUser />
-        </button>
+        {/* === Profile === */}
+        <div className="profile-wrapper" ref={profileRef}>
+          <button
+            className="icon-btn"
+            onClick={() => setProfileOpen((prev) => !prev)}
+            title={t('profile')}
+          >
+            <FaUser />
+          </button>
 
-        {/* Language toggle */}
+          {profileOpen && (
+            <div className="profile-dropdown">
+              {/* Top Section */}
+              <div className="profile-info">
+                <h4 className="business-name">Amazing Company</h4>
+                <p className="managed-by">
+                  {t('profileChoices.managedBy')}: <span>Name</span>
+                </p>
+              </div>
+
+              <div className="divider" />
+
+              {/* Middle Section */}
+              <div className="profile-actions">
+                <button className="profile-item">
+                  <FaEnvelope /> {t('profileChoices.directMessaging')}
+                </button>
+                <button className="profile-item">
+                  <FaGavel /> {t('profileChoices.biddings')}
+                </button>
+                <button className="profile-item">
+                  <FaShoppingCart /> {t('profileChoices.orders')}
+                </button>
+                <button className="profile-item">
+                  <FaFileInvoice /> {t('profileChoices.invoices')}
+                </button>
+                <button className="profile-item">
+                  <FaHeart /> {t('profileChoices.wishlist')}
+                </button>
+                <button className="profile-item">
+                  <FaCog /> {t('profileChoices.settings')}
+                </button>
+              </div>
+
+              <div className="divider" />
+
+              {/* Bottom Section */}
+              <div className="profile-actions">
+                <button className="profile-item highlight">
+                  <FaExchangeAlt /> {t('profileChoices.changeRoleToSupplier')}
+                </button>
+                <button className="profile-item logout">
+                  <FaSignOutAlt /> {t('profileChoices.logout')}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* === Language Toggle === */}
         <button className="language-toggle" onClick={toggleLanguage}>
           <FaGlobe />
         </button>

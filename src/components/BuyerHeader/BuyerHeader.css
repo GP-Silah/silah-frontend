@@ -193,3 +193,95 @@
     transform: translateY(0);
   }
 }
+
+.supplier {
+  color: #543361;
+}
+
+/* ===== Profile Menu ===== */
+.profile-wrapper {
+  position: relative;
+}
+
+.profile-dropdown {
+  position: absolute;
+  right: -165%;
+  top: 160%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 280px;
+  padding: 12px 0;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+}
+
+.profile-info {
+  text-align: center;
+  padding: 10px 16px;
+}
+
+.profile-info .business-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.profile-info .managed-by {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 8px 0;
+}
+
+/* Middle and Bottom sections */
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #333;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.profile-item:hover {
+  background-color: #f0f6fc;
+}
+
+.profile-item svg {
+  color: #2563eb;
+  min-width: 18px;
+}
+
+/* Highlighted (change role) */
+.profile-item.highlight {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* Logout */
+.profile-item.logout {
+  color: #dc2626;
+}
+
+.profile-item.logout svg {
+  color: #dc2626;
+}

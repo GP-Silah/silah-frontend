@@ -1,8 +1,15 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ClipLoader } from 'react-spinners';
 import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 
 // Layouts
 import BuyerLayout from './layouts/BuyerLayout';
@@ -16,21 +23,28 @@ import Landing from './pages/Landing/Landing';
 
 const pages = import.meta.glob('./pages/**/*.jsx');
 
-function App() {
+export default function App() {
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { role, loading } = useAuth();
 
-  const layoutRoutes = {
-    public: [],
-    guest: [],
-    buyer: [],
-    supplier: [],
-  };
+  // Automatically redirect from "/" to the appropriate page
+  useEffect(() => {
+    if (!loading && location.pathname === '/') {
+      if (role === 'buyer') navigate('/buyer/homepage', { replace: true });
+      else if (role === 'supplier')
+        navigate('/supplier/homepage', { replace: true });
+      else navigate('/landing', { replace: true });
+    }
+  }, [role, loading, location.pathname, navigate]);
+
+  // Collect pages by layout/role
+  const layoutRoutes = { public: [], guest: [], buyer: [], supplier: [] };
 
   Object.entries(pages).forEach(([filePath, resolver]) => {
     let routePath = filePath.replace('./pages', '').replace('.jsx', '');
     const parts = routePath.split('/').filter(Boolean);
-
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
@@ -38,7 +52,6 @@ function App() {
     ) {
       parts.pop();
     }
-
     routePath =
       '/' +
       parts
@@ -49,7 +62,6 @@ function App() {
             .toLowerCase(),
         )
         .join('/');
-
     if (routePath === '/not-found') routePath = '*';
 
     const PageComponent = React.lazy(() =>
@@ -60,26 +72,17 @@ function App() {
       layoutRoutes.buyer.push({ path: routePath, Component: PageComponent });
     else if (routePath.startsWith('/supplier/'))
       layoutRoutes.supplier.push({ path: routePath, Component: PageComponent });
-    else if (['/login', '/signup', '/verify-email', '*'].includes(routePath))
+    else if (['/login', '/signup', '/verify-email'].includes(routePath))
       layoutRoutes.public.push({ path: routePath, Component: PageComponent });
     else layoutRoutes.guest.push({ path: routePath, Component: PageComponent });
   });
 
-  if (loading) {
+  if (loading)
     return (
       <div className="loader-center">
         <ClipLoader color="#543361" size={60} />
       </div>
     );
-  }
-
-  // Central redirect logic for both `/` and `/landing`
-  const redirectByRole = () => {
-    if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
-    if (role === 'supplier')
-      return <Navigate to="/supplier/homepage" replace />;
-    return <Navigate to="/landing" replace />;
-  };
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
@@ -91,49 +94,55 @@ function App() {
         }
       >
         <Routes>
-          {/* Public pages (login/signup/etc) */}
+          {/* Public pages: login/signup/verify-email */}
           <Route element={<PublicLayout />}>
             {layoutRoutes.public.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
           </Route>
 
-          {/* Guest pages (non-logged-in browsing, landing, products) */}
+          {/* Guest pages: landing, etc */}
           <Route element={<GuestLayout />}>
-            <Route path="/landing" element={redirectByRole()} />
+            <Route path="/landing" element={<Landing />} />
             {layoutRoutes.guest.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
           </Route>
 
           {/* Buyer pages */}
-          <Route
-            element={
-              role === 'buyer' ? <BuyerLayout /> : <Navigate to="/landing" />
-            }
-          >
-            {layoutRoutes.buyer.map(({ path, Component }) => (
-              <Route key={path} path={path} element={<Component />} />
-            ))}
+          <Route element={<BuyerLayout />}>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={['buyer']}
+                  redirectTo="/landing"
+                />
+              }
+            >
+              {layoutRoutes.buyer.map(({ path, Component }) => (
+                <Route key={path} path={path} element={<Component />} />
+              ))}
+            </Route>
           </Route>
 
           {/* Supplier pages */}
-          <Route
-            element={
-              role === 'supplier' ? (
-                <SupplierLayout />
-              ) : (
-                <Navigate to="/landing" />
-              )
-            }
-          >
-            {layoutRoutes.supplier.map(({ path, Component }) => (
-              <Route key={path} path={path} element={<Component />} />
-            ))}
+          <Route element={<SupplierLayout />}>
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={['supplier']}
+                  redirectTo="/landing"
+                />
+              }
+            >
+              {layoutRoutes.supplier.map(({ path, Component }) => (
+                <Route key={path} path={path} element={<Component />} />
+              ))}
+            </Route>
           </Route>
 
-          {/* Root / redirect */}
-          <Route path="/" element={redirectByRole()} />
+          {/* Root "/" */}
+          <Route path="/" element={<Navigate to="/landing" replace />} />
 
           {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
@@ -142,5 +151,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
