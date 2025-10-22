@@ -1,97 +1,121 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './CreateBid.css';
 
 export default function CreateBid() {
-  const [bid, setBid] = useState({
-    name: '',
-    activity: '',
-    submission: '',
-    response: '',
+  const { t, i18n } = useTranslation('createBid');
+
+  // direction: sync <html dir> + component container
+  useEffect(() => {
+    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+  }, [i18n.language]);
+
+  const [form, setForm] = useState({
+    bidName: '',
+    mainActivity: '',
+    submissionDeadline: '',
+    responseDeadline: '2w', // default like the mock
   });
 
   const handleChange = (e) => {
-    setBid({ ...bid, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Bid published successfully!');
+    // TODO: hook with backend
+    alert(t('publishSuccess'));
   };
 
+  // min date = today
+  const todayISO = new Date().toISOString().split('T')[0];
+
   return (
-    <div className="dashboard-container">
-      <Sidebar />
+    <div className="cb-page" data-dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="cb-card">
+        <h1 className="cb-title">{t('title')}</h1>
 
-      <div className="create-bid-container">
-        <div className="bid-card">
-          <h2 className="bid-title">Create a New Bid</h2>
+        <form className="cb-form" onSubmit={handleSubmit}>
+          {/* Bid Name */}
+          <div className="cb-field">
+            <label htmlFor="bidName" className="cb-label">
+              {t('bidName.label')}
+            </label>
+            <input
+              id="bidName"
+              name="bidName"
+              type="text"
+              className="cb-input"
+              placeholder={t('bidName.placeholder')}
+              value={form.bidName}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <form className="bid-form" onSubmit={handleSubmit}>
-            {/* Bid Name */}
-            <div className="bid-field">
-              <label>Bid Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Supply and Installation of Smart Street Lighting Systems"
-                value={bid.name}
-                onChange={handleChange}
-              />
-            </div>
+          {/* Main Activity */}
+          <div className="cb-field">
+            <label htmlFor="mainActivity" className="cb-label">
+              {t('mainActivity.label')}
+            </label>
+            <input
+              id="mainActivity"
+              name="mainActivity"
+              type="text"
+              className="cb-input"
+              placeholder={t('mainActivity.placeholder')}
+              value={form.mainActivity}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            {/* Main Activity */}
-            <div className="bid-field">
-              <label>Main Activity</label>
-              <input
-                type="text"
-                name="activity"
-                placeholder="Electrical Works & Lighting - Installation and Maintenance of Electrical Systems"
-                value={bid.activity}
-                onChange={handleChange}
-              />
-            </div>
+          {/* Submission Deadline */}
+          <div className="cb-field">
+            <label htmlFor="submissionDeadline" className="cb-label">
+              {t('submissionDeadline.label')}
+            </label>
+            <input
+              id="submissionDeadline"
+              name="submissionDeadline"
+              type="date"
+              className="cb-input"
+              min={todayISO}
+              value={form.submissionDeadline}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-            {/* Submission Deadline */}
-            <div className="bid-field">
-              <label>Submission Deadline</label>
-              <div className="date-input">
-                <i className="fa-regular fa-calendar"></i>
-                <input
-                  type="date"
-                  name="submission"
-                  value={bid.submission}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            {/* Response Deadline */}
-            <div className="bid-field">
-              <label>Response Deadline for Offers</label>
+          {/* Response Deadline for Offers */}
+          <div className="cb-field">
+            <label htmlFor="responseDeadline" className="cb-label">
+              {t('responseDeadline.label')}
+            </label>
+            <div className="cb-row">
               <select
-                name="response"
-                value={bid.response}
+                id="responseDeadline"
+                name="responseDeadline"
+                className="cb-select"
+                value={form.responseDeadline}
                 onChange={handleChange}
               >
-                <option value="">Select...</option>
-                <option value="1 week">
-                  1 week after the submission deadline
-                </option>
-                <option value="2 weeks">
-                  2 weeks after the submission deadline
-                </option>
-                <option value="1 month">
-                  1 month after the submission deadline
-                </option>
+                <option value="1w">{t('responseDeadline.options.1w')}</option>
+                <option value="2w">{t('responseDeadline.options.2w')}</option>
+                <option value="3w">{t('responseDeadline.options.3w')}</option>
+                <option value="1m">{t('responseDeadline.options.1m')}</option>
               </select>
             </div>
+          </div>
 
-            {/* Publish Button */}
-            <button type="submit" className="publish-btn">
-              Publish Bid
+          <div className="cb-actions">
+            <button type="submit" className="cb-btn">
+              {t('publishBtn')}
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );
