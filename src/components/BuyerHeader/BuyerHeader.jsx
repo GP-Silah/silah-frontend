@@ -16,21 +16,25 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 import './BuyerHeader.css';
 
 const BuyerHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
+  const { user, refreshUser, handleLogout } = useAuth();
 
   const [categories, setCategories] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
 
   const dropdownRef = useRef(null);
   const profileRef = useRef(null);
 
+  // === Toggle Language ===
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
@@ -47,7 +51,7 @@ const BuyerHeader = () => {
       .catch((err) => console.error('Failed to load categories', err));
   }, [i18n.language]);
 
-  // === Notifications (Fetch + SSE) ===
+  // === Fetch Notifications (and setup SSE) ===
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`, {
@@ -74,13 +78,13 @@ const BuyerHeader = () => {
     return () => eventSource.close();
   }, [i18n.language]);
 
-  // === Close dropdowns when clicking outside ===
+  // === Close dropdowns on outside click ===
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
       }
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
     };
@@ -88,11 +92,12 @@ const BuyerHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // === Mark Notifications as Read ===
   const markAllAsRead = async () => {
     const unreadIds = notifications
       .filter((n) => !n.isRead)
       .map((n) => n.notificationId);
-    if (unreadIds.length === 0) return;
+    if (!unreadIds.length) return;
 
     try {
       await axios.patch(
@@ -104,6 +109,40 @@ const BuyerHeader = () => {
     } catch (err) {
       console.error('Failed to mark notifications as read', err);
     }
+  };
+
+  // === Handle Role Switch ===
+  const handleSwitchRole = async () => {
+    if (switching) return;
+    setSwitching(true);
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/switch-role`,
+        {},
+        { withCredentials: true },
+      );
+
+      await refreshUser();
+
+      const newRole = res.data?.newRole?.toLowerCase();
+      if (newRole === 'supplier') navigate('/supplier/overview');
+      else navigate('/');
+    } catch (err) {
+      const msg =
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        err.message;
+      console.error('Failed to switch role:', msg);
+      alert(t('profileChoices.roleSwitchError') || msg);
+    } finally {
+      setSwitching(false);
+    }
+  };
+
+  // === Handle Logout ===
+  const handleLogoutClick = async () => {
+    await handleLogout();
+    navigate('/');
   };
 
   return (
@@ -121,6 +160,7 @@ const BuyerHeader = () => {
         <CategoryMegamenu categories={categories} lang={i18n.language} />
       </div>
 
+      {/* === Search === */}
       <div className="search-bar">
         <FaSearch className="search-icon" />
         <input type="text" placeholder={t('searchPlaceholder')} />
@@ -131,6 +171,7 @@ const BuyerHeader = () => {
         </select>
       </div>
 
+      {/* === Right Section === */}
       <div className="header-right">
         {/* === Cart === */}
         <button
@@ -156,12 +197,7 @@ const BuyerHeader = () => {
             <div className="notification-dropdown">
               <div className="notification-list">
                 {notifications.length === 0 ? (
-                  <div
-                    className="notif-item"
-                    style={{ justifyContent: 'center', color: '#555' }}
-                  >
-                    {t('noNotifications')}
-                  </div>
+                  <div className="notif-item empty">{t('noNotifications')}</div>
                 ) : (
                   notifications.map((n) => (
                     <div
@@ -180,7 +216,7 @@ const BuyerHeader = () => {
               </div>
 
               {notifications.length > 0 && (
-                <>
+                <div className="notification-footer">
                   <button
                     className="view-all-btn"
                     onClick={() => navigate('/buyer/notifications')}
@@ -190,7 +226,7 @@ const BuyerHeader = () => {
                   <button className="mark-read-btn" onClick={markAllAsRead}>
                     {t('markAllRead')}
                   </button>
-                </>
+                </div>
               )}
             </div>
           )}
@@ -200,19 +236,30 @@ const BuyerHeader = () => {
         <div className="profile-wrapper" ref={profileRef}>
           <button
             className="icon-btn"
-            onClick={() => setProfileOpen((prev) => !prev)}
+            onClick={() => setProfileOpen((p) => !p)}
             title={t('profile')}
           >
-            <FaUser />
+            {user?.pfpUrl ? (
+              <img
+                src={user.pfpUrl}
+                alt="Profile"
+                className="profile-pic"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <FaUser />
+            )}
           </button>
 
           {profileOpen && (
             <div className="profile-dropdown">
               {/* Top Section */}
               <div className="profile-info">
-                <h4 className="business-name">Amazing Company</h4>
+                <h4 className="business-name">
+                  {user?.businessName || t('profileChoices.noBusinessName')}
+                </h4>
                 <p className="managed-by">
-                  {t('profileChoices.managedBy')}: <span>Name</span>
+                  {t('profileChoices.managedBy')}: <span>{user?.name}</span>
                 </p>
               </div>
 
@@ -244,10 +291,20 @@ const BuyerHeader = () => {
 
               {/* Bottom Section */}
               <div className="profile-actions">
-                <button className="profile-item highlight">
-                  <FaExchangeAlt /> {t('profileChoices.changeRoleToSupplier')}
+                <button
+                  className="profile-item highlight"
+                  onClick={handleSwitchRole}
+                  disabled={switching}
+                >
+                  <FaExchangeAlt />
+                  {switching
+                    ? t('profileChoices.switching')
+                    : t('profileChoices.changeRoleToSupplier')}
                 </button>
-                <button className="profile-item logout">
+                <button
+                  className="profile-item logout"
+                  onClick={handleLogoutClick}
+                >
                   <FaSignOutAlt /> {t('profileChoices.logout')}
                 </button>
               </div>

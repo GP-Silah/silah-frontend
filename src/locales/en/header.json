@@ -24,6 +24,7 @@
     "settings": "Settings",
     "changeRoleToSupplier": "Change Role to Supplier",
     "changeRoleToBuyer": "Change Role to Buyer",
+    "switching": "We are changing your role...",
     "logout": "Log out"
   }
 }

@@ -30,13 +30,13 @@
   border: none;
   cursor: pointer;
   font-size: 18px;
-  color: #2563eb; /* main blue */
+  color: #517fbf; /* main blue */
   transition: color 0.2s;
 }
 
 .buyer-header .language-toggle:hover,
 .buyer-header .icon-btn:hover {
-  color: #1e40af; /* darker blue on hover */
+  color: #476dae; /* darker blue on hover */
 }
 
 .buyer-header .search-bar {
@@ -61,14 +61,14 @@
 
 .buyer-header .search-icon {
   margin-right: 8px;
-  color: #3b82f6; /* medium blue */
+  color: #555;
 }
 
 .buyer-header .product-select {
   padding: 6px 12px;
   border-radius: 24px;
   border: none;
-  background-color: #f0f6fc;
+  background-color: #e3edf6;
   font-size: 14px;
   color: #333;
 }
@@ -93,11 +93,10 @@
   right: 0;
   width: 8px;
   height: 8px;
-  background-color: #2563eb; /* main blue */
+  background-color: #517fbf; /* main blue */
   border-radius: 50%;
 }
 
-/* Notification dropdown stays largely the same, but allow scroll and add mark-all-read button */
 .notification-dropdown {
   position: absolute;
   right: -200%;
@@ -114,7 +113,7 @@
 .notif-title {
   font-size: 15px;
   font-weight: 600;
-  color: #1e3a8a;
+  color: #252f46; /* darkest blue */
   margin-bottom: 10px;
   text-align: center;
 }
@@ -142,11 +141,11 @@
 }
 
 .notif-item.unread {
-  background-color: #f0f6fc; /* light blue for unread */
+  background-color: #e3edf6; /* light blue for unread */
 }
 
 .notif-icon {
-  color: #2563eb;
+  color: #517fbf;
   font-size: 16px;
   min-width: 20px;
 }
@@ -166,20 +165,20 @@
 }
 
 .view-all-btn {
-  background-color: #2563eb;
+  background-color: #517fbf;
 }
 
 .view-all-btn:hover {
-  background-color: #1e40af;
+  background-color: #476dae;
 }
 
 .mark-read-btn {
-  background-color: #1e40af;
+  background-color: #476dae;
   margin-top: 6px;
 }
 
 .mark-read-btn:hover {
-  background-color: #1b3a91;
+  background-color: #3e598f;
 }
 
 /* Fade-in animation for dropdown */
@@ -203,10 +202,15 @@
   position: relative;
 }
 
+.profile-pic {
+  height: 24px;
+  border-radius: 50px;
+}
+
 .profile-dropdown {
   position: absolute;
   right: -165%;
-  top: 160%;
+  top: 150%;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -224,7 +228,7 @@
 .profile-info .business-name {
   font-size: 15px;
   font-weight: 600;
-  color: #1e3a8a;
+  color: #252f46; /* darkest blue */
   margin: 0;
 }
 
@@ -263,21 +267,19 @@
 }
 
 .profile-item:hover {
-  background-color: #f0f6fc;
+  background-color: #e3edf6;
 }
 
 .profile-item svg {
-  color: #2563eb;
+  color: #517fbf;
   min-width: 18px;
 }
 
-/* Highlighted (change role) */
 .profile-item.highlight {
   font-weight: 600;
-  color: #2563eb;
+  color: #517fbf;
 }
 
-/* Logout */
 .profile-item.logout {
   color: #dc2626;
 }
