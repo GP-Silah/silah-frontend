@@ -1,9 +1,15 @@
+/* ----------------------------
+   Reset Page Container
+---------------------------- */
 .reset-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
+/* ----------------------------
+   Header
+---------------------------- */
 .reset-header {
   display: flex;
   justify-content: space-between;
@@ -15,6 +21,7 @@
   height: 28px;
   cursor: pointer;
 }
+
 .lang-btn {
   background: transparent;
   border: 1px solid #d7d7d7;
@@ -23,6 +30,9 @@
   cursor: pointer;
 }
 
+/* ----------------------------
+   Reset Form Container
+---------------------------- */
 .reset-container {
   flex: 1;
   max-width: 520px;
@@ -30,39 +40,49 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center; /* center content */
   justify-content: center;
   gap: 10px;
-  text-align: center;
+  text-align: center; /* center text for LTR and RTL */
 }
 
+/* Description */
 .reset-desc {
   color: #666;
   font-size: 0.95rem;
   margin-top: -4px;
 }
 
+/* Label */
 .reset-label {
-  text-align: left;
   margin-top: 8px;
   font-size: 0.95rem;
   color: #333;
 }
 
+/* Input */
 .reset-container input {
   height: 40px;
+  width: 100%;
+  max-width: 380px;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 0 12px;
   outline: none;
+  text-align: center; /* centered input */
 }
 
+/* ----------------------------
+   Button
+---------------------------- */
 .primary-btn {
   margin-top: 10px;
   height: 40px;
+  width: 100%;
+  max-width: 380px;
   border: none;
   border-radius: 8px;
-  background: #4e2c5a; /* بنفسجي زي تصميمكم */
+  background: #4e2c5a;
   color: #fff;
   cursor: pointer;
 }
@@ -72,6 +92,9 @@
   cursor: not-allowed;
 }
 
+/* ----------------------------
+   Timer
+---------------------------- */
 .timer {
   margin-top: 10px;
   color: #8f6a9a;
@@ -79,6 +102,9 @@
   letter-spacing: 0.5px;
 }
 
+/* ----------------------------
+   Back to login
+---------------------------- */
 .back-to-login {
   margin-top: 6px;
 }
@@ -88,17 +114,23 @@
   cursor: pointer;
 }
 
+/* ----------------------------
+   Error Message
+---------------------------- */
 .error-message {
   color: #b3261e;
   font-size: 0.9rem;
 }
 
+/* ----------------------------
+   Alerts
+---------------------------- */
 .alert {
   border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 10px;
   border: 1px solid transparent;
-  text-align: left;
+  text-align: center; /* centered alerts */
 }
 
 .alert.success {
@@ -111,8 +143,4 @@
   background: #fff4f3;
   border-color: #f3d0cd;
   color: #8a1d17;
-}
-
-html[dir='rtl'] .reset-label {
-  text-align: right;
 }

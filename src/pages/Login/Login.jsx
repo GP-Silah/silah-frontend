@@ -119,7 +119,7 @@ function Login() {
         <div className="login-options">
           <span
             className="text-link reset-link"
-            onClick={() => navigate('/reset-password')}
+            onClick={() => navigate('/request-password-reset')}
           >
             {t('resetPassword')}
           </span>

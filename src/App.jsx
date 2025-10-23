@@ -51,7 +51,16 @@ export default function App() {
       resolver().then((mod) => ({ default: mod.default })),
     );
 
-    if (['/login', '/signup', '/verify-email', '*'].includes(routePath))
+    if (
+      [
+        '/login',
+        '/signup',
+        '/verify-email',
+        '/request-password-reset',
+        '/password-reset',
+        '*',
+      ].includes(routePath)
+    )
       layoutRoutes.public.push({ path: routePath, Component: PageComponent });
     else if (routePath.startsWith('/buyer'))
       layoutRoutes.buyer.push({ path: routePath, Component: PageComponent });
