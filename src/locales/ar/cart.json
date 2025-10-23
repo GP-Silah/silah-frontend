@@ -1,0 +1,10 @@
+{
+  "title": "سلتك ({{count}} موردين)",
+  "deleteAll": "حذف الكل",
+  "outOfStock": "غير متوفر بالمخزون",
+  "productsTotal": "إجمالي المنتجات",
+  "deliveryFees": "رسوم التوصيل",
+  "cartTotal": "إجمالي السلة",
+  "checkout": "إتمام الطلب",
+  "removeOutOfStock": "احذف المنتجات غير المتوفرة لإكمال عملية الشراء"
+}
