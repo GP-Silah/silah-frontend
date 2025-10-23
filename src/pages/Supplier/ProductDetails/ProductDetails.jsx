@@ -1,45 +1,182 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SupplierSelectSubCategory from '@/components/SupplierSelectSubCategory/SupplierSelectSubCategory';
 import { FiPackage, FiClock } from 'react-icons/fi';
 import { FaRegEye, FaRegEyeSlash, FaRegTrashAlt } from 'react-icons/fa';
 import './SupplierProductDetails.css';
 
-/* ===== Mock API — replace with real endpoints later ===== */
-async function mockFetchProductById(id) {
-  return {
-    id,
-    name: 'Amber - 250ml Soy Candle',
-    description:
-      'Experience the warm and inviting aroma of the Amber 250ml Soy Candle. Crafted with premium soy wax and an amber blend, it creates a cozy atmosphere with a clean burn and minimal soot. Ideal for gifting or enhancing home ambiance.',
-    category: '',
-    images: ['/assets/mock/candle1.jpg', '/assets/mock/candle2.jpg'],
-    pricePerUnit: 10,
-    currency: '﷼',
-    caseQty: 4,
-    minOrderQty: 8,
-    maxOrderQty: 'Unlimited',
-    groupEnabled: true,
-    groupMinQty: 8,
-    groupDeadline: 'After 3 days',
-    groupPricePerUnit: 7.5,
-    status: 'PUBLISHED',
-    createdAt: '2025-03-24T02:41:00Z',
-    stockQty: 24,
+export const routePath = '/supplier/products';
+
+async function createProduct() {
+  const formData = new FormData();
+  const dto = {
+    name: form.name,
+    description: form.description,
+    price: Number(form.pricePerUnit),
+    stock: form.stockQty,
+    categoryId: form.category,
+    caseQuantity: Number(form.caseQty),
+    minOrderQuantity: Number(form.minOrderQty),
+    maxOrderQuantity:
+      form.maxOrderQty === 'Unlimited' ? null : Number(form.maxOrderQty),
+    allowGroupPurchase: form.groupEnabled,
+    minGroupOrderQuantity: Number(form.groupMinQty),
+    groupPurchasePrice: form.groupPricePerUnit
+      ? Number(form.groupPricePerUnit)
+      : null,
+    groupPurchaseDuration: form.groupDeadline,
+    isPublished: form.status === 'PUBLISHED',
   };
+  formData.append('dto', JSON.stringify(dto));
+
+  // Add images (files only)
+  filesToUpload.forEach((file) => formData.append('files', file));
+
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || 'Failed to create product');
+  return data;
 }
-async function mockSaveProduct(payload) {
-  console.log('Saving product (mock):', payload);
-  return { ok: true };
+
+async function updateProduct() {
+  const payload = {
+    name: form.name,
+    description: form.description,
+    price: Number(form.pricePerUnit),
+    stock: form.stockQty,
+    categoryId: form.category,
+    caseQuantity: Number(form.caseQty),
+    minOrderQuantity: Number(form.minOrderQty),
+    maxOrderQuantity:
+      form.maxOrderQty === 'Unlimited' ? null : Number(form.maxOrderQty),
+    allowGroupPurchase: form.groupEnabled,
+    minGroupOrderQuantity: Number(form.groupMinQty),
+    groupPurchasePrice: form.groupPricePerUnit
+      ? Number(form.groupPricePerUnit)
+      : null,
+    groupPurchaseDuration: form.groupDeadline,
+    isPublished: form.status === 'PUBLISHED',
+  };
+
+  const res = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      credentials: 'include',
+    },
+  );
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || 'Failed to update product');
+  return data;
 }
+
+const uploadProductImage = async (file) => {
+  if (!file) return;
+
+  if (form.images.length >= 3) {
+    setError('A maximum of 3 images is allowed');
+    return;
+  }
+
+  // Check file type
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    setError('Invalid file type');
+    return;
+  }
+
+  // Check file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    setError('File exceeds 5MB');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    setSaving(true);
+    setError('');
+    const res = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}/images`,
+      {
+        method: 'PATCH',
+        body: formData,
+        credentials: 'include',
+      },
+    );
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.message || 'Failed to upload image');
+
+    // Add new image URL to local state
+    setForm((p) => ({
+      ...p,
+      images: [...(p.images || []), data.imagesFilesUrls.slice(-1)[0]], // take last uploaded
+    }));
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setSaving(false);
+  }
+};
+
+async function deleteImage(fileName, idx) {
+  try {
+    const res = await fetch(
+      `${
+        import.meta.env.VITE_BACKEND_URL
+      }/api/products/${productId}/image/${fileName}`,
+      { method: 'DELETE', credentials: 'include' },
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.message || 'Failed to delete image');
+
+    // Update local form.images (URLs)
+    setForm((p) => ({
+      ...p,
+      images: p.images.filter((_, i) => i !== idx),
+    }));
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  }
+}
+
+async function deleteProduct() {
+  if (!confirm('Are you sure you want to delete this product?')) return;
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+      },
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.message || 'Failed to delete product');
+    navigate('/products');
+  } catch (err) {
+    console.error(err);
+    setError(err.message);
+  }
+}
+
 /* ======================================================== */
 
 export default function SupplierProductDetails() {
   const { t, i18n } = useTranslation('product');
-  const [search] = useSearchParams();
+  const { id: productId } = useParams();
+  const isCreateMode = productId === 'new';
   const navigate = useNavigate();
-  const productId = search.get('id') || null;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -84,25 +221,50 @@ export default function SupplierProductDetails() {
     document.title = t('pageTitle');
   }, [t, i18n.language]);
 
-  // load product (mock)
   useEffect(() => {
+    if (isCreateMode) return;
+
     (async () => {
       try {
         setLoading(true);
-        if (productId) {
-          const data = await mockFetchProductById(productId);
-          setForm((p) => ({ ...p, ...data }));
-        } else {
-          // new product - keep defaults
-        }
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`,
+          {
+            credentials: 'include',
+          },
+        );
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.message || 'Failed to load product');
+
+        setForm({
+          ...form,
+          id: data.productId,
+          name: data.name,
+          description: data.description,
+          category: data.category?.id || '',
+          images: data.imagesFilesUrls || [],
+          pricePerUnit: data.price,
+          currency: '﷼',
+          caseQty: data.caseQuantity,
+          minOrderQty: data.minOrderQuantity,
+          maxOrderQty: data.maxOrderQuantity || 'Unlimited',
+          groupEnabled: data.allowGroupPurchase,
+          groupMinQty: data.minGroupOrderQuantity,
+          groupDeadline: data.groupPurchaseDuration,
+          groupPricePerUnit: data.groupPurchasePrice,
+          status: data.isPublished ? 'PUBLISHED' : 'UNPUBLISHED',
+          stockQty: data.stock,
+          createdAt: data.createdAt,
+        });
       } catch (err) {
         console.error(err);
-        setError(t('errors.fetch'));
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     })();
-  }, [productId, t]);
+  }, [productId, i18n.language]);
 
   // fetch category details when category id exists
   useEffect(() => {
@@ -238,13 +400,19 @@ export default function SupplierProductDetails() {
     setSaving(true);
     setMsg('');
     setError('');
+
     try {
-      const res = await mockSaveProduct(form);
-      if (res.ok) setMsg(t('messages.saved'));
-      else setError(t('errors.save'));
+      let data;
+      if (isCreateMode) {
+        data = await createProduct();
+      } else {
+        data = await updateProduct();
+      }
+      setMsg(t('messages.saved'));
+      if (isCreateMode) navigate(`/products/${data.productId}`); // go to new product page
     } catch (err) {
       console.error(err);
-      setError(t('errors.save'));
+      setError(err.message || t('errors.save'));
     } finally {
       setSaving(false);
     }
@@ -262,16 +430,14 @@ export default function SupplierProductDetails() {
   };
 
   /* ------- Images handling ------- */
-  const onAddImage = (file) => {
+  const onAddImage = async (file) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setForm((p) => ({ ...p, images: [...(p.images || []), reader.result] }));
-    };
-    reader.readAsDataURL(file);
+    await uploadProductImage(file); // updates `form.images` inside the function
   };
-  const onRemoveImage = (idx) => {
-    setForm((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }));
+
+  const onRemoveImage = async (idx) => {
+    const fileName = form.images[idx]; // adjust if you store URLs differently
+    await deleteImage(fileName, idx);
   };
 
   if (loading) {
@@ -330,10 +496,7 @@ export default function SupplierProductDetails() {
             <FiClock /> {t('actions.predictDemand')}
           </button>
 
-          <button
-            className="pd-btn danger"
-            onClick={() => console.log('delete')}
-          >
+          <button className="pd-btn danger" onClick={deleteProduct}>
             <FaRegTrashAlt />
             {t('actions.delete')}
           </button>
@@ -521,7 +684,10 @@ export default function SupplierProductDetails() {
                 min={form.caseQty || 1}
                 value={form.minOrderQty}
                 onChange={(e) =>
-                  setField('minOrderQty', Number(e.target.value))
+                  setField(
+                    'minOrderQty',
+                    e.target.value ? Number(e.target.value) : '',
+                  )
                 }
                 onBlur={() => {
                   // Round up to nearest multiple of caseQty when leaving input
@@ -557,7 +723,10 @@ export default function SupplierProductDetails() {
                     form.maxOrderQty !== 'Unlimited' ? form.maxOrderQty : ''
                   }
                   onChange={(e) =>
-                    setField('maxOrderQty', Number(e.target.value))
+                    setField(
+                      'maxOrderQty',
+                      e.target.value ? Number(e.target.value) : '',
+                    )
                   }
                   onBlur={() => {
                     if (
