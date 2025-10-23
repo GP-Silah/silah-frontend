@@ -8,10 +8,12 @@ export default function SupplierLayout() {
   return (
     <>
       <DemoBanner />
-      <SupplierSidebar />
-      <main>
-        <Outlet />
-      </main>
+      <div className="supplier-layout-container">
+        <SupplierSidebar />
+        <main className="supplier-main">
+          <Outlet />
+        </main>
+      </div>
     </>
   );
 }

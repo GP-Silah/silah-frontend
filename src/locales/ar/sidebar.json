@@ -1,17 +1,15 @@
 {
   "overview": "نظرة عامة",
-  "products": "المنتجات والخدمات",
+  "listings": "المنتجات والخدمات",
   "biddings": "المناقصات",
   "orders": "الطلبات",
   "invoices": "الفواتير",
   "analytics": "التحليلات والرؤى",
   "settings": "الإعدادات",
-  "changeRole": "تغيير الدور إلى",
-  "buyer": "مشتري",
+  "changeRoleToBuyer": "التبديل إلى دور المشتري",
+  "switching": "نحن نقوم بتبديل دورك...",
   "messages": "الرسائل المباشرة",
   "notifications": "الإشعارات",
   "language": "اللغة",
-  "profile": {
-    "defaultRole": "مستخدم رائع"
-  }
+  "logout": "تسجيل الخروج"
 }

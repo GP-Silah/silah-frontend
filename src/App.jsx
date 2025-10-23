@@ -1,9 +1,8 @@
 import React from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Swal from 'sweetalert2';
-import { ClipLoader } from 'react-spinners';
 import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 
 // Layouts
 import BuyerLayout from './layouts/BuyerLayout';
@@ -12,87 +11,46 @@ import GuestLayout from './layouts/GuestLayout';
 import PublicLayout from './layouts/PublicLayout';
 
 // Pages
-import NotFound from './pages/NotFound/NotFound';
 import Landing from './pages/Landing/Landing';
+import NotFound from './pages/NotFound/NotFound';
 
 const pages = import.meta.glob('./pages/**/*.jsx');
 
-function getRedirectUrlByRole(role) {
-  if (role === 'buyer') return '/buyer/homepage';
-  if (role === 'supplier') return '/supplier/overview';
-  return '/landing';
-}
-
-function UnauthorizedRedirectWrapper() {
-  const { t } = useTranslation('auth');
-  const { role } = useAuth();
-  const navigate = useNavigate(); // ✅ initialize navigate
-  const [alertShown, setAlertShown] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!alertShown) {
-      setAlertShown(true); // ensure alert shows only once
-      Swal.fire({
-        icon: 'error',
-        title: t('unauthorizedTitle'),
-        text: t('unauthorizedText'),
-        confirmButtonColor: '#476DAE',
-        confirmButtonText: 'OK',
-        allowOutsideClick: false,
-      }).then(() => {
-        // ✅ SPA navigation
-        navigate(getRedirectUrlByRole(role), { replace: true });
-      });
-    }
-  }, [alertShown, role, t, navigate]);
-
-  return null; // nothing renders
-}
-
-function App() {
+export default function App() {
   const { i18n } = useTranslation();
   const { role, loading } = useAuth();
 
-  const layoutRoutes = {
-    public: [],
-    guest: [],
-    buyer: [],
-    supplier: [],
+  if (loading) return null; // show spinner from ProtectedRoute
+
+  const redirectByRole = () => {
+    if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
+    if (role === 'supplier')
+      return <Navigate to="/supplier/overview" replace />;
+    return <Navigate to="/landing" replace />;
   };
 
-  // ✅ Build routes dynamically
+  const layoutRoutes = { public: [], guest: [], buyer: [], supplier: [] };
+
+  // Build page routes dynamically
   Object.entries(pages).forEach(([filePath, resolver]) => {
     let routePath = filePath.replace('./pages', '').replace('.jsx', '');
     const parts = routePath.split('/').filter(Boolean);
-
-    // handle duplicate folder/component names
     if (
       parts.length > 1 &&
-      parts[parts.length - 1].toLowerCase() ===
-        parts[parts.length - 2].toLowerCase()
-    ) {
+      parts.at(-1).toLowerCase() === parts.at(-2).toLowerCase()
+    )
       parts.pop();
-    }
-
-    // build normalized path
     routePath =
       '/' +
       parts
-        .map((part) =>
-          part
-            .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-            .replace(/([A-Z]{2,})([A-Z][a-z]+)/g, '$1-$2')
-            .toLowerCase(),
-        )
+        .map((p) => p.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase())
         .join('/');
 
     if (routePath === '/not-found') routePath = '*';
-
     const PageComponent = React.lazy(() =>
       resolver().then((mod) => ({ default: mod.default })),
     );
 
-    // ✅ Assign route to correct layout
     if (['/login', '/signup', '/verify-email', '*'].includes(routePath))
       layoutRoutes.public.push({ path: routePath, Component: PageComponent });
     else if (routePath.startsWith('/buyer'))
@@ -102,102 +60,69 @@ function App() {
     else layoutRoutes.guest.push({ path: routePath, Component: PageComponent });
   });
 
-  // ✅ Handle loading state
-  if (loading) {
-    return (
-      <div className="loader-center">
-        <ClipLoader color="#543361" size={60} />
-      </div>
-    );
-  }
-
-  // ✅ Role-based redirect
-  const redirectByRole = () => {
-    if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
-    if (role === 'supplier')
-      return <Navigate to="/supplier/overview" replace />;
-    return <Navigate to="/landing" replace />;
-  };
-
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      <React.Suspense
-        fallback={
-          <div className="loader-center">
-            <ClipLoader color="#543361" size={60} />
-          </div>
-        }
-      >
+      <React.Suspense fallback={null}>
         <Routes>
-          {/* ✅ Public layout (login/signup/etc) */}
+          {/* Public layout */}
           <Route element={<PublicLayout />}>
             {layoutRoutes.public.map(({ path, Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
           </Route>
 
-          {/* ✅ Guest layout (landing and other visitor pages) */}
+          {/* Guest layout */}
           <Route path="/" element={<GuestLayout />}>
             <Route index element={redirectByRole()} />
             <Route path="landing" element={<Landing />} />
             {layoutRoutes.guest.map(({ path, Component }) => (
               <Route
                 key={path}
-                path={path.replace(/^\//, '')} // make paths relative
+                path={path.replace(/^\//, '')}
                 element={<Component />}
               />
             ))}
           </Route>
 
-          {/* ✅ Buyer layout */}
+          {/* Buyer layout */}
           <Route
-            path="/buyer"
+            element={<ProtectedRoute allowedRoles={['buyer']} redirectTo="/" />}
+          >
+            <Route path="/buyer/*" element={<BuyerLayout />}>
+              {layoutRoutes.buyer.map(({ path, Component }) => (
+                <Route
+                  key={path}
+                  path={path.replace(/^\/buyer\//, '')}
+                  element={<Component />}
+                />
+              ))}
+            </Route>
+          </Route>
+
+          {/* Supplier layout */}
+          <Route
             element={
-              role === 'buyer' ? (
-                <BuyerLayout />
-              ) : (
-                <UnauthorizedRedirectWrapper />
-              )
+              <ProtectedRoute allowedRoles={['supplier']} redirectTo="/" />
             }
           >
-            {layoutRoutes.buyer.map(({ path, Component }) => (
-              <Route
-                key={path}
-                path={path.replace(/^\/buyer\//, '')}
-                element={<Component />}
-              />
-            ))}
+            <Route path="/supplier/*" element={<SupplierLayout />}>
+              {layoutRoutes.supplier.map(({ path, Component }) => (
+                <Route
+                  key={path}
+                  path={path.replace(/^\/supplier\//, '')}
+                  element={<Component />}
+                />
+              ))}
+            </Route>
           </Route>
 
-          {/* ✅ Supplier layout */}
-          <Route
-            path="/supplier"
-            element={
-              role === 'supplier' ? (
-                <SupplierLayout />
-              ) : (
-                <UnauthorizedRedirectWrapper />
-              )
-            }
-          >
-            {layoutRoutes.supplier.map(({ path, Component }) => (
-              <Route
-                key={path}
-                path={path.replace(/^\/supplier\//, '')}
-                element={<Component />}
-              />
-            ))}
-          </Route>
-
-          {/* ✅ Root redirect */}
+          {/* Root redirect */}
           <Route path="/" element={redirectByRole()} />
 
-          {/* ✅ Fallback 404 */}
+          {/* 404 fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </React.Suspense>
     </div>
   );
 }
-
-export default App;
