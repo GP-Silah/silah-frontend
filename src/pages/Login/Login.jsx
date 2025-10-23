@@ -12,7 +12,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { refreshUser } = useAuth();
+  const { fetchUser } = useAuth();
 
   useEffect(() => {
     document.title = t('pageTitle.login', { ns: 'common' });
@@ -50,16 +50,9 @@ function Login() {
       const role = res.data?.role?.toLowerCase() || (await refreshUser())?.role;
 
       // Update the user context immediately
-      await refreshUser();
+      await fetchUser();
 
-      // Navigate based on role
-      if (role === 'buyer') {
-        navigate('/buyer/homepage');
-      } else if (role === 'supplier') {
-        navigate('/supplier/homepage');
-      } else {
-        navigate('/landing');
-      }
+      navigate('/');
     } catch (err) {
       console.log('Login error:', err);
 
@@ -101,6 +94,9 @@ function Login() {
           placeholder={t('emailOrCRN')}
           value={identifier}
           onChange={(e) => setIdentifier(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleLogin();
+          }}
         />
 
         <input
@@ -108,6 +104,9 @@ function Login() {
           placeholder={t('password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleLogin();
+          }}
         />
 
         {error && <p className="error-message">{error}</p>}
