@@ -1,0 +1,10 @@
+{
+  "title": "Your Cart ({{count}} Suppliers)",
+  "deleteAll": "Delete All",
+  "outOfStock": "Out of Stock",
+  "productsTotal": "Products Total",
+  "deliveryFees": "Delivery Fees",
+  "cartTotal": "Cart Total",
+  "checkout": "Checkout",
+  "removeOutOfStock": "Remove the out-of-stock items to proceed with checkout"
+}

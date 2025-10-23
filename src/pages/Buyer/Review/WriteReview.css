@@ -59,19 +59,9 @@
   border: 1px solid var(--card-border);
   padding: 16px;
   margin-bottom: 24px;
-}
-
-.wrb-stars {
-  color: #f5b301;
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
-.wrb-star {
-  cursor: pointer;
-  font-size: 22px;
-  color: #ddd;
-  transition: color 0.2s ease;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 
 .wrb-star.active,
@@ -153,22 +143,27 @@
 /* تأكيد أن النجوم قابلة للنقر */
 .wrb-stars {
   display: flex;
-  gap: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 999;
   pointer-events: auto;
   cursor: pointer;
-  justify-content: center;
 }
 
 .wrb-star {
+  z-index: 1000; /* يرفعها فوق أي عنصر ثاني */
   cursor: pointer;
-  font-size: 24px;
+  font-size: 28px;
   color: #ddd;
   transition: color 0.2s ease;
   user-select: none; /* يمنع تحديد النجمة كنص */
-  z-index: 10; /* يرفعها فوق أي عنصر ثاني */
 }
 
-.wrb-star.active,
-.wrb-star:hover {
+.wrb-star.active {
   color: #f5b301;
+}
+.wrb-star:hover {
+  color: #ffc107;
 }
