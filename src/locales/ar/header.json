@@ -13,5 +13,18 @@
   "notifications": "الإشعارات",
   "viewAll": "عرض الكل",
   "markAllRead": "تحديد الكل كمقروء",
-  "noNotifications": "لا توجد إشعارات حتى الآن"
+  "noNotifications": "لا توجد إشعارات حتى الآن",
+  "profileChoices": {
+    "managedBy": "يدار بواسطة",
+    "directMessaging": "الرسائل المباشرة",
+    "biddings": "المناقصات",
+    "orders": "الطلبات",
+    "invoices": "الفواتير",
+    "wishlist": "قائمة الرغبات",
+    "settings": "الإعدادات",
+    "changeRoleToSupplier": "التبديل إلى دور المورد",
+    "changeRoleToBuyer": "التبديل إلى دور المشتري",
+    "switching": "نحن نقوم بتبديل دورك...",
+    "logout": "تسجيل الخروج"
+  }
 }

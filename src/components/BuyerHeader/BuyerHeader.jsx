@@ -1,34 +1,46 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  FaGlobe,
   FaSearch,
-  FaShoppingCart,
   FaBell,
-  FaUser,
   FaEnvelope,
+  FaGavel,
+  FaShoppingCart,
   FaFileInvoice,
-  FaClipboardList,
+  FaHeart,
+  FaCog,
+  FaExchangeAlt,
+  FaSignOutAlt,
+  FaUser,
+  FaGlobe,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 import './BuyerHeader.css';
 
 const BuyerHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
+  const { user, refreshUser, handleLogout } = useAuth();
+
   const [categories, setCategories] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [switching, setSwitching] = useState(false);
 
+  const dropdownRef = useRef(null);
+  const profileRef = useRef(null);
+
+  // === Toggle Language ===
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
   };
 
-  // Fetch categories
+  // === Fetch Categories ===
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
@@ -39,9 +51,8 @@ const BuyerHeader = () => {
       .catch((err) => console.error('Failed to load categories', err));
   }, [i18n.language]);
 
-  // Fetch unread notifications and set up SSE
+  // === Fetch Notifications (and setup SSE) ===
   useEffect(() => {
-    // Initial fetch
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`, {
         params: { lang: i18n.language },
@@ -50,7 +61,6 @@ const BuyerHeader = () => {
       .then((res) => setNotifications(res.data))
       .catch((err) => console.error('Failed to load notifications', err));
 
-    // SSE for live notifications
     const eventSource = new EventSource(
       `${import.meta.env.VITE_BACKEND_URL}/api/notifications/stream`,
       { withCredentials: true },
@@ -58,7 +68,7 @@ const BuyerHeader = () => {
 
     eventSource.onmessage = (e) => {
       try {
-        const parsed = JSON.parse(JSON.parse(e.data).data); // double parse
+        const parsed = JSON.parse(JSON.parse(e.data).data);
         setNotifications((prev) => [parsed, ...prev]);
       } catch (err) {
         console.error('Failed to parse notification', err);
@@ -68,24 +78,26 @@ const BuyerHeader = () => {
     return () => eventSource.close();
   }, [i18n.language]);
 
-  // Handle outside click to close dropdown
+  // === Close dropdowns on outside click ===
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toggleDropdown = () => setDropdownOpen((prev) => !prev);
-
+  // === Mark Notifications as Read ===
   const markAllAsRead = async () => {
     const unreadIds = notifications
       .filter((n) => !n.isRead)
       .map((n) => n.notificationId);
-    if (unreadIds.length === 0) return;
+    if (!unreadIds.length) return;
 
     try {
       await axios.patch(
@@ -97,6 +109,40 @@ const BuyerHeader = () => {
     } catch (err) {
       console.error('Failed to mark notifications as read', err);
     }
+  };
+
+  // === Handle Role Switch ===
+  const handleSwitchRole = async () => {
+    if (switching) return;
+    setSwitching(true);
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/switch-role`,
+        {},
+        { withCredentials: true },
+      );
+
+      await refreshUser();
+
+      const newRole = res.data?.newRole?.toLowerCase();
+      if (newRole === 'supplier') navigate('/supplier/overview');
+      else navigate('/');
+    } catch (err) {
+      const msg =
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        err.message;
+      console.error('Failed to switch role:', msg);
+      alert(t('profileChoices.roleSwitchError') || msg);
+    } finally {
+      setSwitching(false);
+    }
+  };
+
+  // === Handle Logout ===
+  const handleLogoutClick = async () => {
+    await handleLogout();
+    navigate('/');
   };
 
   return (
@@ -114,6 +160,7 @@ const BuyerHeader = () => {
         <CategoryMegamenu categories={categories} lang={i18n.language} />
       </div>
 
+      {/* === Search === */}
       <div className="search-bar">
         <FaSearch className="search-icon" />
         <input type="text" placeholder={t('searchPlaceholder')} />
@@ -124,8 +171,9 @@ const BuyerHeader = () => {
         </select>
       </div>
 
+      {/* === Right Section === */}
       <div className="header-right">
-        {/* Cart Icon */}
+        {/* === Cart === */}
         <button
           className="icon-btn"
           onClick={() => navigate('/buyer/cart')}
@@ -134,11 +182,11 @@ const BuyerHeader = () => {
           <FaShoppingCart />
         </button>
 
-        {/* Notifications Icon */}
+        {/* === Notifications === */}
         <div className="notification-wrapper" ref={dropdownRef}>
           <button
             className="icon-btn"
-            onClick={toggleDropdown}
+            onClick={() => setDropdownOpen((prev) => !prev)}
             title={t('notifications')}
           >
             <FaBell />
@@ -149,12 +197,7 @@ const BuyerHeader = () => {
             <div className="notification-dropdown">
               <div className="notification-list">
                 {notifications.length === 0 ? (
-                  <div
-                    className="notif-item"
-                    style={{ justifyContent: 'center', color: '#555' }}
-                  >
-                    {t('noNotifications')}
-                  </div>
+                  <div className="notif-item empty">{t('noNotifications')}</div>
                 ) : (
                   notifications.map((n) => (
                     <div
@@ -163,7 +206,6 @@ const BuyerHeader = () => {
                         n.isRead ? '' : 'unread'
                       }`}
                     >
-                      {/* Optional: Icon based on n.notificationType */}
                       <div className="notification-content">
                         <strong>{n.title}</strong>
                         <p>{n.content}</p>
@@ -174,7 +216,7 @@ const BuyerHeader = () => {
               </div>
 
               {notifications.length > 0 && (
-                <>
+                <div className="notification-footer">
                   <button
                     className="view-all-btn"
                     onClick={() => navigate('/buyer/notifications')}
@@ -184,18 +226,93 @@ const BuyerHeader = () => {
                   <button className="mark-read-btn" onClick={markAllAsRead}>
                     {t('markAllRead')}
                   </button>
-                </>
+                </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Profile Icon */}
-        <button className="icon-btn" title={t('profile')}>
-          <FaUser />
-        </button>
+        {/* === Profile === */}
+        <div className="profile-wrapper" ref={profileRef}>
+          <button
+            className="icon-btn"
+            onClick={() => setProfileOpen((p) => !p)}
+            title={t('profile')}
+          >
+            {user?.pfpUrl ? (
+              <img
+                src={user.pfpUrl}
+                alt="Profile"
+                className="profile-pic"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <FaUser />
+            )}
+          </button>
 
-        {/* Language toggle */}
+          {profileOpen && (
+            <div className="profile-dropdown">
+              {/* Top Section */}
+              <div className="profile-info">
+                <h4 className="business-name">
+                  {user?.businessName || t('profileChoices.noBusinessName')}
+                </h4>
+                <p className="managed-by">
+                  {t('profileChoices.managedBy')}: <span>{user?.name}</span>
+                </p>
+              </div>
+
+              <div className="divider" />
+
+              {/* Middle Section */}
+              <div className="profile-actions">
+                <button className="profile-item">
+                  <FaEnvelope /> {t('profileChoices.directMessaging')}
+                </button>
+                <button className="profile-item">
+                  <FaGavel /> {t('profileChoices.biddings')}
+                </button>
+                <button className="profile-item">
+                  <FaShoppingCart /> {t('profileChoices.orders')}
+                </button>
+                <button className="profile-item">
+                  <FaFileInvoice /> {t('profileChoices.invoices')}
+                </button>
+                <button className="profile-item">
+                  <FaHeart /> {t('profileChoices.wishlist')}
+                </button>
+                <button className="profile-item">
+                  <FaCog /> {t('profileChoices.settings')}
+                </button>
+              </div>
+
+              <div className="divider" />
+
+              {/* Bottom Section */}
+              <div className="profile-actions">
+                <button
+                  className="profile-item highlight"
+                  onClick={handleSwitchRole}
+                  disabled={switching}
+                >
+                  <FaExchangeAlt />
+                  {switching
+                    ? t('profileChoices.switching')
+                    : t('profileChoices.changeRoleToSupplier')}
+                </button>
+                <button
+                  className="profile-item logout"
+                  onClick={handleLogoutClick}
+                >
+                  <FaSignOutAlt /> {t('profileChoices.logout')}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* === Language Toggle === */}
         <button className="language-toggle" onClick={toggleLanguage}>
           <FaGlobe />
         </button>

@@ -40,15 +40,26 @@ function Login() {
 
     try {
       setLoading(true);
-      await axios.post(
+      const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
         payload,
-        { withCredentials: true }, // important to receive cookie
+        { withCredentials: true },
       );
 
-      // If successful, backend sets the cookie automatically
-      await refreshUser(); // force fetch /me
-      navigate('/'); // redirect to homepage
+      // Example response: { message: "Login successful", role: "BUYER" }
+      const role = res.data?.role?.toLowerCase() || (await refreshUser())?.role;
+
+      // Update the user context immediately
+      await refreshUser();
+
+      // Navigate based on role
+      if (role === 'buyer') {
+        navigate('/buyer/homepage');
+      } else if (role === 'supplier') {
+        navigate('/supplier/homepage');
+      } else {
+        navigate('/landing');
+      }
     } catch (err) {
       console.log('Login error:', err);
 
