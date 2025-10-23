@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const { t, i18n } = useTranslation('auth');
   const [user, setUser] = useState(null);
   const [role, setRole] = useState('guest');
   const [loading, setLoading] = useState(true);
@@ -32,6 +35,14 @@ export function AuthProvider({ children }) {
       setRole(res.data.role?.toLowerCase() || 'guest');
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
+        // Show alert before logging out
+        await Swal.fire({
+          icon: 'warning',
+          title: t('title'),
+          text: t('text'),
+          confirmButtonColor: '#476DAE',
+          confirmButtonText: 'OK',
+        });
         handleLogout();
       } else {
         setUser(null);

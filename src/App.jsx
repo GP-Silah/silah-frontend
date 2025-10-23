@@ -1,6 +1,7 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Swal from 'sweetalert2';
 import { ClipLoader } from 'react-spinners';
 import { useAuth } from './context/AuthContext';
 
@@ -15,6 +16,38 @@ import NotFound from './pages/NotFound/NotFound';
 import Landing from './pages/Landing/Landing';
 
 const pages = import.meta.glob('./pages/**/*.jsx');
+
+function getRedirectUrlByRole(role) {
+  if (role === 'buyer') return '/buyer/homepage';
+  if (role === 'supplier') return '/supplier/overview';
+  return '/landing';
+}
+
+function UnauthorizedRedirectWrapper() {
+  const { t } = useTranslation('auth');
+  const { role } = useAuth();
+  const navigate = useNavigate(); // ✅ initialize navigate
+  const [alertShown, setAlertShown] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!alertShown) {
+      setAlertShown(true); // ensure alert shows only once
+      Swal.fire({
+        icon: 'error',
+        title: t('unauthorizedTitle'),
+        text: t('unauthorizedText'),
+        confirmButtonColor: '#476DAE',
+        confirmButtonText: 'OK',
+        allowOutsideClick: false,
+      }).then(() => {
+        // ✅ SPA navigation
+        navigate(getRedirectUrlByRole(role), { replace: true });
+      });
+    }
+  }, [alertShown, role, t, navigate]);
+
+  return null; // nothing renders
+}
 
 function App() {
   const { i18n } = useTranslation();
@@ -82,7 +115,7 @@ function App() {
   const redirectByRole = () => {
     if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
     if (role === 'supplier')
-      return <Navigate to="/supplier/homepage" replace />;
+      return <Navigate to="/supplier/overview" replace />;
     return <Navigate to="/landing" replace />;
   };
 
@@ -120,7 +153,11 @@ function App() {
           <Route
             path="/buyer"
             element={
-              role === 'buyer' ? <BuyerLayout /> : <Navigate to="/landing" />
+              role === 'buyer' ? (
+                <BuyerLayout />
+              ) : (
+                <UnauthorizedRedirectWrapper />
+              )
             }
           >
             {layoutRoutes.buyer.map(({ path, Component }) => (
@@ -139,7 +176,7 @@ function App() {
               role === 'supplier' ? (
                 <SupplierLayout />
               ) : (
-                <Navigate to="/landing" />
+                <UnauthorizedRedirectWrapper />
               )
             }
           >
