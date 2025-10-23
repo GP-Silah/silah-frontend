@@ -1,8 +1,11 @@
+/* base container (keep your existing rules) */
 .pd-container {
   padding: 24px 28px;
   max-width: 1160px;
   margin-inline: auto;
 }
+
+/* header */
 .pd-header {
   display: flex;
   justify-content: space-between;
@@ -36,10 +39,12 @@
   border-color: #cfe9db;
 }
 
+/* actions */
 .pd-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
 }
 .pd-btn {
   border: 1px solid #e5e1ff;
@@ -48,6 +53,9 @@
   border-radius: 12px;
   cursor: pointer;
   font-weight: 500;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
 }
 .pd-btn:hover {
   background: #faf8ff;
@@ -72,7 +80,9 @@
   cursor: not-allowed;
 }
 
-.pd-card {
+/* card + sections */
+.pd-card,
+.pd-section {
   background: #fff;
   border: 1px solid #eee;
   border-radius: 16px;
@@ -84,6 +94,8 @@
   font-size: 18px;
   font-weight: 700;
 }
+
+/* grids */
 .pd-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -94,13 +106,8 @@
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
 }
-@media (max-width: 980px) {
-  .pd-grid-2,
-  .pd-grid-3 {
-    grid-template-columns: 1fr;
-  }
-}
 
+/* fields */
 .pd-label {
   font-weight: 700;
   display: block;
@@ -138,17 +145,31 @@
 .pd-field textarea {
   resize: vertical;
 }
+
+/* counters & errors */
 .pd-counter {
   color: #8a8f99;
   font-size: 12px;
   margin-top: 4px;
 }
+.pd-counter.invalid {
+  color: #b3261e;
+  font-weight: 700;
+}
+.pd-error-text {
+  color: #b3261e;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* note */
 .pd-note {
   color: #4d5156;
   font-size: 13px;
   margin-top: 6px;
 }
 
+/* image list */
 .pd-image-tips {
   border: 1px dashed #ddd;
   border-radius: 12px;
@@ -158,7 +179,8 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  align-items: flex-start;
+  /* align-items: flex-start; */
+  align-items: center;
 }
 .pd-image-item {
   position: relative;
@@ -174,18 +196,53 @@
   height: 100%;
   object-fit: cover;
 }
-.pd-img-del {
+
+/* Outer white circle */
+.delete-image-icon-bg {
   position: absolute;
   top: 6px;
-  inset-inline-end: 6px;
-  border: none;
-  background: #0008;
-  color: #fff;
+  right: 6px;
+  width: 34px;
+  height: 34px;
+  background-color: white;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  display: flex; /* center inner wrapper */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
   cursor: pointer;
+  padding: 0; /* remove extra space */
+  box-sizing: border-box; /* include border/padding in size */
 }
+
+/* Inner red circle */
+.pd-btn-image-delete {
+  padding: 0px;
+  width: 24px; /* slightly smaller than outer */
+  height: 24px;
+  border: 2px solid red;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  font-size: 12px; /* adjust to fit inside circle */
+  font-weight: bold;
+  line-height: 1;
+  box-sizing: border-box;
+  transform: translateZ(0); /* fix subpixel rendering */
+  user-select: none;
+  pointer-events: none; /* ensures click goes to outer circle */
+}
+
+/* Hover effect */
+.delete-image-icon-bg:hover .pd-btn-image-delete {
+  background-color: red;
+  color: white;
+  border-color: red;
+}
+
+/* upload card */
 .pd-image-upload {
   display: grid;
   place-items: center;
@@ -204,55 +261,44 @@
 }
 
 .pd-input-prefix {
-  position: relative;
-}
-.pd-input-prefix input {
-  padding-inline-end: 42px;
-}
-.pd-prefix {
-  position: absolute;
-  inset-inline-end: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
+  position: relative; /* keeps the inner icon positioned relative to this container */
 }
 
-.w-240 {
-  max-width: 240px;
+.pd-input-prefix input {
+  padding-inline-end: 36px; /* space for the icon, adjust as needed */
 }
-.pd-msg {
-  margin: 10px 0;
-  padding: 10px 12px;
-  border-radius: 10px;
+
+.sar {
+  position: absolute; /* position relative to .pd-input-prefix */
+  inset-inline-end: 8px; /* distance from the right edge (or left in RTL) */
+  top: 50%; /* center vertically */
+  transform: translateY(-50%); /* vertical center */
+  width: 24px; /* size you want */
+  height: 24px;
+  object-fit: contain; /* scale image without stretching */
+  pointer-events: none; /* so clicks go to input */
 }
-.pd-msg.success {
-  background: #e8f5ee;
-  color: #1f5837;
-  border: 1px solid #bfe5cf;
+
+.pd-input-prefix input[type='number']::-webkit-inner-spin-button,
+.pd-input-prefix input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* optional, removes default spacing */
 }
-.pd-msg.error {
-  background: #fff0f3;
-  color: #a41e34;
-  border: 1px solid #f2c0c6;
+.pd-input-prefix input[type='number'] {
+  -moz-appearance: textfield;
 }
+
+/* savebar center */
 .pd-savebar {
   display: flex;
   justify-content: flex-end;
   margin: 20px 0;
 }
-
-.pd-skeleton,
-.pd-error {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 16px;
+.pd-savebar.center {
+  justify-content: center;
 }
 
-:dir(rtl) .pd-subtitle {
-  flex-direction: row-reverse;
-}
-/* ===== Modal (Update Stock) ===== */
+/* modal */
 .pd-modal-overlay {
   position: fixed;
   inset: 0;
@@ -303,4 +349,59 @@
   gap: 8px;
   margin-top: 14px;
 }
-/* ===== End Modal ===== */
+
+/* ========== Order Requirements / Group two-column explanation grid ========== */
+.or-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* left column is inputs */
+.or-left {
+}
+
+/* right column is explanation blocks */
+.or-right {
+}
+.or-explain {
+  background: #fbfbfb;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #f0f0f0;
+}
+.or-explain h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+.or-explain p {
+  margin: 0;
+  color: #5b5b5b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* responsive fallback (you said not required, but included) */
+@media (max-width: 720px) {
+  .or-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* RTL tweaks */
+:dir(rtl) .pd-prefix {
+  right: auto;
+  left: 10px;
+}
+:dir(rtl) .pd-btn-image-delete {
+  right: auto;
+  left: 6px;
+}
+:dir(rtl) .pd-image-upload {
+  direction: rtl;
+}
+:dir(rtl) .or-grid {
+  direction: rtl;
+}

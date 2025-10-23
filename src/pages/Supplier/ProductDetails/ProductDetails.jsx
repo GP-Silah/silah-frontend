@@ -1,16 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import SupplierSelectSubCategory from '@/components/SupplierSelectSubCategory/SupplierSelectSubCategory';
+import { FiPackage, FiClock } from 'react-icons/fi';
+import { FaRegEye, FaRegEyeSlash, FaRegTrashAlt } from 'react-icons/fa';
 import './SupplierProductDetails.css';
 
-/* ===== Mock API مؤقتًا — بدّليها لاحقًا بالـendpoints الحقيقية ===== */
+/* ===== Mock API — replace with real endpoints later ===== */
 async function mockFetchProductById(id) {
   return {
     id,
     name: 'Amber - 250ml Soy Candle',
     description:
       'Experience the warm and inviting aroma of the Amber 250ml Soy Candle. Crafted with premium soy wax and an amber blend, it creates a cozy atmosphere with a clean burn and minimal soot. Ideal for gifting or enhancing home ambiance.',
-    category: 'Home & Living > Furniture',
+    category: '',
     images: ['/assets/mock/candle1.jpg', '/assets/mock/candle2.jpg'],
     pricePerUnit: 10,
     currency: '﷼',
@@ -23,28 +26,29 @@ async function mockFetchProductById(id) {
     groupPricePerUnit: 7.5,
     status: 'PUBLISHED',
     createdAt: '2025-03-24T02:41:00Z',
-    stockQty: 24, // 👈 جديد: كمية المخزون الحالية (للمودال)
+    stockQty: 24,
   };
 }
 async function mockSaveProduct(payload) {
   console.log('Saving product (mock):', payload);
   return { ok: true };
 }
-/* =================================================================== */
+/* ======================================================== */
 
 export default function SupplierProductDetails() {
   const { t, i18n } = useTranslation('product');
-  const navigate = useNavigate();
-  const location = useLocation();
   const [search] = useSearchParams();
-  const productId = search.get('id') || 'demo-1';
+  const navigate = useNavigate();
+  const productId = search.get('id') || null;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [msg, setMsg] = useState('');
+  const [categoryDetails, setCategoryDetails] = useState(null);
 
   const [form, setForm] = useState({
+    id: null,
     name: '',
     description: '',
     category: '',
@@ -53,23 +57,76 @@ export default function SupplierProductDetails() {
     currency: '﷼',
     caseQty: 1,
     minOrderQty: 1,
-    maxOrderQty: 'Unlimited',
-    groupEnabled: true,
+    maxOrderQty: 'Unlimited', // string 'Unlimited' or number
+    groupEnabled: false,
     groupMinQty: 1,
     groupDeadline: 'After 3 days',
     groupPricePerUnit: '',
-    status: 'PUBLISHED',
+    status: 'UNPUBLISHED',
     createdAt: '',
-    stockQty: 0, // 👈 جديد
+    stockQty: 0,
   });
 
-  // مودال تحديث المخزون
+  // input-level validation state
+  const [errors, setErrors] = useState({
+    name: '',
+    description: '',
+    minOrderQty: '',
+    maxOrderQty: '',
+    groupPricePerUnit: '',
+  });
+
+  // stock modal
   const [showStockModal, setShowStockModal] = useState(false);
   const [newStockQty, setNewStockQty] = useState('');
 
   useEffect(() => {
     document.title = t('pageTitle');
   }, [t, i18n.language]);
+
+  // load product (mock)
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        if (productId) {
+          const data = await mockFetchProductById(productId);
+          setForm((p) => ({ ...p, ...data }));
+        } else {
+          // new product - keep defaults
+        }
+      } catch (err) {
+        console.error(err);
+        setError(t('errors.fetch'));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [productId, t]);
+
+  // fetch category details when category id exists
+  useEffect(() => {
+    if (!form.category) {
+      setCategoryDetails(null);
+      return;
+    }
+    const fetchCategory = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/categories/${
+            form.category
+          }?lang=${i18n.language}`,
+        );
+        if (!res.ok) throw new Error('category not found');
+        const data = await res.json();
+        setCategoryDetails(data);
+      } catch (err) {
+        console.error('fetch category error', err);
+        setCategoryDetails(null);
+      }
+    };
+    fetchCategory();
+  }, [form.category, i18n.language]);
 
   const createdAtFmt = useMemo(() => {
     if (!form.createdAt) return '';
@@ -86,38 +143,98 @@ export default function SupplierProductDetails() {
       .replace(',', '');
   }, [form.createdAt, i18n.language]);
 
+  const setField = (name, value) => {
+    setForm((p) => ({ ...p, [name]: value }));
+  };
+
+  /* ------- Validation helpers ------- */
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const data = await mockFetchProductById(productId);
-        setForm({ ...data });
-      } catch {
-        setError(t('errors.fetch'));
-      } finally {
-        setLoading(false);
+    // name validation
+    if ((form.name || '').length > 60) {
+      setErrors((e) => ({ ...e, name: t('validation.nameTooLong') }));
+    } else setErrors((e) => ({ ...e, name: '' }));
+
+    // description validation
+    if ((form.description || '').length > 1000) {
+      setErrors((e) => ({
+        ...e,
+        description: t('validation.descriptionTooLong'),
+      }));
+    } else setErrors((e) => ({ ...e, description: '' }));
+
+    // minOrder multiple-of-case validation
+    if (Number(form.minOrderQty) <= 0) {
+      setErrors((e) => ({ ...e, minOrderQty: t('validation.positiveNumber') }));
+    } else if (Number(form.minOrderQty) % Number(form.caseQty) !== 0) {
+      setErrors((e) => ({
+        ...e,
+        minOrderQty: t('orderRequirements.minQtyValidation'),
+      }));
+    } else {
+      setErrors((e) => ({ ...e, minOrderQty: '' }));
+    }
+
+    // maxOrder validation (if numeric)
+    if (form.maxOrderQty !== 'Unlimited') {
+      const maxVal = Number(form.maxOrderQty || 0);
+      if (maxVal <= 0) {
+        setErrors((e) => ({
+          ...e,
+          maxOrderQty: t('validation.positiveNumber'),
+        }));
+      } else if (maxVal % Number(form.caseQty) !== 0) {
+        setErrors((e) => ({
+          ...e,
+          maxOrderQty: t('orderRequirements.maxQtyValidation'),
+        }));
+      } else setErrors((e) => ({ ...e, maxOrderQty: '' }));
+    } else {
+      setErrors((e) => ({ ...e, maxOrderQty: '' }));
+    }
+
+    // group price: must be positive and less than standard price if set
+    if (form.groupEnabled && form.groupPricePerUnit !== '') {
+      const gp = Number(form.groupPricePerUnit);
+      if (Number.isNaN(gp) || gp <= 0) {
+        setErrors((e) => ({
+          ...e,
+          groupPricePerUnit: t('validation.positiveNumber'),
+        }));
+      } else {
+        setErrors((e) => ({ ...e, groupPricePerUnit: '' }));
       }
-    })();
-  }, [productId, t]);
+    } else {
+      setErrors((e) => ({ ...e, groupPricePerUnit: '' }));
+    }
+  }, [
+    form.name,
+    form.description,
+    form.caseQty,
+    form.minOrderQty,
+    form.maxOrderQty,
+    form.groupEnabled,
+    form.groupPricePerUnit,
+    t,
+  ]);
 
-  const setField = (name, value) => setForm((p) => ({ ...p, [name]: value }));
+  const hasErrors = Object.values(errors).some(Boolean);
 
-  // تبديل حالة النشر Publish/Unpublish
+  /* ------- Actions ------- */
   const handleTogglePublish = () => {
-    setForm((prev) => ({
-      ...prev,
-      status: prev.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED',
+    setForm((p) => ({
+      ...p,
+      status: p.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED',
     }));
     setMsg(
       t(
         `messages.${form.status === 'PUBLISHED' ? 'unpublished' : 'published'}`,
       ),
     );
-    // لاحقًا: استدعاء API للتغيير الفعلي
   };
 
   async function onSave(e) {
     e.preventDefault();
+    if (hasErrors) return;
     setSaving(true);
     setMsg('');
     setError('');
@@ -125,90 +242,105 @@ export default function SupplierProductDetails() {
       const res = await mockSaveProduct(form);
       if (res.ok) setMsg(t('messages.saved'));
       else setError(t('errors.save'));
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError(t('errors.save'));
     } finally {
       setSaving(false);
     }
   }
 
-  // فتح/حفظ مودال تحديث المخزون
   const openStockModal = () => {
-    setNewStockQty(form.stockQty?.toString() || '');
+    setNewStockQty(String(form.stockQty || ''));
     setShowStockModal(true);
   };
   const applyStockUpdate = () => {
     const qty = Number(newStockQty || 0);
-    setForm((prev) => ({ ...prev, stockQty: qty }));
+    setForm((p) => ({ ...p, stockQty: qty }));
     setShowStockModal(false);
     setMsg(t('stock.updated'));
-    // لاحقًا: API لتحديث المخزون
   };
 
-  const handleTopAction = (type) => {
-    if (type === 'update-stock') openStockModal();
-    if (type === 'unpublish') handleTogglePublish();
-    console.log('Top action:', type, form.id);
+  /* ------- Images handling ------- */
+  const onAddImage = (file) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((p) => ({ ...p, images: [...(p.images || []), reader.result] }));
+    };
+    reader.readAsDataURL(file);
+  };
+  const onRemoveImage = (idx) => {
+    setForm((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }));
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="pd-container" dir={i18n.dir()} lang={i18n.language}>
         <div className="pd-skeleton">{t('loading')}</div>
       </div>
     );
-  if (error)
+  }
+
+  if (error) {
     return (
       <div className="pd-container" dir={i18n.dir()} lang={i18n.language}>
         <div className="pd-error">{error}</div>
       </div>
     );
+  }
 
   return (
     <div className="pd-container" dir={i18n.dir()} lang={i18n.language}>
       {/* Header */}
       <div className="pd-header">
         <div>
-          <h1 className="pd-title">{form.name}</h1>
+          <h1 className="pd-title">{form.name || t('basic.productDetails')}</h1>
           <div className="pd-subtitle">
             <span>{t('createdOn', { date: createdAtFmt })}</span>
+          </div>
+          <div style={{ marginTop: 8 }}>
             <span className={`pd-badge ${form.status?.toLowerCase()}`}>
               {t('productStatus')}:{' '}
               {t(`status.${form.status?.toLowerCase()}`, form.status)}
             </span>
           </div>
         </div>
+
         <div className="pd-actions">
-          <button
-            className="pd-btn ghost"
-            onClick={() => handleTopAction('update-stock')}
-          >
-            {t('actions.updateStock')}
+          <button className="pd-btn ghost" onClick={openStockModal}>
+            <FiPackage /> {t('actions.updateStock')}
           </button>
-          <button
-            className="pd-btn ghost"
-            onClick={() => handleTopAction('unpublish')}
-          >
+
+          <button className="pd-btn ghost" onClick={handleTogglePublish}>
+            {form.status === 'PUBLISHED' ? (
+              <FaRegEyeSlash style={{ marginInlineEnd: 8 }} />
+            ) : (
+              <FaRegEye style={{ marginInlineEnd: 8 }} />
+            )}
             {form.status === 'PUBLISHED'
               ? t('actions.unpublish')
               : t('actions.publish')}
           </button>
+
           <button
             className="pd-btn ghost"
-            onClick={() => handleTopAction('predict-demand')}
+            onClick={() => console.log('predict')}
           >
-            {t('actions.predictDemand')}
+            <FiClock /> {t('actions.predictDemand')}
           </button>
+
           <button
             className="pd-btn danger"
-            onClick={() => handleTopAction('delete')}
+            onClick={() => console.log('delete')}
           >
+            <FaRegTrashAlt />
             {t('actions.delete')}
           </button>
         </div>
       </div>
 
-      {/* Basic Information */}
+      {/* Basic Info */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.basicInfo')}</h2>
         <div className="pd-grid-2">
@@ -222,10 +354,19 @@ export default function SupplierProductDetails() {
                 type="text"
                 value={form.name}
                 onChange={(e) => setField('name', e.target.value)}
-                maxLength={240}
+                maxLength={60}
                 placeholder={t('placeholders.name')}
               />
-              <div className="pd-counter">{(form.name || '').length}/240</div>
+              <div
+                className={`pd-counter ${
+                  form.name.length > 60 ? 'invalid' : ''
+                }`}
+              >
+                {form.name.length}/60
+              </div>
+              {errors.name && (
+                <div className="pd-error-text">{errors.name}</div>
+              )}
             </div>
 
             <div className="pd-field">
@@ -237,36 +378,44 @@ export default function SupplierProductDetails() {
                 maxLength={1000}
                 placeholder={t('placeholders.description')}
               />
-              <div className="pd-counter">
-                {(form.description || '').length}/1000
+              <div
+                className={`pd-counter ${
+                  form.description.length > 1000 ? 'invalid' : ''
+                }`}
+              >
+                {form.description.length}/1000
               </div>
+              {errors.description && (
+                <div className="pd-error-text">{errors.description}</div>
+              )}
             </div>
           </div>
 
           <div>
             <label className="pd-label">{t('basic.productCategory')}</label>
             <div className="pd-help">{t('basic.productCategoryHelp')}</div>
+
             <div className="pd-field">
               <span className="pd-field-label">{t('basic.category')}</span>
-              <select
+              <SupplierSelectSubCategory
                 value={form.category}
-                onChange={(e) => setField('category', e.target.value)}
-              >
-                <option value="">{t('basic.selectCategory')}</option>
-                <option>Home & Living &gt; Furniture</option>
-                <option>Home & Living &gt; Decor</option>
-                <option>Beauty & Personal Care</option>
-                <option>Gifts & Bundles</option>
-              </select>
+                onChange={(selectedId) => setField('category', selectedId)}
+                usedFor="PRODUCT"
+              />
               <div className="pd-note">
-                {t('basic.willAppearIn')} {form.category || '—'}
+                {t('basic.willAppearIn')}{' '}
+                {categoryDetails
+                  ? `${categoryDetails.parentCategory?.name || ''} > ${
+                      categoryDetails.name
+                    }`
+                  : '—'}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Images */}
+      {/* Images (card-like) */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.images')}</h2>
         <div className="pd-grid-2">
@@ -278,46 +427,45 @@ export default function SupplierProductDetails() {
               <li>{t('images.t3')}</li>
               <li>{t('images.t4')}</li>
             </ul>
+            <div className="pd-help-sm">{t('images.uploadHint')}</div>
           </div>
+
           <div className="pd-image-list">
-            {form.images?.map((src, i) => (
-              <div className="pd-image-item" key={i}>
+            {(form.images || []).map((src, i) => (
+              <div key={i} className="pd-image-item">
                 <img src={src} alt={`product-${i}`} />
-                <button
-                  className="pd-img-del"
-                  onClick={() => {
-                    const arr = [...form.images];
-                    arr.splice(i, 1);
-                    setField('images', arr);
-                  }}
-                  aria-label={t('images.remove')}
-                >
-                  ×
-                </button>
+                <div className="delete-image-icon-bg">
+                  <button
+                    type="button"
+                    className="pd-btn-image-delete"
+                    aria-label={t('images.remove')}
+                    onClick={() => onRemoveImage(i)}
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             ))}
-            <label className="pd-image-upload">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  const url = URL.createObjectURL(file);
-                  setField('images', [...(form.images || []), url]);
-                }}
-              />
-              <span>
-                {t('images.upload')}
-                <br />
-                <small>.png / .jpg</small>
-              </span>
-            </label>
+
+            {form.images.length < 3 && (
+              <label className="pd-image-upload" style={{ cursor: 'pointer' }}>
+                <input
+                  type="file"
+                  accept=".png,.jpg,.jpeg,.webp"
+                  onChange={(e) => onAddImage(e.target.files?.[0])}
+                />
+                <span>
+                  {t('images.upload')}
+                  <br />
+                  <small>.png / .jpg / .jpeg / .webp</small>
+                </span>
+              </label>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Price */}
+      {/* Price card */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.price')}</h2>
         <div className="pd-field w-240">
@@ -325,141 +473,260 @@ export default function SupplierProductDetails() {
           <div className="pd-input-prefix">
             <input
               type="number"
-              step="0.01"
+              min="0"
               value={form.pricePerUnit}
               onChange={(e) => setField('pricePerUnit', e.target.value)}
             />
-            <span className="pd-prefix">{form.currency}</span>
+            <img src="/riyal.png" alt="SAR" className="sar" />
           </div>
         </div>
       </section>
 
-      {/* Order Requirements */}
+      {/* Order Requirements: two-column grid (left inputs, right explanations) */}
       <section className="pd-card">
-        <h2 className="pd-section-title">{t('sections.orderReq')}</h2>
-        <div className="pd-grid-3">
-          <div className="pd-field">
-            <span className="pd-field-label">{t('order.caseQty')}</span>
-            <input
-              type="number"
-              min="1"
-              value={form.caseQty}
-              onChange={(e) => setField('caseQty', Number(e.target.value || 1))}
-            />
-            <div className="pd-help-sm">{t('order.caseHint')}</div>
+        <h2 className="pd-section-title">{t('orderRequirements.title')}</h2>
+
+        <div className="or-grid">
+          {/* left: inputs */}
+          <div className="or-left">
+            <div className="pd-field">
+              <span className="pd-field-label">
+                {t('orderRequirements.caseQty')}
+              </span>
+              <input
+                type="number"
+                min="1"
+                value={form.caseQty}
+                onChange={(e) => {
+                  const val = Math.max(1, Number(e.target.value || 1));
+                  setField('caseQty', val);
+
+                  // Adjust min/max order if they fall below new caseQty
+                  if (form.minOrderQty < val) setField('minOrderQty', val);
+                  if (
+                    form.maxOrderQty !== 'Unlimited' &&
+                    form.maxOrderQty < val
+                  )
+                    setField('maxOrderQty', val);
+                }}
+              />
+            </div>
+
+            <div className="pd-field">
+              <span className="pd-field-label">
+                {t('orderRequirements.minQty')}
+              </span>
+              <input
+                type="number"
+                min={form.caseQty || 1}
+                value={form.minOrderQty}
+                onChange={(e) =>
+                  setField('minOrderQty', Number(e.target.value))
+                }
+                onBlur={() => {
+                  // Round up to nearest multiple of caseQty when leaving input
+                  let val = form.minOrderQty;
+                  if (val % form.caseQty !== 0) {
+                    val = Math.ceil(val / form.caseQty) * form.caseQty;
+                    setField('minOrderQty', val);
+                  }
+                  // Adjust maxOrderQty if needed
+                  if (
+                    form.maxOrderQty !== 'Unlimited' &&
+                    form.maxOrderQty < val
+                  ) {
+                    setField('maxOrderQty', val);
+                  }
+                }}
+              />
+
+              {errors.minOrderQty && (
+                <div className="pd-error-text">{errors.minOrderQty}</div>
+              )}
+            </div>
+
+            <div className="pd-field">
+              <span className="pd-field-label">
+                {t('orderRequirements.maxQty')}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <input
+                  type="number"
+                  min={form.minOrderQty || form.caseQty || 1}
+                  value={
+                    form.maxOrderQty !== 'Unlimited' ? form.maxOrderQty : ''
+                  }
+                  onChange={(e) =>
+                    setField('maxOrderQty', Number(e.target.value))
+                  }
+                  onBlur={() => {
+                    if (
+                      form.maxOrderQty !== 'Unlimited' &&
+                      form.maxOrderQty % form.caseQty !== 0
+                    ) {
+                      const val =
+                        Math.ceil(form.maxOrderQty / form.caseQty) *
+                        form.caseQty;
+                      setField('maxOrderQty', val);
+                    }
+                  }}
+                  disabled={form.maxOrderQty === 'Unlimited'}
+                />
+
+                <label
+                  style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.maxOrderQty === 'Unlimited'}
+                    onChange={(e) =>
+                      setField(
+                        'maxOrderQty',
+                        e.target.checked ? 'Unlimited' : form.minOrderQty,
+                      )
+                    }
+                  />{' '}
+                  {t('orderRequirements.unlimited')}
+                </label>
+              </div>
+              {errors.maxOrderQty && (
+                <div className="pd-error-text">{errors.maxOrderQty}</div>
+              )}
+            </div>
           </div>
 
-          <div className="pd-field">
-            <span className="pd-field-label">{t('order.minOrderQty')}</span>
-            <input
-              type="number"
-              min="1"
-              value={form.minOrderQty}
-              onChange={(e) =>
-                setField('minOrderQty', Number(e.target.value || 1))
-              }
-            />
-            <div className="pd-help-sm">{t('order.minHint')}</div>
-          </div>
+          {/* right: explanation text */}
+          <div className="or-right">
+            <div className="or-explain">
+              <h4>{t('orderRequirements.caseQty')}</h4>
+              <p>{t('orderRequirements.caseQtyHelp')}</p>
+            </div>
 
-          <div className="pd-field">
-            <span className="pd-field-label">{t('order.maxOrderQty')}</span>
-            <select
-              value={form.maxOrderQty}
-              onChange={(e) => setField('maxOrderQty', e.target.value)}
-            >
-              <option>Unlimited</option>
-              <option>50</option>
-              <option>100</option>
-              <option>250</option>
-              <option>500</option>
-            </select>
-            <div className="pd-help-sm">{t('order.maxHint')}</div>
+            <div className="or-explain">
+              <h4>{t('orderRequirements.minQty')}</h4>
+              <p>{t('orderRequirements.minQtyHelp')}</p>
+            </div>
+
+            <div className="or-explain">
+              <h4>{t('orderRequirements.maxQty')}</h4>
+              <p>{t('orderRequirements.maxQtyHelp')}</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Group Purchasing */}
       <section className="pd-card">
-        <h2 className="pd-section-title">{t('sections.group')}</h2>
+        <h2 className="pd-section-title">{t('groupPurchasing.title')}</h2>
 
-        <div className="pd-field">
-          <span className="pd-field-label">{t('group.enable')}</span>
-          <div className="pd-radio">
-            <label>
-              <input
-                type="radio"
-                checked={!!form.groupEnabled}
-                onChange={() => setField('groupEnabled', true)}
-              />{' '}
-              {t('yes')}
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={!form.groupEnabled}
-                onChange={() => setField('groupEnabled', false)}
-              />{' '}
-              {t('no')}
-            </label>
-          </div>
-          <div className="pd-help-sm">{t('group.help')}</div>
-        </div>
-
-        {form.groupEnabled && (
-          <div className="pd-grid-3">
+        <div className="or-grid">
+          <div className="or-left">
             <div className="pd-field">
-              <span className="pd-field-label">{t('group.minQty')}</span>
-              <input
-                type="number"
-                min="1"
-                value={form.groupMinQty}
-                onChange={(e) =>
-                  setField('groupMinQty', Number(e.target.value || 1))
-                }
-              />
-            </div>
-
-            <div className="pd-field">
-              <span className="pd-field-label">{t('group.deadline')}</span>
-              <select
-                value={form.groupDeadline}
-                onChange={(e) => setField('groupDeadline', e.target.value)}
-              >
-                <option>{t('group.afterXDays', { n: 3 })}</option>
-                <option>{t('group.afterXDays', { n: 5 })}</option>
-                <option>{t('group.afterXDays', { n: 7 })}</option>
-              </select>
-            </div>
-
-            <div className="pd-field">
-              <span className="pd-field-label">{t('group.pricePerUnit')}</span>
-              <div className="pd-input-prefix">
+              <label className="pd-field-label">
                 <input
-                  type="number"
-                  step="0.01"
-                  value={form.groupPricePerUnit}
-                  onChange={(e) =>
-                    setField('groupPricePerUnit', e.target.value)
-                  }
-                />
-                <span className="pd-prefix">{form.currency}</span>
-              </div>
+                  type="checkbox"
+                  checked={!!form.groupEnabled}
+                  onChange={(e) => setField('groupEnabled', e.target.checked)}
+                />{' '}
+                {t('groupPurchasing.enabled')}
+              </label>
+            </div>
+
+            {form.groupEnabled && (
+              <>
+                <div className="pd-field">
+                  <span className="pd-field-label">
+                    {t('groupPurchasing.minQty')}
+                  </span>
+                  <input
+                    type="number"
+                    min={1}
+                    value={form.groupMinQty}
+                    onChange={(e) =>
+                      setField('groupMinQty', Number(e.target.value || 1))
+                    }
+                  />
+                </div>
+
+                <div className="pd-field">
+                  <span className="pd-field-label">
+                    {t('groupPurchasing.deadline')}
+                  </span>
+                  <select
+                    value={form.groupDeadline}
+                    onChange={(e) => setField('groupDeadline', e.target.value)}
+                  >
+                    <option value={t('groupPurchasing.afterXDays', { n: 3 })}>
+                      {t('groupPurchasing.afterXDays', { n: 3 })}
+                    </option>
+                    <option value={t('groupPurchasing.afterXDays', { n: 5 })}>
+                      {t('groupPurchasing.afterXDays', { n: 5 })}
+                    </option>
+                    <option value={t('groupPurchasing.afterXDays', { n: 7 })}>
+                      {t('groupPurchasing.afterXDays', { n: 7 })}
+                    </option>
+                  </select>
+                </div>
+
+                <div className="pd-field">
+                  <span className="pd-field-label">
+                    {t('groupPurchasing.pricePerUnit')}
+                  </span>
+                  <div className="pd-input-prefix">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.groupPricePerUnit}
+                      onChange={(e) =>
+                        setField('groupPricePerUnit', e.target.value)
+                      }
+                    />
+                    <img src="/riyal.png" alt="SAR" className="sar" />
+                  </div>
+                  {errors.groupPricePerUnit && (
+                    <div className="pd-error-text">
+                      {errors.groupPricePerUnit}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="or-right">
+            <div className="or-explain">
+              <h4>{t('groupPurchasing.enabledHelpTitle')}</h4>
+              <p>{t('groupPurchasing.enabledHelp')}</p>
+            </div>
+
+            <div className="or-explain">
+              <h4>{t('groupPurchasing.minQty')}</h4>
+              <p>{t('groupPurchasing.minQtyHelp')}</p>
+            </div>
+
+            <div className="or-explain">
+              <h4>{t('groupPurchasing.deadline')}</h4>
+              <p>{t('groupPurchasing.deadlineHelp')}</p>
             </div>
           </div>
-        )}
+        </div>
       </section>
 
       {msg && <div className="pd-msg success">{msg}</div>}
       {error && <div className="pd-msg error">{error}</div>}
 
-      <div className="pd-savebar">
-        <button className="pd-btn primary" onClick={onSave} disabled={saving}>
+      <div className="pd-savebar center">
+        <button
+          className="pd-btn primary"
+          onClick={onSave}
+          disabled={saving || hasErrors}
+        >
           {saving ? t('saving') : t('save')}
         </button>
       </div>
 
-      {/* ===== Modal: Update Stock ===== */}
+      {/* Stock modal */}
       {showStockModal && (
         <div
           className="pd-modal-overlay"
@@ -471,18 +738,20 @@ export default function SupplierProductDetails() {
               <span className="pd-modal-label">{t('stock.current')}</span>
               <span className="pd-modal-value">{form.stockQty}</span>
             </div>
+
             <div className="pd-modal-row">
               <label className="pd-modal-label" htmlFor="newStockQty">
                 {t('stock.newQty')}
               </label>
               <input
                 id="newStockQty"
-                type="number"
                 className="pd-modal-input"
+                type="number"
                 value={newStockQty}
                 onChange={(e) => setNewStockQty(e.target.value)}
               />
             </div>
+
             <div className="pd-modal-actions">
               <button className="pd-btn primary" onClick={applyStockUpdate}>
                 {t('stock.update')}
@@ -497,7 +766,6 @@ export default function SupplierProductDetails() {
           </div>
         </div>
       )}
-      {/* ===== End Modal ===== */}
     </div>
   );
 }

@@ -11,7 +11,6 @@
     "published": "Published",
     "unpublished": "Unpublished"
   },
-
   "actions": {
     "updateStock": "Update Stock",
     "unpublish": "Unpublish",
@@ -19,7 +18,6 @@
     "predictDemand": "Predict Demand",
     "delete": "Delete"
   },
-
   "sections": {
     "basicInfo": "Basic Information",
     "images": "Images",
@@ -27,7 +25,6 @@
     "orderReq": "Order Requirements",
     "group": "Group Purchasing Settings"
   },
-
   "basic": {
     "productDetails": "Product Details",
     "productDetailsHelp": "Build buyers confidence with a clear, detailed product listing.",
@@ -39,12 +36,11 @@
     "selectCategory": "Select a Category",
     "willAppearIn": "This Product will appear to buyers in:"
   },
-
   "placeholders": {
     "name": "Enter product name",
-    "description": "Write a clear, detailed description"
+    "description": "Write a clear, detailed description",
+    "maxQty": "Maximum Order Quantity is Unlimited"
   },
-
   "images": {
     "tipsTitle": "Image Tips",
     "t1": "Use at least 1050px by 1050px.",
@@ -52,42 +48,53 @@
     "t3": "Ensure bright lighting with minimal shadows.",
     "t4": "Include front, side, and close-up views.",
     "upload": "Upload Image",
-    "remove": "Remove image"
+    "remove": "Remove image",
+    "uploadHint": "You can upload up to 3 images (.png, .jpg, .jpeg, .webp)."
   },
-
   "price": {
     "pricePerUnit": "Price Per Unit"
   },
-
-  "order": {
+  "orderRequirements": {
+    "title": "Order Requirements",
     "caseQty": "Case Quantity",
-    "caseHint": "Buyers purchase multiples of this case quantity (e.g., 4 → 8, 12, 20…).",
-    "minOrderQty": "Minimum Order Quantity",
-    "minHint": "Smallest number of units a buyer must order from you.",
-    "maxOrderQty": "Maximum Order Quantity",
-    "maxHint": "Upper limit per one-time purchase to manage inventory."
+    "caseQtyHelp": "Case quantity refers to the number of units that come in a single case or package. Buyers are required to purchase products in this case quantity, meaning orders must be in multiples of the case quantity. For example, if the case quantity is 10, buyers must order in increments of 10 units (e.g., 10, 20, 30 units, etc.).",
+    "minQty": "Minimum Order Quantity",
+    "minQtyHelp": "The minimum order quantity is the smallest number of units that a buyer must order from you. This ensures that you can sell products in bulk, optimizing your production, inventory, and shipping processes.",
+    "maxQty": "Maximum Order Quantity",
+    "maxQtyHelp": "The maximum order quantity is the largest number of units or items a buyer can order from you at one time. This limit is set to ensure that products are distributed fairly, prevent market saturation, manage inventory effectively, and avoid stock shortages.",
+    "minQtyValidation": "Minimum order must be a multiple of case quantity.",
+    "maxQtyValidation": "Maximum order must be a multiple of case quantity.",
+    "unlimited": "Unlimited "
   },
-
-  "group": {
-    "enable": "Would you like to enable group purchasing?",
-    "help": "Buyers from the same city can collectively place a bulk order to access discount pricing.",
+  "groupPurchasing": {
+    "title": "Group Purchasing Settings",
+    "enabled": "Would you like to enable group purchasing?",
+    "enabledHelpTitle": "Group Purchasing",
+    "enabledHelp": "Group purchasing allows five buyers from the same city to collectively place a bulk order for a product, enabling them to access discounted pricing. This feature helps you increase sales volume, attract more buyers, and move inventory more efficiently while offering competitive pricing.",
     "minQty": "Minimum Group Orders Quantity",
+    "minQtyHelp": "The minimum group orders quantity is the smallest number of units or packages that must be collectively ordered by all buyers in a group purchase. This ensures that you can meet your production and inventory requirements efficiently while offering a discount to buyers.",
     "deadline": "Order Deadline",
+    "deadlineHelp": "The order deadline is the specified time by which the minimum number of buyers (which is 5) and the minimum group orders quantity must be met for the group purchase to be completed. If the requirements are not fulfilled by the deadline, the group purchase will be canceled.",
     "afterXDays": "After {{n}} days",
-    "pricePerUnit": "Group Purchase Price Per Unit"
+    "pricePerUnit": "Group Purchase Price Per Unit",
+    "priceHelp": "The discounted unit price for the group purchase."
   },
-
+  "validation": {
+    "required": "This field is required",
+    "positiveNumber": "Must be a positive number",
+    "multipleOfCase": "Must be a multiple of case quantity",
+    "nameTooLong": "Name must be 60 characters or less",
+    "descriptionTooLong": "Description must be 1000 characters or less"
+  },
   "messages": {
-    "saved": "Changes saved (mock).",
+    "saved": "Changes saved.",
     "published": "Product is now published.",
     "unpublished": "Product is now unpublished."
   },
-
   "errors": {
     "fetch": "Failed to load product.",
     "save": "Failed to save."
   },
-
   "stock": {
     "title": "Update Stock Levels",
     "current": "Current Stock Level",
