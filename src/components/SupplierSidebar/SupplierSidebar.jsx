@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   FaHome,
   FaCube,
@@ -13,52 +13,69 @@ import {
   FaBell,
   FaGlobe,
   FaUserCircle,
+  FaSignOutAlt,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 import './SupplierSidebar.css';
 
 const SupplierSidebar = () => {
   const { t, i18n } = useTranslation('sidebar');
+  const { user, refreshUser, handleLogout, switchRole } = useAuth();
+  const navigate = useNavigate();
+  const [switching, setSwitching] = useState(false);
 
-  // بيانات المستخدم من LocalStorage (مؤقت)
-  const user = JSON.parse(localStorage.getItem('user')) || {
-    companyName: 'Company XYZ',
-    role: t('profile.defaultRole'),
-  };
-
-  //  دالة لتبديل اللغة
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
     i18n.changeLanguage(newLang);
-    localStorage.setItem('i18nextLng', newLang); // نحفظها عشان تبقى حتى بعد التحديث
+    localStorage.setItem('i18nextLng', newLang);
   };
+
+  const handleLogoutClick = async () => {
+    await handleLogout();
+    navigate('/');
+  };
+
+  const handleSwitchRole = async () => {
+    if (switching) return;
+    setSwitching(true);
+    try {
+      const newRole = await switchRole();
+      if (newRole === 'supplier')
+        navigate('/supplier/overview', { replace: true });
+      else if (newRole === 'buyer')
+        navigate('/buyer/homepage', { replace: true });
+      else navigate('/', { replace: true });
+    } finally {
+      setSwitching(false);
+    }
+  };
+
+  const logoSrc =
+    i18n.language === 'ar' ? '/sidebar-logo-ar.png' : '/sidebar-logo.png';
 
   return (
     <aside
-      className={`sidebar-container sidebar ${
-        i18n.language === 'ar' ? 'rtl' : 'ltr'
-      }`}
+      className={`sidebar-container ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}
     >
-      {/*  اللوغو  */}
+      {/* Logo */}
       <div className="sidebar-logo">
-        <img src="/logo.png" alt="Silah Logo" />
-        <div className="logo-text">
-          <span>Connecting</span>
-          <span>Businesses</span>
-        </div>
+        <img src={logoSrc} alt="Silah Logo" />
       </div>
 
-      {/*  الروابط  */}
-      <ul className="sidebar-links">
+      <hr className="divider" />
+
+      {/* Top navigation */}
+      <ul className="sidebar-links top-links">
         <li>
           <Link to="/overview">
             <FaHome /> {t('overview')}
           </Link>
         </li>
         <li>
-          <Link to="/supplier-product-details">
-            <FaCube /> {t('products')}
+          <Link to="/listings">
+            <FaCube /> {t('listings')}
           </Link>
         </li>
         <li>
@@ -82,42 +99,64 @@ const SupplierSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/settings-page/settings">
-            <FaCog /> {t('settings')}
-          </Link>
-        </li>
-        <li claasName="change-role">
-          <Link to="/role">
-            <FaExchangeAlt />
-            <span>{t('changeRole')}</span>
-            <span className="buyer">{t('buyer')}</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/messages">
+          <Link to="/messages" className="sidebar-action">
             <FaEnvelope /> {t('messages')}
           </Link>
         </li>
         <li>
-          <Link to="/notifications">
+          <Link to="/notifications" className="sidebar-action">
             <FaBell /> {t('notifications')}
+          </Link>
+        </li>
+        <li>
+          <Link to="/settings">
+            <FaCog /> {t('settings')}
           </Link>
         </li>
       </ul>
 
-      {/*  البروفايل + اللغة */}
-      <div className="profile">
-        <FaUserCircle className="profile-icon" />
-        <div>
-          <p className="company">{user.companyName}</p>
-          <span className="role">{user.role}</span>
-        </div>
-      </div>
+      {/* Push bottom section to bottom */}
+      <div className="sidebar-bottom">
+        {/* Switch role, logout, and language at the bottom */}
+        <div className="sidebar-actions">
+          <button
+            className="sidebar-action switch-role"
+            onClick={handleSwitchRole}
+            disabled={switching}
+          >
+            <FaExchangeAlt />
+            {switching ? t('switching') : t('changeRoleToBuyer')}
+          </button>
 
-      {/*  زر اللغة  */}
-      <div className="language-switch" onClick={toggleLanguage}>
-        <FaGlobe />
-        <span>{i18n.language === 'ar' ? 'English' : 'العربية'}</span>
+          <button className="sidebar-action logout" onClick={handleLogoutClick}>
+            <FaSignOutAlt /> {t('logout')}
+          </button>
+
+          <div className="language-switch" onClick={toggleLanguage}>
+            <FaGlobe />{' '}
+            <span>{i18n.language === 'ar' ? 'English' : 'العربية'}</span>
+          </div>
+        </div>
+
+        <hr className="divider" />
+
+        {/* Profile */}
+        <div className="profile">
+          {user?.pfpUrl ? (
+            <img
+              src={user.pfpUrl}
+              alt="Profile"
+              className="profile-img"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <FaUserCircle className="profile-icon" />
+          )}
+          <div>
+            <p className="company">{user?.businessName}</p>
+            <span className="role">{user?.name}</span>
+          </div>
+        </div>
       </div>
     </aside>
   );

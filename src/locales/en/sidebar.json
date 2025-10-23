@@ -1,17 +1,15 @@
 {
   "overview": "Overview",
-  "products": "Products & Services",
+  "listings": "Products & Services",
   "biddings": "Biddings",
   "orders": "Orders",
   "invoices": "Invoices",
   "analytics": "Analytics & Insights",
   "settings": "Settings",
-  "changeRole": "Change Role to",
-  "buyer": "Buyer",
+  "changeRoleToBuyer": "Change Role to Buyer",
+  "switching": "We are changing your role...",
   "messages": "Direct Messages",
   "notifications": "Notifications",
   "language": "Language",
-  "profile": {
-    "defaultRole": "Amazing Person"
-  }
+  "logout": "Log out"
 }
