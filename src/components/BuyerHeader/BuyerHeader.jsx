@@ -23,7 +23,7 @@ import './BuyerHeader.css';
 const BuyerHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
-  const { user, refreshUser, handleLogout } = useAuth();
+  const { user, refreshUser, handleLogout, switchRole } = useAuth();
 
   const [categories, setCategories] = useState([]);
   const [notifications, setNotifications] = useState([]);
@@ -116,24 +116,13 @@ const BuyerHeader = () => {
     if (switching) return;
     setSwitching(true);
     try {
-      const res = await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/switch-role`,
-        {},
-        { withCredentials: true },
-      );
-
-      await refreshUser();
-
-      const newRole = res.data?.newRole?.toLowerCase();
-      if (newRole === 'supplier') navigate('/supplier/overview');
-      else navigate('/');
-    } catch (err) {
-      const msg =
-        err.response?.data?.error?.message ||
-        err.response?.data?.message ||
-        err.message;
-      console.error('Failed to switch role:', msg);
-      alert(t('profileChoices.roleSwitchError') || msg);
+      const newRole = await switchRole(); // <--- CALL context's switchRole
+      // now navigate based on returned role (safe)
+      if (newRole === 'supplier')
+        navigate('/supplier/overview', { replace: true });
+      else if (newRole === 'buyer')
+        navigate('/buyer/homepage', { replace: true });
+      else navigate('/', { replace: true });
     } finally {
       setSwitching(false);
     }

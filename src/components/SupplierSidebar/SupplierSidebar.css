@@ -1,75 +1,73 @@
-/*  الأساسيات  */
-.sidebar-container {
-  width: 260px;
-  min-width: 260px;
-  background: #ffffff;
-  border-inline-end: 1px solid #e9e9ee;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  left: 0 !important;
-  right: auto !important;
+/* Layout container */
+.supplier-layout-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  overflow-y: auto;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  direction: ltr; /* السايدبار دايمًا يسار */
-  text-align: left;
 }
 
-/* بالعربي نخلي المحتوى داخل الروابط RTL بدون ما نعكس مكان السايدبار */
+.supplier-main {
+  flex: 1;
+  padding: 20px;
+  margin-inline-start: 280px; /* space for sidebar */
+}
+
+/* Sidebar basics */
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  width: 280px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #fff;
+  border-inline-end: 1px solid #e9e9ee;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  text-align: left;
+  overflow-y: auto;
+  white-space: nowrap;
+  padding: 20px 0;
+}
+
 .sidebar-container.rtl {
   direction: rtl;
   text-align: right;
   font-family: 'Tajawal', sans-serif;
 }
 
-/*  اللوغو  */
+/* Logo */
 .sidebar-logo {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-left: 8px;
-  margin-bottom: 25px;
-  position: relative;
-  top: 15px;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-shrink: 0; /* prevent collapsing */
 }
 
 .sidebar-logo img {
-  width: 50px;
-  height: auto;
-  flex-shrink: 0;
-  transform: translateY(-1px);
+  width: auto; /* maintain natural width */
+  height: 50px; /* fix a reasonable height */
+  display: block; /* remove inline spacing issues */
 }
 
-.sidebar-logo .logo-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #5f408c;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 1.4;
-  white-space: nowrap;
+/* Divider */
+.divider {
+  height: 1px; /* thin line */
+  width: calc(
+    100% - 32px
+  ); /* full width minus sidebar padding (16px each side) */
+  background-color: #eee; /* light gray */
+  margin: 12px 16px; /* vertical + horizontal spacing */
+  border: none; /* remove default border */
+  flex-shrink: 0; /* don’t collapse in flex */
 }
 
-.sidebar-logo .logo-text span:first-child {
-  font-weight: 500;
-  color: #2f3c73;
-}
-
-/*  الروابط  */
+/* Links */
 .sidebar-links {
   list-style: none;
-  padding: 0 8px 10px;
+  padding: 0 16px;
   margin: 0;
-  position: relative;
-}
-
-.sidebar-links li:first-child a {
-  margin-top: 6px;
 }
 
 .sidebar-links li + li {
@@ -79,17 +77,20 @@
 .sidebar-links a {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 10px; /* space between icon and text */
   padding: 10px 12px;
   color: #2f3c73;
   text-decoration: none;
   font-weight: 500;
   border-radius: 10px;
-  transition:
-    background 0.25s,
-    color 0.25s;
-  line-height: 1.25;
+  transition: background 0.25s, color 0.25s;
   min-height: 42px;
+  flex-wrap: nowrap; /* prevent wrapping in small widths */
+}
+
+.sidebar-links a svg {
+  font-size: 1.05rem;
+  flex-shrink: 0; /* do not shrink the icon */
 }
 
 .sidebar-links a:hover {
@@ -97,35 +98,87 @@
   color: #6f4e9e;
 }
 
-.sidebar-links svg {
-  font-size: 1.05rem;
+.sidebar-action.switch-role,
+.sidebar-action.logout {
+  background: transparent;
+  border: none;
+  color: #2f3c73;
+  min-height: 42px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.25s, color 0.25s;
 }
 
-/*  تغيير الدور  */
-.change-role a span,
-.change-role a .buyer {
-  white-space: nowrap;
-}
-
-.sidebar-links .buyer {
-  margin-inline-start: 4px;
-  font-weight: 600;
+.sidebar-action.switch-role:hover,
+.sidebar-action.logout:hover {
+  background: #f3eefb;
   color: #6f4e9e;
-  font-size: 0.92rem;
 }
 
-/*  البروفايل  */
+/* Bottom section pushed to bottom */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* DM / Notifications / Language section */
+.sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 16px;
+  gap: 4px; /* small gap like Figma */
+}
+
+.sidebar-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-weight: 500;
+  color: #2f3c73;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.sidebar-action:hover {
+  background: #f3eefb;
+  color: #6f4e9e;
+}
+
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #2f3c73;
+}
+
+.language-switch:hover {
+  background: #f3eefb;
+}
+
+/* Profile */
 .profile {
   display: flex;
   align-items: center;
-  padding: 14px 16px;
-  background: #f8f8fc;
-  border-top: 1px solid #e0e0e5;
+  gap: 10px;
+  padding: 16px;
+}
+
+.profile-img {
+  height: 48px;
+  border-radius: 50px;
 }
 
 .profile-icon {
   font-size: 1.9rem;
-  margin-inline-end: 10px;
   color: #6f4e9e;
 }
 
@@ -141,27 +194,7 @@
   color: #888;
 }
 
-/*  زر اللغة  */
-.language-switch {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 0;
-  cursor: pointer;
-  color: #2f3c73;
-  background: #f8f8fc;
-  border-top: 1px solid #e0e0e5;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: background 0.3s;
-}
-
-.language-switch:hover {
-  background: #f3eefb;
-}
-
-/* سكرول  */
+/* Scrollbar */
 .sidebar-container::-webkit-scrollbar {
   width: 6px;
 }

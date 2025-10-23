@@ -6,10 +6,11 @@ import Swal from 'sweetalert2';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const { t, i18n } = useTranslation('auth');
+  const { t } = useTranslation('auth');
   const [user, setUser] = useState(null);
   const [role, setRole] = useState('guest');
   const [loading, setLoading] = useState(true);
+  const [switching, setSwitching] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -20,9 +21,10 @@ export function AuthProvider({ children }) {
       );
     } catch (err) {
       console.warn('Logout failed:', err.response?.data || err.message);
+    } finally {
+      setUser(null);
+      setRole('guest');
     }
-    setUser(null);
-    setRole('guest');
   };
 
   const fetchUser = async () => {
@@ -35,7 +37,6 @@ export function AuthProvider({ children }) {
       setRole(res.data.role?.toLowerCase() || 'guest');
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        // Show alert before logging out
         await Swal.fire({
           icon: 'warning',
           title: t('title'),
@@ -43,8 +44,10 @@ export function AuthProvider({ children }) {
           confirmButtonColor: '#476DAE',
           confirmButtonText: 'OK',
         });
-        handleLogout();
+        setUser(null);
+        setRole('guest');
       } else {
+        console.error('Fetch user failed:', err);
         setUser(null);
         setRole('guest');
       }
@@ -57,13 +60,45 @@ export function AuthProvider({ children }) {
     fetchUser();
   }, []);
 
-  const refreshUser = async () => {
-    await fetchUser();
+  const switchRole = async () => {
+    if (switching) return role;
+    setSwitching(true);
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/switch-role`,
+        {},
+        { withCredentials: true },
+      );
+      await fetchUser();
+      return res.data?.newRole?.toLowerCase() || role;
+    } catch (err) {
+      const msg =
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        err.message;
+      Swal.fire({
+        icon: 'error',
+        title: t('switchRoleErrorTitle') || 'Switch role failed',
+        text: msg,
+        confirmButtonColor: '#476DAE',
+      });
+      return role;
+    } finally {
+      setSwitching(false);
+    }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, role, loading, refreshUser, handleLogout }}
+      value={{
+        user,
+        role,
+        loading,
+        switching,
+        handleLogout,
+        fetchUser,
+        switchRole,
+      }}
     >
       {children}
     </AuthContext.Provider>
