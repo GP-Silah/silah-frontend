@@ -1,0 +1,14 @@
+{
+  "type": "النوع",
+  "date": "التاريخ",
+  "allNotifications": "كل الإشعارات",
+  "newReviews": "مراجعات جديدة",
+  "bidsStatus": "حالة العطاءات",
+  "newMessages": "رسائل جديدة",
+  "newOrders": "طلبات جديدة",
+  "invoicesStatus": "حالة الفواتير",
+  "allDays": "كل الأيام",
+  "today": "اليوم",
+  "thisWeek": "هذا الأسبوع",
+  "thisMonth": "هذا الشهر"
+}

@@ -79,7 +79,7 @@ const SupplierSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/bids">
+          <Link to="/supplier/bids">
             <FaGavel /> {t('biddings')}
           </Link>
         </li>
@@ -104,12 +104,12 @@ const SupplierSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/notifications" className="sidebar-action">
+          <Link to="/supplier/notifications" className="sidebar-action">
             <FaBell /> {t('notifications')}
           </Link>
         </li>
         <li>
-          <Link to="/settings">
+          <Link to="/supplier/settings">
             <FaCog /> {t('settings')}
           </Link>
         </li>

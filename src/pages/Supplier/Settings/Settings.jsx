@@ -36,15 +36,11 @@ export default function SupplierSettings() {
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar ثابت */}
-      <div className="sidebar-fixed">
-        <Sidebar />
-      </div>
       {/* المحتوى الرئيسي */}
       <div className="page-content" dir={i18n.dir()}>
         <div className="settings-container">
           <h2 className="settings-title">{t('pageTitle.settings')}</h2>{' '}
-          {/* 🔹 التبويبات */}
+          {/* التبويبات */}
           <div className="settings-tabs">
             {['general', 'account', 'notifications', 'store', 'support'].map(
               (tab) => (
@@ -60,7 +56,7 @@ export default function SupplierSettings() {
               ),
             )}
           </div>
-          {/* 🟣 General Tab */}
+          {/*  General Tab */}
           {activeTab === 'general' && (
             <>
               <section className="settings-box">
@@ -122,7 +118,7 @@ export default function SupplierSettings() {
               </section>
             </>
           )}
-          {/* 🟣 Account Tab */}
+          {/*  Account Tab */}
           {activeTab === 'account' && (
             <section className="settings-box">
               <h3>{t('account.title')}</h3>
@@ -150,7 +146,7 @@ export default function SupplierSettings() {
               </button>
             </section>
           )}
-          {/* 🟣 Notifications Tab */}
+          {/*  Notifications Tab */}
           {activeTab === 'notifications' && (
             <section className="settings-box">
               <h3>{t('notifications.title')}</h3>
@@ -189,7 +185,7 @@ export default function SupplierSettings() {
               </div>
             </section>
           )}
-          {/* 🟣 Store Tab */}
+          {/*  Store Tab */}
           {activeTab === 'store' && (
             <section className="settings-box">
               <h3>{t('store.title')}</h3>
@@ -252,7 +248,7 @@ export default function SupplierSettings() {
               </div>
             </section>
           )}
-          {/* 🟣 Support Tab */}
+          {/* Support Tab */}
           {activeTab === 'support' && (
             <section className="settings-box support-section">
               <h3 className="support-title">{t('support.helpTitle')}</h3>

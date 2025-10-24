@@ -33,8 +33,6 @@ const BidOffer = () => {
 
   return (
     <div className={`bid-offer-page ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}>
-      <Sidebar />
-
       <main className="bid-offer-content">
         <div className="bid-offer-wrapper">
           <h1>{t('title')}</h1>
