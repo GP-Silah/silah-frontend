@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Reset.css';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaGlobe } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 
 function PasswordReset() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation('password');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -13,54 +13,78 @@ function PasswordReset() {
   const [confirmPw, setConfirmPw] = useState('');
   const [error, setError] = useState('');
   const [banner, setBanner] = useState(null); // 'success' | 'expired' | null
+  const [loading, setLoading] = useState(false);
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
-  };
+  // Extract token from query string
+  const token = new URLSearchParams(location.search).get('token');
 
   useEffect(() => {
-    document.title = 'Password Reset';
+    document.title = t('reset.pageTitle');
 
-    const params = new URLSearchParams(location.search);
-    const status = params.get('status');
+    // Handle banners from query params
+    const status = new URLSearchParams(location.search).get('status');
     if (status === 'expired') setBanner('expired');
     else if (status === 'success') setBanner('success');
-  }, [location.search]);
+  }, [location.search, t]);
 
-  const handleSave = () => {
+  // 🚨 Redirect if token is missing
+  useEffect(() => {
+    if (!token) {
+      navigate('/request-password-reset?status=missing-token', {
+        replace: true,
+      });
+    }
+  }, [token, navigate]);
+
+  const validatePassword = (pw) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#!$]{8,28}$/;
+    return regex.test(pw);
+  };
+
+  const handleSave = async () => {
     setError('');
+    setBanner(null);
+
     if (!newPw || !confirmPw) {
       setError(t('reset.pwRequired'));
       return;
     }
-    if (newPw.length < 6) {
-      setError(t('reset.pwTooShort'));
+
+    if (!validatePassword(newPw)) {
+      setError(t('errors.weakPassword'));
       return;
     }
+
     if (newPw !== confirmPw) {
-      setError(t('reset.pwMismatch'));
+      setError(t('errors.passwordMismatch'));
       return;
     }
 
-    setBanner('success');
+    try {
+      setLoading(true);
+      await axios.post(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/auth/reset-password?token=${token}`,
+        { newPassword: newPw },
+      );
 
-    setTimeout(() => navigate('/login'), 2000);
+      setBanner('success');
+      setTimeout(() => navigate('/login'), 2000);
+    } catch (err) {
+      console.error(err);
+      const msg =
+        err.response?.data?.error?.message ||
+        err.response?.data?.message ||
+        t('reset.genericError');
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="reset-page">
-      <div className="reset-header">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          className="logo"
-          onClick={() => navigate('/')}
-        />
-        <button className="lang-btn" onClick={toggleLanguage}>
-          <FaGlobe />
-        </button>
-      </div>
-
       <div className="reset-container">
         <h2>{t('reset.resetTitle')}</h2>
 
@@ -77,6 +101,7 @@ function PasswordReset() {
           placeholder="••••••••"
           value={newPw}
           onChange={(e) => setNewPw(e.target.value)}
+          disabled={loading}
         />
 
         <label className="reset-label">{t('reset.confirmPw')}</label>
@@ -85,12 +110,13 @@ function PasswordReset() {
           placeholder="••••••••"
           value={confirmPw}
           onChange={(e) => setConfirmPw(e.target.value)}
+          disabled={loading}
         />
 
         {error && <p className="error-message">{error}</p>}
 
-        <button className="primary-btn" onClick={handleSave}>
-          {t('reset.save')}
+        <button className="primary-btn" onClick={handleSave} disabled={loading}>
+          {loading ? t('reset.saving') : t('reset.save')}
         </button>
       </div>
     </div>

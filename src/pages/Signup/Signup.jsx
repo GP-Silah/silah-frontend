@@ -335,11 +335,20 @@ function Signup() {
               </button>
             )}
             <button
-              className="submit-btn"
-              disabled={!isStepValid()}
+              className={`submit-btn ${loading ? 'loading' : ''}`}
+              disabled={loading || !isStepValid()}
               onClick={nextStep}
             >
-              {step === 3 ? t('done') : t('next')}
+              {loading ? (
+                <>
+                  {t('signingUp')}
+                  <span className="loading-spinner"></span>
+                </>
+              ) : step === 3 ? (
+                t('done')
+              ) : (
+                t('next')
+              )}
             </button>
           </div>
         </div>

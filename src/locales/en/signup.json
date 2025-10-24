@@ -22,6 +22,7 @@
   "terms": "terms and conditions",
   "haveAccount": "Already have an account?",
   "login": "Log in",
+  "signingUp": "Signing up...",
   "errors": {
     "numbersOnly": "Please enter numbers only",
     "invalidEmail": "Please enter a valid email address",
