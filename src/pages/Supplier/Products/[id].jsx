@@ -669,7 +669,7 @@ export default function SupplierProductDetails() {
               <SupplierSelectSubCategory
                 value={form.category}
                 onChange={(selectedId) => setField('category', selectedId)}
-                usedFor="PRODUCT"
+                usedFor="products"
               />
               <div className="pd-note">
                 {t('basic.willAppearIn')}{' '}
