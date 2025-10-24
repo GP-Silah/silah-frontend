@@ -1,0 +1,14 @@
+{
+  "type": "Type",
+  "date": "Date",
+  "allNotifications": "All notifications",
+  "newReviews": "New reviews",
+  "bidsStatus": "Bids status",
+  "newMessages": "New messages",
+  "newOrders": "New orders",
+  "invoicesStatus": "Invoices status",
+  "allDays": "All days",
+  "today": "Today",
+  "thisWeek": "This week",
+  "thisMonth": "This month"
+}
