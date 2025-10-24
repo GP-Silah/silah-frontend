@@ -26,8 +26,6 @@ const BidDetails = () => {
     <div
       className={`bid-details-page ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}
     >
-      <Sidebar />
-
       <main className="bid-details-content">
         {/* العنوان يكون محاذي يمين بالعربي */}
         <h1

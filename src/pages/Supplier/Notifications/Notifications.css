@@ -1,0 +1,164 @@
+:root {
+  --silah-purple: #5a2a6e;
+  --card-bg: #f7f7fb;
+  --border: #e5e5ea;
+  --text: #1c1c1e;
+  --muted: #6b7280;
+  --white: #ffffff;
+}
+
+/*  الصفحة العامة  */
+.notif-page {
+  background: var(--card-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 50px 80px;
+  font-family: system-ui, 'Tajawal', sans-serif;
+  overflow-y: auto; /* الصفحة كلها تسكرل */
+  box-sizing: border-box;
+}
+
+/*  العناوين والفلاتر  */
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.notif-filters-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.notif-filter-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/*  Dropdowns (Type / Date filters)  */
+.dropdown {
+  position: relative;
+}
+
+.dropdown button {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 170px;
+  text-align: left;
+}
+
+[data-dir='rtl'] .dropdown button {
+  text-align: right;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  width: 190px;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.dropdown-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f2f2f7;
+}
+
+/*  قائمة الإشعارات  */
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+/*  الإشعار الواحد  */
+.notif-item {
+  display: flex;
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.notif-item:hover {
+  background: #f1eef6;
+}
+
+/* إشعارات غير مقروءة */
+.notif-item.unread {
+  background: #edf0ff;
+  border-left: 4px solid var(--silah-purple);
+}
+
+/* أيقونة الإشعار */
+.notif-icon {
+  font-size: 22px;
+  margin-right: 14px;
+  color: var(--silah-purple);
+}
+
+[data-dir='rtl'] .notif-icon {
+  margin-right: 0;
+  margin-left: 14px;
+}
+
+.notif-info {
+  flex: 1;
+}
+
+.notif-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.notif-date {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/*  Scrollbar شكل السكرول  */
+.notif-page::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notif-page::-webkit-scrollbar-thumb {
+  background: #c3b4d6;
+  border-radius: 10px;
+}
+
+.notif-page::-webkit-scrollbar-thumb:hover {
+  background: #a084c4;
+}
