@@ -26,6 +26,7 @@ export default function SupplierServiceDetails() {
     description: '',
     category: '',
     images: [],
+    _newFiles: [],
     price: '',
     currency: '﷼',
     isPriceNegotiable: false,
@@ -50,8 +51,8 @@ export default function SupplierServiceDetails() {
     };
     formData.append('dto', JSON.stringify(dto));
 
-    // Add images (files only)
-    filesToUpload.forEach((file) => formData.append('files', file));
+    // Add images in create mode
+    (form._newFiles || []).forEach((file) => formData.append('files', file));
 
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/services`,
@@ -195,11 +196,22 @@ export default function SupplierServiceDetails() {
   const [errors, setErrors] = useState({
     name: '',
     description: '',
+    price: '',
+  });
+
+  const [touched, setTouched] = useState({
+    name: false,
+    description: false,
+    price: false,
   });
 
   useEffect(() => {
-    document.title = t('pageTitle');
-  }, [t, i18n.language]);
+    if (isCreateMode) {
+      document.title = t('pageTitleCreate');
+    } else {
+      document.title = form.name || t('pageTitle');
+    }
+  }, [form.name, isCreateMode, t]);
 
   const createdAtFmt = useMemo(() => {
     if (!form.createdAt) return '';
@@ -298,7 +310,17 @@ export default function SupplierServiceDetails() {
         description: t('validation.descriptionTooLong'),
       }));
     } else setErrors((e) => ({ ...e, description: '' }));
-  }, [form.name, form.description, t]);
+
+    // price validation
+    if (!touched.price) return;
+    if (form.price === '' || form.price === null || form.price === undefined) {
+      setErrors((e) => ({ ...e, price: t('validation.priceRequired') }));
+    } else if (form.price < 0) {
+      setErrors((e) => ({ ...e, price: t('validation.pricePositive') }));
+    } else {
+      setErrors((e) => ({ ...e, price: '' }));
+    }
+  }, [form.name, form.description, form.price, touched.price, t]);
 
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -340,14 +362,40 @@ export default function SupplierServiceDetails() {
   }
 
   /* ------- Images handling ------- */
+  // Add image (create mode vs update mode)
   const onAddImage = async (file) => {
     if (!file) return;
-    await uploadServiceImage(file); // updates `form.images` inside the function
+
+    if (isCreateMode) {
+      // Preview locally before saving to backend
+      const previewUrl = URL.createObjectURL(file);
+      setForm((p) => ({
+        ...p,
+        images: [...(p.images || []), previewUrl], // for preview
+        _newFiles: [...(p._newFiles || []), file], // for actual upload later
+      }));
+      return;
+    }
+
+    // Update mode → upload immediately
+    await uploadServiceImage(file);
   };
 
-  const onRemoveImage = async (idx) => {
-    const fileName = form.images[idx]; // adjust if you store URLs differently
-    await deleteImage(fileName, idx);
+  const onRemoveImage = (idx) => {
+    if (isCreateMode) {
+      setForm((p) => {
+        const newImages = p.images.filter((_, i) => i !== idx);
+        return {
+          ...p,
+          images: newImages,
+          _newFiles: (p._newFiles || []).filter((_, i) => i !== idx),
+        };
+      });
+      return;
+    }
+
+    const fileName = form.images[idx];
+    deleteImage(fileName, idx);
   };
 
   if (loading) {
@@ -507,7 +555,11 @@ export default function SupplierServiceDetails() {
                     type="button"
                     className="pd-btn-image-delete"
                     aria-label={t('images.remove')}
-                    onClick={() => onRemoveImage(i)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // <---- ensure click isn't blocked by parent
+                      e.preventDefault();
+                      onRemoveImage(i);
+                    }}
                   >
                     ×
                   </button>
@@ -536,47 +588,85 @@ export default function SupplierServiceDetails() {
       {/* Price */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.price')}</h2>
-        <div className="pd-field w-240">
-          <span className="pd-field-label">{t('price.price')}</span>
-          <div className="pd-input-prefix">
-            <input
-              type="number"
-              min="0"
-              value={form.price}
-              onChange={(e) => setField('price', e.target.value)}
-            />
-            <img src="/riyal.png" alt="SAR" className="sar" />
+
+        <div className="or-grid">
+          {/* left: inputs */}
+          <div className="or-left">
+            <div className="pd-field w-240">
+              <span className="pd-field-label">{t('price.price')}</span>
+              <div className="pd-input-prefix">
+                <input
+                  type="number"
+                  min="0"
+                  value={form.price}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // Only allow digits (and dot if you want decimals)
+                    if (val === '') {
+                      setField('price', '');
+                    } else {
+                      const num = Number(val);
+                      setField('price', isNaN(num) ? '' : num);
+                    }
+                  }}
+                  onBlur={() => setTouched((t) => ({ ...t, price: true }))}
+                />
+                <img src="/riyal.png" alt="SAR" className="sar" />
+              </div>
+              {errors.price && (
+                <div className="pd-error-text">{errors.price}</div>
+              )}
+            </div>
           </div>
 
-          <label className="pd-check">
-            <input
-              type="checkbox"
-              checked={!!form.isPriceNegotiable}
-              onChange={(e) => setField('isPriceNegotiable', e.target.checked)}
-            />{' '}
-            {t('price.negotiable')}
-          </label>
-          <div className="pd-help-sm">{t('price.note')}</div>
+          {/* right: negotiation checkbox */}
+          <div className="or-right">
+            <label className="pd-check">
+              <input
+                type="checkbox"
+                checked={!!form.isPriceNegotiable}
+                onChange={(e) =>
+                  setField('isPriceNegotiable', e.target.checked)
+                }
+              />{' '}
+              {t('price.negotiable')}
+            </label>
+            <div className="pd-help-sm">{t('price.note')}</div>
+          </div>
         </div>
       </section>
 
       {/* Service Availability */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.serviceDetails')}</h2>
-        <div className="pd-grid-2">
-          <div className="pd-field w-240">
-            <span className="pd-field-label">{t('service.availability')}</span>
-            <select
-              value={form.serviceAvailability}
-              onChange={(e) => setField('serviceAvailability', e.target.value)}
-            >
-              {Object.entries(t('availabilityOptions')).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <div className="pd-help-sm">{t('service.availabilityHelp')}</div>
+
+        <div className="or-grid">
+          <div className="or-left">
+            <div className="pd-field w-240">
+              <span className="pd-field-label">
+                {t('service.availability')}
+              </span>
+              <select
+                value={form.serviceAvailability}
+                onChange={(e) =>
+                  setField('serviceAvailability', e.target.value)
+                }
+              >
+                {Object.entries(
+                  t('availabilityOptions', { returnObjects: true }),
+                ).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="or-right">
+            <div className="or-explain">
+              <div className="pd-help-sm">{t('service.availabilityHelp')}</div>
+            </div>
           </div>
         </div>
       </section>

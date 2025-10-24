@@ -232,7 +232,6 @@
   box-sizing: border-box;
   transform: translateZ(0); /* fix subpixel rendering */
   user-select: none;
-  pointer-events: none; /* ensures click goes to outer circle */
 }
 
 /* Hover effect */

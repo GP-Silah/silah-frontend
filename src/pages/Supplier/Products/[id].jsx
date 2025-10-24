@@ -26,6 +26,7 @@ export default function SupplierProductDetails() {
     description: '',
     category: '',
     images: [],
+    _newFiles: [],
     pricePerUnit: '',
     currency: '﷼',
     caseQty: 1,
@@ -98,6 +99,9 @@ export default function SupplierProductDetails() {
       groupPurchaseDuration: form.groupDeadline,
       isPublished: form.status === 'PUBLISHED',
     };
+
+    // Add images in create mode
+    (form._newFiles || []).forEach((file) => formData.append('files', file));
 
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`,
@@ -221,13 +225,23 @@ export default function SupplierProductDetails() {
     groupPricePerUnit: '',
   });
 
+  const [touched, setTouched] = useState({
+    // name: false,
+    // description: false,
+    pricePerUnit: false,
+  });
+
   // stock modal
   const [showStockModal, setShowStockModal] = useState(false);
   const [newStockQty, setNewStockQty] = useState('');
 
   useEffect(() => {
-    document.title = t('pageTitle');
-  }, [t, i18n.language]);
+    if (isCreateMode) {
+      document.title = t('pageTitleCreate');
+    } else {
+      document.title = form.name || t('pageTitle');
+    }
+  }, [form.name, isCreateMode, t]);
 
   const createdAtFmt = useMemo(() => {
     if (!form.createdAt) return '';
@@ -336,6 +350,20 @@ export default function SupplierProductDetails() {
       }));
     } else setErrors((e) => ({ ...e, description: '' }));
 
+    // pricePerUnit validation
+    if (!touched.pricePerUnit) return;
+    if (
+      form.pricePerUnit === '' ||
+      form.pricePerUnit === null ||
+      form.pricePerUnit === undefined
+    ) {
+      setErrors((e) => ({ ...e, pricePerUnit: t('validation.priceRequired') }));
+    } else if (form.pricePerUnit < 0) {
+      setErrors((e) => ({ ...e, pricePerUnit: t('validation.pricePositive') }));
+    } else {
+      setErrors((e) => ({ ...e, pricePerUnit: '' }));
+    }
+
     // minOrder multiple-of-case validation
     if (Number(form.minOrderQty) <= 0) {
       setErrors((e) => ({ ...e, minOrderQty: t('validation.positiveNumber') }));
@@ -383,6 +411,8 @@ export default function SupplierProductDetails() {
   }, [
     form.name,
     form.description,
+    form.pricePerUnit,
+    touched.pricePerUnit,
     form.caseQty,
     form.minOrderQty,
     form.maxOrderQty,
@@ -469,14 +499,40 @@ export default function SupplierProductDetails() {
   };
 
   /* ------- Images handling ------- */
+  // Add image (create mode vs update mode)
   const onAddImage = async (file) => {
     if (!file) return;
-    await uploadProductImage(file); // updates `form.images` inside the function
+
+    if (isCreateMode) {
+      // Preview locally before saving to backend
+      const previewUrl = URL.createObjectURL(file);
+      setForm((p) => ({
+        ...p,
+        images: [...(p.images || []), previewUrl], // for preview
+        _newFiles: [...(p._newFiles || []), file], // for actual upload later
+      }));
+      return;
+    }
+
+    // Update mode → upload immediately
+    await uploadProductImage(file);
   };
 
-  const onRemoveImage = async (idx) => {
-    const fileName = form.images[idx]; // adjust if you store URLs differently
-    await deleteImage(fileName, idx);
+  const onRemoveImage = (idx) => {
+    if (isCreateMode) {
+      setForm((p) => {
+        const newImages = p.images.filter((_, i) => i !== idx);
+        return {
+          ...p,
+          images: newImages,
+          _newFiles: (p._newFiles || []).filter((_, i) => i !== idx),
+        };
+      });
+      return;
+    }
+
+    const fileName = form.images[idx];
+    deleteImage(fileName, idx);
   };
 
   if (loading) {
@@ -652,7 +708,11 @@ export default function SupplierProductDetails() {
                     type="button"
                     className="pd-btn-image-delete"
                     aria-label={t('images.remove')}
-                    onClick={() => onRemoveImage(i)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // <---- ensure click isn't blocked by parent
+                      e.preventDefault();
+                      onRemoveImage(i);
+                    }}
                   >
                     ×
                   </button>
@@ -688,10 +748,23 @@ export default function SupplierProductDetails() {
               type="number"
               min="0"
               value={form.pricePerUnit}
-              onChange={(e) => setField('pricePerUnit', e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Only allow digits (and dot if you want decimals)
+                if (val === '') {
+                  setField('pricePerUnit', '');
+                } else {
+                  const num = Number(val);
+                  setField('pricePerUnit', isNaN(num) ? '' : num);
+                }
+              }}
+              onBlur={() => setTouched((t) => ({ ...t, pricePerUnit: true }))}
             />
             <img src="/riyal.png" alt="SAR" className="sar" />
           </div>
+          {errors.pricePerUnit && (
+            <div className="pd-error-text">{errors.pricePerUnit}</div>
+          )}
         </div>
       </section>
 

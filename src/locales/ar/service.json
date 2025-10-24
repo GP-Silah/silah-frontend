@@ -1,4 +1,5 @@
 {
+  "pageTitleCreate": "إنشاء خدمة جديدة",
   "pageTitle": "تفاصيل الخدمة",
   "loading": "جاري التحميل…",
   "save": "حفظ",
@@ -27,7 +28,7 @@
   "basic": {
     "serviceDetails": "تفاصيل الخدمة",
     "serviceDetailsHelp": "امنح المشترين الثقة من خلال وصف واضح ومفصل للخدمة.",
-    "name": "اسم الخدمة",
+    "name": "الاسم",
     "description": "الوصف",
 
     "serviceCategory": "فئة الخدمة",
@@ -56,7 +57,7 @@
   "price": {
     "price": "السعر",
     "negotiable": "السعر قابل للتفاوض",
-    "note": "السعر قابل للتفاوض حسب نطاق المشروع."
+    "note": "السعر قابل للتفاوض حسب نطاق المشروع"
   },
 
   "service": {
@@ -76,6 +77,16 @@
     "WEEKDAYS": "أيام الأسبوع",
     "WEEKENDS": "عطلة نهاية الأسبوع",
     "APPOINTMENT": "بالموعد"
+  },
+
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "positiveNumber": "يجب أن يكون رقمًا موجبًا",
+    "multipleOfCase": "يجب أن يكون مضاعفًا لعدد العبوات",
+    "nameTooLong": "يجب ألا يزيد الاسم عن 60 حرفًا",
+    "descriptionTooLong": "يجب ألا يزيد الوصف عن 1000 حرف",
+    "priceRequired": "السعر مطلوب",
+    "pricePositive": "السعر يجب أن يكون رقمًا موجبًا"
   },
 
   "errors": {
