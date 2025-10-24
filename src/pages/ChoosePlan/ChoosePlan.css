@@ -1,0 +1,97 @@
+.choose-plan {
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+padding: 40px;
+font-family: "Poppins", sans-serif;
+}
+
+.lang-toggle {
+position: absolute;
+top: 20px;
+right: 20px;
+}
+
+.lang-toggle button {
+background: transparent;
+border: 2px solid #888;
+border-radius: 10px;
+padding: 6px 12px;
+cursor: pointer;
+}
+
+.plans-container {
+max-width: 900px;
+margin-top: 40px;
+}
+
+.plans-grid {
+display: flex;
+justify-content: center;
+gap: 30px;
+margin-top: 30px;
+flex-wrap: wrap;
+}
+
+.plan-card {
+width: 250px;
+background: #fff;
+border-radius: 16px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+padding: 20px;
+text-align: center;
+transition: transform 0.3s;
+}
+
+.plan-card:hover {
+transform: translateY(-8px);
+}
+
+.plan-card.premium {
+border: 2px solid #6c5ce7;
+}
+
+.price {
+font-size: 20px;
+font-weight: 600;
+color: #6c5ce7;
+margin: 10px 0;
+}
+
+.upgrade-btn,
+.trial-btn {
+width: 100%;
+border: none;
+border-radius: 8px;
+padding: 10px;
+cursor: pointer;
+font-weight: 600;
+transition: background 0.3s;
+}
+
+.upgrade-btn {
+background: #6c5ce7;
+color: #fff;
+}
+
+.upgrade-btn:disabled {
+background: #ccc;
+cursor: not-allowed;
+}
+
+.trial-btn {
+margin-top: 10px;
+background: transparent;
+border: 2px solid #6c5ce7;
+color: #6c5ce7;
+}
+
+.popup {
+background: #fff;
+padding: 50px;
+border-radius: 16px;
+box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+text-align: center;
+max-width: 400px;
+}

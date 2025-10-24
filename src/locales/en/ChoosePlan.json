@@ -1,0 +1,23 @@
+{
+"title": "Choose your plan",
+"subtitle": "Upgrade your experience or start your free trial today.",
+"current": "Current Plan",
+"upgrade": "Upgrade",
+"trial": "Start your 30 days trial",
+"successTitle": "Upgrade Successful!",
+"successMessage": "You have successfully upgraded to the Premium Plan.",
+"trialTitle": "Trial Started!",
+"trialMessage": "You started using your 30 days trial period.",
+"plans": {
+"basic": {
+"name": "Basic Plan",
+"price": "Free",
+"features": ["Access to basic tools", "Community support"]
+},
+"premium": {
+"name": "Premium Plan",
+"price": "$19.99 / month",
+"features": ["All basic features", "Priority support", "Advanced analytics"]
+}
+}
+}
