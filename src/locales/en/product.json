@@ -1,4 +1,5 @@
 {
+  "pageTitleCreate": "Create a New Product",
   "pageTitle": "Product Details",
   "loading": "Loading…",
   "save": "Save",
@@ -84,7 +85,9 @@
     "positiveNumber": "Must be a positive number",
     "multipleOfCase": "Must be a multiple of case quantity",
     "nameTooLong": "Name must be 60 characters or less",
-    "descriptionTooLong": "Description must be 1000 characters or less"
+    "descriptionTooLong": "Description must be 1000 characters or less",
+    "priceRequired": "Price is required",
+    "pricePositive": "Price must be positive"
   },
   "messages": {
     "saved": "Changes saved.",
