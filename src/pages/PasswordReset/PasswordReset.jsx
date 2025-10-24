@@ -21,11 +21,20 @@ function PasswordReset() {
   useEffect(() => {
     document.title = t('reset.pageTitle');
 
-    // Optional: check status query param for expired / success banners
+    // Handle banners from query params
     const status = new URLSearchParams(location.search).get('status');
     if (status === 'expired') setBanner('expired');
     else if (status === 'success') setBanner('success');
   }, [location.search, t]);
+
+  // 🚨 Redirect if token is missing
+  useEffect(() => {
+    if (!token) {
+      navigate('/request-password-reset?status=missing-token', {
+        replace: true,
+      });
+    }
+  }, [token, navigate]);
 
   const validatePassword = (pw) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#!$]{8,28}$/;
@@ -51,14 +60,9 @@ function PasswordReset() {
       return;
     }
 
-    if (!token) {
-      setError(t('reset.missingToken'));
-      return;
-    }
-
     try {
       setLoading(true);
-      const response = await axios.post(
+      await axios.post(
         `${
           import.meta.env.VITE_BACKEND_URL
         }/api/auth/reset-password?token=${token}`,

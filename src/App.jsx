@@ -43,7 +43,14 @@ export default function App() {
     routePath =
       '/' +
       parts
-        .map((p) => p.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase())
+        .map((p) => {
+          // turn [id] or [slug] or [anything] into :id, :slug etc.
+          if (p.startsWith('[') && p.endsWith(']')) {
+            return `:${p.slice(1, -1)}`;
+          }
+          // handle CamelCase to kebab-case
+          return p.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+        })
         .join('/');
 
     if (routePath === '/not-found') routePath = '*';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../PasswordReset/Reset.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
@@ -9,15 +9,21 @@ const COUNTDOWN_SECONDS = 300;
 function RequestPasswordReset() {
   const { t } = useTranslation('password');
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(COUNTDOWN_SECONDS);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [banner, setBanner] = useState(null); // 'missing-token' | null
 
   useEffect(() => {
     document.title = t('req.pageTitle');
-  }, [t]);
+
+    const status = new URLSearchParams(location.search).get('status');
+    if (status === 'missing-token') setBanner('missing-token');
+  }, [location.search, t]);
 
   // Countdown timer
   useEffect(() => {
@@ -45,16 +51,13 @@ function RequestPasswordReset() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/request-password-reset`,
-        {
-          email,
-        },
+        { email },
       );
       setSent(true);
       setSecondsLeft(COUNTDOWN_SECONDS);
       setSuccess(response.data.message || t('req.successMessage'));
     } catch (err) {
       console.error(err);
-      // Extract the backend message safely
       const msg =
         err.response?.data?.error?.message ||
         err.response?.data?.message ||
@@ -67,6 +70,10 @@ function RequestPasswordReset() {
     <div className="reset-page">
       <div className="reset-container">
         <h2>{t('req.requestTitle')}</h2>
+
+        {banner === 'missing-token' && (
+          <div className="alert danger">{t('reset.missingTokenMessage')}</div>
+        )}
 
         <p className="reset-desc">{t('req.requestDesc')}</p>
 

@@ -405,3 +405,44 @@
 :dir(rtl) .or-grid {
   direction: rtl;
 }
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.spinner {
+  border: 4px solid #eee;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Generic disabled style for all buttons */
+.pd-btn:disabled {
+  opacity: 0.6; /* slightly dimmed */
+  cursor: not-allowed; /* show the not-allowed cursor */
+  pointer-events: none; /* prevents any interaction */
+}
+
+/* Optional: slightly different dim for primary vs ghost/danger */
+.pd-btn.primary:disabled {
+  opacity: 0.75; /* keep your existing value */
+}
+.pd-btn.ghost:disabled,
+.pd-btn.danger:disabled {
+  opacity: 0.6; /* consistent dimming */
+}
+.pd-btn:disabled:hover {
+  background: inherit;
+}

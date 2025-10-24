@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SupplierSelectSubCategory from '@/components/SupplierSelectSubCategory/SupplierSelectSubCategory';
 import { FiPackage, FiClock } from 'react-icons/fi';
 import { FaRegEye, FaRegEyeSlash, FaRegTrashAlt } from 'react-icons/fa';
 import './SupplierProductDetails.css';
-
-export const routePath = '/supplier/products';
 
 async function createProduct() {
   const formData = new FormData();
@@ -222,7 +220,10 @@ export default function SupplierProductDetails() {
   }, [t, i18n.language]);
 
   useEffect(() => {
-    if (isCreateMode) return;
+    if (isCreateMode) {
+      setLoading(false); // <--- this ensures form renders
+      return;
+    }
 
     (async () => {
       try {
@@ -422,11 +423,38 @@ export default function SupplierProductDetails() {
     setNewStockQty(String(form.stockQty || ''));
     setShowStockModal(true);
   };
-  const applyStockUpdate = () => {
+
+  const applyStockUpdate = async () => {
     const qty = Number(newStockQty || 0);
-    setForm((p) => ({ ...p, stockQty: qty }));
-    setShowStockModal(false);
-    setMsg(t('stock.updated'));
+    setSaving(true);
+    setError('');
+    setMsg('');
+
+    try {
+      const payload = { stock: qty };
+
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/${productId}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          credentials: 'include',
+        },
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || 'Failed to update stock');
+
+      setForm((p) => ({ ...p, stockQty: qty }));
+      setShowStockModal(false);
+      setMsg(t('stock.updated'));
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
   };
 
   /* ------- Images handling ------- */
@@ -443,7 +471,9 @@ export default function SupplierProductDetails() {
   if (loading) {
     return (
       <div className="pd-container" dir={i18n.dir()} lang={i18n.language}>
-        <div className="pd-skeleton">{t('loading')}</div>
+        <div className="spinner-container">
+          <div className="spinner"></div>
+        </div>
       </div>
     );
   }
@@ -474,7 +504,11 @@ export default function SupplierProductDetails() {
         </div>
 
         <div className="pd-actions">
-          <button className="pd-btn ghost" onClick={openStockModal}>
+          <button
+            className="pd-btn ghost"
+            onClick={openStockModal}
+            disabled={isCreateMode} // <-- disable in create mode
+          >
             <FiPackage /> {t('actions.updateStock')}
           </button>
 
@@ -492,6 +526,7 @@ export default function SupplierProductDetails() {
           <button
             className="pd-btn ghost"
             onClick={() => console.log('predict')}
+            disabled={isCreateMode} // <-- disable in create mode
           >
             <FiClock /> {t('actions.predictDemand')}
           </button>
