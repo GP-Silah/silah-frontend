@@ -43,7 +43,14 @@ export default function App() {
     routePath =
       '/' +
       parts
-        .map((p) => p.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase())
+        .map((p) => {
+          // turn [id] or [slug] or [anything] into :id, :slug etc.
+          if (p.startsWith('[') && p.endsWith(']')) {
+            return `:${p.slice(1, -1)}`;
+          }
+          // handle CamelCase to kebab-case
+          return p.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+        })
         .join('/');
 
     if (routePath === '/not-found') routePath = '*';
@@ -51,7 +58,16 @@ export default function App() {
       resolver().then((mod) => ({ default: mod.default })),
     );
 
-    if (['/login', '/signup', '/verify-email', '*'].includes(routePath))
+    if (
+      [
+        '/login',
+        '/signup',
+        '/verify-email',
+        '/request-password-reset',
+        '/password-reset',
+        '*',
+      ].includes(routePath)
+    )
       layoutRoutes.public.push({ path: routePath, Component: PageComponent });
     else if (routePath.startsWith('/buyer'))
       layoutRoutes.buyer.push({ path: routePath, Component: PageComponent });
