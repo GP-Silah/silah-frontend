@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import './BuyerSettings.css';
 import BuyerSettingsPayment from './BuyerSettingsPayment';
-import TapCardForm from '../../../components/TapCardForm';
+// import TapCardForm from '../../../components/TapCardForm';
 
 export default function BuyerSettings() {
   const { t, i18n } = useTranslation('buyerSettings');
@@ -30,8 +30,6 @@ export default function BuyerSettings() {
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar ثابت */}
-      {/* <div className="sidebar-fixed"></div> */}
       {/* المحتوى الرئيسي */}
       <div className="page-content" dir={i18n.dir()}>
         <div className="settings-container">
@@ -205,8 +203,9 @@ export default function BuyerSettings() {
           {/* Payment Tab */}
           {activeTab === 'payment' && (
             <section className="settings-box">
-              <h3>Payment Method</h3>
-              <TapCardForm />
+              {/* <h3>Payment Method</h3> */}
+              <BuyerSettingsPayment />
+              {/* <TapCardForm /> */}
             </section>
           )}
           {/* Support Tab */}

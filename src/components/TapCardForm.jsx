@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-
-const TapCardForm = ({ onTokenGenerated }) => {
+const TapCardForm = ({ onTokenGenerated, isActive }) => {
   const [tapLoaded, setTapLoaded] = useState(false);
   const formRef = useRef(null);
 
   useEffect(() => {
+    if (!isActive) return;
     // Load Tap SDK dynamically (from CDN as per docs)
     const script = document.createElement('script');
     script.src = 'https://tap-sdks.b-cdn.net/card/1.0.2/index.js';
@@ -19,7 +19,7 @@ const TapCardForm = ({ onTokenGenerated }) => {
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [isActive]);
 
   useEffect(() => {
     if (!tapLoaded || !window.CardSDK || !formRef.current) return;
