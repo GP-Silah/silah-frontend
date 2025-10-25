@@ -1,4 +1,5 @@
 {
+  "pageTitleCreate": "Create a New Service",
   "pageTitle": "Service Details",
   "loading": "Loading…",
   "save": "Save",
@@ -27,7 +28,7 @@
   "basic": {
     "serviceDetails": "Service Details",
     "serviceDetailsHelp": "Build buyers confidence with a clear, detailed service listing.",
-    "name": "Service Name",
+    "name": "Name",
     "description": "Description",
 
     "serviceCategory": "Service Category",
@@ -56,7 +57,7 @@
   "price": {
     "price": "Price",
     "negotiable": "Price negotiable",
-    "note": "Price negotiable based on project scope."
+    "note": "Price negotiable based on project scope"
   },
 
   "service": {
@@ -76,6 +77,17 @@
     "WEEKDAYS": "Weekdays",
     "WEEKENDS": "Weekends",
     "APPOINTMENT": "By Appointment"
+  },
+
+  "validation": {
+    "required": "This field is required",
+    "positiveNumber": "Must be a positive number",
+    "multipleOfCase": "Must be a multiple of case quantity",
+    "nameTooLong": "Name must be 60 characters or less",
+    "descriptionTooLong": "Description must be 1000 characters or less",
+    "priceRequired": "Price is required",
+    "pricePositive": "Price must be positive",
+    "imageRequired": "At least one image is required"
   },
 
   "errors": {
