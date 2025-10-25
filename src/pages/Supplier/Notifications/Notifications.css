@@ -15,8 +15,8 @@
   flex-direction: column;
   padding: 40px 50px 80px;
   font-family: system-ui, 'Tajawal', sans-serif;
-  overflow-y: auto; /* الصفحة كلها تسكرل */
-  box-sizing: border-box;
+  overflow-y: auto;
+  /* box-sizing: border-box; */
 }
 
 /*  العناوين والفلاتر  */
@@ -96,6 +96,8 @@
   flex-direction: column;
   gap: 16px;
   flex-grow: 1;
+  height: auto;
+  overflow-y: visible;
 }
 
 /*  الإشعار الواحد  */
