@@ -259,7 +259,13 @@ const BuyerHeader = () => {
                 <button className="profile-item">
                   <FaEnvelope /> {t('profileChoices.directMessaging')}
                 </button>
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/create-bid');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaGavel /> {t('profileChoices.biddings')}
                 </button>
                 <button className="profile-item">
@@ -271,7 +277,13 @@ const BuyerHeader = () => {
                 <button className="profile-item">
                   <FaHeart /> {t('profileChoices.wishlist')}
                 </button>
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/settings');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaCog /> {t('profileChoices.settings')}
                 </button>
               </div>
