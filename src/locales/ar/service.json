@@ -86,7 +86,8 @@
     "nameTooLong": "يجب ألا يزيد الاسم عن 60 حرفًا",
     "descriptionTooLong": "يجب ألا يزيد الوصف عن 1000 حرف",
     "priceRequired": "السعر مطلوب",
-    "pricePositive": "السعر يجب أن يكون رقمًا موجبًا"
+    "pricePositive": "السعر يجب أن يكون رقمًا موجبًا",
+    "imageRequired": "مطلوب صورة وحده على الأقل"
   },
 
   "errors": {

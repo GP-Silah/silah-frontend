@@ -87,7 +87,9 @@
     "nameTooLong": "Name must be 60 characters or less",
     "descriptionTooLong": "Description must be 1000 characters or less",
     "priceRequired": "Price is required",
-    "pricePositive": "Price must be positive"
+    "pricePositive": "Price must be positive",
+    "groupPriceLessThanPrice": "Group price cannot exceed or equals standard price",
+    "imageRequired": "At least one image is required"
   },
   "messages": {
     "saved": "Changes saved.",

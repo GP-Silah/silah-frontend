@@ -20,26 +20,72 @@ export default function SupplierProductDetails() {
   const [msg, setMsg] = useState('');
   const [categoryDetails, setCategoryDetails] = useState(null);
 
-  const [form, setForm] = useState({
-    id: null,
-    name: '',
-    description: '',
-    category: '',
-    images: [],
-    _newFiles: [],
-    pricePerUnit: '',
-    currency: '﷼',
-    caseQty: 1,
-    minOrderQty: 1,
-    maxOrderQty: 'Unlimited', // string 'Unlimited' or number
-    groupEnabled: false,
-    groupMinQty: 1,
-    groupDeadline: 'After 3 days',
-    groupPricePerUnit: '',
-    status: 'UNPUBLISHED',
-    createdAt: '',
-    stockQty: 0,
+  const groupDeadlineMap = {
+    [t('groupPurchasing.afterXDays', { n: 3 })]: 'THREE_DAYS',
+    [t('groupPurchasing.afterXDays', { n: 5 })]: 'FIVE_DAYS',
+    [t('groupPurchasing.afterXDays', { n: 7 })]: 'SEVEN_DAYS',
+  };
+
+  const LOCAL_STORAGE_KEY = 'newProductForm';
+
+  const [form, setForm] = useState(() => {
+    const emptyForm = {
+      id: null,
+      name: '',
+      description: '',
+      category: '',
+      images: [],
+      _newFiles: [],
+      pricePerUnit: '',
+      currency: '﷼',
+      caseQty: 1,
+      minOrderQty: 1,
+      maxOrderQty: 'Unlimited',
+      groupEnabled: false,
+      groupMinQty: 1,
+      groupDeadline: 'After 3 days',
+      groupPricePerUnit: '',
+      status: 'UNPUBLISHED',
+      createdAt: '',
+      stockQty: 0,
+    };
+
+    if (isCreateMode) {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return {
+            ...emptyForm,
+            ...parsed,
+            pricePerUnit: Number(parsed.pricePerUnit || 0),
+            groupPricePerUnit: Number(parsed.groupPricePerUnit || 0),
+            caseQty: Number(parsed.caseQty || 1),
+            minOrderQty: Number(parsed.minOrderQty || 1),
+            maxOrderQty:
+              parsed.maxOrderQty === 'Unlimited'
+                ? 'Unlimited'
+                : Number(parsed.maxOrderQty || 1),
+            groupMinQty: Number(parsed.groupMinQty || 1),
+            stockQty: Number(parsed.stockQty || 0),
+          };
+        } catch (e) {
+          console.error('Failed to parse localStorage data:', e);
+          return emptyForm; // Fallback to emptyForm on error
+        }
+      }
+      return emptyForm;
+    } else {
+      return emptyForm;
+    }
   });
+
+  useEffect(() => {
+    if (isCreateMode) {
+      const { images, _newFiles, ...rest } = form; // exclude images
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(rest));
+    }
+  }, [form]);
 
   async function createProduct() {
     const formData = new FormData();
@@ -48,7 +94,7 @@ export default function SupplierProductDetails() {
       description: form.description,
       price: Number(form.pricePerUnit),
       stock: form.stockQty,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       caseQuantity: Number(form.caseQty),
       minOrderQuantity: Number(form.minOrderQty),
       maxOrderQuantity:
@@ -58,13 +104,14 @@ export default function SupplierProductDetails() {
       groupPurchasePrice: form.groupPricePerUnit
         ? Number(form.groupPricePerUnit)
         : null,
-      groupPurchaseDuration: form.groupDeadline,
+      groupPurchaseDuration:
+        groupDeadlineMap[form.groupDeadline] || 'THREE_DAYS',
       isPublished: form.status === 'PUBLISHED',
     };
     formData.append('dto', JSON.stringify(dto));
 
     // Add images (files only)
-    filesToUpload.forEach((file) => formData.append('files', file));
+    (form._newFiles || []).forEach((file) => formData.append('files', file));
 
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/products`,
@@ -81,12 +128,13 @@ export default function SupplierProductDetails() {
   }
 
   async function updateProduct() {
+    const formData = new FormData();
     const payload = {
       name: form.name,
       description: form.description,
       price: Number(form.pricePerUnit),
       stock: form.stockQty,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       caseQuantity: Number(form.caseQty),
       minOrderQuantity: Number(form.minOrderQty),
       maxOrderQuantity:
@@ -96,7 +144,8 @@ export default function SupplierProductDetails() {
       groupPurchasePrice: form.groupPricePerUnit
         ? Number(form.groupPricePerUnit)
         : null,
-      groupPurchaseDuration: form.groupDeadline,
+      groupPurchaseDuration:
+        groupDeadlineMap[form.groupDeadline] || 'THREE_DAYS',
       isPublished: form.status === 'PUBLISHED',
     };
 
@@ -162,7 +211,13 @@ export default function SupplierProductDetails() {
       // Add new image URL to local state
       setForm((p) => ({
         ...p,
-        images: [...(p.images || []), data.imagesFilesUrls.slice(-1)[0]], // take last uploaded
+        images: [
+          ...(p.images || []),
+          {
+            url: data.imagesFilesUrls.slice(-1)[0],
+            fileName: data.imagesFilesNames.slice(-1)[0] || null,
+          },
+        ],
       }));
     } catch (err) {
       console.error(err);
@@ -220,6 +275,7 @@ export default function SupplierProductDetails() {
   const [errors, setErrors] = useState({
     name: '',
     description: '',
+    images: '',
     minOrderQty: '',
     maxOrderQty: '',
     groupPricePerUnit: '',
@@ -275,7 +331,7 @@ export default function SupplierProductDetails() {
         );
 
         const data = await res.json();
-        if (!res.ok)
+        if (!res.ok || data.isDeleted)
           throw new Error(data?.error?.message || 'Failed to load product');
 
         setForm({
@@ -284,7 +340,11 @@ export default function SupplierProductDetails() {
           name: data.name,
           description: data.description,
           category: data.category?.id || '',
-          images: data.imagesFilesUrls || [],
+          images:
+            data.imagesFilesUrls.map((url, i) => ({
+              url,
+              fileName: data.imagesFilesNames[i],
+            })) || [],
           pricePerUnit: data.price,
           currency: '﷼',
           caseQty: data.caseQuantity,
@@ -350,17 +410,39 @@ export default function SupplierProductDetails() {
       }));
     } else setErrors((e) => ({ ...e, description: '' }));
 
-    // pricePerUnit validation
-    if (!touched.pricePerUnit) return;
-    if (
-      form.pricePerUnit === '' ||
-      form.pricePerUnit === null ||
-      form.pricePerUnit === undefined
-    ) {
-      setErrors((e) => ({ ...e, pricePerUnit: t('validation.priceRequired') }));
-    } else if (form.pricePerUnit < 0) {
-      setErrors((e) => ({ ...e, pricePerUnit: t('validation.pricePositive') }));
+    // Validate images
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
     } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
+    // pricePerUnit validation (now wrapped without return)
+    if (touched.pricePerUnit) {
+      if (
+        form.pricePerUnit === '' ||
+        form.pricePerUnit === null ||
+        form.pricePerUnit === undefined
+      ) {
+        setErrors((e) => ({
+          ...e,
+          pricePerUnit: t('validation.priceRequired'),
+        }));
+      } else if (form.pricePerUnit < 0) {
+        setErrors((e) => ({
+          ...e,
+          pricePerUnit: t('validation.pricePositive'),
+        }));
+      } else {
+        setErrors((e) => ({ ...e, pricePerUnit: '' }));
+      }
+    } else {
+      // Optionally clear error if not touched (avoids showing initial errors)
       setErrors((e) => ({ ...e, pricePerUnit: '' }));
     }
 
@@ -395,12 +477,30 @@ export default function SupplierProductDetails() {
     }
 
     // group price: must be positive and less than standard price if set
-    if (form.groupEnabled && form.groupPricePerUnit !== '') {
+    if (form.groupEnabled) {
+      if (
+        form.groupPricePerUnit === '' ||
+        form.groupPricePerUnit === null ||
+        form.groupPricePerUnit === undefined
+      ) {
+        setErrors((e) => ({
+          ...e,
+          groupPricePerUnit: t('validation.priceRequired'),
+        }));
+      }
+
       const gp = Number(form.groupPricePerUnit);
+      const sp = Number(form.pricePerUnit);
+
       if (Number.isNaN(gp) || gp <= 0) {
         setErrors((e) => ({
           ...e,
           groupPricePerUnit: t('validation.positiveNumber'),
+        }));
+      } else if (sp && gp >= sp) {
+        setErrors((e) => ({
+          ...e,
+          groupPricePerUnit: t('validation.groupPriceLessThanPrice'),
         }));
       } else {
         setErrors((e) => ({ ...e, groupPricePerUnit: '' }));
@@ -411,6 +511,7 @@ export default function SupplierProductDetails() {
   }, [
     form.name,
     form.description,
+    form.images,
     form.pricePerUnit,
     touched.pricePerUnit,
     form.caseQty,
@@ -425,19 +526,31 @@ export default function SupplierProductDetails() {
 
   /* ------- Actions ------- */
   const handleTogglePublish = () => {
-    setForm((p) => ({
-      ...p,
-      status: p.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED',
-    }));
-    setMsg(
-      t(
-        `messages.${form.status === 'PUBLISHED' ? 'unpublished' : 'published'}`,
-      ),
-    );
+    setForm((p) => {
+      const newStatus = p.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED';
+      setMsg(
+        t(
+          `messages.${newStatus === 'PUBLISHED' ? 'published' : 'unpublished'}`,
+        ),
+      );
+      return { ...p, status: newStatus };
+    });
   };
 
   async function onSave(e) {
     e.preventDefault();
+
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
+    } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
     if (hasErrors) return;
     setSaving(true);
     setMsg('');
@@ -447,11 +560,12 @@ export default function SupplierProductDetails() {
       let data;
       if (isCreateMode) {
         data = await createProduct();
+        localStorage.removeItem(LOCAL_STORAGE_KEY); // clear auto-save after save
       } else {
         data = await updateProduct();
       }
       setMsg(t('messages.saved'));
-      if (isCreateMode) navigate(`/products/${data.productId}`); // go to new product page
+      if (isCreateMode) navigate(`/supplier/products/${data.productId}`); // go to new product page
     } catch (err) {
       console.error(err);
       setError(err.message || t('errors.save'));
@@ -508,8 +622,8 @@ export default function SupplierProductDetails() {
       const previewUrl = URL.createObjectURL(file);
       setForm((p) => ({
         ...p,
-        images: [...(p.images || []), previewUrl], // for preview
-        _newFiles: [...(p._newFiles || []), file], // for actual upload later
+        images: [...(p.images || []), { url: previewUrl, fileName: null }],
+        _newFiles: [...(p._newFiles || []), file],
       }));
       return;
     }
@@ -519,6 +633,21 @@ export default function SupplierProductDetails() {
   };
 
   const onRemoveImage = (idx) => {
+    const imageCount = isCreateMode
+      ? form._newFiles.length
+      : form.images.length;
+
+    if (imageCount <= 1) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+
+      // Clear the error automatically after 2 seconds
+      setTimeout(() => {
+        setErrors((e) => ({ ...e, images: '' }));
+      }, 2000);
+
+      return; // Prevent removal
+    }
+
     if (isCreateMode) {
       setForm((p) => {
         const newImages = p.images.filter((_, i) => i !== idx);
@@ -531,7 +660,7 @@ export default function SupplierProductDetails() {
       return;
     }
 
-    const fileName = form.images[idx];
+    const fileName = form.images[idx].fileName;
     deleteImage(fileName, idx);
   };
 
@@ -700,9 +829,9 @@ export default function SupplierProductDetails() {
           </div>
 
           <div className="pd-image-list">
-            {(form.images || []).map((src, i) => (
+            {(form.images || []).map((img, i) => (
               <div key={i} className="pd-image-item">
-                <img src={src} alt={`product-${i}`} />
+                <img src={img.url} alt={`product-${i}`} />
                 <div className="delete-image-icon-bg">
                   <button
                     type="button"
@@ -733,6 +862,10 @@ export default function SupplierProductDetails() {
                   <small>.png / .jpg / .jpeg / .webp</small>
                 </span>
               </label>
+            )}
+
+            {errors.images && (
+              <div className="pd-error-text">{errors.images}</div>
             )}
           </div>
         </div>

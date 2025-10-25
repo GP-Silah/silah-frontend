@@ -86,7 +86,8 @@
     "nameTooLong": "Name must be 60 characters or less",
     "descriptionTooLong": "Description must be 1000 characters or less",
     "priceRequired": "Price is required",
-    "pricePositive": "Price must be positive"
+    "pricePositive": "Price must be positive",
+    "imageRequired": "At least one image is required"
   },
 
   "errors": {

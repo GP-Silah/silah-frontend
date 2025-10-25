@@ -20,20 +20,51 @@ export default function SupplierServiceDetails() {
   const [msg, setMsg] = useState('');
   const [categoryDetails, setCategoryDetails] = useState(null);
 
-  const [form, setForm] = useState({
-    id: null,
-    name: '',
-    description: '',
-    category: '',
-    images: [],
-    _newFiles: [],
-    price: '',
-    currency: '﷼',
-    isPriceNegotiable: false,
-    status: 'UNPUBLISHED',
-    serviceAvailability: 'TWENTY_FOUR_SEVEN',
-    createdAt: '',
+  const LOCAL_STORAGE_KEY = 'newServiceForm'; // for new services
+
+  const [form, setForm] = useState(() => {
+    const emptyForm = {
+      id: null,
+      name: '',
+      description: '',
+      category: '',
+      images: [],
+      _newFiles: [],
+      price: '',
+      currency: '﷼',
+      isPriceNegotiable: false,
+      status: 'UNPUBLISHED',
+      serviceAvailability: 'TWENTY_FOUR_SEVEN',
+      createdAt: '',
+    };
+
+    if (isCreateMode) {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return {
+            ...emptyForm,
+            ...parsed,
+            price: Number(parsed.price || 0),
+          };
+        } catch (e) {
+          console.error('Failed to parse localStorage data:', e);
+          return emptyForm; // Fallback to emptyForm on error
+        }
+      }
+      return emptyForm;
+    } else {
+      return emptyForm;
+    }
   });
+
+  useEffect(() => {
+    if (isCreateMode) {
+      const { images, _newFiles, ...rest } = form; // exclude imagess
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(rest));
+    }
+  }, [form]);
 
   // ======================================
   // API Integration Functions
@@ -43,9 +74,9 @@ export default function SupplierServiceDetails() {
     const dto = {
       name: form.name,
       description: form.description,
-      price: Number(form.pricePerUnit),
+      price: Number(form.price),
       isPriceNegotiable: form.isPriceNegotiable,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       serviceAvailability: form.serviceAvailability,
       isPublished: form.status === 'PUBLISHED',
     };
@@ -72,9 +103,9 @@ export default function SupplierServiceDetails() {
     const payload = {
       name: form.name,
       description: form.description,
-      price: Number(form.pricePerUnit),
+      price: Number(form.price),
       isPriceNegotiable: form.isPriceNegotiable,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       serviceAvailability: form.serviceAvailability,
       isPublished: form.status === 'PUBLISHED',
     };
@@ -138,7 +169,13 @@ export default function SupplierServiceDetails() {
       // Add new image URL to local state
       setForm((p) => ({
         ...p,
-        images: [...(p.images || []), data.imagesFilesUrls.slice(-1)[0]], // take last uploaded
+        images: [
+          ...(p.images || []),
+          {
+            url: data.imagesFilesUrls.slice(-1)[0],
+            fileName: data.imagesFilesNames.slice(-1)[0] || null,
+          },
+        ],
       }));
     } catch (err) {
       console.error(err);
@@ -197,6 +234,7 @@ export default function SupplierServiceDetails() {
     name: '',
     description: '',
     price: '',
+    images: '',
   });
 
   const [touched, setTouched] = useState({
@@ -246,7 +284,7 @@ export default function SupplierServiceDetails() {
         );
 
         const data = await res.json();
-        if (!res.ok)
+        if (!res.ok || data.isDeleted)
           throw new Error(data?.error?.message || 'Failed to load service');
 
         setForm({
@@ -255,7 +293,11 @@ export default function SupplierServiceDetails() {
           name: data.name,
           description: data.description,
           category: data.category?.id || '',
-          images: data.imagesFilesUrls || [],
+          images:
+            data.imagesFilesUrls.map((url, i) => ({
+              url,
+              fileName: data.imagesFilesNames[i],
+            })) || [],
           price: data.price,
           currency: '﷼',
           isPriceNegotiable: data.isPriceNegotiable,
@@ -311,6 +353,18 @@ export default function SupplierServiceDetails() {
       }));
     } else setErrors((e) => ({ ...e, description: '' }));
 
+    // Validate images
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
+    } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
     // price validation
     if (!touched.price) return;
     if (form.price === '' || form.price === null || form.price === undefined) {
@@ -320,7 +374,7 @@ export default function SupplierServiceDetails() {
     } else {
       setErrors((e) => ({ ...e, price: '' }));
     }
-  }, [form.name, form.description, form.price, touched.price, t]);
+  }, [form.name, form.description, form.price, touched.price, form.images, t]);
 
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -339,6 +393,18 @@ export default function SupplierServiceDetails() {
 
   async function onSave(e) {
     e.preventDefault();
+
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
+    } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
     if (hasErrors) return;
     setSaving(true);
     setMsg('');
@@ -348,11 +414,12 @@ export default function SupplierServiceDetails() {
       let data;
       if (isCreateMode) {
         data = await createService();
+        localStorage.removeItem(LOCAL_STORAGE_KEY); // clear auto-save after save
       } else {
         data = await updateService();
       }
       setMsg(t('messages.saved'));
-      if (isCreateMode) navigate(`/services/${data.serviceId}`); // go to new product page
+      if (isCreateMode) navigate(`/supplier/services/${data.serviceId}`); // go to new product page
     } catch (err) {
       console.error(err);
       setError(err.message || t('errors.save'));
@@ -371,8 +438,8 @@ export default function SupplierServiceDetails() {
       const previewUrl = URL.createObjectURL(file);
       setForm((p) => ({
         ...p,
-        images: [...(p.images || []), previewUrl], // for preview
-        _newFiles: [...(p._newFiles || []), file], // for actual upload later
+        images: [...(p.images || []), { url: previewUrl, fileName: null }],
+        _newFiles: [...(p._newFiles || []), file],
       }));
       return;
     }
@@ -382,6 +449,21 @@ export default function SupplierServiceDetails() {
   };
 
   const onRemoveImage = (idx) => {
+    const imageCount = isCreateMode
+      ? form._newFiles.length
+      : form.images.length;
+
+    if (imageCount <= 1) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+
+      // Clear the error automatically after 2 seconds
+      setTimeout(() => {
+        setErrors((e) => ({ ...e, images: '' }));
+      }, 2000);
+
+      return; // Prevent removal
+    }
+
     if (isCreateMode) {
       setForm((p) => {
         const newImages = p.images.filter((_, i) => i !== idx);
@@ -394,7 +476,7 @@ export default function SupplierServiceDetails() {
       return;
     }
 
-    const fileName = form.images[idx];
+    const fileName = form.images[idx].fileName;
     deleteImage(fileName, idx);
   };
 
@@ -547,9 +629,9 @@ export default function SupplierServiceDetails() {
           </div>
 
           <div className="pd-image-list">
-            {(form.images || []).map((src, i) => (
+            {(form.images || []).map((img, i) => (
               <div key={i} className="pd-image-item">
-                <img src={src} alt={`service-${i}`} />
+                <img src={img.url} alt={`service-${i}`} />{' '}
                 <div className="delete-image-icon-bg">
                   <button
                     type="button"
@@ -580,6 +662,10 @@ export default function SupplierServiceDetails() {
                   <small>.png / .jpg / .jpeg / .webp</small>
                 </span>
               </label>
+            )}
+
+            {errors.images && (
+              <div className="pd-error-text">{errors.images}</div>
             )}
           </div>
         </div>

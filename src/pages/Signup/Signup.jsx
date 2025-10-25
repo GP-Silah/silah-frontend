@@ -142,6 +142,10 @@ function Signup() {
           { withCredentials: true }, // << important, used to store the token cookie
         );
 
+        // ✅ Clear local storage after successful signup
+        localStorage.removeItem('signupForm');
+        localStorage.removeItem('signupStep');
+
         // if we reach here → signup succeeded
         navigate('/verify-email', { state: { email: formData.email } });
       } catch (err) {
