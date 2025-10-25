@@ -49,6 +49,7 @@
 }
 
 .signup-form input[type='checkbox'] {
+  flex-direction: row;
   width: auto; /* default size */
   height: auto; /* default size */
   padding: 0; /* remove input padding */
