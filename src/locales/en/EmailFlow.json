@@ -21,6 +21,7 @@
   "success": {
     "icon": "✔️",
     "title": "Your Email has been Validated Successfully",
-    "message": "You can safely close this tab."
+    "message": "You can safely close this tab.",
+    "button": "Let's Login"
   }
 }

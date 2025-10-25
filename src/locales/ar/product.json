@@ -1,4 +1,5 @@
 {
+  "pageTitleCreate": "إنشاء منتج جديد",
   "pageTitle": "تفاصيل المنتج",
   "loading": "جاري التحميل…",
   "save": "حفظ",
@@ -84,7 +85,11 @@
     "positiveNumber": "يجب أن يكون رقمًا موجبًا",
     "multipleOfCase": "يجب أن يكون مضاعفًا لعدد العبوات",
     "nameTooLong": "يجب ألا يزيد الاسم عن 60 حرفًا",
-    "descriptionTooLong": "يجب ألا يزيد الوصف عن 1000 حرف"
+    "descriptionTooLong": "يجب ألا يزيد الوصف عن 1000 حرف",
+    "priceRequired": "السعر مطلوب",
+    "pricePositive": "السعر يجب أن يكون رقمًا موجبًا",
+    "groupPriceLessThanPrice": "سعر الشراء الجماعي لا يمكن أن يتجاوز أو يساوي السعر الشراء الفردي",
+    "imageRequired": "مطلوب صورة وحده على الأقل"
   },
   "messages": {
     "saved": "تم حفظ التغييرات.",

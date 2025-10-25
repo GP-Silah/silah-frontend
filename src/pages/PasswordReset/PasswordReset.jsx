@@ -51,12 +51,12 @@ function PasswordReset() {
     }
 
     if (!validatePassword(newPw)) {
-      setError(t('errors.weakPassword'));
+      setError(t('reset.errors.weakPassword'));
       return;
     }
 
     if (newPw !== confirmPw) {
-      setError(t('errors.passwordMismatch'));
+      setError(t('reset.errors.passwordMismatch'));
       return;
     }
 

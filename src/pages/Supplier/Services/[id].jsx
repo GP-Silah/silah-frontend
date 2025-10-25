@@ -20,19 +20,51 @@ export default function SupplierServiceDetails() {
   const [msg, setMsg] = useState('');
   const [categoryDetails, setCategoryDetails] = useState(null);
 
-  const [form, setForm] = useState({
-    id: null,
-    name: '',
-    description: '',
-    category: '',
-    images: [],
-    price: '',
-    currency: '﷼',
-    isPriceNegotiable: false,
-    status: 'UNPUBLISHED',
-    serviceAvailability: 'TWENTY_FOUR_SEVEN',
-    createdAt: '',
+  const LOCAL_STORAGE_KEY = 'newServiceForm'; // for new services
+
+  const [form, setForm] = useState(() => {
+    const emptyForm = {
+      id: null,
+      name: '',
+      description: '',
+      category: '',
+      images: [],
+      _newFiles: [],
+      price: '',
+      currency: '﷼',
+      isPriceNegotiable: false,
+      status: 'UNPUBLISHED',
+      serviceAvailability: 'TWENTY_FOUR_SEVEN',
+      createdAt: '',
+    };
+
+    if (isCreateMode) {
+      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          return {
+            ...emptyForm,
+            ...parsed,
+            price: Number(parsed.price || 0),
+          };
+        } catch (e) {
+          console.error('Failed to parse localStorage data:', e);
+          return emptyForm; // Fallback to emptyForm on error
+        }
+      }
+      return emptyForm;
+    } else {
+      return emptyForm;
+    }
   });
+
+  useEffect(() => {
+    if (isCreateMode) {
+      const { images, _newFiles, ...rest } = form; // exclude imagess
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(rest));
+    }
+  }, [form]);
 
   // ======================================
   // API Integration Functions
@@ -42,16 +74,16 @@ export default function SupplierServiceDetails() {
     const dto = {
       name: form.name,
       description: form.description,
-      price: Number(form.pricePerUnit),
+      price: Number(form.price),
       isPriceNegotiable: form.isPriceNegotiable,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       serviceAvailability: form.serviceAvailability,
       isPublished: form.status === 'PUBLISHED',
     };
     formData.append('dto', JSON.stringify(dto));
 
-    // Add images (files only)
-    filesToUpload.forEach((file) => formData.append('files', file));
+    // Add images in create mode
+    (form._newFiles || []).forEach((file) => formData.append('files', file));
 
     const res = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/api/services`,
@@ -71,9 +103,9 @@ export default function SupplierServiceDetails() {
     const payload = {
       name: form.name,
       description: form.description,
-      price: Number(form.pricePerUnit),
+      price: Number(form.price),
       isPriceNegotiable: form.isPriceNegotiable,
-      categoryId: form.category,
+      categoryId: Number(form.category),
       serviceAvailability: form.serviceAvailability,
       isPublished: form.status === 'PUBLISHED',
     };
@@ -137,7 +169,13 @@ export default function SupplierServiceDetails() {
       // Add new image URL to local state
       setForm((p) => ({
         ...p,
-        images: [...(p.images || []), data.imagesFilesUrls.slice(-1)[0]], // take last uploaded
+        images: [
+          ...(p.images || []),
+          {
+            url: data.imagesFilesUrls.slice(-1)[0],
+            fileName: data.imagesFilesNames.slice(-1)[0] || null,
+          },
+        ],
       }));
     } catch (err) {
       console.error(err);
@@ -195,11 +233,23 @@ export default function SupplierServiceDetails() {
   const [errors, setErrors] = useState({
     name: '',
     description: '',
+    price: '',
+    images: '',
+  });
+
+  const [touched, setTouched] = useState({
+    name: false,
+    description: false,
+    price: false,
   });
 
   useEffect(() => {
-    document.title = t('pageTitle');
-  }, [t, i18n.language]);
+    if (isCreateMode) {
+      document.title = t('pageTitleCreate');
+    } else {
+      document.title = form.name || t('pageTitle');
+    }
+  }, [form.name, isCreateMode, t]);
 
   const createdAtFmt = useMemo(() => {
     if (!form.createdAt) return '';
@@ -234,7 +284,7 @@ export default function SupplierServiceDetails() {
         );
 
         const data = await res.json();
-        if (!res.ok)
+        if (!res.ok || data.isDeleted)
           throw new Error(data?.error?.message || 'Failed to load service');
 
         setForm({
@@ -243,7 +293,11 @@ export default function SupplierServiceDetails() {
           name: data.name,
           description: data.description,
           category: data.category?.id || '',
-          images: data.imagesFilesUrls || [],
+          images:
+            data.imagesFilesUrls.map((url, i) => ({
+              url,
+              fileName: data.imagesFilesNames[i],
+            })) || [],
           price: data.price,
           currency: '﷼',
           isPriceNegotiable: data.isPriceNegotiable,
@@ -298,7 +352,29 @@ export default function SupplierServiceDetails() {
         description: t('validation.descriptionTooLong'),
       }));
     } else setErrors((e) => ({ ...e, description: '' }));
-  }, [form.name, form.description, t]);
+
+    // Validate images
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
+    } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
+    // price validation
+    if (!touched.price) return;
+    if (form.price === '' || form.price === null || form.price === undefined) {
+      setErrors((e) => ({ ...e, price: t('validation.priceRequired') }));
+    } else if (form.price < 0) {
+      setErrors((e) => ({ ...e, price: t('validation.pricePositive') }));
+    } else {
+      setErrors((e) => ({ ...e, price: '' }));
+    }
+  }, [form.name, form.description, form.price, touched.price, form.images, t]);
 
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -317,6 +393,18 @@ export default function SupplierServiceDetails() {
 
   async function onSave(e) {
     e.preventDefault();
+
+    const imageCount = isCreateMode
+      ? (form._newFiles || []).length
+      : (form.images || []).length;
+
+    if (imageCount === 0) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+      return;
+    } else {
+      setErrors((e) => ({ ...e, images: '' }));
+    }
+
     if (hasErrors) return;
     setSaving(true);
     setMsg('');
@@ -326,11 +414,12 @@ export default function SupplierServiceDetails() {
       let data;
       if (isCreateMode) {
         data = await createService();
+        localStorage.removeItem(LOCAL_STORAGE_KEY); // clear auto-save after save
       } else {
         data = await updateService();
       }
       setMsg(t('messages.saved'));
-      if (isCreateMode) navigate(`/services/${data.serviceId}`); // go to new product page
+      if (isCreateMode) navigate(`/supplier/services/${data.serviceId}`); // go to new product page
     } catch (err) {
       console.error(err);
       setError(err.message || t('errors.save'));
@@ -340,14 +429,55 @@ export default function SupplierServiceDetails() {
   }
 
   /* ------- Images handling ------- */
+  // Add image (create mode vs update mode)
   const onAddImage = async (file) => {
     if (!file) return;
-    await uploadServiceImage(file); // updates `form.images` inside the function
+
+    if (isCreateMode) {
+      // Preview locally before saving to backend
+      const previewUrl = URL.createObjectURL(file);
+      setForm((p) => ({
+        ...p,
+        images: [...(p.images || []), { url: previewUrl, fileName: null }],
+        _newFiles: [...(p._newFiles || []), file],
+      }));
+      return;
+    }
+
+    // Update mode → upload immediately
+    await uploadServiceImage(file);
   };
 
-  const onRemoveImage = async (idx) => {
-    const fileName = form.images[idx]; // adjust if you store URLs differently
-    await deleteImage(fileName, idx);
+  const onRemoveImage = (idx) => {
+    const imageCount = isCreateMode
+      ? form._newFiles.length
+      : form.images.length;
+
+    if (imageCount <= 1) {
+      setErrors((e) => ({ ...e, images: t('validation.imageRequired') }));
+
+      // Clear the error automatically after 2 seconds
+      setTimeout(() => {
+        setErrors((e) => ({ ...e, images: '' }));
+      }, 2000);
+
+      return; // Prevent removal
+    }
+
+    if (isCreateMode) {
+      setForm((p) => {
+        const newImages = p.images.filter((_, i) => i !== idx);
+        return {
+          ...p,
+          images: newImages,
+          _newFiles: (p._newFiles || []).filter((_, i) => i !== idx),
+        };
+      });
+      return;
+    }
+
+    const fileName = form.images[idx].fileName;
+    deleteImage(fileName, idx);
   };
 
   if (loading) {
@@ -468,7 +598,7 @@ export default function SupplierServiceDetails() {
               <SupplierSelectSubCategory
                 value={form.category}
                 onChange={(selectedId) => setField('category', selectedId)}
-                usedFor="SERVICE"
+                usedFor="services"
               />
               <div className="pd-note">
                 {t('basic.willAppearIn')}{' '}
@@ -499,15 +629,19 @@ export default function SupplierServiceDetails() {
           </div>
 
           <div className="pd-image-list">
-            {(form.images || []).map((src, i) => (
+            {(form.images || []).map((img, i) => (
               <div key={i} className="pd-image-item">
-                <img src={src} alt={`service-${i}`} />
+                <img src={img.url} alt={`service-${i}`} />{' '}
                 <div className="delete-image-icon-bg">
                   <button
                     type="button"
                     className="pd-btn-image-delete"
                     aria-label={t('images.remove')}
-                    onClick={() => onRemoveImage(i)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // <---- ensure click isn't blocked by parent
+                      e.preventDefault();
+                      onRemoveImage(i);
+                    }}
                   >
                     ×
                   </button>
@@ -529,6 +663,10 @@ export default function SupplierServiceDetails() {
                 </span>
               </label>
             )}
+
+            {errors.images && (
+              <div className="pd-error-text">{errors.images}</div>
+            )}
           </div>
         </div>
       </section>
@@ -536,47 +674,85 @@ export default function SupplierServiceDetails() {
       {/* Price */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.price')}</h2>
-        <div className="pd-field w-240">
-          <span className="pd-field-label">{t('price.price')}</span>
-          <div className="pd-input-prefix">
-            <input
-              type="number"
-              min="0"
-              value={form.price}
-              onChange={(e) => setField('price', e.target.value)}
-            />
-            <img src="/riyal.png" alt="SAR" className="sar" />
+
+        <div className="or-grid">
+          {/* left: inputs */}
+          <div className="or-left">
+            <div className="pd-field w-240">
+              <span className="pd-field-label">{t('price.price')}</span>
+              <div className="pd-input-prefix">
+                <input
+                  type="number"
+                  min="0"
+                  value={form.price}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // Only allow digits (and dot if you want decimals)
+                    if (val === '') {
+                      setField('price', '');
+                    } else {
+                      const num = Number(val);
+                      setField('price', isNaN(num) ? '' : num);
+                    }
+                  }}
+                  onBlur={() => setTouched((t) => ({ ...t, price: true }))}
+                />
+                <img src="/riyal.png" alt="SAR" className="sar" />
+              </div>
+              {errors.price && (
+                <div className="pd-error-text">{errors.price}</div>
+              )}
+            </div>
           </div>
 
-          <label className="pd-check">
-            <input
-              type="checkbox"
-              checked={!!form.isPriceNegotiable}
-              onChange={(e) => setField('isPriceNegotiable', e.target.checked)}
-            />{' '}
-            {t('price.negotiable')}
-          </label>
-          <div className="pd-help-sm">{t('price.note')}</div>
+          {/* right: negotiation checkbox */}
+          <div className="or-right">
+            <label className="pd-check">
+              <input
+                type="checkbox"
+                checked={!!form.isPriceNegotiable}
+                onChange={(e) =>
+                  setField('isPriceNegotiable', e.target.checked)
+                }
+              />{' '}
+              {t('price.negotiable')}
+            </label>
+            <div className="pd-help-sm">{t('price.note')}</div>
+          </div>
         </div>
       </section>
 
       {/* Service Availability */}
       <section className="pd-card">
         <h2 className="pd-section-title">{t('sections.serviceDetails')}</h2>
-        <div className="pd-grid-2">
-          <div className="pd-field w-240">
-            <span className="pd-field-label">{t('service.availability')}</span>
-            <select
-              value={form.serviceAvailability}
-              onChange={(e) => setField('serviceAvailability', e.target.value)}
-            >
-              {Object.entries(t('availabilityOptions')).map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <div className="pd-help-sm">{t('service.availabilityHelp')}</div>
+
+        <div className="or-grid">
+          <div className="or-left">
+            <div className="pd-field w-240">
+              <span className="pd-field-label">
+                {t('service.availability')}
+              </span>
+              <select
+                value={form.serviceAvailability}
+                onChange={(e) =>
+                  setField('serviceAvailability', e.target.value)
+                }
+              >
+                {Object.entries(
+                  t('availabilityOptions', { returnObjects: true }),
+                ).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="or-right">
+            <div className="or-explain">
+              <div className="pd-help-sm">{t('service.availabilityHelp')}</div>
+            </div>
           </div>
         </div>
       </section>
