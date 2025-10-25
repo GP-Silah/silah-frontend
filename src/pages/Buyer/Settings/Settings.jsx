@@ -31,9 +31,7 @@ export default function BuyerSettings() {
   return (
     <div className="dashboard-container">
       {/* Sidebar ثابت */}
-      <div className="sidebar-fixed">
-        <Sidebar />
-      </div>
+      {/* <div className="sidebar-fixed"></div> */}
       {/* المحتوى الرئيسي */}
       <div className="page-content" dir={i18n.dir()}>
         <div className="settings-container">

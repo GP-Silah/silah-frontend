@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import './Notifications.css';
 
@@ -6,6 +6,10 @@ export default function NotificationsSupplier() {
   const { t, i18n } = useTranslation('notifications');
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
+
+  useEffect(() => {
+    document.title = t('pageTitle.notifications', { ns: 'common' });
+  }, [t, i18n.language]);
 
   // حالات الفتح للقوائم
   const [typeOpen, setTypeOpen] = useState(false);
