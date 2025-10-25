@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TapCardForm from '../../../components/TapCardForm';
 import './BuyerSettingsPayment.css';
 
 export default function BuyerSettingsPayment() {
@@ -48,10 +49,14 @@ export default function BuyerSettingsPayment() {
     <div className="payment-section">
       <h3 className="payment-title">Payment Method</h3>
       <p className="payment-hint">
-        You don’t have a saved card yet. Add one to make your payments easier.
+        {/* You don’t have a saved card yet. Add one to make your payments easier. */}
+        Add your card below (Test Mode) - no real payments will be processed.
       </p>
 
-      <div className="payment-grid">
+      {/* <TapCardForm isActive={activeTab === 'payment'} /> */}
+      <TapCardForm isActive={true} />
+
+      {/* <div className="payment-grid">
         <label>
           <span>Cardholder Name</span>
           <input
@@ -84,7 +89,7 @@ export default function BuyerSettingsPayment() {
             placeholder="CVV"
           />
         </label>
-      </div>
+      </div> */}
 
       <button type="button" className="payment-button" onClick={handleSave}>
         Save
