@@ -1,0 +1,30 @@
+{
+"ScaleSmartTitle": "Scale Smart, Connect Better – Choose Your Plan",
+"ScaleSmartSubtitle": "Get the best tools to grow your business on Silah. Upgrade to Premium for just 50 SAR/month and unlock exclusive features.",
+"BasicTitle": "Basic",
+"BasicSubtitle": "For small businesses & startups",
+"BasicPrice": "0 SAR / month",
+"Currently": "Currently",
+"BasicFeature1": "Create & manage a storefront",
+"BasicFeature2": "List up to 10 products",
+"BasicFeature3": "List up to 3 services",
+"BasicFeature4": "View & respond to buyer messages",
+"BasicFeature5": "Receive orders & create invoices",
+
+"PremiumTitle": "Premium",
+"PremiumSubtitle": "For growing businesses & serious suppliers",
+"PremiumPrice": "50 SAR / month",
+"Upgrade": "Upgrade",
+"StartTrial": "Start your 30 days trial",
+"Popular": "Popular",
+"PremiumFeature1": "All features of the Basic Plan, plus:",
+"PremiumFeature2": "Unlimited products & services",
+"PremiumFeature3": "View product wish-list count",
+"PremiumFeature4": "AI-powered stock demand forecasting",
+
+"UpgradeSuccessTitle": "Upgrade Successful!",
+"UpgradeSuccessText": "Start making the most of your upgraded benefits now!",
+"TrialSuccessTitle": "You started using your 30 days trial",
+"TrialSuccessText": "Enjoy full Premium access for the next 30 days.",
+"Close": "Close"
+}
