@@ -8,6 +8,13 @@
   "whyPoint3": "Join group purchases to unlock bulk discounts and save more.",
   "whyPoint4": "Get AI-powered demand forecasts to plan purchases smarter.",
   "whyPoint5": "Enjoy a seamless experience with a user-friendly platform.",
+  "how": {
+    "title": "How It Works?",
+    "step1": "Sign Up",
+    "step2": "Switch between Buyer and Supplier Roles to suit your needs.",
+    "step3": "Explore & Connect with Reliable Partners",
+    "step4": "Close Deals & Grow Your Business"
+  },
   "exploreTitle": "All You Need in One Place",
   "exploreSubtitle": "Explore Our Categories and Source with Confidence!",
   "filters": {
@@ -30,5 +37,6 @@
   "tabs": {
     "products": "Products",
     "services": "Services"
-  }
+  },
+  "noResult": "No {{activeTab}} found in this category."
 }
