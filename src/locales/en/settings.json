@@ -6,7 +6,7 @@
     "general": "General",
     "account": "Account",
     "notifications": "Notifications",
-    "store": "Store Settings",
+    "store": "Store",
     "support": "Support"
   },
 
@@ -25,12 +25,16 @@
     "title": "Account Info",
     "email": "Email",
     "password": "Password",
-    "changePassword": "Change Password"
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "done": "Done"
   },
   "subscription": {
-    "title": "Subscription Plan",
-    "current": "Current Plan:",
-    "manage": "Manage Plan"
+    "title": "Subscription",
+    "currentPlan": "Your Current Plan: {{plan}}",
+    "managePlan": "Manage Plan"
   },
   "plans": {
     "basic": "Basic",
@@ -40,11 +44,11 @@
     "title": "Notifications",
     "allow": "Allow Notifications",
     "select": "Select what you'd like to be notified about:",
-    "messages": "New Messages",
-    "orders": "New Orders",
-    "reviews": "New Reviews",
-    "biddings": "Biddings Updates",
-    "invoices": "Invoices Updates"
+    "newMessageNotify": "New Messages",
+    "newOrderNotify": "New Orders",
+    "newReviewNotify": "New Reviews",
+    "biddingStatusNotify": "Biddings Updates",
+    "invoiceStatusNotify": "Invoices Updates"
   },
   "store": {
     "title": "Store Settings",
@@ -74,10 +78,35 @@
     "email": "Your email",
     "closeMsg": "Type message shown when store is closed",
     "city": "Enter your city",
-    "fees": "Enter fees",
-    "bio": "Write something about your store..."
+    "deliveryFees": "Enter delivery fees (e.g., 10)",
+    "bio": "Write something about your store...",
+    "currentPassword": "Enter current password",
+    "newPassword": "Enter new password",
+    "confirmPassword": "Confirm new password"
   },
   "actions": {
+    "save": "Save Settings",
     "demo": "This is a demo action."
-  }
+  },
+  "success": {
+    "settingsUpdated": "Settings updated successfully",
+    "passwordUpdated": "Password updated successfully",
+    "profileUploaded": "Profile picture uploaded successfully",
+    "bannerUploaded": "Store banner uploaded successfully"
+  },
+  "errors": {
+    "weakPassword": "Password must be 8-28 characters, including at least one uppercase letter, one lowercase letter, and one number.",
+    "passwordMismatch": "Passwords do not match.",
+    "required": "This field is required.",
+    "fetchFailed": "Failed to load settings. Please try again.",
+    "saveFailed": "Failed to save settings. Please try again.",
+    "passwordUpdateFailed": "Failed to update password. Please check your current password and try again.",
+    "inactiveSupplier": "Your supplier account is inactive. Please renew your subscription.",
+    "fileTooLarge": "File size exceeds 5MB limit.",
+    "invalidFileType": "Only PNG, JPEG, or WebP images are allowed.",
+    "profileUploadFailed": "Failed to upload profile picture. Please try again.",
+    "bannerUploadFailed": "Failed to upload store banner. Please try again.",
+    "minOneCategory": "You must have at least one business category selected."
+  },
+  "loading": "Loading settings..."
 }

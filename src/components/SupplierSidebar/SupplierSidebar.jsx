@@ -69,12 +69,12 @@ const SupplierSidebar = () => {
       {/* Top navigation */}
       <ul className="sidebar-links top-links">
         <li>
-          <Link to="/overview">
+          <Link to="/supplier/overview">
             <FaHome /> {t('overview')}
           </Link>
         </li>
         <li>
-          <Link to="/listings">
+          <Link to="/supplier/listings">
             <FaCube /> {t('listings')}
           </Link>
         </li>
@@ -84,22 +84,22 @@ const SupplierSidebar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/orders">
+          <Link to="/supplier/orders">
             <FaShoppingCart /> {t('orders')}
           </Link>
         </li>
         <li>
-          <Link to="/invoices">
+          <Link to="/supplier/invoices">
             <FaFileInvoice /> {t('invoices')}
           </Link>
         </li>
         <li>
-          <Link to="/analytics">
+          <Link to="/supplier/analytics">
             <FaChartLine /> {t('analytics')}
           </Link>
         </li>
         <li>
-          <Link to="/messages" className="sidebar-action">
+          <Link to="/supplier/messages" className="sidebar-action">
             <FaEnvelope /> {t('messages')}
           </Link>
         </li>
