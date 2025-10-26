@@ -6,11 +6,11 @@ import Swal from 'sweetalert2';
 import { useAuth } from './context/AuthContext';
 
 export default function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
-  const { role, loading, switching } = useAuth();
+  const { role, user, loading, switching } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
-  const [checked, setChecked] = useState(false); // role has been verified
+  const [checked, setChecked] = useState(false); // role and email verification checked
   const [alertShown, setAlertShown] = useState(false);
 
   // Reset alert and checked when route changes
@@ -24,24 +24,49 @@ export default function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
     if (loading || switching) return;
 
     if (!checked) {
-      setChecked(true); // mark that we verified role for this route
+      setChecked(true); // mark that we verified role and email for this route
 
-      if (!allowedRoles.includes(role) && !alertShown) {
+      // Check role first
+      if (!allowedRoles.includes(role)) {
+        if (!alertShown) {
+          setAlertShown(true);
+          Swal.fire({
+            icon: 'error',
+            title: t('unauthorizedTitle'),
+            text: t('unauthorizedText'),
+            confirmButtonColor: '#476DAE',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+          }).then(() => {
+            navigate(redirectTo, { replace: true });
+          });
+        }
+        return;
+      }
+
+      // Check email verification for authenticated users
+      if (role !== 'guest' && user && !user.isEmailVerified && !alertShown) {
         setAlertShown(true);
         Swal.fire({
-          icon: 'error',
-          title: t('unauthorizedTitle'),
-          text: t('unauthorizedText'),
+          icon: 'warning',
+          title: t('emailNotVerifiedTitle') || 'Email Verification Required',
+          text:
+            t('emailNotVerifiedText') ||
+            'Please verify your email to access most features of this platform.',
           confirmButtonColor: '#476DAE',
           confirmButtonText: 'OK',
           allowOutsideClick: false,
         }).then(() => {
-          navigate(redirectTo, { replace: true });
+          navigate('/verify-email', {
+            replace: true,
+            state: { email: user.email },
+          });
         });
       }
     }
   }, [
     role,
+    user,
     allowedRoles,
     loading,
     switching,
@@ -60,6 +85,9 @@ export default function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
     );
   }
 
-  // Only render children if role is allowed
-  return allowedRoles.includes(role) ? <Outlet /> : null;
+  // Only render children if role is allowed and email is verified (or not applicable)
+  return allowedRoles.includes(role) &&
+    (role === 'guest' || user?.isEmailVerified) ? (
+    <Outlet />
+  ) : null;
 }

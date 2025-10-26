@@ -214,16 +214,44 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: center; /* Center children (upload-card) horizontally */
 }
 
-.upload-card,
-.upload-banner {
+.upload-card {
   border: 1px dashed var(--purple-light);
   background: #f7f4ff;
-  border-radius: 10px;
+  border-radius: 50%; /* Circular shape */
   text-align: center;
   padding: 24px;
   cursor: pointer;
+  width: 120px; /* Fixed width to ensure circle */
+  height: 120px; /* Equal height for perfect circle */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-banner {
+  border: 1px dashed var(--purple-light);
+  background: #f7f4ff;
+  border-radius: 10px; /* Keep rectangular for banner */
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+  width: 100%; /* Ensure full width of parent (.settings-box) */
+  box-sizing: border-box; /* Include padding in width */
+}
+
+.upload-card .upload-icon {
+  font-size: 24px; /* Slightly smaller to fit circle */
+  margin-bottom: 4px;
+}
+
+.upload-card p {
+  font-size: 12px; /* Smaller text to fit within circle */
+  margin: 0;
+  line-height: 1.2;
 }
 
 .upload-icon {
@@ -248,11 +276,35 @@ textarea:focus {
 /* مربعات التحديد */
 .check {
   display: flex;
-  align-items: center;
+  flex-direction: row; /* Align checkbox and text side by side */
+  align-items: center; /* Vertically center the checkbox and text */
   gap: 8px;
   margin-top: 8px;
+  width: 200px;
 }
 
+/* Ensure proper ordering for RTL and LTR */
+.check[dir='rtl'] {
+  flex-direction: row-reverse; /* Checkbox on right, text on left in RTL */
+}
+
+.check[dir='ltr'] {
+  flex-direction: row; /* Checkbox on left, text on right in LTR */
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  /* Removed width: 450px and margin-inline-start: 24px to allow full width */
+}
+
+/* Maintain tighter spacing for Notifications Tab */
+.checkboxes .grid-2 {
+  gap: 6px;
+  width: 450px; /* Keep fixed width only for Notifications Tab */
+  margin-inline-start: 24px;
+}
 .check input {
   accent-color: var(--purple);
 }
@@ -389,4 +441,132 @@ textarea:focus {
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
+}
+
+/* Subscription Section */
+.subscription-section {
+  margin-bottom: 24px;
+}
+
+.subscription-section p {
+  font-size: 15px;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+/* Error Text */
+.error-text {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.success-text {
+  color: #2e7d32;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Make label span both columns in grid-2 */
+.full-width {
+  grid-column: 1 / -1; /* Span all columns */
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+}
+
+input:read-only {
+  background-color: rgb(245, 244, 244);
+}
+
+.btn-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 120px; /* Fixed square width */
+  height: 120px; /* Same as width to make it square */
+  border-radius: 50%; /* Perfect circle */
+  overflow: clip; /* Clip image to circle */
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Fill the circle without stretching */
+  display: block;
+}
+
+.banner-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 10px; /* same as .upload-banner */
+  overflow: hidden; /* clip edges if image is too big */
+  aspect-ratio: 16 / 6; /* optional: consistent banner height */
+}
+
+.banner-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.delete-image-icon-bg {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  overflow: visible;
+}
+
+.pd-btn-image-delete {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: visible;
+}
+
+.pd-btn-image-delete:hover {
+  color: black;
+  background-color: red;
+  cursor: pointer;
+}
+
+.overlay-upload-hint {
+  border-radius: 50%; /* Circular shape */
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+  width: 120px; /* Fixed width to ensure circle */
+  height: 120px; /* Equal height for perfect circle */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.overlay-upload-hint p {
+  font-size: 8px; /* Smaller text to fit within circle */
+  margin: 0;
+  line-height: 1.2;
+}
+.overlay-upload-hint .upload-icon {
+  font-size: 9px; /* Smaller text to fit within circle */
+  margin: 0;
+  line-height: 1.2;
 }
