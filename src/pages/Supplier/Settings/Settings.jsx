@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import './Settings.css';
@@ -6,6 +7,7 @@ import SignupBusinessActivity from '@/components/SingupBusinessActivity/SignupBu
 
 const SupplierSettings = () => {
   const { t, i18n } = useTranslation('settings');
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -592,7 +594,7 @@ const SupplierSettings = () => {
                 <button
                   type="button"
                   className="btn-primary mt-12"
-                  onClick={() => alert(t('actions.demo'))}
+                  onClick={() => navigate('/supplier/choose-plan')}
                 >
                   {t('subscription.managePlan')}
                 </button>
