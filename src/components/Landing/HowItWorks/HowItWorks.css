@@ -1,20 +1,103 @@
-/* components/HowItWorks.css */
-
-/* components/HowItWorks.css */
-
 .how-it-works-section {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%); /* يكسر الكونتينر ويخلي الخلفية تمتد */
-  /* background-color: #3f245c; /* البنفسجي من الصورة */
-
-  margin-top: 70px;
+  width: 100%;
   background-color: #543361;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  width: 100vw;
+  margin-inline-start: calc(-50vw + 50%);
 }
 
-.how-it-works-image img {
+.how-container {
   max-width: 1000px;
-  height: auto;
-  border-radius: 0px; /* اختياري */
+  margin: 0 auto;
+}
+
+.how-title {
+  font-size: 2rem;
+  margin-bottom: 50px;
+  font-weight: 700;
+}
+
+.steps-container {
+  display: flex;
+  justify-content: center; /* centers items evenly */
+  align-items: flex-start;
+  gap: 80px; /* consistent gap between steps */
+  position: relative;
+  flex-wrap: nowrap;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+  width: 180px;
+}
+
+/* The numbered circle */
+.circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  color: #543361;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  position: relative;
+}
+
+/* Step text below the circle */
+.step-text {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 180px;
+}
+
+/* Connector line — using ::after pseudo-element */
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 30px; /* middle of the circle */
+  left: 100%;
+  width: 80px;
+  height: 2px;
+  background-color: white;
+  z-index: 1;
+}
+
+/* RTL mode flips line direction */
+.rtl .step-item:not(:last-child)::after {
+  left: auto;
+  right: 100%;
+}
+
+/* Ensure steps stay centered on all widths */
+@media (max-width: 1000px) {
+  .steps-container {
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+}
+
+/* Mobile: vertical layout, no lines */
+@media (max-width: 800px) {
+  .steps-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-item:not(:last-child)::after {
+    display: none;
+  }
 }
