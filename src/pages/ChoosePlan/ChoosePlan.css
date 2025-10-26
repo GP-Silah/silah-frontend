@@ -1,0 +1,183 @@
+.choose-plan-container {
+display: flex;
+flex-direction: column;
+align-items: center; /* توسيط المحتوى أفقيًا */
+text-align: center;
+padding: 60px 20px;
+background: #fff;
+color: #222;
+}
+
+.choose-plan-title {
+font-size: 1.8rem;
+font-weight: 700;
+}
+
+.choose-plan-subtitle {
+color: #555;
+margin-top: 8px;
+margin-bottom: 40px;
+max-width: 600px;
+}
+
+.plan-cards {
+display: flex;
+justify-content: center; /* توسيط الكروت /
+align-items: flex-start;
+gap: 30px;
+flex-wrap: wrap; / يسمح للنزول تحت بعض في الشاشات الصغيرة */
+margin: 0 auto;
+max-width: 850px;
+}
+
+.plan-card {
+width: 280px;
+border-radius: 10px;
+border: 1.5px solid #ccc;
+padding: 20px;
+text-align: center;
+position: relative;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plan-card:hover {
+transform: translateY(-4px);
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.plan-card.basic {
+background: #fff;
+}
+
+.plan-card.premium {
+background: #5b2e91;
+color: #fff;
+border: none;
+}
+
+.popular-badge {
+position: absolute;
+top: 10px;
+right: 10px;
+background: #ffcc00;
+color: #000;
+font-size: 0.8rem;
+font-weight: 600;
+padding: 3px 8px;
+border-radius: 5px;
+}
+
+.plan-name {
+font-size: 1.2rem;
+font-weight: 600;
+}
+
+.plan-price {
+font-size: 1.6rem;
+margin: 10px 0;
+}
+
+.plan-button {
+border: none;
+outline: none;
+border-radius: 25px;
+padding: 8px 20px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.plan-button.current {
+background: #f2f2f2;
+color: #333;
+}
+
+.plan-button.upgrade {
+background: #fff;
+color: #5b2e91;
+}
+
+.plan-button.upgrade:hover {
+background: #eee;
+}
+
+.trial-link {
+display: block;
+margin: 10px auto;
+font-size: 0.9rem;
+background: transparent;
+border: none;
+color: #fff;
+text-decoration: underline;
+cursor: pointer;
+}
+
+.plan-features {
+text-align: left;
+margin-top: 15px;
+font-size: 0.9rem;
+color: inherit;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.6);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+}
+
+.modal-box {
+background: #fff;
+border-radius: 10px;
+padding: 30px 40px;
+text-align: center;
+width: 360px;
+}
+
+.modal-icon {
+font-size: 2rem;
+color: green;
+margin-bottom: 10px;
+}
+
+.modal-title {
+font-weight: 700;
+font-size: 1.2rem;
+margin-bottom: 10px;
+}
+
+.modal-text {
+color: #555;
+margin-bottom: 20px;
+}
+
+.modal-close {
+background: #5b2e91;
+color: #fff;
+border: none;
+border-radius: 20px;
+padding: 8px 20px;
+cursor: pointer;
+transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+background: #4a257a;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+.plan-cards {
+flex-direction: column;
+align-items: center;
+}
+
+.plan-card {
+width: 90%;
+max-width: 320px;
+}
+}
