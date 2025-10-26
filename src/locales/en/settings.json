@@ -92,7 +92,9 @@
     "settingsUpdated": "Settings updated successfully",
     "passwordUpdated": "Password updated successfully",
     "profileUploaded": "Profile picture uploaded successfully",
-    "bannerUploaded": "Store banner uploaded successfully"
+    "bannerUploaded": "Store banner uploaded successfully",
+    "profileDeleted": "Profile picture deleted successfully",
+    "bannerDeleted": "Store banner deleted successfully"
   },
   "errors": {
     "weakPassword": "Password must be 8-28 characters, including at least one uppercase letter, one lowercase letter, and one number.",

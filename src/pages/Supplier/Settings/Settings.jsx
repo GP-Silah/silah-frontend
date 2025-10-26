@@ -44,9 +44,17 @@ const SupplierSettings = () => {
     bio: '',
     pfpFileName: '',
     bannerFileName: '',
+    pfpUrl: '',
+    bannerUrl: '',
+    isDefaultPfp: true,
   });
   const profileRef = useRef(null);
   const bannerRef = useRef(null);
+
+  useEffect(() => {
+    document.title = t('pageTitle.settings', { ns: 'common' });
+    document.documentElement.setAttribute('dir', i18n.dir());
+  }, [i18n, i18n.language, t]);
 
   // Fetch initial data
   useEffect(() => {
@@ -93,7 +101,10 @@ const SupplierSettings = () => {
 
         if (supplierData.supplierStatus !== 'ACTIVE')
           setError(t('errors.inactiveSupplier'));
-        else
+        else {
+          const isDefaultPfp =
+            supplierData.user?.pfpFileName?.includes('defaultavatars');
+
           setStore({
             closed: supplierData.storeStatus === 'CLOSED',
             closeMsg: supplierData.storeClosedMsg || '',
@@ -104,7 +115,9 @@ const SupplierSettings = () => {
             bannerFileName: supplierData.storeBannerFileName || '',
             pfpUrl: supplierData.user?.pfpUrl || '',
             bannerUrl: supplierData.storeBannerFileUrl || '',
+            isDefaultPfp,
           });
+        }
 
         const planResponse = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/suppliers/me/plan`,
@@ -223,26 +236,42 @@ const SupplierSettings = () => {
     try {
       const formData = new FormData();
       formData.append('file', file);
+
       const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
       const endpoint =
         type === 'profile'
           ? `${baseUrl}/api/users/me/profile-picture`
           : `${baseUrl}/api/suppliers/me/store-banner`;
 
-      const response = await axios.post(endpoint, formData, {
+      await axios.post(endpoint, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
 
-      setStore({
-        ...store,
-        [type === 'profile' ? 'pfpFileName' : 'bannerFileName']:
-          response.data[
-            type === 'profile' ? 'pfpFileName' : 'storeBannerFileName'
-          ],
-        [type === 'profile' ? 'pfpUrl' : 'bannerUrl']:
-          response.data[type === 'profile' ? 'pfpUrl' : 'storeBannerFileUrl'],
-      });
+      // Re-fetch updated info (this is key!)
+      if (type === 'profile') {
+        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
+          withCredentials: true,
+        });
+
+        setStore((prev) => ({
+          ...prev,
+          pfpFileName: data.pfpFileName,
+          pfpUrl: data.pfpUrl,
+          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+        }));
+      } else {
+        const { data } = await axios.get(`${baseUrl}/api/suppliers/me`, {
+          withCredentials: true,
+        });
+
+        setStore((prev) => ({
+          ...prev,
+          bannerFileName: data?.storeBannerFileName,
+          bannerUrl: data?.storeBannerFileUrl,
+        }));
+      }
+
       setSuccess(t(`success.${type}Uploaded`));
     } catch (err) {
       setError(
@@ -258,7 +287,18 @@ const SupplierSettings = () => {
         await axios.delete(`${baseUrl}/api/users/me/profile-picture`, {
           withCredentials: true,
         });
-        setStore({ ...store, pfpFileName: '' });
+
+        // ✅ Re-fetch to get the default avatar URL
+        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
+          withCredentials: true,
+        });
+
+        setStore((prev) => ({
+          ...prev,
+          pfpFileName: data.pfpFileName,
+          pfpUrl: data.pfpUrl,
+          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+        }));
       } else if (type === 'banner' && store.bannerFileName) {
         await axios.delete(`${baseUrl}/api/suppliers/me/store-banner`, {
           withCredentials: true,
@@ -661,20 +701,36 @@ const SupplierSettings = () => {
                 >
                   {store.pfpFileName ? (
                     <div className="image-wrapper">
-                      <img src={store.pfpUrl} alt="profile" />
-                      <div className="delete-image-icon-bg">
-                        <button
-                          type="button"
-                          className="pd-btn-image-delete"
-                          aria-label={t('images.remove')}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleImageDelete('profile');
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
+                      <img
+                        src={store.pfpUrl}
+                        alt="profile"
+                        onError={(e) => (e.target.style.display = 'none')} // hide if URL fails
+                      />
+
+                      {/* show delete button only if NOT default */}
+                      {!store.isDefaultPfp && (
+                        <div className="delete-image-icon-bg">
+                          <button
+                            type="button"
+                            className="pd-btn-image-delete"
+                            aria-label={t('images.remove')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleImageDelete('profile');
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Allow uploading even when it's default */}
+                      {store.isDefaultPfp && (
+                        <div className="overlay-upload-hint">
+                          <span className="upload-icon">⬆️</span>
+                          <p>{t('store.uploadProfile')}</p>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <>
@@ -682,6 +738,7 @@ const SupplierSettings = () => {
                       <p>{t('store.uploadProfile')}</p>
                     </>
                   )}
+
                   <input
                     ref={profileRef}
                     type="file"
@@ -699,7 +756,7 @@ const SupplierSettings = () => {
                   onClick={() => bannerRef.current.click()}
                 >
                   {store.bannerFileName ? (
-                    <div className="image-wrapper">
+                    <div className="banner-wrapper">
                       <img src={store.bannerUrl} alt="banner" />
                       <div className="delete-image-icon-bg">
                         <button
