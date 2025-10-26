@@ -1,0 +1,196 @@
+:root {
+  --bg: #f7f7fb;
+  --white: #fff;
+  --border: #e5e5ea;
+  --text: #1c1c1e;
+  --muted: #8e8e93;
+  --purple: #5c2d91;
+  --purple-2: #4b217c;
+  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+/* الصفحة العامة */
+.bids-page {
+  min-height: 100vh;
+  background: #fff;
+  padding: 32px 40px 80px;
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Tajawal', sans-serif;
+}
+
+/* RTL/LTR */
+.bids-page.rtl {
+  direction: rtl;
+  text-align: right;
+}
+.bids-page.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+/* الهيدر: العنوان + الزر */
+.bids-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 16px;
+}
+
+.bids-title {
+  color: #5c2d91;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.create-bid-btn {
+  background: var(--purple);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.create-bid-btn:hover {
+  background: var(--purple-2);
+}
+.create-bid-btn:active {
+  transform: translateY(1px);
+}
+
+/* قائمة الكروت */
+.bids-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+/* الكرت */
+.bid-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px;
+}
+
+.top-note {
+  color: #b5b5be;
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.bid-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 4px 0 8px;
+  color: #222;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 10px 0 12px;
+}
+.divider.thin {
+  margin: 8px 0 12px;
+}
+
+.activity {
+  margin: 0 0 6px;
+  line-height: 1.5;
+}
+.activity-label {
+  color: #5c2d91;
+  font-weight: 800;
+}
+.activity-text {
+  color: #333;
+}
+
+/* أسفل الكرت */
+.bid-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.meta {
+  display: flex;
+  gap: 26px;
+  flex-wrap: wrap;
+}
+
+.meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 210px;
+}
+.meta-label {
+  color: #696974;
+  font-size: 13px;
+  font-weight: 700;
+}
+.meta-value {
+  color: #222;
+  font-size: 14px;
+  font-weight: 700;
+}
+.with-icon .emoji {
+  margin-inline-end: 6px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-primary {
+  background: #5b3e6f; /* بنفسجي أغمق قليلًا حتى يطابق الصورة */
+  color: #fff;
+}
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-disabled {
+  background: #f1eff6;
+  color: #7b7392;
+  border: 1px solid #e3e0ef;
+  cursor: not-allowed;
+}
+
+/* فوتر بسيط */
+.bids-footer {
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 12px;
+  margin-top: 28px;
+}
+
+/* استجابة */
+@media (max-width: 720px) {
+  .bids-page {
+    padding: 24px 18px 64px;
+  }
+  .meta {
+    gap: 14px;
+  }
+  .meta-block {
+    min-width: unset;
+  }
+}

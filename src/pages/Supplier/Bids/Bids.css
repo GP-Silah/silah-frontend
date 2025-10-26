@@ -1,7 +1,7 @@
 /* ====== الهيكل العام ====== */
 .bids-layout {
-  display: flex; /* ✅ يخلي السايدبار والصفحة جنب بعض */
-  flex-direction: row; /* ✅ يثبت ترتيبهم يسار -> يمين */
+  display: flex; /* يخلي السايدبار والصفحة جنب بعض */
+  flex-direction: row; /*  يثبت ترتيبهم يسار -> يمين */
   min-height: 100vh;
   background: #f9f9f9;
 }
