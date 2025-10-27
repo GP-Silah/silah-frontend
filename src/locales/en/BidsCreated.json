@@ -1,12 +1,17 @@
 {
   "pageTitle": "Bids You Created",
-  "bidsTitle": "Bids You Created",
-  "createNewBid": "Create a New Bid +",
-  "dateOfPublication": "Date of publication",
+  "bidsTitle": "My Bids",
+  "createNewBid": "Create New Bid",
+  "dateOfPublication": "Published on",
   "mainActivity": "Main Activity",
-  "referenceNumber": "Reference Number",
+  "referenceNumber": "Reference #",
   "submissionDeadline": "Submission Deadline",
   "viewDetails": "View Details",
   "viewOffers": "View Offers",
-  "offersLockedNote": "You can't view the offers before the submission deadline arrives"
+  "offersLockedNote": "Offers are locked until the deadline",
+  "loading": "Loading…",
+  "noBids": "You haven't created any bids yet.",
+  "errors": {
+    "fetchFailed": "Failed to load your bids. Please try again."
+  }
 }

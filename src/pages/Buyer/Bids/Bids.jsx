@@ -1,62 +1,68 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import './Bids.css';
 
 export default function BidsYouCreated() {
-  const { t, i18n } = useTranslation('bidsCreated');
+  const { t, i18n } = useTranslation('BidsCreated');
   const navigate = useNavigate();
-  const isRTL = i18n.dir() === 'rtl';
 
-  const handleCreateBid = () => {
-    navigate('/buyer/create-bid');
-  };
-  const handleViewDetails = () => {
-    navigate('/buyer/create-bid/bid-details-buyer');
-  };
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleReceivedOffers = () => {
-    navigate('/buyer/offers/received-offers');
-  };
-
+  // -------------------------------------------------
+  // 1. Fetch bids
+  // -------------------------------------------------
   useEffect(() => {
-    // عنوان المتصفح + اتجاه الصفحة
-    document.title = t('pageTitle', { ns: 'common' });
+    const fetchBids = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/bids/created/me`,
+          { withCredentials: true },
+        );
+        setBids(data);
+      } catch (err) {
+        setError(err.response?.data?.error?.message || t('errors.fetchFailed'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBids();
+  }, [t]);
+
+  // -------------------------------------------------
+  // 2. Page title + dir
+  // -------------------------------------------------
+  useEffect(() => {
+    document.title = t('pageTitle');
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n.language, t]);
 
-  // بيانات تجريبية (نبدلها ببيانات من API)
-  const bids = [
-    {
-      id: 'b1',
-      publishedAt: '05/Feb/2025',
-      title: 'Supply and Installation of Smart Street Lighting Systems',
-      activity:
-        'Electrical Works & Lighting - Installation and Maintenance of Electrical Systems',
-      ref: '1286362961',
-      deadline: '15/Feb/2025',
-      offersAvailable: true,
-    },
-    {
-      id: 'b2',
-      publishedAt: '01/Apr/2025',
-      title: 'Restaurant Equipment and Supplies for Operation',
-      activity:
-        'Supplying equipment, furniture and decorations necessary for restaurant operation',
-      ref: '6428547942',
-      deadline: '10/Apr/2025',
-      offersAvailable: false, // مغلقة إلى أن يوصل الموعد
-    },
-  ];
+  // -------------------------------------------------
+  // 3. Helpers – format dates (en: DD/MMM/YYYY, ar: DD/MMM/YYYY)
+  // -------------------------------------------------
+  const formatDate = (isoString) => {
+    const d = new Date(isoString);
+    const opts = { day: '2-digit', month: 'short', year: 'numeric' };
+    return d.toLocaleDateString(
+      i18n.language === 'ar' ? 'ar-SA' : 'en-GB',
+      opts,
+    );
+  };
 
+  // -------------------------------------------------
+  // 4. Render
+  // -------------------------------------------------
   return (
-    <main
-      className={`bids-page ${isRTL ? 'rtl' : 'ltr'}`}
-      data-dir={i18n.dir()}
-    >
+    <main className={`bids-page ${i18n.dir() === 'rtl' ? 'rtl' : 'ltr'}`}>
+      {/* Header */}
       <div className="bids-header">
         <h2 className="bids-title">{t('bidsTitle')}</h2>
-
         <button
           className="create-bid-btn"
           onClick={() => navigate('/buyer/bids/new')}
@@ -65,66 +71,91 @@ export default function BidsYouCreated() {
         </button>
       </div>
 
+      {/* Loading / Error */}
+      {loading && <div className="bids-loading">{t('loading')}</div>}
+      {error && <div className="bids-error">{error}</div>}
+
+      {/* Bids list */}
+      {!loading && !error && bids.length === 0 && (
+        <p className="bids-empty">{t('noBids')}</p>
+      )}
+
       <section className="bids-list">
-        {bids.map((bid) => (
-          <article key={bid.id} className="bid-card">
-            {/* سطر "تاريخ النشر" */}
-            <p className="muted top-note">
-              {t('dateOfPublication')}: <span>{bid.publishedAt}</span>
-            </p>
+        {bids.map((bid) => {
+          const isOpenForOffers =
+            new Date(bid.submissionDeadline) <= new Date();
 
-            {/* العنوان */}
-            <h3 className="bid-title">{bid.title}</h3>
+          return (
+            <article key={bid.bidId} className="bid-card">
+              {/* Published date */}
+              <p className="muted top-note">
+                {t('dateOfPublication')}:{' '}
+                <span>{formatDate(bid.createdAt)}</span>
+              </p>
 
-            <hr className="divider" />
+              {/* Title */}
+              <h3 className="bid-title">{bid.bidName}</h3>
+              <hr className="divider" />
 
-            {/* النشاط الرئيسي */}
-            <p className="activity">
-              <strong className="activity-label">{t('mainActivity')}:</strong>{' '}
-              <span className="activity-text">{bid.activity}</span>
-            </p>
+              {/* Main activity */}
+              <p className="activity">
+                <strong className="activity-label">{t('mainActivity')}:</strong>{' '}
+                <span className="activity-text">{bid.mainActivity}</span>
+              </p>
 
-            <hr className="divider thin" />
+              <hr className="divider thin" />
 
-            {/* الشريط السفلي */}
-            <div className="bid-footer">
-              <div className="meta">
-                <div className="meta-block">
-                  <span className="meta-label">{t('referenceNumber')}:</span>
-                  <span className="meta-value">{bid.ref}</span>
+              {/* Footer */}
+              <div className="bid-footer">
+                <div className="meta">
+                  <div className="meta-block">
+                    <span className="meta-label">{t('referenceNumber')}:</span>
+                    <span className="meta-value">
+                      {bid.bidId.match(/\d/g)?.slice(0, 10).join('') || '—'}
+                    </span>
+                  </div>
+
+                  <div className="meta-block">
+                    <span className="meta-label">
+                      {t('submissionDeadline')}:
+                    </span>
+                    <span className="meta-value with-icon">
+                      <FontAwesomeIcon
+                        icon={faCalendarAlt}
+                        className="cal-icon"
+                      />
+                      {formatDate(bid.submissionDeadline)}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="meta-block">
-                  <span className="meta-label">{t('submissionDeadline')}:</span>
-                  <span className="meta-value with-icon">
-                    {/* آيقونة تقويم بسيطة (رمز) */}
-                    <span className="emoji">📅</span>
-                    {bid.deadline}
-                  </span>
-                </div>
-              </div>
-
-              <div className="actions">
-                <button className="btn btn-primary" onClick={handleViewDetails}>
-                  View Details
-                </button>
-
-                {bid.offersAvailable ? (
+                <div className="actions">
                   <button
                     className="btn btn-primary"
-                    onClick={handleReceivedOffers}
+                    onClick={() => navigate(`/buyer/bids/${bid.bidId}`)}
                   >
-                    View Offers
+                    {t('viewDetails')}
                   </button>
-                ) : (
-                  <button className="btn btn-disabled" disabled>
-                    {t('offersLockedNote')}
-                  </button>
-                )}
+
+                  {isOpenForOffers ? (
+                    <button
+                      className="btn btn-primary"
+                      onClick={() =>
+                        navigate(`/buyer/bids/${bid.bidId}/offers`)
+                      }
+                    >
+                      {t('viewOffers')}
+                    </button>
+                  ) : (
+                    <button className="btn btn-disabled" disabled>
+                      {t('offersLockedNote')}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </section>
     </main>
   );
