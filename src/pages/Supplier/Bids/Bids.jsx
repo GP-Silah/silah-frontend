@@ -8,8 +8,8 @@ function Bids() {
   const { t, i18n } = useTranslation('bids');
   const navigate = useNavigate();
 
-  const handleViewDetails = (id) => {
-    navigate('/bid-details/${id}');
+  const handleDetails = () => {
+    navigate('/supplier/bid-details');
   };
 
   useEffect(() => {
@@ -58,11 +58,8 @@ function Bids() {
               <p>
                 <strong>{t('deadline')}:</strong> {bid.deadline}
               </p>
-              <button
-                className="view-details-btn"
-                onClick={() => handleViewDetails(bid.id)}
-              >
-                {t('viewDetails')}
+              <button className="view-details-btn" onClick={handleDetails}>
+                View Details
               </button>
             </div>
           ))}

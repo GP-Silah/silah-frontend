@@ -1,0 +1,10 @@
+{
+  "pageTitle": "Bidding Offers",
+  "offerDate": "Offer Date",
+  "supplier": "Supplier",
+  "proposedAmount": "Proposed Amount",
+  "completionTime": "Project Completion Time",
+  "decline": "Decline Offer",
+  "accept": "Accept Offer",
+  "viewDetails": "View Details"
+}

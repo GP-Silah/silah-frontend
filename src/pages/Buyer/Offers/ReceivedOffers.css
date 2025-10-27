@@ -1,0 +1,127 @@
+.bids-container {
+  flex: 1;
+  padding: 30px 60px;
+  background: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Tajawal', sans-serif;
+}
+
+.bids-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.bids-title {
+  color: #5c2d91;
+  font-size: 26px;
+  font-weight: 800;
+}
+
+/* قائمة الكروت */
+.bids-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* الكارد */
+.bid-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  border-inline-start: 5px solid #6f4e9e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* رأس الكارد */
+.offer-header {
+  margin-bottom: 10px;
+}
+
+.offer-date {
+  font-size: 14px;
+  color: #777;
+}
+
+/* الجسم */
+.offer-body {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* مكان الصورة */
+.offer-logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #aaa;
+}
+
+/* النصوص */
+.offer-supplier {
+  font-size: 18px;
+  color: #222;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.offer-info p {
+  color: #444;
+  font-size: 15px;
+  margin: 3px 0;
+}
+
+/* الأزرار */
+.offer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.decline-btn,
+.accept-btn,
+.view-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.decline-btn {
+  background: #f5f5f5;
+  color: #444;
+}
+
+.decline-btn:hover {
+  background: #e3e3e3;
+}
+
+.accept-btn {
+  background: #5c2d91;
+  color: #fff;
+}
+
+.accept-btn:hover {
+  background: #4c1f7a;
+}
+
+.view-btn {
+  background: #ede6f7;
+  color: #5c2d91;
+}
+
+.view-btn:hover {
+  background: #ddd1f0;
+}

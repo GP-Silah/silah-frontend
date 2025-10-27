@@ -4,17 +4,28 @@ import { useNavigate } from 'react-router-dom';
 import './BidsCreated.css';
 
 export default function BidsYouCreated() {
-  const { t, i18n } = useTranslation('buyerBids');
+  const { t, i18n } = useTranslation('bidsCreated');
   const navigate = useNavigate();
   const isRTL = i18n.dir() === 'rtl';
 
+  const handleCreateBid = () => {
+    navigate('/buyer/create-bid');
+  };
+  const handleViewDetails = () => {
+    navigate('/buyer/create-bid/bid-details-buyer');
+  };
+
+  const handleReceivedOffers = () => {
+    navigate('/buyer/offers/received-offers');
+  };
+
   useEffect(() => {
     // عنوان المتصفح + اتجاه الصفحة
-    document.title = t('pageTitle', { ns: 'buyerBids' });
+    document.title = t('pageTitle', { ns: 'common' });
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n.language, t]);
 
-  // بيانات تجريبية (بدليها ببياناتك من الـ API)
+  // بيانات تجريبية (نبدلها ببيانات من API)
   const bids = [
     {
       id: 'b1',
@@ -46,11 +57,8 @@ export default function BidsYouCreated() {
       <div className="bids-header">
         <h2 className="bids-title">{t('bidsTitle')}</h2>
 
-        <button
-          className="create-bid-btn"
-          onClick={() => navigate('/buyer/create-bid')}
-        >
-          {t('createNewBid')}
+        <button className="create-bid-btn" onClick={handleCreateBid}>
+          Create a New Bid +
         </button>
       </div>
 
@@ -94,19 +102,16 @@ export default function BidsYouCreated() {
               </div>
 
               <div className="actions">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => navigate(`/buyer/bids/${bid.id}`)}
-                >
-                  {t('viewDetails')}
+                <button className="btn btn-primary" onClick={handleViewDetails}>
+                  View Details
                 </button>
 
                 {bid.offersAvailable ? (
                   <button
                     className="btn btn-primary"
-                    onClick={() => navigate(`/buyer/bids/${bid.id}/offers`)}
+                    onClick={handleReceivedOffers}
                   >
-                    {t('viewOffers')}
+                    View Offers
                   </button>
                 ) : (
                   <button className="btn btn-disabled" disabled>
@@ -118,11 +123,6 @@ export default function BidsYouCreated() {
           </article>
         ))}
       </section>
-
-      {/* فوتر بسيط اختياري */}
-      <footer className="bids-footer">
-        <span>© 2025 Silah. {t('rightsReserved', { ns: 'common' })}</span>
-      </footer>
     </main>
   );
 }

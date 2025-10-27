@@ -262,7 +262,7 @@ const BuyerHeader = () => {
                 <button
                   className="profile-item"
                   onClick={() => {
-                    navigate('/buyer/create-bid');
+                    navigate('/buyer/bids/bids-created');
                     setProfileOpen(false);
                   }}
                 >

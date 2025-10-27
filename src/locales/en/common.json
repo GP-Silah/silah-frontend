@@ -11,6 +11,8 @@
     "bidOffer": "Submit Bid Offer",
     "settings": "Settings",
     "buyerSettings": "Settings",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "bidsCreated": "Bids You Created",
+    "receivedOffers": "Bidding Offers"
   }
 }

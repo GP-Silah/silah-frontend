@@ -1,0 +1,10 @@
+{
+  "pageTitle": "عروض المناقصات",
+  "offerDate": "تاريخ العرض",
+  "supplier": "المورد",
+  "proposedAmount": "المبلغ المقترح",
+  "completionTime": "مدة التنفيذ",
+  "decline": "رفض العرض",
+  "accept": "قبول العرض",
+  "viewDetails": "عرض التفاصيل"
+}

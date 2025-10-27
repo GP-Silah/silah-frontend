@@ -7,6 +7,10 @@ const BidDetails = () => {
   const { t, i18n } = useTranslation('bidDetails');
   const navigate = useNavigate();
 
+  const handleWriteOffer = () => {
+    navigate('/supplier/write-offer');
+  };
+
   const bid = {
     name: 'Supply and Installation of Smart Street Lighting Systems',
     mainActivity:
@@ -100,12 +104,8 @@ const BidDetails = () => {
             <button className="back-btn" onClick={() => navigate(-1)}>
               {t('back')}
             </button>
-            {/*<button className="participate-btn">{t('participate')}</button>*/}
-            <button
-              className="participate-btn"
-              onClick={() => navigate('/bid-offer')}
-            >
-              {t('participate')}
+            <button className="participate-btn" onClick={handleWriteOffer}>
+              Participate
             </button>
           </div>
         </section>

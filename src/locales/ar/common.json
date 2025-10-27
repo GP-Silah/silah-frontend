@@ -11,6 +11,8 @@
     "bidOffer": "تقديم عرض مناقصة",
     "settings": "الإعدادات",
     "buyerSettings": "الإعدادات",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "bidsCreated": "المناقصات التي أنشأتها",
+    "receivedOffers": "عروض المناقصات"
   }
 }
