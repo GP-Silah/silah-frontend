@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import '../../Supplier/Settings/Settings.css';
 import SignupBusinessActivity from '@/components/SingupBusinessActivity/SignupBusinessActivity';
-import TapCardForm from '@/components/TapCardForm';
+import TapCardForm from '@/components/Tap/TapCardForm';
 
-export default function BuyerSettings() {
+const BuyerSettings = () => {
   const { t, i18n } = useTranslation('settings');
   const [activeTab, setActiveTab] = useState('general');
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,7 @@ export default function BuyerSettings() {
     pfpFileName: '',
     pfpUrl: '',
     isDefaultPfp: true,
+    tapCustomerId: '',
   });
   const [biz, setBiz] = useState({ name: '', crn: '', activity: [] });
   const [email, setEmail] = useState('');
@@ -32,12 +34,6 @@ export default function BuyerSettings() {
     newPassword: '',
     confirmPassword: '',
   });
-  const isPasswordFormInvalid =
-    !passwordForm.currentPassword ||
-    !passwordForm.newPassword ||
-    !passwordForm.confirmPassword ||
-    Object.values(passwordErrors).some((error) => error);
-
   const [notifications, setNotifications] = useState(true);
   const [notifTypes, setNotifTypes] = useState({
     newMessageNotify: true,
@@ -46,7 +42,6 @@ export default function BuyerSettings() {
     orderStatusNotify: true,
     groupPurchaseStatusNotify: true,
   });
-
   const [hasSavedCard, setHasSavedCard] = useState(false);
   const [card, setCard] = useState({
     name: '',
@@ -57,12 +52,127 @@ export default function BuyerSettings() {
 
   const profileRef = useRef(null);
 
+  const isPasswordFormInvalid =
+    !passwordForm.currentPassword ||
+    !passwordForm.newPassword ||
+    !passwordForm.confirmPassword ||
+    Object.values(passwordErrors).some((error) => error);
+
   useEffect(() => {
     document.title = t('pageTitle.settings', { ns: 'common' });
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n, i18n.language, t]);
 
   // Fetch initial data
+  useEffect(() => {
+    const fetchData = async () => {
+      const controller = new AbortController();
+      setLoading(true);
+      try {
+        const userRequest = axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+          {
+            withCredentials: true,
+            signal: controller.signal,
+          },
+        );
+        const cardRequest = axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
+          {
+            withCredentials: true,
+            signal: controller.signal,
+          },
+        );
+        const notifRequest = axios.get(
+          `${
+            import.meta.env.VITE_BACKEND_URL
+          }/api/notifications/me/preferences`,
+          {
+            withCredentials: true,
+            signal: controller.signal,
+          },
+        );
+
+        const [userResponse, cardResponse, notifResponse] =
+          await Promise.allSettled([userRequest, cardRequest, notifRequest]);
+
+        if (userResponse.status === 'fulfilled') {
+          const userData = userResponse.value.data;
+          setUser({
+            name: userData.name || '',
+            nid: userData.nid || '',
+            pfpFileName: userData.pfpFileName || '',
+            pfpUrl: userData.pfpUrl || '',
+            isDefaultPfp:
+              userData.pfpFileName?.includes('defaultavatars') || false,
+            tapCustomerId: userData.tapCustomerId || '',
+          });
+          setEmail(userData.email || '');
+          setBiz({
+            name: userData.businessName || '',
+            crn: userData.crn || '',
+            activity: userData.categories?.map((cat) => cat.id) || [],
+          });
+
+          if (
+            userData.preferredLanguage &&
+            ((userData.preferredLanguage === 'ARA' && i18n.language !== 'ar') ||
+              (userData.preferredLanguage === 'ENG' && i18n.language !== 'en'))
+          ) {
+            i18n.changeLanguage(
+              userData.preferredLanguage === 'ARA' ? 'ar' : 'en',
+            );
+          }
+        } else {
+          console.error('User data fetch failed:', userResponse.reason);
+          setError(
+            userResponse.reason.response?.data?.error?.message ||
+              t('errors.fetchFailed'),
+          );
+        }
+
+        if (
+          cardResponse.status === 'fulfilled' &&
+          cardResponse.value.data.card
+        ) {
+          setHasSavedCard(true);
+          setCard({
+            name: cardResponse.value.data.card.cardHolderName || '',
+            number: `**** ${cardResponse.value.data.card.last4 || ''}`,
+            expiry:
+              `${
+                cardResponse.value.data.card.expMonth
+              }/${cardResponse.value.data.card.expYear.slice(-2)}` || '',
+            cvv: '',
+          });
+        } else if (cardResponse.status === 'rejected') {
+          console.warn('Card fetch failed:', cardResponse.reason);
+        }
+
+        if (notifResponse.status === 'fulfilled') {
+          const prefs = notifResponse.value.data.notificationPreferences || {};
+          setNotifications(prefs.allowNotifications ?? true);
+          setNotifTypes({
+            newMessageNotify: prefs.newMessageNotify ?? true,
+            newInvoiceNotify: prefs.newInvoiceNotify ?? true,
+            newOfferNotify: prefs.newOfferNotify ?? true,
+            orderStatusNotify: prefs.orderStatusNotify ?? true,
+            groupPurchaseStatusNotify: prefs.groupPurchaseStatusNotify ?? true,
+          });
+        } else {
+          console.warn('Notifications fetch failed:', notifResponse.reason);
+        }
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+        setError(err.response?.data?.error?.message || t('errors.fetchFailed'));
+      } finally {
+        setLoading(false);
+      }
+      return () => controller.abort();
+    };
+
+    fetchData();
+  }, [i18n.language, t]);
 
   const validatePassword = (field, value) => {
     let error = '';
@@ -86,15 +196,52 @@ export default function BuyerSettings() {
     return error;
   };
 
-  const handleCardSave = () => {
-    if (card.number && card.number.length >= 4) {
-      setHasSavedCard(true);
+  const handleTokenGenerated = async (tokenId, cardId) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
+        {
+          tokenId,
+          redirectUrl:
+            window.location.origin + '/buyer/payment/callback?type=card',
+        },
+        { withCredentials: true },
+      );
+
+      console.log('➡️ Redirecting user to Tap OTP page:', data.transactionUrl);
+      window.location.href = data.transactionUrl;
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message || t('errors.saveCardFailed'),
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCardDelete = () => {
-    setHasSavedCard(false);
-    setCard({ name: '', number: '', expiry: '', cvv: '' });
+  const handleFormError = (errorMessage) => {
+    setError(errorMessage);
+  };
+
+  const handleCardDelete = async () => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
+        {
+          withCredentials: true,
+        },
+      );
+      setHasSavedCard(false);
+      setCard({ name: '', number: '', expiry: '', cvv: '' });
+      setSuccess(t('success.cardDeleted'));
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message || t('errors.cardDeleteFailed'),
+      );
+    }
   };
 
   const handlePasswordSubmit = async () => {
@@ -154,29 +301,23 @@ export default function BuyerSettings() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-
       const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
-      const endpoint = `${baseUrl}/api/users/me/profile-picture`;
-
-      await axios.post(endpoint, formData, {
+      await axios.post(`${baseUrl}/api/users/me/profile-picture`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         withCredentials: true,
       });
 
-      // Re-fetch updated info (this is key!)
-      if (type === 'profile') {
-        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
-          withCredentials: true,
-        });
+      const { data } = await axios.get(`${baseUrl}/api/users/me`, {
+        withCredentials: true,
+      });
 
-        setUser((prev) => ({
-          ...prev,
-          pfpFileName: data.pfpFileName,
-          pfpUrl: data.pfpUrl,
-          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
-        }));
-      }
-
+      setUser((prev) => ({
+        ...prev,
+        pfpFileName: data.pfpFileName,
+        pfpUrl: data.pfpUrl,
+        isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+        tapCustomerId: data.tapCustomerId || prev.tapCustomerId,
+      }));
       setSuccess(t(`success.${type}Uploaded`));
     } catch (err) {
       setError(
@@ -188,12 +329,11 @@ export default function BuyerSettings() {
   const handleImageDelete = async (type) => {
     try {
       const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
-      if (type === 'profile' && store.pfpFileName) {
+      if (type === 'profile' && user.pfpFileName && !user.isDefaultPfp) {
         await axios.delete(`${baseUrl}/api/users/me/profile-picture`, {
           withCredentials: true,
         });
 
-        // ✅ Re-fetch to get the default avatar URL
         const { data } = await axios.get(`${baseUrl}/api/users/me`, {
           withCredentials: true,
         });
@@ -203,23 +343,16 @@ export default function BuyerSettings() {
           pfpFileName: data.pfpFileName,
           pfpUrl: data.pfpUrl,
           isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+          tapCustomerId: data.tapCustomerId || prev.tapCustomerId,
         }));
+        setSuccess(t(`success.${type}Deleted`));
       }
-
-      setSuccess(t(`success.${type}Deleted`));
     } catch (err) {
       setError(
         err.response?.data?.error?.message || t(`errors.${type}DeleteFailed`),
       );
     }
   };
-
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => setSuccess(''), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   const handleSave = async () => {
     try {
@@ -234,10 +367,13 @@ export default function BuyerSettings() {
         userUpdates.categories = biz.activity
           .map((id) => Number(id))
           .filter((num) => !isNaN(num));
+      } else {
+        setError(t('errors.minOneCategory'));
+        return;
       }
-      if (store.city) userUpdates.city = store.city;
+      if (email) userUpdates.email = email;
       if (i18n.language) {
-        userUpdates.preferredLanguage = i18n.language === 'ar' ? 'AR' : 'EN';
+        userUpdates.preferredLanguage = i18n.language === 'ar' ? 'ARA' : 'ENG';
       }
 
       if (Object.keys(userUpdates).length > 0) {
@@ -246,23 +382,14 @@ export default function BuyerSettings() {
         });
       }
 
-      // Update notification preferences
-      try {
-        await axios.patch(
-          `${baseUrl}/api/notifications/me/preferences`,
-          {
-            allowNotifications: notifications,
-            ...notifTypes,
-          },
-          { withCredentials: true },
-        );
-      } catch (err) {
-        console.error('Failed to update notifications:', err);
-        setError(
-          err.response?.data?.error?.message ||
-            t('errors.notificationUpdateFailed'),
-        );
-      }
+      await axios.patch(
+        `${baseUrl}/api/notifications/me/preferences`,
+        {
+          allowNotifications: notifications,
+          ...notifTypes,
+        },
+        { withCredentials: true },
+      );
 
       setSuccess(t('success.settingsUpdated'));
     } catch (err) {
@@ -270,34 +397,23 @@ export default function BuyerSettings() {
     }
   };
 
-  if (hasSavedCard) {
-    return (
-      <div className="payment-section">
-        <h3 className="payment-title">Payment Method</h3>
-        <div className="saved-card">
-          <div className="saved-card-info">
-            <img src="/logo.svg" alt="Mada logo" className="mada-logo" />
-            <span className="saved-card-number">
-              **** {card.number.slice(-4)}
-            </span>
-          </div>
-          <button className="remove-card" onClick={handleDelete}>
-            ❌
-          </button>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(''), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   return (
     <div className="dashboard-container">
-      {/* المحتوى الرئيسي */}
       <div className="page-content" dir={i18n.dir()}>
         <div className="settings-container">
+          {loading && <p>{t('loading')}</p>}
+          {error && <p className="error-text">{error}</p>}
+          {success && <p className="success-text">{success}</p>}
           <h2 className="settings-title">
             {t('pageTitle.settings', { ns: 'common' })}
-          </h2>{' '}
-          {/* التابات */}
+          </h2>
           <div className="settings-tabs">
             {['general', 'account', 'notifications', 'payment', 'support'].map(
               (tab) => (
@@ -313,7 +429,7 @@ export default function BuyerSettings() {
               ),
             )}
           </div>
-          {/* General Tab */}
+
           {activeTab === 'general' && (
             <>
               <section className="settings-box">
@@ -335,7 +451,6 @@ export default function BuyerSettings() {
                   </label>
                 </div>
               </section>
-
               <section className="settings-box">
                 <h3>{t('businessInfo.title')}</h3>
                 <div className="grid-3">
@@ -356,9 +471,12 @@ export default function BuyerSettings() {
                     <SignupBusinessActivity
                       value={biz.activity}
                       onChange={(selectedValues) => {
-                        if (selectedValues.length === 0) {
-                          setError(t('errors.minOneCategory')); // show message
-                          return; // stop deletion
+                        if (
+                          selectedValues.length === 0 &&
+                          biz.activity.length > 0
+                        ) {
+                          setError(t('errors.minOneCategory'));
+                          return;
                         }
                         setError('');
                         setBiz({ ...biz, activity: selectedValues });
@@ -369,7 +487,7 @@ export default function BuyerSettings() {
               </section>
             </>
           )}
-          {/* Account Tab */}
+
           {activeTab === 'account' && (
             <section className="settings-box">
               <h3>{t('account.title')}</h3>
@@ -495,9 +613,7 @@ export default function BuyerSettings() {
                   {t('account.changePassword')}
                 </button>
               )}
-
               <div className="upload-section mt-24">
-                {/* Profile Picture */}
                 <div
                   className="upload-card"
                   onClick={() => profileRef.current.click()}
@@ -507,11 +623,9 @@ export default function BuyerSettings() {
                       <img
                         src={user.pfpUrl}
                         alt="profile"
-                        onError={(e) => (e.target.style.display = 'none')} // hide if URL fails
+                        onError={(e) => (e.target.style.display = 'none')}
                       />
-
-                      {/* show delete button only if NOT default */}
-                      {!store.isDefaultPfp && (
+                      {!user.isDefaultPfp && (
                         <div className="delete-image-icon-bg">
                           <button
                             type="button"
@@ -526,8 +640,6 @@ export default function BuyerSettings() {
                           </button>
                         </div>
                       )}
-
-                      {/* Allow uploading even when it's default */}
                       {user.isDefaultPfp && (
                         <div className="overlay-upload-hint">
                           <span className="upload-icon">⬆️</span>
@@ -541,7 +653,6 @@ export default function BuyerSettings() {
                       <p>{t('account.upload')}</p>
                     </>
                   )}
-
                   <input
                     ref={profileRef}
                     type="file"
@@ -555,7 +666,7 @@ export default function BuyerSettings() {
               </div>
             </section>
           )}
-          {/* Notifications Tab */}
+
           {activeTab === 'notifications' && (
             <section className="settings-box">
               <h3>{t('notifications.title')}</h3>
@@ -570,7 +681,6 @@ export default function BuyerSettings() {
                   <span className="slider"></span>
                 </label>
               </div>
-
               <div className="checkboxes mt-16">
                 <p className="notif-description">{t('notifications.select')}</p>
                 <div className="grid-2">
@@ -594,66 +704,44 @@ export default function BuyerSettings() {
               </div>
             </section>
           )}
-          {/* Payment Tab */}
+
           {activeTab === 'payment' && (
             <section className="settings-box">
               <div className="payment-section">
-                <h3 className="payment-title">Payment Method</h3>
-                <p className="payment-hint">
-                  You don't have a saved card yet. Add one to make your payments
-                  easier. <br />
-                  Add your card below
-                </p>
-
-                {/* <TapCardForm isActive={activeTab === 'payment'} /> */}
-                <TapCardForm isActive={true} />
-
-                {/* <div className="payment-grid">
-        <label>
-          <span>Cardholder Name</span>
-          <input
-            value={card.name}
-            onChange={(e) => setCard({ ...card, name: e.target.value })}
-            placeholder="Cardholder Name"
-          />
-        </label>
-        <label>
-          <span>Card Number</span>
-          <input
-            value={card.number}
-            onChange={(e) => setCard({ ...card, number: e.target.value })}
-            placeholder="Card Number"
-          />
-        </label>
-        <label>
-          <span>MM/YY</span>
-          <input
-            value={card.expiry}
-            onChange={(e) => setCard({ ...card, expiry: e.target.value })}
-            placeholder="MM/YY"
-          />
-        </label>
-        <label>
-          <span>CVV</span>
-          <input
-            value={card.cvv}
-            onChange={(e) => setCard({ ...card, cvv: e.target.value })}
-            placeholder="CVV"
-          />
-        </label>
-      </div> */}
-
-                <button
-                  type="button"
-                  className="payment-button"
-                  onClick={handleCardSave}
-                >
-                  {t('payment.save')}
-                </button>
+                <h3 className="payment-title">{t('payment.title')}</h3>
+                {hasSavedCard ? (
+                  <div className="saved-card">
+                    <div className="saved-card-info">
+                      <img
+                        src="/logo.svg"
+                        alt="Mada logo"
+                        className="mada-logo"
+                      />
+                      <span className="saved-card-number">{card.number}</span>
+                    </div>
+                    <button className="remove-card" onClick={handleCardDelete}>
+                      ❌
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="payment-hint">{t('payment.hint')}</p>
+                    <div className="tap-card-wrapper">
+                      <TapCardForm
+                        isActive={activeTab === 'payment'}
+                        onTokenGenerated={handleTokenGenerated}
+                        onError={handleFormError}
+                        customerId={user.tapCustomerId}
+                        t={t}
+                      />
+                      {error && <p className="error-text">{error}</p>}
+                    </div>
+                  </>
+                )}
               </div>
             </section>
           )}
-          {/* Support Tab */}
+
           {activeTab === 'support' && (
             <section className="settings-box support-section">
               <h3 className="support-title">{t('support.helpTitle')}</h3>
@@ -669,6 +757,7 @@ export default function BuyerSettings() {
               <p className="support-text">{t('support.paragraph3')}</p>
             </section>
           )}
+
           <button
             type="button"
             className={`btn-primary mt-24 ${error ? 'btn-disabled' : ''}`}
@@ -681,4 +770,6 @@ export default function BuyerSettings() {
       </div>
     </div>
   );
-}
+};
+
+export default memo(BuyerSettings);

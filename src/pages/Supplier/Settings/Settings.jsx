@@ -80,7 +80,7 @@ const SupplierSettings = () => {
           },
         );
         const userData = userResponse.data;
-        setUser({ name: userData.name || '', nid: userData.crn || '' });
+        setUser({ name: userData.name || '', nid: userData.nid || '' });
         setEmail(userData.email || '');
         setBiz({
           name: userData.businessName || '',
