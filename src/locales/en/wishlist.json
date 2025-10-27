@@ -1,0 +1,20 @@
+{
+  "ok": "OK",
+  "demoTitle": "Demo Mode",
+  "demoText": "This is a demo preview. Favoriting is disabled in static mode.",
+  "successTitle": "Wishlist Updated",
+  "added": "Item added to your wishlist.",
+  "removed": "Item removed from your wishlist.",
+  "error": {
+    "badRequestTitle": "Invalid Item",
+    "badRequestText": "This item ID format is invalid.",
+    "unauthorizedTitle": "Unauthorized",
+    "unauthorizedText": "Please log in to manage your wishlist.",
+    "forbiddenTitle": "Access Denied",
+    "forbiddenText": "You do not have permission to perform this action.",
+    "notFoundTitle": "Item Not Found",
+    "notFoundText": "The item you tried to favorite could not be found.",
+    "genericTitle": "Error",
+    "genericText": "Something went wrong. Please try again later."
+  }
+}
