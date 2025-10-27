@@ -37,13 +37,18 @@ export function AuthProvider({ children }) {
       setRole(res.data.role?.toLowerCase() || 'guest');
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        await Swal.fire({
-          icon: 'warning',
-          title: t('title'),
-          text: t('text'),
-          confirmButtonColor: '#476DAE',
-          confirmButtonText: 'OK',
-        });
+        const message = err.response?.data?.error?.message;
+
+        if (message === 'Invalid or expired token') {
+          await Swal.fire({
+            icon: 'warning',
+            title: t('title'),
+            text: t('text'),
+            confirmButtonColor: '#476DAE',
+            confirmButtonText: 'OK',
+          });
+        }
+
         setUser(null);
         setRole('guest');
       } else {
