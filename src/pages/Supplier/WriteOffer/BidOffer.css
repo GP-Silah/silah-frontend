@@ -1,11 +1,11 @@
-/* ===== الصفحة العامة ===== */
+/*  الصفحة العامة  */
 .bid-offer-page {
   display: flex;
   background-color: #fafafa;
   min-height: 100vh;
 }
 
-/* ===== المحتوى ===== */
+/*  المحتوى  */
 .bid-offer-content {
   flex: 1;
   display: flex;
@@ -19,7 +19,7 @@
   line-height: 1.8;
 }
 
-/* ===== توسيط بصري فعلي ===== */
+/*  توسيط بصري فعلي  */
 .bid-offer-wrapper {
   display: flex;
   flex-direction: column;
