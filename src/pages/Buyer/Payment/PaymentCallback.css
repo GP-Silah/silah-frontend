@@ -1,0 +1,39 @@
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 15vh;
+}
+
+.spinner {
+  border: 4px solid #eee;
+  border-top: 4px solid var(--purple, #6b48ff);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.success-text {
+  color: green;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}
+
+.error-text {
+  color: red;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+}

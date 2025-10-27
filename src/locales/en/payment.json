@@ -1,0 +1,12 @@
+{
+  "payment": {
+    "loading": "Loading payment form..."
+  },
+  "success": {
+    "cardSaved": "Card saved successfully"
+  },
+  "errors": {
+    "saveCardFailed": "Failed to save card. Try again.",
+    "missingChargeId": "Missing charge ID. Card save process failed."
+  }
+}

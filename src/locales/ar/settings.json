@@ -7,6 +7,7 @@
     "account": "الحساب",
     "notifications": "الإشعارات",
     "store": "المتجر",
+    "payment": "طرق الدفع",
     "support": "الدعم"
   },
   "userInfo": {
@@ -28,7 +29,8 @@
     "newPassword": "كلمة المرور الجديدة",
     "confirmPassword": "تأكيد كلمة المرور الجديدة",
     "changePassword": "تغيير كلمة المرور",
-    "done": "تم"
+    "done": "تم",
+    "upload": "رفع صورة الملف الشخصي"
   },
   "subscription": {
     "title": "الاشتراك",
@@ -47,7 +49,11 @@
     "newOrderNotify": "الطلبات الجديدة",
     "newReviewNotify": "التقييمات الجديدة",
     "biddingStatusNotify": "تحديثات العطاءات",
-    "invoiceStatusNotify": "تحديثات الفواتير"
+    "invoiceStatusNotify": "تحديثات الفواتير",
+    "newInvoiceNotify": "إشعارات الفواتير الجديدة",
+    "newOfferNotify": "إشعارات العطاءات الجديدة",
+    "orderStatusNotify": "إشعارات حالة الطلبات",
+    "groupPurchaseStatusNotify": "إشعارات الشراء الجماعي"
   },
   "store": {
     "title": "إعدادات المتجر",
@@ -58,6 +64,17 @@
     "uploadProfile": "ارفع صورة المتجر",
     "uploadBanner": "ارفع بانر المتجر",
     "storeBio": "نبذة عن المتجر"
+  },
+  "payment": {
+    "title": "طرق الدفع",
+    "hint": "ليس لديك بطاقة محفوظة بعد. أضف واحدة لتسهيل عملية الدفع.",
+    "owner": "اسم صاحب البطاقة",
+    "number": "رقم البطاقة",
+    "expiry": "MM/YY",
+    "cvv": "رمز التحقق",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "remove": "حذف البطاقة"
   },
   "support": {
     "title": "الدعم الفني",
@@ -81,7 +98,11 @@
     "bio": "اكتب نبذة تعريفية عن متجرك...",
     "currentPassword": "أدخل كلمة المرور الحالية",
     "newPassword": "أدخل كلمة المرور الجديدة",
-    "confirmPassword": "تأكيد كلمة المرور الجديدة"
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "owner": "اسم صاحب البطاقة",
+    "number": "رقم البطاقة",
+    "expiry": "MM/YY",
+    "cvv": "رمز التحقق"
   },
   "actions": {
     "save": "حفظ الإعدادات",
@@ -93,7 +114,8 @@
     "profileUploaded": "تم رفع صورة الملف الشخصي بنجاح",
     "bannerUploaded": "تم رفع بانر المتجر بنجاح",
     "profileDeleted": "تم حذف صورة الملف الشخصي بنجاح",
-    "bannerDeleted": "تم حذف البانر بنجاح"
+    "bannerDeleted": "تم حذف البانر بنجاح",
+    "cardSaved": "تم حفظ البطاقة بنجاح"
   },
   "errors": {
     "weakPassword": "يجب أن تتكون كلمة المرور من 8-28 حرفًا، وتحتوي على حرف كبير، وحرف صغير، ورقم واحد على الأقل.",
@@ -107,7 +129,13 @@
     "invalidFileType": "يُسمح فقط بصور PNG أو JPEG أو WebP.",
     "profileUploadFailed": "فشل في رفع صورة الملف الشخصي. حاول مرة أخرى.",
     "bannerUploadFailed": "فشل في رفع بانر المتجر. حاول مرة أخرى.",
-    "minOneCategory": "يجب اختيار نشاط تجاري واحد على الأقل."
+    "minOneCategory": "يجب اختيار نشاط تجاري واحد على الأقل.",
+    "fillAll": "يرجى تعبئة جميع حقول البطاقة.",
+    "saveCardFailed": "فشل في حفظ البطاقة. حاول مرة أخرى.",
+    "loadCardFormFailed": "فشل في تحميل نموذج الدفع. حاول مرة أخرى.",
+    "renderCardFormFailed": "فشل في عرض نموذج الدفع. حاول مرة أخرى.",
+    "invalidCardDetails": "تفاصيل البطاقة غير صالحة. تحقق وحاول مرة أخرى.",
+    "cardFormNotReady": "نموذج الدفع غير جاهز. يرجى الانتظار وحاول مرة أخرى."
   },
   "loading": "جاري تحميل الإعدادات..."
 }

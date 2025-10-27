@@ -1,0 +1,85 @@
+.tap-card-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  min-height: 200px; /* Ensure enough space for the form */
+  display: flex;
+  flex-direction: column; /* Ensure vertical stacking */
+  gap: 1rem; /* Space between form and button */
+}
+
+/* Target the SDK's wrapper div and iframe */
+.tap-card-wrapper div[id*='[object HTMLDivElement]'] {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  margin: 0 !important;
+  z-index: 0 !important;
+  order: 1; /* Ensure it stays above button */
+}
+
+.tap-card-wrapper iframe[src*='tap-'] {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: 100% !important;
+  max-width: 500px !important;
+  z-index: 0 !important;
+  border-radius: 10px;
+  order: 1; /* Ensure it stays above button */
+}
+
+/* Ensure the loader stays contained */
+.tap-card-wrapper div[style*='loader'] {
+  position: relative !important;
+  z-index: 0 !important;
+  margin: 0 !important;
+  order: 1; /* Ensure it stays above button */
+}
+
+/* Ensure the payment button is below the form */
+.payment-button {
+  position: relative;
+  z-index: 2;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  width: 110px;
+  cursor: pointer;
+  align-self: center;
+  margin-top: 0; /* Remove inline margin, handled by flex gap */
+  transition: background 0.25s ease;
+  order: 2; /* Ensure button is last */
+}
+
+.payment-button:hover {
+  background: #5b3a99;
+}
+
+.payment-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15vh;
+}
+
+.spinner {
+  border: 4px solid #eee;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
