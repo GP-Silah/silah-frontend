@@ -256,25 +256,49 @@ const BuyerHeader = () => {
 
               {/* Middle Section */}
               <div className="profile-actions">
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/chats');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaEnvelope /> {t('profileChoices.directMessaging')}
                 </button>
                 <button
                   className="profile-item"
                   onClick={() => {
-                    navigate('/buyer/create-bid');
+                    navigate('/buyer/bids');
                     setProfileOpen(false);
                   }}
                 >
                   <FaGavel /> {t('profileChoices.biddings')}
                 </button>
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/orders');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaShoppingCart /> {t('profileChoices.orders')}
                 </button>
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onclick={() => {
+                    navigate('/buyer/invoices');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaFileInvoice /> {t('profileChoices.invoices')}
                 </button>
-                <button className="profile-item">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/wishlist');
+                    setProfileOpen(false);
+                  }}
+                >
                   <FaHeart /> {t('profileChoices.wishlist')}
                 </button>
                 <button

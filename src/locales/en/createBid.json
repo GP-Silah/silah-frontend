@@ -16,9 +16,28 @@
     "options": {
       "1w": "1 week after submission",
       "2w": "2 weeks after submission",
-      "3w": "3 weeks after submission",
-      "1m": "1 month after submission"
+      "3w": "4 weeks after submission",
+      "1m": "6 weeks after submission"
     }
   },
-  "publishBtn": "Publish Bid"
+  "publishBtn": "Publish Bid",
+  "publishSuccess": "Bid published successfully",
+  "errors": {
+    "bidName": {
+      "required": "Bid name is required",
+      "maxLength": "Bid name must not exceed 100 characters"
+    },
+    "mainActivity": {
+      "required": "Main activity is required",
+      "maxLength": "Main activity must not exceed 500 characters"
+    },
+    "submissionDeadline": {
+      "required": "Submission deadline is required",
+      "future": "Submission deadline must be a future date"
+    },
+    "responseDeadline": {
+      "required": "Response deadline is required"
+    },
+    "apiError": "An error occurred while publishing the bid. Please try again."
+  }
 }

@@ -155,3 +155,45 @@ body,
 .cb-select {
   padding-inline: 14px;
 }
+
+.cb-error {
+  color: #d32f2f;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.cb-input-error {
+  border-color: #d32f2f !important;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.12) !important;
+}
+
+.cb-input::after {
+  content: attr(data-length) '/100';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--muted);
+  display: none;
+}
+
+.cb-page[data-dir='rtl'] .cb-input::after {
+  right: auto;
+  left: 10px;
+}
+
+.cb-input[data-length]:focus::after {
+  display: block;
+}
+
+.cb-char-count {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+  text-align: left;
+}
+
+.cb-page[data-dir='rtl'] .cb-char-count {
+  text-align: right;
+}
