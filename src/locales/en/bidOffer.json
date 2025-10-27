@@ -1,15 +1,31 @@
 {
-  "title": "Write & Submit an Offer",
-  "instructions": "Submit your offer to participate in the bidding by following the instructions carefully:",
-  "amount": "Proposed Amount:",
-  "completionDate": "Expected Completion Time:",
-  "technicalDetails": "Technical Offer Details:",
-  "executionDuration": "Project Execution Duration:",
-  "notes": "Do you have any additional notes?",
-  "technicalPlaceholder": "Describe your technical approach and materials...",
-  "durationPlaceholder": "Explain your estimated project duration...",
-  "notesPlaceholder": "Optional notes for the buyer...",
+  "title": "Submit Your Offer",
+  "instructions": "Fill in the details below to submit your offer for this bid.",
+  "amount": "Proposed Amount",
+  "completionDate": "Expected Completion Date",
+  "technicalDetails": "Technical Details",
+  "executionDuration": "Execution Plan",
+  "notes": "Additional Notes (Optional)",
+  "technicalPlaceholder": "Describe your technical approach, materials, and standards...",
+  "durationPlaceholder": "Explain timeline, phases, and delivery plan...",
+  "notesPlaceholder": "Any special conditions or remarks...",
   "back": "Back",
   "submit": "Submit Offer",
-  "submitted": "Your offer has been submitted successfully!"
+  "submitting": "Submitting...",
+  "submitted": "Your offer has been submitted successfully!",
+  "validation": {
+    "amount": {
+      "required": "Amount is required",
+      "min": "Amount must be at least 1"
+    },
+    "completionDate": {
+      "required": "Completion date is required",
+      "future": "Date must be in the future"
+    },
+    "maxLength": "Maximum {{count}} characters"
+  },
+  "errors": {
+    "missingBidId": "Bid ID is missing.",
+    "submitFailed": "Failed to submit offer. Please try again."
+  }
 }
