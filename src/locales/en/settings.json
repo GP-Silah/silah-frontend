@@ -7,9 +7,9 @@
     "account": "Account",
     "notifications": "Notifications",
     "store": "Store",
+    "payment": "Payment Method",
     "support": "Support"
   },
-
   "userInfo": {
     "title": "User Info",
     "name": "Name",
@@ -29,7 +29,8 @@
     "newPassword": "New Password",
     "confirmPassword": "Confirm Password",
     "changePassword": "Change Password",
-    "done": "Done"
+    "done": "Done",
+    "upload": "Upload Your Profile Picture"
   },
   "subscription": {
     "title": "Subscription",
@@ -48,7 +49,11 @@
     "newOrderNotify": "New Orders",
     "newReviewNotify": "New Reviews",
     "biddingStatusNotify": "Biddings Updates",
-    "invoiceStatusNotify": "Invoices Updates"
+    "invoiceStatusNotify": "Invoices Updates",
+    "newInvoiceNotify": "New Invoices Notifications",
+    "newOfferNotify": "New Bid Offers Notifications",
+    "orderStatusNotify": "Order Status Notifications",
+    "groupPurchaseStatusNotify": "Group Purchase Status Notifications"
   },
   "store": {
     "title": "Store Settings",
@@ -59,6 +64,17 @@
     "uploadProfile": "Upload Store Profile Picture",
     "uploadBanner": "Upload Store Banner",
     "storeBio": "Store Bio"
+  },
+  "payment": {
+    "title": "Payment Method",
+    "hint": "You don't have a saved card yet. Add one to make your payments easier.",
+    "owner": "Cardholder Name",
+    "number": "Card Number",
+    "expiry": "MM/YY",
+    "cvv": "CVV",
+    "save": "Save",
+    "saving": "Saving...",
+    "remove": "Remove Card"
   },
   "support": {
     "title": "Support",
@@ -82,7 +98,11 @@
     "bio": "Write something about your store...",
     "currentPassword": "Enter current password",
     "newPassword": "Enter new password",
-    "confirmPassword": "Confirm new password"
+    "confirmPassword": "Confirm new password",
+    "owner": "Cardholder Name",
+    "number": "Card Number",
+    "expiry": "MM/YY",
+    "cvv": "CVV"
   },
   "actions": {
     "save": "Save Settings",
@@ -94,7 +114,8 @@
     "profileUploaded": "Profile picture uploaded successfully",
     "bannerUploaded": "Store banner uploaded successfully",
     "profileDeleted": "Profile picture deleted successfully",
-    "bannerDeleted": "Store banner deleted successfully"
+    "bannerDeleted": "Store banner deleted successfully",
+    "cardSaved": "Card saved successfully"
   },
   "errors": {
     "weakPassword": "Password must be 8-28 characters, including at least one uppercase letter, one lowercase letter, and one number.",
@@ -108,7 +129,13 @@
     "invalidFileType": "Only PNG, JPEG, or WebP images are allowed.",
     "profileUploadFailed": "Failed to upload profile picture. Please try again.",
     "bannerUploadFailed": "Failed to upload store banner. Please try again.",
-    "minOneCategory": "You must have at least one business category selected."
+    "minOneCategory": "You must have at least one business category selected.",
+    "fillAll": "Please fill all card fields.",
+    "saveCardFailed": "Failed to save card. Try again.",
+    "loadCardFormFailed": "Failed to load payment form. Please try again.",
+    "renderCardFormFailed": "Failed to render payment form. Please try again.",
+    "invalidCardDetails": "Invalid card details. Please check and try again.",
+    "cardFormNotReady": "Payment form is not ready. Please wait and try again."
   },
   "loading": "Loading settings..."
 }
