@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import './BidsCreated.css';
+import './Bids.css';
 
 export default function BidsYouCreated() {
   const { t, i18n } = useTranslation('bidsCreated');
@@ -57,8 +57,11 @@ export default function BidsYouCreated() {
       <div className="bids-header">
         <h2 className="bids-title">{t('bidsTitle')}</h2>
 
-        <button className="create-bid-btn" onClick={handleCreateBid}>
-          Create a New Bid +
+        <button
+          className="create-bid-btn"
+          onClick={() => navigate('/buyer/bids/new')}
+        >
+          {t('createNewBid')}
         </button>
       </div>
 
