@@ -1,12 +1,17 @@
 {
-  "pageTitle": "عطاءاتك المنشأة",
-  "bidsTitle": "Bids You Created",
-  "createNewBid": "إنشاء عطاء جديد +",
+  "pageTitle": "مناقصاتك المنشأة",
+  "bidsTitle": "مناقصاتي",
+  "createNewBid": "إنشاء مناقصة جديدة",
   "dateOfPublication": "تاريخ النشر",
   "mainActivity": "النشاط الرئيسي",
   "referenceNumber": "رقم المرجع",
   "submissionDeadline": "آخر موعد للتقديم",
   "viewDetails": "عرض التفاصيل",
   "viewOffers": "عرض العروض",
-  "offersLockedNote": "لا يمكنك عرض العروض قبل وصول موعد الإغلاق"
+  "offersLockedNote": "العروض مقفلة حتى حلول الموعد",
+  "loading": "يتم التحميل...",
+  "noBids": "لم تقم بإنشاء أي منافصات بعد.",
+  "errors": {
+    "fetchFailed": "لم نتمكن من تحميل مناقصاتك، رجاءً حاول مره أخرى."
+  }
 }

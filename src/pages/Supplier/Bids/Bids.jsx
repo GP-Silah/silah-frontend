@@ -1,66 +1,147 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import '../../../App.css';
 import './Bids.css';
-import { useNavigate } from 'react-router-dom';
 
-function Bids() {
+export default function Bids() {
   const { t, i18n } = useTranslation('bids');
   const navigate = useNavigate();
 
-  const handleViewDetails = (id) => {
-    navigate('/bid-details/${id}');
+  const [allBids, setAllBids] = useState([]);
+  const [joinedBids, setJoinedBids] = useState([]);
+  const [showJoinedOnly, setShowJoinedOnly] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // -------------------------------------------------
+  // 1. Load *all* bids (public)
+  // -------------------------------------------------
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/bids`,
+        );
+        setAllBids(data);
+      } catch (err) {
+        setError(t('errors.fetchAll'));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAll();
+  }, [t]);
+
+  // -------------------------------------------------
+  // 2. Load *joined* bids when the checkbox is ON
+  // -------------------------------------------------
+  useEffect(() => {
+    if (!showJoinedOnly) {
+      setJoinedBids([]);
+      return;
+    }
+
+    const fetchJoined = async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/bids/joined/me`,
+          { withCredentials: true },
+        );
+        setJoinedBids(data);
+      } catch (err) {
+        setError(t('errors.fetchJoined'));
+      }
+    };
+    fetchJoined();
+  }, [showJoinedOnly, t]);
+
+  // -------------------------------------------------
+  // 3. Page title
+  // -------------------------------------------------
+  useEffect(() => {
+    document.title = t('title');
+  }, [t]);
+
+  // -------------------------------------------------
+  // 4. Helpers
+  // -------------------------------------------------
+  const formatDate = (iso) => {
+    const d = new Date(iso);
+    const opts = { day: '2-digit', month: 'short', year: 'numeric' };
+    return d.toLocaleDateString(
+      i18n.language === 'ar' ? 'ar-SA' : 'en-GB',
+      opts,
+    );
   };
 
-  useEffect(() => {
-    document.title = t('pageTitle.bids', { ns: 'common' });
-  }, [t, i18n.language]);
+  const refNumber = (bidId) => bidId.replace(/-/g, '').slice(0, 10);
 
-  const bids = [
-    {
-      id: 1,
-      title: t('bid1.title'),
-      activity: t('bid1.activity'),
-      refNumber: '1286362961',
-      pubDate: '05/Feb/2025',
-      deadline: '15/Feb/2025',
-    },
-    {
-      id: 2,
-      title: t('bid2.title'),
-      activity: t('bid2.activity'),
-      refNumber: '6428549742',
-      pubDate: '10/Mar/2025',
-      deadline: '25/Mar/2025',
-    },
-  ];
+  const displayedBids = showJoinedOnly ? joinedBids : allBids;
 
+  // -------------------------------------------------
+  // 5. Render
+  // -------------------------------------------------
   return (
     <div className="bids-layout">
-      {/* الصفحة الرئيسية */}
       <main
         className={`bids-container ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}
       >
-        <h2 className="bids-title">{t('title')}</h2>
+        {/* Header + filter */}
+        <div className="bids-header">
+          <h2 className="bids-title">{t('title')}</h2>
+
+          <label className="filter-checkbox">
+            <input
+              type="checkbox"
+              checked={showJoinedOnly}
+              onChange={(e) => setShowJoinedOnly(e.target.checked)}
+            />
+            <span>{t('showJoinedOnly')}</span>
+          </label>
+        </div>
+
+        {/* States */}
+        {loading && <div className="bids-loading">{t('loading')}</div>}
+        {error && <div className="bids-error">{error}</div>}
+
+        {/* Empty */}
+        {!loading && !error && displayedBids.length === 0 && (
+          <p className="bids-empty">
+            {showJoinedOnly ? t('noJoinedBids') : t('noBids')}
+          </p>
+        )}
+
+        {/* List */}
         <div className="bids-list">
-          {bids.map((bid) => (
-            <div key={bid.id} className="bid-card">
+          {displayedBids.map((bid) => (
+            <div key={bid.bidId} className="bid-card">
               <p>
-                <strong>{t('pubDate')}:</strong> {bid.pubDate}
+                <strong>{t('pubDate')}:</strong> {formatDate(bid.createdAt)}
               </p>
-              <h3>{bid.title}</h3>
+
+              <h3>{bid.bidName}</h3>
+
               <p>
-                <strong>{t('activity')}:</strong> {bid.activity}
+                <strong>{t('activity')}:</strong> {bid.mainActivity}
               </p>
+
               <p>
-                <strong>{t('refNumber')}:</strong> {bid.refNumber}
+                <strong>{t('refNumber')}:</strong> {refNumber(bid.bidId)}
               </p>
+
               <p>
-                <strong>{t('deadline')}:</strong> {bid.deadline}
+                <strong>{t('deadline')}:</strong>{' '}
+                <FontAwesomeIcon icon={faCalendarAlt} className="cal-icon" />
+                {formatDate(bid.submissionDeadline)}
               </p>
+
               <button
                 className="view-details-btn"
-                onClick={() => handleViewDetails(bid.id)}
+                onClick={() => navigate(`/bid-details/${bid.bidId}`)}
               >
                 {t('viewDetails')}
               </button>
@@ -71,5 +152,3 @@ function Bids() {
     </div>
   );
 }
-
-export default Bids;

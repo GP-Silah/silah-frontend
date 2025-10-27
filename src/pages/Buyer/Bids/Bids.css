@@ -194,3 +194,8 @@
     min-width: unset;
   }
 }
+
+.cal-icon {
+  margin-inline-end: 6px;
+  color: var(--purple);
+}
