@@ -1,11 +1,26 @@
 {
-  "title": "فيما يلي تفاصيل العطاء الخاص بك:",
-  "bidName": "اسم العطاء:",
-  "mainActivity": "النشاط الرئيسي:",
-  "organizationName": "اسم الجهة:",
-  "referenceNumber": "رقم المرجع:",
-  "timeRemaining": "الوقت المتبقي:",
-  "publicationDate": "تاريخ النشر:",
-  "submissionDeadline": "آخر موعد للتقديم:",
-  "expectedResponse": "المدة المتوقعة للرد:"
+  "title": "تفاصيل المناقصة الخاصة بك",
+  "bidName": "اسم المناقصة",
+  "mainActivity": "النشاط الرئيسي",
+  "organizationName": "اسم الجهة",
+  "referenceNumber": "رقم المرجع",
+  "timeRemainingTitle": "الوقت المتبقي",
+  "publicationDate": "تاريخ النشر",
+  "submissionDeadline": "آخر موعد للتقديم",
+  "expectedResponse": "المدة المتوقعة للرد",
+  "loading": "جاري تحميل تفاصيل المناقصة…",
+  "timeRemaining": {
+    "days": "{{count}} أيام متبقية",
+    "expired": "انتهى الموعد"
+  },
+  "responseTime": {
+    "oneWeek": "أسبوع واحد بعد التقديم",
+    "twoWeeks": "أسبوعين بعد التقديم",
+    "fourWeeks": "أربعة أسابيع بعد التقديم",
+    "sixWeeks": "ستة أسابيع بعد التقديم"
+  },
+  "errors": {
+    "notFound": "المناقصة غير موجودة.",
+    "fetchFailed": "فشل تحميل تفاصيل المناقصة."
+  }
 }

@@ -78,7 +78,7 @@ export default function Bids() {
     );
   };
 
-  const refNumber = (bidId) => bidId.replace(/-/g, '').slice(0, 10);
+  const refNumber = (bidId) => bidId.match(/\d/g)?.slice(0, 10).join('') || '—';
 
   const displayedBids = showJoinedOnly ? joinedBids : allBids;
 
@@ -141,7 +141,7 @@ export default function Bids() {
 
               <button
                 className="view-details-btn"
-                onClick={() => navigate(`/bid-details/${bid.bidId}`)}
+                onClick={() => navigate(`/supplier/bids/${bid.bidId}`)}
               >
                 {t('viewDetails')}
               </button>
