@@ -1,11 +1,26 @@
 {
-  "title": "Here are the details of your bid:",
-  "bidName": "Bid Name:",
-  "mainActivity": "Main Activity:",
-  "organizationName": "Organization Name:",
-  "referenceNumber": "Reference Number:",
-  "timeRemaining": "Time Remaining:",
-  "publicationDate": "Publication Date:",
-  "submissionDeadline": "Submission Deadline:",
-  "expectedResponse": "Expected Response Time:"
+  "title": "Your Bid Details",
+  "bidName": "Bid Name",
+  "mainActivity": "Main Activity",
+  "organizationName": "Organization",
+  "referenceNumber": "Reference #",
+  "timeRemainingTitle": "Time Remaining",
+  "publicationDate": "Published On",
+  "submissionDeadline": "Submission Deadline",
+  "expectedResponse": "Expected Response Time",
+  "loading": "Loading bid details…",
+  "timeRemaining": {
+    "days": "{{count}} day(s) remaining",
+    "expired": "Deadline passed"
+  },
+  "responseTime": {
+    "oneWeek": "1 week after submission",
+    "twoWeeks": "2 weeks after submission",
+    "fourWeeks": "4 weeks after submission",
+    "sixWeeks": "6 weeks after submission"
+  },
+  "errors": {
+    "notFound": "Bid not found.",
+    "fetchFailed": "Failed to load bid details."
+  }
 }

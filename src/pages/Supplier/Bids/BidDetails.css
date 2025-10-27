@@ -107,3 +107,14 @@
   background-color: #472d6f;
   transform: translateY(-1px);
 }
+
+.bid-loading,
+.bid-error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #2f3c73;
+}
+.bid-error {
+  color: #c33;
+}
