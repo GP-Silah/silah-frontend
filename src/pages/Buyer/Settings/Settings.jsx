@@ -47,7 +47,6 @@ const BuyerSettings = () => {
     name: '',
     number: '',
     expiry: '',
-    cvv: '',
   });
 
   const profileRef = useRef(null);
@@ -133,18 +132,21 @@ const BuyerSettings = () => {
 
         if (
           cardResponse.status === 'fulfilled' &&
-          cardResponse.value.data.card
+          cardResponse.value.data.message != 'No card found'
         ) {
           setHasSavedCard(true);
           setCard({
-            name: cardResponse.value.data.card.cardHolderName || '',
-            number: `**** ${cardResponse.value.data.card.last4 || ''}`,
+            name: cardResponse.value.data.cardHolderName || '',
+            number: `**** ${cardResponse.value.data.last4 || ''}`,
             expiry:
-              `${
-                cardResponse.value.data.card.expMonth
-              }/${cardResponse.value.data.card.expYear.slice(-2)}` || '',
-            cvv: '',
+              `${cardResponse.value.data.expMonth}/${cardResponse.value.data.expYear}` ||
+              '',
           });
+        } else if (
+          cardResponse.status === 'fulfilled' &&
+          cardResponse.value.data.message === 'No card found'
+        ) {
+          setHasSavedCard(false);
         } else if (cardResponse.status === 'rejected') {
           console.warn('Card fetch failed:', cardResponse.reason);
         }
@@ -235,7 +237,7 @@ const BuyerSettings = () => {
         },
       );
       setHasSavedCard(false);
-      setCard({ name: '', number: '', expiry: '', cvv: '' });
+      setCard({ name: '', number: '', expiry: '' });
       setSuccess(t('success.cardDeleted'));
     } catch (err) {
       setError(
@@ -713,15 +715,30 @@ const BuyerSettings = () => {
                   <div className="saved-card">
                     <div className="saved-card-info">
                       <img
-                        src="/logo.svg"
+                        src="/mada-logo.svg"
                         alt="Mada logo"
                         className="mada-logo"
                       />
-                      <span className="saved-card-number">{card.number}</span>
+                      <div className="saved-card-details">
+                        <span className="saved-card-number">{card.number}</span>
+                        <div className="saved-card-row">
+                          <span className="saved-card-name">{card.name}</span>
+                          <span className="saved-card-expiry">
+                            {card.expiry}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <button className="remove-card" onClick={handleCardDelete}>
-                      ❌
-                    </button>
+                    <div className="delete-image-icon-bg">
+                      <button
+                        type="button"
+                        className="pd-btn-image-delete"
+                        aria-label={t('payment.removeCard')}
+                        onClick={handleCardDelete}
+                      >
+                        ×
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <>

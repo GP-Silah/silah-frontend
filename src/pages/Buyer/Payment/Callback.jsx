@@ -54,7 +54,7 @@ export default function PaymentCallback() {
       }
 
       try {
-        const response = await axios.post(
+        const response = await axios.put(
           config.confirmEndpoint,
           config.requestBody(searchParams),
           { withCredentials: true },
