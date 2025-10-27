@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
 const TapCardForm = ({ onTokenGenerated, isActive }) => {
+  const { t } = useTranslation('settings');
   const [tapLoaded, setTapLoaded] = useState(false);
   const formRef = useRef(null);
 

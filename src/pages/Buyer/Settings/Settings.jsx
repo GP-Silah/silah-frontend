@@ -1,24 +1,58 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import './BuyerSettings.css';
-import BuyerSettingsPayment from './BuyerSettingsPayment';
-// import TapCardForm from '../../../components/TapCardForm';
+import '../../Supplier/Settings/Settings.css';
+import SignupBusinessActivity from '@/components/SingupBusinessActivity/SignupBusinessActivity';
+import TapCardForm from '@/components/TapCardForm';
 
 export default function BuyerSettings() {
-  const { t, i18n } = useTranslation('buyerSettings');
+  const { t, i18n } = useTranslation('settings');
   const [activeTab, setActiveTab] = useState('general');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const [user, setUser] = useState({ name: '', nid: '' });
-  const [biz, setBiz] = useState({ name: '', crn: '', city: '', activity: '' });
+  const [user, setUser] = useState({
+    name: '',
+    nid: '',
+    pfpFileName: '',
+    pfpUrl: '',
+    isDefaultPfp: true,
+  });
+  const [biz, setBiz] = useState({ name: '', crn: '', activity: [] });
   const [email, setEmail] = useState('');
   const [password] = useState('********');
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [passwordErrors, setPasswordErrors] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const isPasswordFormInvalid =
+    !passwordForm.currentPassword ||
+    !passwordForm.newPassword ||
+    !passwordForm.confirmPassword ||
+    Object.values(passwordErrors).some((error) => error);
+
   const [notifications, setNotifications] = useState(true);
   const [notifTypes, setNotifTypes] = useState({
-    messages: true,
-    invoices: true,
-    bids: true,
-    orders: true,
-    groups: true,
+    newMessageNotify: true,
+    newInvoiceNotify: true,
+    newOfferNotify: true,
+    orderStatusNotify: true,
+    groupPurchaseStatusNotify: true,
+  });
+
+  const [hasSavedCard, setHasSavedCard] = useState(false);
+  const [card, setCard] = useState({
+    name: '',
+    number: '',
+    expiry: '',
+    cvv: '',
   });
 
   const profileRef = useRef(null);
@@ -27,6 +61,233 @@ export default function BuyerSettings() {
     document.title = t('pageTitle.settings', { ns: 'common' });
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n, i18n.language, t]);
+
+  // Fetch initial data
+
+  const validatePassword = (field, value) => {
+    let error = '';
+    switch (field) {
+      case 'newPassword':
+        if (
+          value &&
+          !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@#!$]{8,28}$/.test(value)
+        ) {
+          error = t('errors.weakPassword');
+        }
+        break;
+      case 'confirmPassword':
+        if (value !== passwordForm.newPassword) {
+          error = t('errors.passwordMismatch');
+        }
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleCardSave = () => {
+    if (card.number && card.number.length >= 4) {
+      setHasSavedCard(true);
+    }
+  };
+
+  const handleCardDelete = () => {
+    setHasSavedCard(false);
+    setCard({ name: '', number: '', expiry: '', cvv: '' });
+  };
+
+  const handlePasswordSubmit = async () => {
+    setError('');
+    const errors = {
+      currentPassword: passwordForm.currentPassword ? '' : t('errors.required'),
+      newPassword: validatePassword('newPassword', passwordForm.newPassword),
+      confirmPassword: validatePassword(
+        'confirmPassword',
+        passwordForm.confirmPassword,
+      ),
+    };
+    setPasswordErrors(errors);
+
+    if (!Object.values(errors).some((error) => error)) {
+      try {
+        await axios.patch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/me/change-password`,
+          {
+            oldPassword: passwordForm.currentPassword,
+            newPassword: passwordForm.newPassword,
+          },
+          { withCredentials: true },
+        );
+        setSuccess(t('success.passwordUpdated'));
+        setShowPasswordFields(false);
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+        setPasswordErrors({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+      } catch (err) {
+        setError(
+          err.response?.data?.error?.message ||
+            t('errors.passwordUpdateFailed'),
+        );
+      }
+    }
+  };
+
+  const handleImageUpload = async (file, type) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setError(t('errors.fileTooLarge'));
+      return;
+    }
+    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+      setError(t('errors.invalidFileType'));
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const endpoint = `${baseUrl}/api/users/me/profile-picture`;
+
+      await axios.post(endpoint, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+      });
+
+      // Re-fetch updated info (this is key!)
+      if (type === 'profile') {
+        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
+          withCredentials: true,
+        });
+
+        setUser((prev) => ({
+          ...prev,
+          pfpFileName: data.pfpFileName,
+          pfpUrl: data.pfpUrl,
+          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+        }));
+      }
+
+      setSuccess(t(`success.${type}Uploaded`));
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message || t(`errors.${type}UploadFailed`),
+      );
+    }
+  };
+
+  const handleImageDelete = async (type) => {
+    try {
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
+      if (type === 'profile' && store.pfpFileName) {
+        await axios.delete(`${baseUrl}/api/users/me/profile-picture`, {
+          withCredentials: true,
+        });
+
+        // ✅ Re-fetch to get the default avatar URL
+        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
+          withCredentials: true,
+        });
+
+        setUser((prev) => ({
+          ...prev,
+          pfpFileName: data.pfpFileName,
+          pfpUrl: data.pfpUrl,
+          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
+        }));
+      }
+
+      setSuccess(t(`success.${type}Deleted`));
+    } catch (err) {
+      setError(
+        err.response?.data?.error?.message || t(`errors.${type}DeleteFailed`),
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(''), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  const handleSave = async () => {
+    try {
+      setError('');
+      setSuccess('');
+
+      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
+      const userUpdates = {};
+      if (user.name) userUpdates.name = user.name;
+      if (biz.name) userUpdates.businessName = biz.name;
+      if (biz.activity.length > 0) {
+        userUpdates.categories = biz.activity
+          .map((id) => Number(id))
+          .filter((num) => !isNaN(num));
+      }
+      if (store.city) userUpdates.city = store.city;
+      if (i18n.language) {
+        userUpdates.preferredLanguage = i18n.language === 'ar' ? 'AR' : 'EN';
+      }
+
+      if (Object.keys(userUpdates).length > 0) {
+        await axios.patch(`${baseUrl}/api/users/me`, userUpdates, {
+          withCredentials: true,
+        });
+      }
+
+      // Update notification preferences
+      try {
+        await axios.patch(
+          `${baseUrl}/api/notifications/me/preferences`,
+          {
+            allowNotifications: notifications,
+            ...notifTypes,
+          },
+          { withCredentials: true },
+        );
+      } catch (err) {
+        console.error('Failed to update notifications:', err);
+        setError(
+          err.response?.data?.error?.message ||
+            t('errors.notificationUpdateFailed'),
+        );
+      }
+
+      setSuccess(t('success.settingsUpdated'));
+    } catch (err) {
+      setError(err.response?.data?.error?.message || t('errors.saveFailed'));
+    }
+  };
+
+  if (hasSavedCard) {
+    return (
+      <div className="payment-section">
+        <h3 className="payment-title">Payment Method</h3>
+        <div className="saved-card">
+          <div className="saved-card-info">
+            <img src="/logo.svg" alt="Mada logo" className="mada-logo" />
+            <span className="saved-card-number">
+              **** {card.number.slice(-4)}
+            </span>
+          </div>
+          <button className="remove-card" onClick={handleDelete}>
+            ❌
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -70,13 +331,7 @@ export default function BuyerSettings() {
                   </label>
                   <label>
                     <span>{t('userInfo.nid')}</span>
-                    <input
-                      value={user.nid}
-                      onChange={(e) =>
-                        setUser({ ...user, nid: e.target.value })
-                      }
-                      placeholder={t('placeholders.nid')}
-                    />
+                    <input value={user.nid} readOnly />
                   </label>
                 </div>
               </section>
@@ -94,28 +349,20 @@ export default function BuyerSettings() {
                   </label>
                   <label>
                     <span>{t('businessInfo.crn')}</span>
-                    <input
-                      value={biz.crn}
-                      onChange={(e) => setBiz({ ...biz, crn: e.target.value })}
-                      placeholder={t('placeholders.crn')}
-                    />
+                    <input value={biz.crn} readOnly />
                   </label>
-                  <label>
-                    <span>{t('businessInfo.city')}</span>
-                    <input
-                      value={biz.city}
-                      onChange={(e) => setBiz({ ...biz, city: e.target.value })}
-                      placeholder={t('placeholders.city')}
-                    />
-                  </label>
-                  <label>
+                  <label className="full-width">
                     <span>{t('businessInfo.activity')}</span>
-                    <input
+                    <SignupBusinessActivity
                       value={biz.activity}
-                      onChange={(e) =>
-                        setBiz({ ...biz, activity: e.target.value })
-                      }
-                      placeholder={t('placeholders.activity')}
+                      onChange={(selectedValues) => {
+                        if (selectedValues.length === 0) {
+                          setError(t('errors.minOneCategory')); // show message
+                          return; // stop deletion
+                        }
+                        setError('');
+                        setBiz({ ...biz, activity: selectedValues });
+                      }}
                     />
                   </label>
                 </div>
@@ -141,22 +388,169 @@ export default function BuyerSettings() {
                   <input type="password" value={password} readOnly />
                 </label>
               </div>
-              <button
-                type="button"
-                className="btn-primary mt-12"
-                onClick={() => alert(t('actions.demo'))}
-              >
-                {t('account.changePassword')}
-              </button>
+              {showPasswordFields ? (
+                <>
+                  <div className="grid-2 mt-16">
+                    <label className="full-width">
+                      <span>{t('account.currentPassword')}</span>
+                      <input
+                        type="password"
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPasswordForm({
+                            ...passwordForm,
+                            currentPassword: value,
+                          });
+                          setPasswordErrors({
+                            ...passwordErrors,
+                            currentPassword: value ? '' : t('errors.required'),
+                          });
+                        }}
+                        placeholder={t('placeholders.currentPassword')}
+                      />
+                      {passwordErrors.currentPassword && (
+                        <p className="error-text">
+                          {passwordErrors.currentPassword}
+                        </p>
+                      )}
+                    </label>
+                  </div>
+                  <div className="grid-2 mt-16">
+                    <label>
+                      <span>{t('account.newPassword')}</span>
+                      <input
+                        type="password"
+                        value={passwordForm.newPassword}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPasswordForm({
+                            ...passwordForm,
+                            newPassword: value,
+                          });
+                          setPasswordErrors({
+                            ...passwordErrors,
+                            newPassword: validatePassword('newPassword', value),
+                            confirmPassword:
+                              passwordForm.confirmPassword &&
+                              validatePassword(
+                                'confirmPassword',
+                                passwordForm.confirmPassword,
+                              ),
+                          });
+                        }}
+                        placeholder={t('placeholders.newPassword')}
+                      />
+                      {passwordErrors.newPassword && (
+                        <p className="error-text">
+                          {passwordErrors.newPassword}
+                        </p>
+                      )}
+                    </label>
+                    <label>
+                      <span>{t('account.confirmPassword')}</span>
+                      <input
+                        type="password"
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setPasswordForm({
+                            ...passwordForm,
+                            confirmPassword: value,
+                          });
+                          setPasswordErrors({
+                            ...passwordErrors,
+                            confirmPassword: validatePassword(
+                              'confirmPassword',
+                              value,
+                            ),
+                          });
+                        }}
+                        placeholder={t('placeholders.confirmPassword')}
+                      />
+                      {passwordErrors.confirmPassword && (
+                        <p className="error-text">
+                          {passwordErrors.confirmPassword}
+                        </p>
+                      )}
+                    </label>
+                  </div>
+                  <button
+                    type="button"
+                    className={`btn-primary mt-24 ${
+                      isPasswordFormInvalid ? 'btn-disabled' : ''
+                    }`}
+                    onClick={handlePasswordSubmit}
+                    disabled={isPasswordFormInvalid}
+                  >
+                    {t('account.done')}
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn-primary mt-12"
+                  onClick={() => setShowPasswordFields(true)}
+                >
+                  {t('account.changePassword')}
+                </button>
+              )}
 
               <div className="upload-section mt-24">
+                {/* Profile Picture */}
                 <div
                   className="upload-card"
                   onClick={() => profileRef.current.click()}
                 >
-                  <span className="upload-icon">⬆️</span>
-                  <p>{t('account.upload')}</p>
-                  <input ref={profileRef} type="file" hidden accept="image/*" />
+                  {user.pfpFileName ? (
+                    <div className="image-wrapper">
+                      <img
+                        src={user.pfpUrl}
+                        alt="profile"
+                        onError={(e) => (e.target.style.display = 'none')} // hide if URL fails
+                      />
+
+                      {/* show delete button only if NOT default */}
+                      {!store.isDefaultPfp && (
+                        <div className="delete-image-icon-bg">
+                          <button
+                            type="button"
+                            className="pd-btn-image-delete"
+                            aria-label={t('images.remove')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleImageDelete('profile');
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Allow uploading even when it's default */}
+                      {user.isDefaultPfp && (
+                        <div className="overlay-upload-hint">
+                          <span className="upload-icon">⬆️</span>
+                          <p>{t('account.upload')}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <span className="upload-icon">⬆️</span>
+                      <p>{t('account.upload')}</p>
+                    </>
+                  )}
+
+                  <input
+                    ref={profileRef}
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) =>
+                      handleImageUpload(e.target.files[0], 'profile')
+                    }
+                  />
                 </div>
               </div>
             </section>
@@ -203,9 +597,60 @@ export default function BuyerSettings() {
           {/* Payment Tab */}
           {activeTab === 'payment' && (
             <section className="settings-box">
-              {/* <h3>Payment Method</h3> */}
-              <BuyerSettingsPayment />
-              {/* <TapCardForm /> */}
+              <div className="payment-section">
+                <h3 className="payment-title">Payment Method</h3>
+                <p className="payment-hint">
+                  You don't have a saved card yet. Add one to make your payments
+                  easier. <br />
+                  Add your card below
+                </p>
+
+                {/* <TapCardForm isActive={activeTab === 'payment'} /> */}
+                <TapCardForm isActive={true} />
+
+                {/* <div className="payment-grid">
+        <label>
+          <span>Cardholder Name</span>
+          <input
+            value={card.name}
+            onChange={(e) => setCard({ ...card, name: e.target.value })}
+            placeholder="Cardholder Name"
+          />
+        </label>
+        <label>
+          <span>Card Number</span>
+          <input
+            value={card.number}
+            onChange={(e) => setCard({ ...card, number: e.target.value })}
+            placeholder="Card Number"
+          />
+        </label>
+        <label>
+          <span>MM/YY</span>
+          <input
+            value={card.expiry}
+            onChange={(e) => setCard({ ...card, expiry: e.target.value })}
+            placeholder="MM/YY"
+          />
+        </label>
+        <label>
+          <span>CVV</span>
+          <input
+            value={card.cvv}
+            onChange={(e) => setCard({ ...card, cvv: e.target.value })}
+            placeholder="CVV"
+          />
+        </label>
+      </div> */}
+
+                <button
+                  type="button"
+                  className="payment-button"
+                  onClick={handleCardSave}
+                >
+                  {t('payment.save')}
+                </button>
+              </div>
             </section>
           )}
           {/* Support Tab */}
@@ -224,6 +669,14 @@ export default function BuyerSettings() {
               <p className="support-text">{t('support.paragraph3')}</p>
             </section>
           )}
+          <button
+            type="button"
+            className={`btn-primary mt-24 ${error ? 'btn-disabled' : ''}`}
+            onClick={handleSave}
+            disabled={loading || !!error}
+          >
+            {t('actions.save')}
+          </button>
         </div>
       </div>
     </div>

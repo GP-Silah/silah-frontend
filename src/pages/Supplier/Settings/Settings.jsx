@@ -29,6 +29,12 @@ const SupplierSettings = () => {
     newPassword: '',
     confirmPassword: '',
   });
+  const isPasswordFormInvalid =
+    !passwordForm.currentPassword ||
+    !passwordForm.newPassword ||
+    !passwordForm.confirmPassword ||
+    Object.values(passwordErrors).some((error) => error);
+
   const [notifications, setNotifications] = useState(true);
   const [notifTypes, setNotifTypes] = useState({
     newMessageNotify: true,
@@ -382,12 +388,6 @@ const SupplierSettings = () => {
       setError(err.response?.data?.error?.message || t('errors.saveFailed'));
     }
   };
-
-  const isPasswordFormInvalid =
-    !passwordForm.currentPassword ||
-    !passwordForm.newPassword ||
-    !passwordForm.confirmPassword ||
-    Object.values(passwordErrors).some((error) => error);
 
   return (
     <div className="dashboard-container">
