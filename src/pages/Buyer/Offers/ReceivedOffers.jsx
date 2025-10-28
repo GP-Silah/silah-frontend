@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function BiddingOffersBuyer() {
   const { t, i18n } = useTranslation(['receivedOffers', 'common']);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = t('pageTitle', { ns: 'common' });
@@ -62,7 +63,13 @@ export default function BiddingOffersBuyer() {
             <div className="offer-buttons">
               <button className="decline-btn">{t('decline')}</button>
               <button className="accept-btn">{t('accept')}</button>
-              <button className="view-btn">{t('viewDetails')}</button>
+              {/* <button className="view-btn">{t('viewDetails')}</button> */}
+              <button
+                onKlick={() => navigate('/buyer/offers/offer-details')}
+                className="view-btn"
+              >
+                {t('viewDetails')}
+              </button>
             </div>
           </div>
         ))}
