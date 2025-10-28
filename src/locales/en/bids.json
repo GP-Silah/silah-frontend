@@ -1,16 +1,16 @@
 {
-  "title": "Recent Biddings",
-  "pubDate": "Date of publication",
+  "title": "Open Bids",
+  "showJoinedOnly": "Show only bids I joined",
+  "pubDate": "Published on",
   "activity": "Main Activity",
-  "refNumber": "Reference Number",
+  "refNumber": "Reference #",
   "deadline": "Submission Deadline",
   "viewDetails": "View Details",
-  "bid1": {
-    "title": "Supply and Installation of Smart Street Lighting Systems",
-    "activity": "Electrical Works & Lighting - Installation and Maintenance of Electrical Systems"
-  },
-  "bid2": {
-    "title": "Supply and Furnishing of a Tourist Hotel, Including Furniture and Hotel Equipment",
-    "activity": "Hotel & Hospitality Equipment - Supply and Installation of Furniture and Operational Equipment"
+  "loading": "Loading…",
+  "noBids": "No open bids at the moment.",
+  "noJoinedBids": "You haven't joined any bids yet.",
+  "errors": {
+    "fetchAll": "Failed to load open bids.",
+    "fetchJoined": "Failed to load your joined bids."
   }
 }

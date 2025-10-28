@@ -11,6 +11,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "@rollup/plugin-json": "^6.1.0",
     "@tap-payments/card-sdk": "^1.0.2",
     "axios": "^1.12.2",
