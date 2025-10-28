@@ -90,3 +90,14 @@
 .bdb-page[data-dir='rtl'] .bdb-value {
   text-align: right;
 }
+
+.bdb-loading,
+.bdb-error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: #666;
+}
+.bdb-error {
+  color: #c33;
+}

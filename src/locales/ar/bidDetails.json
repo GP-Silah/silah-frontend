@@ -7,7 +7,22 @@
   "remaining": "المدة المتبقية",
   "publication": "تاريخ النشر",
   "deadline": "آخر موعد للتقديم",
-  "responseTime": "المدة المتوقعة للرد",
+  "responseTimeTitle": "المدة المتوقعة للرد",
   "back": "رجوع",
-  "participate": "المشاركة"
+  "participate": "المشاركة",
+  "loading": "جاري تحميل تفاصيل المناقصة…",
+  "timeRemaining": {
+    "days": "{{count}} أيام متبقية",
+    "expired": "انتهى الموعد"
+  },
+  "responseTime": {
+    "oneWeek": "أسبوع واحد بعد التقديم",
+    "twoWeeks": "أسبوعين بعد التقديم",
+    "fourWeeks": "أربعة أسابيع بعد التقديم",
+    "sixWeeks": "ستة أسابيع بعد التقديم"
+  },
+  "errors": {
+    "notFound": "المناقصة غير موجودة.",
+    "fetchFailed": "فشل تحميل تفاصيل المناقصة."
+  }
 }

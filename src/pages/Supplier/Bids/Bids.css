@@ -73,3 +73,40 @@
 .view-details-btn:hover {
   background: #5b3f84;
 }
+
+.bids-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.filter-checkbox input {
+  margin: 0;
+}
+
+.cal-icon {
+  margin-inline-end: 6px;
+  color: #6f4e9e;
+}
+
+.bids-loading,
+.bids-error,
+.bids-empty {
+  padding: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+.bids-error {
+  color: #c33;
+}
