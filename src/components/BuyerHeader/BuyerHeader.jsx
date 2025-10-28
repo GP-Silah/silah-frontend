@@ -19,14 +19,18 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 import './BuyerHeader.css';
+import { useNotifications } from '../../hooks/useNotifications';
 
-const BuyerHeader = () => {
+const BuyerHeader = ({ unreadCount }) => {
+  // Receive from layout
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
 
   const [categories, setCategories] = useState([]);
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, profilePics, markAsRead } = useNotifications(
+    i18n.language,
+  );
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -92,23 +96,12 @@ const BuyerHeader = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // === Mark Notifications as Read ===
-  const markAllAsRead = async () => {
-    const unreadIds = notifications
+  // === Mark All Notifications as Read ===
+  const markAllAsRead = () => {
+    const ids = notifications
       .filter((n) => !n.isRead)
       .map((n) => n.notificationId);
-    if (!unreadIds.length) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/read-many`,
-        { notificationIds: unreadIds },
-        { withCredentials: true },
-      );
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    } catch (err) {
-      console.error('Failed to mark notifications as read', err);
-    }
+    if (ids.length) markAsRead(ids);
   };
 
   // === Handle Role Switch ===
@@ -175,47 +168,53 @@ const BuyerHeader = () => {
         <div className="notification-wrapper" ref={dropdownRef}>
           <button
             className="icon-btn"
-            onClick={() => setDropdownOpen((prev) => !prev)}
+            onClick={() => setDropdownOpen(!dropdownOpen)}
             title={t('notifications')}
           >
             <FaBell />
-            {notifications.some((n) => !n.isRead) && <span className="dot" />}
+            {unreadCount > 0 && (
+              <span className="notification-badge">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </button>
 
           {dropdownOpen && (
             <div className="notification-dropdown">
-              <div className="notification-list">
-                {notifications.length === 0 ? (
-                  <div className="notif-item empty">{t('noNotifications')}</div>
-                ) : (
-                  notifications.map((n) => (
-                    <div
-                      key={n.notificationId}
-                      className={`notification-item ${
-                        n.isRead ? '' : 'unread'
-                      }`}
-                    >
-                      <div className="notification-content">
-                        <strong>{n.title}</strong>
-                        <p>{n.content}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {notifications.length > 0 && (
-                <div className="notification-footer">
-                  <button
-                    className="view-all-btn"
-                    onClick={() => navigate('/buyer/notifications')}
-                  >
-                    {t('viewAll')}
-                  </button>
-                  <button className="mark-read-btn" onClick={markAllAsRead}>
-                    {t('markAllRead')}
-                  </button>
-                </div>
+              {notifications.length === 0 ? (
+                <div className="notif-item empty">{t('noNotifications')}</div>
+              ) : (
+                <>
+                  <div className="notification-list">
+                    {notifications.map((n) => {
+                      const pfp = profilePics[n.sender.userId];
+                      return (
+                        <div
+                          key={n.notificationId}
+                          className={`notif-item ${n.isRead ? '' : 'unread'}`}
+                        >
+                          {pfp ? (
+                            <img src={pfp} alt="" className="notif-pfp" />
+                          ) : (
+                            <div className="notif-pfp-placeholder">
+                              {n.sender.name[0]}
+                            </div>
+                          )}
+                          <div>
+                            <strong>{n.title}</strong>
+                            <p>{n.content}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="notification-footer">
+                    <button onClick={() => navigate('/buyer/notifications')}>
+                      {t('viewAll')}
+                    </button>
+                    <button onClick={markAllAsRead}>{t('markAllRead')}</button>
+                  </div>
+                </>
               )}
             </div>
           )}
