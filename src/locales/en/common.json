@@ -13,6 +13,7 @@
     "buyerSettings": "Settings",
     "notifications": "Notifications",
     "bidsCreated": "Bids You Created",
-    "receivedOffers": "Bidding Offers"
+    "receivedOffers": "Bidding Offers",
+    "offerDetails": "Offer Details"
   }
 }
