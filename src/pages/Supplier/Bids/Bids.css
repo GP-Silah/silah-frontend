@@ -110,3 +110,28 @@
 .bids-error {
   color: #c33;
 }
+
+.joined-badge {
+  display: inline-block;
+  background: #e9e9e9;
+  color: black;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+
+.view-details-btn.joined {
+  background: #e9e9e9;
+}
+
+.view-details-btn.joined:hover {
+  background: rgb(185, 185, 185);
+}
+
+.view-details-btn:disabled {
+  background: rgb(185, 185, 185);
+  cursor: not-allowed;
+  opacity: 0.9;
+}
