@@ -182,3 +182,62 @@
     max-width: 320px;
   }
 }
+
+.error-message {
+  color: #c33;
+  font-size: 0.9rem;
+  margin: 10px 0;
+  text-align: center;
+  max-width: 600px;
+}
+
+.plan-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.trial-link:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ────────────────────────────────
+   PREMIUM CARD – CURRENT STATE
+   ──────────────────────────────── */
+.plan-card.premium {
+  background: #5b2e91; /* keep the deep purple */
+  color: #fff;
+  border: none;
+}
+
+/* CURRENT BUTTON on PREMIUM (when user is on Premium) */
+.plan-card.premium .plan-button.current {
+  background: rgba(255, 255, 255, 0.25); /* translucent white */
+  color: #fff; /* bright white text */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px); /* subtle glass effect */
+}
+
+/* Hover for the current button (optional – keeps it interactive) */
+.plan-card.premium {
+  background: linear-gradient(135deg, #7c4dff, #5b2e91);
+}
+
+/* UPGRADE button (white → purple text) – unchanged, just keep it */
+.plan-button.upgrade {
+  background: #fff;
+  color: #5b2e91;
+}
+
+/* TRIAL link – keep white, underline stays */
+.trial-link {
+  color: #fff;
+}
+
+/* ────────────────────────────────
+   OPTIONAL: Softer hover for the whole card
+   ──────────────────────────────── */
+.plan-card.premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(91, 46, 145, 0.3);
+}

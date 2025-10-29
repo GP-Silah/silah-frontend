@@ -8,6 +8,7 @@
   "viewDetails": "View Details",
   "loading": "Loading…",
   "noBids": "No open bids at the moment.",
+  "alreadyJoined": "You have joined this bid",
   "noJoinedBids": "You haven't joined any bids yet.",
   "errors": {
     "fetchAll": "Failed to load open bids.",

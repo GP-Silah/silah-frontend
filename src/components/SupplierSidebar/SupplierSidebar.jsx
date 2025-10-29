@@ -20,7 +20,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import './SupplierSidebar.css';
 
-const SupplierSidebar = () => {
+const SupplierSidebar = ({ unreadCount }) => {
   const { t, i18n } = useTranslation('sidebar');
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
   const navigate = useNavigate();
@@ -105,7 +105,15 @@ const SupplierSidebar = () => {
         </li>
         <li>
           <Link to="/supplier/notifications" className="sidebar-action">
-            <FaBell /> {t('notifications')}
+            <div className="notification-bell-wrapper">
+              <FaBell />
+              {unreadCount > 0 && (
+                <span className="notification-badge-supplier">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </div>
+            {t('notifications')}
           </Link>
         </li>
         <li>

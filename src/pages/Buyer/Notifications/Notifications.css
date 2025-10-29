@@ -1,11 +1,14 @@
-/* Notifications.page.css */
+/* Notifications.page.css — Buyer Blue Theme (Figma Clean) */
 :root {
-  --silah-purple: #8a52a7;
-  --card-bg: #fdf8ff; /* Light pink */
-  --border: #e5d4ed;
-  --text: #2d1b3d;
-  --muted: #7c6992;
+  --silah-blue: #517fbf; /* Figma Main Blue */
+  --blue-light: #e3edf6; /* Card BG */
+  --blue-lighter: #f1f5fc; /* Icon Circle */
+  --blue-hover: #476dae; /* Hover Blue */
+  --blue-border: #a3c4e0; /* Softer border */
+  --text: #2d3748; /* Dark readable text */
+  --text-muted: #64748b; /* Muted text (gray-blue) */
   --white: #ffffff;
+  --shadow-blue: rgba(81, 127, 191, 0.12); /* Blue shadow */
 }
 
 .buyer-notif-page {
@@ -15,6 +18,7 @@
   font-family: system-ui, 'Tajawal', sans-serif;
 }
 
+/* === Header === */
 .page-notif-header {
   display: flex;
   justify-content: space-between;
@@ -43,9 +47,10 @@
   font-size: 14px;
 }
 
+/* === Dropdown === */
 .page-dropdown button {
   background: var(--white);
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--blue-border);
   padding: 10px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -53,20 +58,22 @@
   width: 180px;
   text-align: left;
   font-weight: 500;
-  transition: 0.2s;
+  color: var(--text);
+  transition: all 0.2s;
 }
 
 .page-dropdown button:hover {
-  border-color: var(--silah-purple);
+  border-color: var(--silah-blue);
+  box-shadow: 0 0 0 3px rgba(81, 127, 191, 0.15);
 }
 
 .page-dropdown-menu {
   position: absolute;
   top: 110%;
   background: var(--white);
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--blue-border);
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(138, 82, 167, 0.12);
+  box-shadow: 0 8px 20px var(--shadow-blue);
   width: 180px;
   z-index: 10;
   overflow: hidden;
@@ -77,28 +84,32 @@
   padding: 12px 16px;
   font-size: 14px;
   cursor: pointer;
+  color: var(--text);
   transition: background 0.2s;
 }
 
 .page-dropdown-item:hover {
-  background: #f5e8ff;
+  background: var(--blue-light);
 }
 
+/* === Mark All Button === */
 .page-mark-all-btn {
-  background: var(--silah-purple);
+  background: var(--silah-blue);
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s;
 }
 
 .page-mark-all-btn:hover {
-  background: #7a4796;
+  background: var(--blue-hover);
+  transform: translateY(-1px);
 }
 
+/* === Notification List === */
 .page-notif-list {
   display: flex;
   flex-direction: column;
@@ -107,26 +118,27 @@
 
 .page-notif-item {
   position: relative;
-  background: var(--card-bg);
-  border: 1.5px solid var(--border);
+  background: var(--blue-light);
+  border: 1.5px solid var(--blue-border);
   border-radius: 14px;
   padding: 18px 20px;
   display: flex;
   align-items: flex-start;
   gap: 16px;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 6px rgba(138, 82, 167, 0.06);
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px var(--shadow-blue);
 }
 
 .page-notif-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(138, 82, 167, 0.12);
-  border-color: var(--silah-purple);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-blue);
+  border-color: var(--silah-blue);
 }
 
 .page-notif-item.page-unread {
-  border-left: 4px solid var(--silah-purple);
+  border-left: 4px solid var(--silah-blue);
+  background: #edf4fb;
 }
 
 .page-unread-dot {
@@ -135,23 +147,32 @@
   left: 16px;
   width: 10px;
   height: 10px;
-  background: var(--silah-purple);
+  background: var(--silah-blue);
   border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(81, 127, 191, 0.2);
 }
 
+/* === Icon Circle === */
 .page-notif-icon-circle {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #f3e8ff;
+  background: var(--blue-lighter);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--silah-purple);
+  color: var(--silah-blue);
   font-size: 18px;
   flex-shrink: 0;
+  transition: all 0.2s;
 }
 
+.page-notif-item:hover .page-notif-icon-circle {
+  background: #d6e4f5;
+  transform: scale(1.05);
+}
+
+/* === Content === */
 .page-notif-content {
   flex: 1;
   min-width: 0;
@@ -166,15 +187,17 @@
 }
 
 .page-notif-message {
-  color: var(--muted);
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.5;
+  margin: 0;
 }
 
+/* === Meta === */
 .page-notif-meta {
   text-align: right;
   font-size: 13px;
-  color: var(--muted);
+  color: var(--text-muted);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -183,12 +206,14 @@
 
 .page-notif-date {
   font-weight: 500;
+  color: var(--text);
 }
 
+/* === Mark Read Button === */
 .page-mark-read-btn {
   background: transparent;
-  border: 1.5px solid var(--border);
-  color: var(--silah-purple);
+  border: 1.5px solid var(--blue-border);
+  color: var(--silah-blue);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -197,36 +222,40 @@
   justify-content: center;
   cursor: pointer;
   margin-top: 8px;
-  transition: 0.2s;
+  transition: all 0.2s;
 }
 
 .page-mark-read-btn:hover {
-  background: #f3e8ff;
-  border-color: var(--silah-purple);
+  background: var(--silah-blue);
+  color: white;
+  transform: scale(1.1);
 }
 
+/* === Empty / Loading === */
 .page-loading,
 .page-empty {
   text-align: center;
   padding: 40px;
-  color: var(--muted);
+  color: var(--text-muted);
   font-style: italic;
+  font-size: 15px;
 }
 
-/* Position dropdowns */
-.page-type-menu {
+/* === Dropdown Positioning === */
+.page-type-menu,
+.page-date-menu {
   position: absolute;
-  top: 150px;
-  left: 46%;
-  transform: translateX(-50%);
+  top: 170px;
   z-index: 1000;
   white-space: nowrap;
 }
 
+.page-type-menu {
+  left: 37.7%;
+  transform: translateX(-50%);
+}
+
 .page-date-menu {
-  position: absolute;
-  top: 150px;
-  left: 50%;
+  left: 41.7%;
   transform: translateX(50%);
-  z-index: 1000;
 }

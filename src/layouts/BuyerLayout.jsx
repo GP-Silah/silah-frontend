@@ -3,12 +3,18 @@ import BuyerHeader from '@/components/BuyerHeader/BuyerHeader';
 import Footer from '@/components/Footer/Footer';
 import DemoBanner from '@/components/DemoBanner/DemoBanner';
 import { Outlet } from 'react-router-dom';
+import { useNotifications } from '../hooks/useNotifications';
+import { useTranslation } from 'react-i18next';
 
 export default function BuyerLayout() {
+  const { i18n } = useTranslation();
+  const { notifications, markAllAsRead } = useNotifications(i18n.language);
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   return (
     <>
       <DemoBanner />
-      <BuyerHeader />
+      <BuyerHeader unreadCount={unreadCount} markAsRead={markAllAsRead} />{' '}
       <main>
         <Outlet />
       </main>
