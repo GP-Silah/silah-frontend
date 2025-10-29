@@ -1,0 +1,30 @@
+{
+  "pageTitle": "Order Details",
+  "order": {
+    "title": "Order",
+    "status": {
+      "shipped": "Shipped",
+      "completed": "Completed"
+    },
+    "orderedOn": "Ordered on:",
+    "supplier": "Supplier:",
+    "totalPrice": "Total Order Price:",
+    "paid": "(Paid)"
+  },
+  "items": {
+    "title": "Order Items",
+    "image": "Image",
+    "name": "Item Name",
+    "unitPrice": "Unit Price",
+    "quantity": "Quantity",
+    "total": "Total Price"
+  },
+  "buttons": {
+    "confirm": "Confirm Delivery",
+    "review": "Write a Review"
+  },
+  "notes": {
+    "confirmNote": "Click this button if the order has been delivered, this will change the order status to \"Completed\".",
+    "reviewNote": "You can write a review after confirming the delivery."
+  }
+}
