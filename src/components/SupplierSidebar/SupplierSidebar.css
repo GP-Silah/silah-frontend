@@ -205,3 +205,29 @@
   background: #ccc;
   border-radius: 3px;
 }
+
+/* Badge for supplier sidebar */
+.notification-bell-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.notification-badge-supplier {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e63946;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}

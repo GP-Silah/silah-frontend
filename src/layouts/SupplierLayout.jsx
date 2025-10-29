@@ -3,13 +3,19 @@ import SupplierSidebar from '@/components/SupplierSidebar/SupplierSidebar';
 import Footer from '@/components/Footer/Footer';
 import { Outlet } from 'react-router-dom';
 import DemoBanner from '@/components/DemoBanner/DemoBanner';
+import { useNotifications } from '../hooks/useNotifications';
+import { useTranslation } from 'react-i18next';
 
 export default function SupplierLayout() {
+  const { i18n } = useTranslation();
+  const { notifications, markAllAsRead } = useNotifications(i18n.language);
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
+
   return (
     <>
       <DemoBanner />
       <div className="supplier-layout-container">
-        <SupplierSidebar />
+        <SupplierSidebar unreadCount={unreadCount} />{' '}
         <main className="supplier-main">
           <Outlet />
         </main>

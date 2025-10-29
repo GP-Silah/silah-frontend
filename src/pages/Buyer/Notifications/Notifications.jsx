@@ -7,21 +7,20 @@ import {
   FaFileInvoice,
   FaTag,
   FaTruck,
-  FaStar,
+  FaUsers,
   FaCheck,
 } from 'react-icons/fa';
 import './Notifications.css';
 
 const TYPE_ICONS = {
   CHAT: FaEnvelope,
-  ORDER: FaTruck,
-  REVIEW: FaStar,
-  BID: FaTag,
-  OFFER: FaTag,
   INVOICE: FaFileInvoice,
+  OFFER: FaTag,
+  ORDER: FaTruck,
+  GROUP_PURCHASE: FaUsers,
 };
 
-export default function NotificationsSupplier() {
+export default function BuyerNotifications() {
   const { t, i18n } = useTranslation('notifications');
   const navigate = useNavigate();
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
@@ -54,7 +53,6 @@ export default function NotificationsSupplier() {
     fetchNotifications();
   }, [i18n.language]);
 
-  // === Close dropdowns on outside click ===
   useEffect(() => {
     const handleClick = (e) => {
       if (!e.target.closest('.page-dropdown')) {
@@ -107,20 +105,19 @@ export default function NotificationsSupplier() {
 
     switch (n.relatedEntityType) {
       case 'CHAT':
-        navigate(`/supplier/chats/${n.relatedEntityId}`);
-        break;
-      case 'ORDER':
-        navigate(`/supplier/orders/${n.relatedEntityId}`);
-        break;
-      case 'REVIEW':
-        navigate(`/supplier/reviews/${n.relatedEntityId}`);
-        break;
-      case 'BID':
-      case 'OFFER':
-        navigate(`/supplier/bids/${n.relatedEntityId}`);
+        navigate(`/buyer/chats/${n.relatedEntityId}`);
         break;
       case 'INVOICE':
-        navigate(`/supplier/invoices/${n.relatedEntityId}`);
+        navigate(`/buyer/invoices/${n.relatedEntityId}`);
+        break;
+      case 'OFFER':
+        navigate(`/buyer/offers/${n.relatedEntityId}`);
+        break;
+      case 'ORDER':
+        navigate(`/buyer/orders/${n.relatedEntityId}`);
+        break;
+      case 'GROUP_PURCHASE':
+        navigate(`/buyer/invoices`);
         break;
       default:
         break;
@@ -132,15 +129,12 @@ export default function NotificationsSupplier() {
     if (selectedType !== t('allNotifications')) {
       const typeMap = {
         [t('newMessages')]: 'CHAT',
-        [t('newOrders')]: 'ORDER',
-        [t('newReviews')]: 'REVIEW',
-        [t('bidsStatus')]: ['BID', 'OFFER'],
-        [t('invoicesStatus')]: 'INVOICE',
+        [t('newInvoices')]: 'INVOICE',
+        [t('newOffers')]: 'OFFER',
+        [t('orderStatus')]: 'ORDER',
+        [t('groupPurchase')]: 'GROUP_PURCHASE',
       };
-      const allowed = typeMap[selectedType];
-      if (Array.isArray(allowed)) {
-        if (!allowed.includes(n.relatedEntityType)) return false;
-      } else if (allowed !== n.relatedEntityType) return false;
+      if (typeMap[selectedType] !== n.relatedEntityType) return false;
     }
 
     if (selectedDate !== t('allDays')) {
@@ -163,7 +157,6 @@ export default function NotificationsSupplier() {
     <div className="buyer-notif-page" data-dir={dir}>
       <div className="page-notif-header">
         <div className="page-filters-center">
-          {/* Type Filter */}
           <div className="page-notif-filter-inline">
             <span className="page-filter-label">{t('type')}</span>
             <div className="page-dropdown">
@@ -178,10 +171,10 @@ export default function NotificationsSupplier() {
                   {[
                     t('allNotifications'),
                     t('newMessages'),
-                    t('newOrders'),
-                    t('newReviews'),
-                    t('bidsStatus'),
-                    t('invoicesStatus'),
+                    t('newInvoices'),
+                    t('newOffers'),
+                    t('orderStatus'),
+                    t('groupPurchase'),
                   ].map((opt) => (
                     <div
                       key={opt}
@@ -199,7 +192,6 @@ export default function NotificationsSupplier() {
             </div>
           </div>
 
-          {/* Date Filter */}
           <div className="page-notif-filter-inline">
             <span className="page-filter-label">{t('date')}</span>
             <div className="page-dropdown">
@@ -292,7 +284,7 @@ export default function NotificationsSupplier() {
   );
 }
 
-// === Helpers ===
+// Helpers
 const formatDate = (iso, lang) => {
   const date = new Date(iso);
   return date.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
