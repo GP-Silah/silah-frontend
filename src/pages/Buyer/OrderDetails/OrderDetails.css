@@ -1,0 +1,122 @@
+.order-details-container {
+  background: #fff;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.order-title {
+  font-size: 24px;
+  color: #2f3c73;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.order-status.shipped {
+  background-color: #c67b00;
+}
+
+.order-status.completed {
+  background-color: #1b8a5a;
+}
+
+.order-info {
+  color: #444;
+  font-size: 15px;
+  margin: 4px 0;
+}
+
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===== Table ===== */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+}
+
+.order-table th,
+.order-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.order-table th:nth-child(3),
+.order-table th:nth-child(4),
+.order-table th:nth-child(5),
+.order-table td:nth-child(3),
+.order-table td:nth-child(4),
+.order-table td:nth-child(5) {
+  text-align: center;
+}
+
+.order-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ===== Image Placeholder ===== */
+.item-image-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: #eee;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* ===== Button & Note ===== */
+.order-action {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.action-btn {
+  background-color: #5c2d91;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.action-btn:hover {
+  background-color: #4c2576;
+}
+
+.action-note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
