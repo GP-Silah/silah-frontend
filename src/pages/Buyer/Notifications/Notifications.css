@@ -1,0 +1,232 @@
+/* Notifications.page.css */
+:root {
+  --silah-purple: #8a52a7;
+  --card-bg: #fdf8ff; /* Light pink */
+  --border: #e5d4ed;
+  --text: #2d1b3d;
+  --muted: #7c6992;
+  --white: #ffffff;
+}
+
+.buyer-notif-page {
+  background: transparent;
+  min-height: 100vh;
+  padding: 40px 60px;
+  font-family: system-ui, 'Tajawal', sans-serif;
+}
+
+.page-notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-filters-center {
+  display: flex;
+  gap: 24px;
+  flex: 1;
+  justify-content: center;
+}
+
+.page-notif-filter-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-filter-label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.page-dropdown button {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 180px;
+  text-align: left;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.page-dropdown button:hover {
+  border-color: var(--silah-purple);
+}
+
+.page-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(138, 82, 167, 0.12);
+  width: 180px;
+  z-index: 10;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.page-dropdown-item {
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.page-dropdown-item:hover {
+  background: #f5e8ff;
+}
+
+.page-mark-all-btn {
+  background: var(--silah-purple);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.page-mark-all-btn:hover {
+  background: #7a4796;
+}
+
+.page-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-notif-item {
+  position: relative;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(138, 82, 167, 0.06);
+}
+
+.page-notif-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(138, 82, 167, 0.12);
+  border-color: var(--silah-purple);
+}
+
+.page-notif-item.page-unread {
+  border-left: 4px solid var(--silah-purple);
+}
+
+.page-unread-dot {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--silah-purple);
+  border-radius: 50%;
+}
+
+.page-notif-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f3e8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--silah-purple);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.page-notif-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-notif-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 4px;
+  text-align: start;
+}
+
+.page-notif-message {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.page-notif-meta {
+  text-align: right;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.page-notif-date {
+  font-weight: 500;
+}
+
+.page-mark-read-btn {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--silah-purple);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: 0.2s;
+}
+
+.page-mark-read-btn:hover {
+  background: #f3e8ff;
+  border-color: var(--silah-purple);
+}
+
+.page-loading,
+.page-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Position dropdowns */
+.page-type-menu {
+  position: absolute;
+  top: 170px;
+  left: 37.7%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.page-date-menu {
+  position: absolute;
+  top: 170px;
+  left: 41.7%;
+  transform: translateX(50%);
+  z-index: 1000;
+}

@@ -2,13 +2,16 @@
   "type": "Type",
   "date": "Date",
   "allNotifications": "All notifications",
-  "newReviews": "New reviews",
-  "bidsStatus": "Bids status",
   "newMessages": "New messages",
-  "newOrders": "New orders",
-  "invoicesStatus": "Invoices status",
+  "newInvoices": "New invoices",
+  "newOffers": "New offers",
+  "orderStatus": "Order status changed",
+  "groupPurchase": "Group purchase update",
   "allDays": "All days",
   "today": "Today",
   "thisWeek": "This week",
-  "thisMonth": "This month"
+  "thisMonth": "This month",
+  "markAllRead": "Mark all as read",
+  "noNotifications": "No notifications found",
+  "loading": "Loading..."
 }

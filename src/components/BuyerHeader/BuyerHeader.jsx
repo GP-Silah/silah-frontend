@@ -18,8 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
-import './BuyerHeader.css';
 import { useNotifications } from '../../hooks/useNotifications';
+import './BuyerHeader.global.css';
 
 const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
   // Receive from layout
@@ -42,7 +42,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     i18n.changeLanguage(newLang);
   };
 
-  // === Fetch Categories ===
+  // === Fetch Categories Only ===
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
@@ -51,33 +51,6 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
       })
       .then((res) => setCategories(res.data))
       .catch((err) => console.error('Failed to load categories', err));
-  }, [i18n.language]);
-
-  // === Fetch Notifications (and setup SSE) ===
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`, {
-        params: { lang: i18n.language },
-        withCredentials: true,
-      })
-      .then((res) => setNotifications(res.data))
-      .catch((err) => console.error('Failed to load notifications', err));
-
-    const eventSource = new EventSource(
-      `${import.meta.env.VITE_BACKEND_URL}/api/notifications/stream`,
-      { withCredentials: true },
-    );
-
-    eventSource.onmessage = (e) => {
-      try {
-        const parsed = JSON.parse(JSON.parse(e.data).data);
-        setNotifications((prev) => [parsed, ...prev]);
-      } catch (err) {
-        console.error('Failed to parse notification', err);
-      }
-    };
-
-    return () => eventSource.close();
   }, [i18n.language]);
 
   // === Close dropdowns on outside click ===
@@ -130,22 +103,22 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     if (!n.isRead) {
       markSingleAsRead(n.notificationId);
     }
-    console.log(n.notificationId, n.notificationType, n.relatedEntityId);
+
     // Navigate based on type
-    switch (n.notificationType) {
-      case 'NEW_MESSAGE':
+    switch (n.relatedEntityType) {
+      case 'CHAT':
         navigate(`/buyer/chats/${n.relatedEntityId}`);
         break;
-      case 'NEW_INVOICE':
+      case 'INVOICE':
         navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
-      case 'NEW_OFFER':
+      case 'OFFER':
         navigate(`/buyer/offers/${n.relatedEntityId}`);
         break;
-      case 'ORDER_STATUS_CHANGED':
+      case 'ORDER':
         navigate(`/buyer/orders/${n.relatedEntityId}`);
         break;
-      case 'GROUP_PURCHASE_STATUS_CHANGED':
+      case 'GROUP_PURCHASE':
         navigate(`/buyer/invoices`);
         break;
       default:

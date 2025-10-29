@@ -2,13 +2,16 @@
   "type": "النوع",
   "date": "التاريخ",
   "allNotifications": "كل الإشعارات",
-  "newReviews": "مراجعات جديدة",
-  "bidsStatus": "حالة العطاءات",
   "newMessages": "رسائل جديدة",
-  "newOrders": "طلبات جديدة",
-  "invoicesStatus": "حالة الفواتير",
+  "newInvoices": "فواتير جديدة",
+  "newOffers": "عروض جديدة",
+  "orderStatus": "حالة الطلب",
+  "groupPurchase": "حالة الشراء الجماعي",
   "allDays": "كل الأيام",
   "today": "اليوم",
   "thisWeek": "هذا الأسبوع",
-  "thisMonth": "هذا الشهر"
+  "thisMonth": "هذا الشهر",
+  "markAllRead": "تحديد الكل كمقروء",
+  "noNotifications": "لا توجد إشعارات",
+  "loading": "جاري التحميل..."
 }
