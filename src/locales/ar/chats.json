@@ -10,9 +10,10 @@
   "type": "النوع",
   "date": "التاريخ",
   "searchPlaceholder": "ابحث في المحادثات أو المستخدمين...",
-  "noPreviousChats": "لا توجد محادثات سابقة",
   "noSearchResults": "لم يتم العثور على نتائج",
   "noChats": "لا توجد محادثات بعد",
   "loading": "جاري التحميل...",
-  "startNewChat": "بدء محادثة جديدة"
+  "errorLoadingChats": "فشل تحميل المحادثات. حاول مرة أخرى.",
+  "startNewChat": "بدء محادثة جديدة",
+  "imageMessage": "[صورة]"
 }

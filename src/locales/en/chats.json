@@ -10,9 +10,10 @@
   "type": "Type",
   "date": "Date",
   "searchPlaceholder": "Search chats or users...",
-  "noPreviousChats": "No previous chats",
   "noSearchResults": "No results found",
   "noChats": "No chats yet",
   "loading": "Loading...",
-  "startNewChat": "Start new chat"
+  "errorLoadingChats": "Failed to load chats. Please try again.",
+  "startNewChat": "Start new chat",
+  "imageMessage": "[Image]"
 }
