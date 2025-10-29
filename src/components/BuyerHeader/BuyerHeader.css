@@ -217,8 +217,8 @@ header {
 
 .profile-dropdown {
   position: absolute;
-  right: -165%;
-  top: 150%;
+  right: -110px;
+  top: 160%;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -336,4 +336,101 @@ header {
 
 .icon-btn:hover {
   background: #f0f0f0;
+}
+
+/* === Notification Dropdown (Your Style) === */
+.notification-dropdown {
+  right: -150px;
+  top: 175%;
+  width: 340px;
+  padding: 12px;
+}
+
+.notif-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #252f46;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0  w12px 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border-radius: 6px;
+}
+
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  font-size: 13.5px;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notif-item:last-child {
+  border-bottom: none;
+}
+
+.notif-item.unread {
+  background-color: #e3edf6;
+  font-weight: 600;
+}
+
+.notif-pfp {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.notif-pfp-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ccc;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  right: -6px;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-content strong {
+  display: block;
+  font-size: 14px;
+  color: #252f46;
+  margin-bottom: 2px;
+}
+
+.notification-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notif-item.empty {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 16px 0;
+  border-bottom: none;
 }

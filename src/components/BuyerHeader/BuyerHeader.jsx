@@ -21,16 +21,14 @@ import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 import './BuyerHeader.css';
 import { useNotifications } from '../../hooks/useNotifications';
 
-const BuyerHeader = ({ unreadCount }) => {
+const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
   // Receive from layout
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
 
   const [categories, setCategories] = useState([]);
-  const { notifications, profilePics, markAsRead } = useNotifications(
-    i18n.language,
-  );
+  const { notifications, profilePics } = useNotifications(i18n.language);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -101,7 +99,7 @@ const BuyerHeader = ({ unreadCount }) => {
     const ids = notifications
       .filter((n) => !n.isRead)
       .map((n) => n.notificationId);
-    if (ids.length) markAsRead(ids);
+    if (ids.length) markAllAsReadProp(ids); // ← Uses prop from Layout
   };
 
   // === Handle Role Switch ===
@@ -125,6 +123,37 @@ const BuyerHeader = ({ unreadCount }) => {
   const handleLogoutClick = async () => {
     await handleLogout();
     navigate('/');
+  };
+
+  // === Handle Notification Click ===
+  const handleNotificationClick = (n) => {
+    if (!n.isRead) {
+      markSingleAsRead(n.notificationId);
+    }
+    console.log(n.notificationId, n.notificationType, n.relatedEntityId);
+    // Navigate based on type
+    switch (n.notificationType) {
+      case 'NEW_MESSAGE':
+        navigate(`/buyer/chats/${n.relatedEntityId}`);
+        break;
+      case 'NEW_INVOICE':
+        navigate(`/buyer/invoices/${n.relatedEntityId}`);
+        break;
+      case 'NEW_OFFER':
+        navigate(`/buyer/offers/${n.relatedEntityId}`);
+        break;
+      case 'ORDER_STATUS_CHANGED':
+        navigate(`/buyer/orders/${n.relatedEntityId}`);
+        break;
+      case 'GROUP_PURCHASE_STATUS_CHANGED':
+        navigate(`/buyer/invoices`);
+        break;
+      default:
+        // Stay
+        break;
+    }
+
+    // setDropdownOpen(false); // Close dropdown
   };
 
   return (
@@ -181,38 +210,48 @@ const BuyerHeader = ({ unreadCount }) => {
 
           {dropdownOpen && (
             <div className="notification-dropdown">
+              {/* Title */}
+              <div className="notif-title">{t('notifications')}</div>
+
               {notifications.length === 0 ? (
                 <div className="notif-item empty">{t('noNotifications')}</div>
               ) : (
                 <>
-                  <div className="notification-list">
+                  <ul className="notif-list">
                     {notifications.map((n) => {
                       const pfp = profilePics[n.sender.userId];
                       return (
-                        <div
+                        <li
                           key={n.notificationId}
+                          onClick={() => handleNotificationClick(n)}
                           className={`notif-item ${n.isRead ? '' : 'unread'}`}
                         >
                           {pfp ? (
                             <img src={pfp} alt="" className="notif-pfp" />
                           ) : (
                             <div className="notif-pfp-placeholder">
-                              {n.sender.name[0]}
+                              {n.sender.name[0].toUpperCase()}
                             </div>
                           )}
-                          <div>
+                          <div className="notification-content">
                             <strong>{n.title}</strong>
                             <p>{n.content}</p>
                           </div>
-                        </div>
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
+
                   <div className="notification-footer">
-                    <button onClick={() => navigate('/buyer/notifications')}>
+                    <button
+                      className="view-all-btn"
+                      onClick={() => navigate('/buyer/notifications')}
+                    >
                       {t('viewAll')}
                     </button>
-                    <button onClick={markAllAsRead}>{t('markAllRead')}</button>
+                    <button className="mark-read-btn" onClick={markAllAsRead}>
+                      {t('markAllRead')}
+                    </button>
                   </div>
                 </>
               )}
@@ -284,7 +323,7 @@ const BuyerHeader = ({ unreadCount }) => {
                 </button>
                 <button
                   className="profile-item"
-                  onclick={() => {
+                  onClick={() => {
                     navigate('/buyer/invoices');
                     setProfileOpen(false);
                   }}

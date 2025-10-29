@@ -78,7 +78,7 @@ export const useNotifications = (lang) => {
     };
   }, [lang]);
 
-  const markAsRead = async (ids) => {
+  const markAllAsRead = async (ids) => {
     try {
       await axios.patch(
         `${import.meta.env.VITE_BACKEND_URL}/api/notifications/read-many`,
@@ -95,5 +95,27 @@ export const useNotifications = (lang) => {
     }
   };
 
-  return { notifications, profilePics, markAsRead };
+  // === Mark Single as Read ===
+  const markSingleAsRead = async (notificationId) => {
+    try {
+      const { data } = await axios.patch(
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/notifications/${notificationId}/read`,
+        {},
+        { withCredentials: true },
+      );
+
+      // Update local state with response data
+      setNotifications((prev) =>
+        prev.map(
+          (n) => (n.notificationId === notificationId ? data : n), // Use full response
+        ),
+      );
+    } catch (err) {
+      console.error('Failed to mark single notification as read', err);
+    }
+  };
+
+  return { notifications, profilePics, markAllAsRead, markSingleAsRead };
 };
