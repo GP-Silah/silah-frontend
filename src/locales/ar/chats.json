@@ -15,5 +15,7 @@
   "loading": "جاري التحميل...",
   "errorLoadingChats": "فشل تحميل المحادثات. حاول مرة أخرى.",
   "startNewChat": "بدء محادثة جديدة",
-  "imageMessage": "[صورة]"
+  "imageMessage": "[صورة]",
+  "noMessagesYet": "لا توجد رسائل بعد. ابدأ المحادثة!",
+  "typeMessage": "اكتب رسالة..."
 }

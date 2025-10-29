@@ -1,9 +1,9 @@
-// ChatsSupplier.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaSearch, FaPaperPlane } from 'react-icons/fa';
 import axios from 'axios';
+import { socket } from '../../../utils/socket';
 import './Chats.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
@@ -28,10 +28,62 @@ export default function ChatsSupplier() {
 
   const dropdownRef = useRef(null);
   const searchTimeout = useRef(null);
+  const socketInitialized = useRef(false);
 
   // Set page title
   useEffect(() => {
     document.title = t('pageTitle');
+  }, [t]);
+
+  useEffect(() => {
+    if (socketInitialized.current) return;
+
+    socket.connect();
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket');
+      socket.emit('join_user');
+    });
+
+    socket.on('new_message', (data) => {
+      const msg = data.message || data;
+      if (!msg?.chatId) return;
+
+      setChats((prev) => {
+        const updated = [...prev];
+        const chatIndex = updated.findIndex((c) => c.chatId === msg.chatId);
+
+        if (chatIndex === -1) {
+          // New chat appeared (rare, but possible)
+          fetchChats(); // Refresh full list
+          return prev;
+        }
+
+        const chat = updated[chatIndex];
+        updated[chatIndex] = {
+          ...chat,
+          lastMessage: msg.text || t('imageMessage'),
+          lastMessageTime: msg.createdAt,
+          unreadCount: chat.unreadCount + 1,
+          isRead: false,
+        };
+
+        // Move to top
+        updated.splice(chatIndex, 1);
+        updated.unshift(updated[chatIndex]);
+
+        return updated;
+      });
+    });
+
+    socketInitialized.current = true;
+
+    return () => {
+      socket.off('connect');
+      socket.off('new_message');
+      socket.disconnect();
+      socketInitialized.current = false;
+    };
   }, [t]);
 
   // Fetch chats with filters
@@ -135,6 +187,7 @@ export default function ChatsSupplier() {
             userId: user.userId,
             partnerName: user.businessName || user.name,
             partnerAvatar: user.pfpUrl || '',
+            categories: user.categories || [],
             isNewUser: true,
           }));
 
@@ -185,9 +238,10 @@ export default function ChatsSupplier() {
     navigate(`/supplier/chats/${chatId}`);
   };
 
-  const startNewChat = (userId) => {
-    // Navigate to chat creation with null message → backend creates chat
-    navigate(`/supplier/chats/new?with=${userId}&text=`);
+  const startNewChat = (userId, partnerData) => {
+    navigate(`/supplier/chats/new?with=${userId}&text=`, {
+      state: { partner: partnerData }, // ← PASS FULL DATA
+    });
   };
 
   // Filter logic (client-side fallback)
@@ -361,7 +415,13 @@ export default function ChatsSupplier() {
                   <div
                     key={item.userId}
                     className="chats-item"
-                    onClick={() => startNewChat(item.userId)}
+                    onClick={() =>
+                      startNewChat(item.userId, {
+                        userId: item.userId,
+                        name: item.partnerName,
+                        avatar: item.partnerAvatar,
+                      })
+                    }
                   >
                     <div className="chats-avatar-circle">
                       {item.partnerAvatar ? (

@@ -15,5 +15,7 @@
   "loading": "Loading...",
   "errorLoadingChats": "Failed to load chats. Please try again.",
   "startNewChat": "Start new chat",
-  "imageMessage": "[Image]"
+  "imageMessage": "[Image]",
+  "noMessagesYet": "No messages yet. Start the conversation!",
+  "typeMessage": "Type a message..."
 }
