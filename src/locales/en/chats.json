@@ -1,0 +1,18 @@
+{
+  "pageTitle": "Chats",
+  "allMessages": "All Messages",
+  "unreadMessages": "Unread",
+  "readMessages": "Read",
+  "allDays": "All Days",
+  "today": "Today",
+  "thisWeek": "This Week",
+  "thisMonth": "This Month",
+  "type": "Type",
+  "date": "Date",
+  "searchPlaceholder": "Search chats or users...",
+  "noPreviousChats": "No previous chats",
+  "noSearchResults": "No results found",
+  "noChats": "No chats yet",
+  "loading": "Loading...",
+  "startNewChat": "Start new chat"
+}

@@ -1,0 +1,18 @@
+{
+  "pageTitle": "المحادثات",
+  "allMessages": "جميع الرسائل",
+  "unreadMessages": "غير مقروءة",
+  "readMessages": "مقروءة",
+  "allDays": "جميع الأيام",
+  "today": "اليوم",
+  "thisWeek": "هذا الأسبوع",
+  "thisMonth": "هذا الشهر",
+  "type": "النوع",
+  "date": "التاريخ",
+  "searchPlaceholder": "ابحث في المحادثات أو المستخدمين...",
+  "noPreviousChats": "لا توجد محادثات سابقة",
+  "noSearchResults": "لم يتم العثور على نتائج",
+  "noChats": "لا توجد محادثات بعد",
+  "loading": "جاري التحميل...",
+  "startNewChat": "بدء محادثة جديدة"
+}
