@@ -17,5 +17,6 @@
   "startNewChat": "بدء محادثة جديدة",
   "imageMessage": "[صورة]",
   "noMessagesYet": "لا توجد رسائل بعد. ابدأ المحادثة!",
-  "typeMessage": "اكتب رسالة..."
+  "typeMessage": "اكتب رسالة...",
+  "chatWith": "محادثة مع {{otherUser}}"
 }

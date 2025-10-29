@@ -4,8 +4,11 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
 export const socket = io(API_BASE, {
   withCredentials: true,
-  transports: ['websocket'],
-  autoConnect: false, // We'll connect manually in component
+  autoConnect: true,
+});
+
+socket.on('connect', () => {
+  socket.emit('join_user');
 });
 
 // Debug

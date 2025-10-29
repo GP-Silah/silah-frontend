@@ -14,7 +14,6 @@ export default function ChatsSupplier() {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
-  // State
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,7 +29,6 @@ export default function ChatsSupplier() {
   const searchTimeout = useRef(null);
   const socketInitialized = useRef(false);
 
-  // Set page title
   useEffect(() => {
     document.title = t('pageTitle');
   }, [t]);
@@ -54,8 +52,7 @@ export default function ChatsSupplier() {
         const chatIndex = updated.findIndex((c) => c.chatId === msg.chatId);
 
         if (chatIndex === -1) {
-          // New chat appeared (rare, but possible)
-          fetchChats(); // Refresh full list
+          fetchChats();
           return prev;
         }
 
@@ -68,10 +65,8 @@ export default function ChatsSupplier() {
           isRead: false,
         };
 
-        // Move to top
         updated.splice(chatIndex, 1);
         updated.unshift(updated[chatIndex]);
-
         return updated;
       });
     });
@@ -86,7 +81,6 @@ export default function ChatsSupplier() {
     };
   }, [t]);
 
-  // Fetch chats with filters
   const fetchChats = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -123,6 +117,7 @@ export default function ChatsSupplier() {
           : chat.lastMessageText || '',
         lastMessageTime: chat.lastMessageAt,
         unreadCount: chat.unreadCount || 0,
+        categories: chat.otherUser.categories || [],
         isRead: (chat.unreadCount || 0) === 0,
       }));
 
@@ -135,12 +130,10 @@ export default function ChatsSupplier() {
     }
   }, [selectedType, selectedDate, t]);
 
-  // Initial load
   useEffect(() => {
     fetchChats();
   }, [fetchChats]);
 
-  // === SEARCH: Chats + Users ===
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -152,7 +145,6 @@ export default function ChatsSupplier() {
 
     searchTimeout.current = setTimeout(async () => {
       try {
-        // 1. Search existing chats
         const chatRes = await axios.get(`${API_BASE}/api/search/chats`, {
           params: { text: searchQuery },
           withCredentials: true,
@@ -169,10 +161,10 @@ export default function ChatsSupplier() {
           lastMessageTime: chat.lastMessageAt,
           unreadCount: chat.unreadCount || 0,
           isRead: (chat.unreadCount || 0) === 0,
+          categories: chat.otherUser.categories || [],
           isNewUser: false,
         }));
 
-        // 2. Search users (non-chat participants)
         const userRes = await axios.get(`${API_BASE}/api/search/users`, {
           params: { name: searchQuery },
           withCredentials: true,
@@ -181,7 +173,7 @@ export default function ChatsSupplier() {
         const userResults = userRes.data
           .filter(
             (user) =>
-              !chatResults.some((chat) => chat.partnerId === user.userId), // Avoid duplicates
+              !chatResults.some((chat) => chat.partnerId === user.userId),
           )
           .map((user) => ({
             userId: user.userId,
@@ -191,7 +183,6 @@ export default function ChatsSupplier() {
             isNewUser: true,
           }));
 
-        // Combine: chats first, then new users
         setSearchResults([...chatResults, ...userResults]);
         setIsSearching(true);
       } catch (err) {
@@ -203,7 +194,6 @@ export default function ChatsSupplier() {
     return () => clearTimeout(searchTimeout.current);
   }, [searchQuery, t]);
 
-  // Close dropdowns
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -215,36 +205,16 @@ export default function ChatsSupplier() {
     return () => document.removeEventListener('click', handler);
   }, []);
 
-  // Mark chat as read
-  const markChatRead = async (chatId) => {
-    try {
-      await axios.patch(
-        `${API_BASE}/api/chats/${chatId}/read`,
-        {},
-        { withCredentials: true },
-      );
-      setChats((prev) =>
-        prev.map((c) =>
-          c.chatId === chatId ? { ...c, isRead: true, unreadCount: 0 } : c,
-        ),
-      );
-    } catch (err) {
-      console.error('Failed to mark as read:', err);
-    }
-  };
-
   const openChat = (chatId) => {
-    markChatRead(chatId);
     navigate(`/supplier/chats/${chatId}`);
   };
 
   const startNewChat = (userId, partnerData) => {
     navigate(`/supplier/chats/new?with=${userId}&text=`, {
-      state: { partner: partnerData }, // ← PASS FULL DATA
+      state: { partner: partnerData },
     });
   };
 
-  // Filter logic (client-side fallback)
   const filtered = chats.filter((c) => {
     if (selectedType !== t('allMessages')) {
       const map = { [t('unreadMessages')]: false, [t('readMessages')]: true };
@@ -266,9 +236,7 @@ export default function ChatsSupplier() {
 
   return (
     <div className="chats-page" data-dir={dir}>
-      {/* HEADER */}
       <div className="chats-header">
-        {/* Search Bar */}
         <div className="chats-search-bar">
           <FaSearch className="search-icon" />
           <input
@@ -279,7 +247,6 @@ export default function ChatsSupplier() {
           />
         </div>
 
-        {/* Filters */}
         <div className="chats-filters-right" ref={dropdownRef}>
           <div className="chats-filter-inline">
             <span className="chats-filter-label">{t('type')}</span>
@@ -342,7 +309,6 @@ export default function ChatsSupplier() {
         </div>
       </div>
 
-      {/* LIST */}
       <div className="chats-list">
         {loading ? (
           <div className="chats-loading">{t('loading')}</div>
@@ -398,7 +364,6 @@ export default function ChatsSupplier() {
                     </div>
                   </div>
 
-                  {/* Divider before new users */}
                   {isSearching &&
                     index === arr.length - 1 &&
                     searchResults.some((r) => r.isNewUser) && (
@@ -407,7 +372,6 @@ export default function ChatsSupplier() {
                 </React.Fragment>
               ))}
 
-            {/* New Users from Search */}
             {isSearching &&
               searchResults
                 .filter((item) => item.isNewUser)
@@ -420,6 +384,7 @@ export default function ChatsSupplier() {
                         userId: item.userId,
                         name: item.partnerName,
                         avatar: item.partnerAvatar,
+                        categories: item.categories,
                       })
                     }
                   >
@@ -448,7 +413,6 @@ export default function ChatsSupplier() {
   );
 }
 
-/* HELPERS */
 const formatDate = (iso, lang) => {
   const d = new Date(iso);
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {

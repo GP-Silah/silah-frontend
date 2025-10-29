@@ -17,5 +17,6 @@
   "startNewChat": "Start new chat",
   "imageMessage": "[Image]",
   "noMessagesYet": "No messages yet. Start the conversation!",
-  "typeMessage": "Type a message..."
+  "typeMessage": "Type a message...",
+  "chatWith": "Chat With {{otherUser}}"
 }

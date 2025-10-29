@@ -6,7 +6,12 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaPaperPlane, FaImage, FaFileInvoiceDollar } from 'react-icons/fa';
+import {
+  FaPaperPlane,
+  FaImage,
+  FaFileInvoiceDollar,
+  FaEnvelope,
+} from 'react-icons/fa';
 import axios from 'axios';
 import { socket } from '../../../utils/socket';
 import './Chat.css';
@@ -33,19 +38,19 @@ export default function ChatDetail() {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const fileInputRef = useRef(null);
 
-  // Auto-focus
+  useEffect(() => inputRef.current?.focus(), []);
+
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    document.title = t('chatWith', { otherUser: partner?.name });
+  }, [t, partner?.name]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   useEffect(() => scrollToBottom(), [messages]);
 
-  // === CURRENT USER ===
+  // === GET CURRENT USER ===
   useEffect(() => {
     axios
       .get(`${API_BASE}/api/users/me`, { withCredentials: true })
@@ -53,13 +58,13 @@ export default function ChatDetail() {
       .catch(() => navigate('/supplier/chats'));
   }, [navigate]);
 
-  // === LOAD MESSAGES (EXISTING CHAT) ===
+  // === LOAD MESSAGES ===
   const loadMessages = async (id) => {
     try {
       const res = await axios.get(`${API_BASE}/api/chats/me/${id}/messages`, {
         withCredentials: true,
       });
-      const msgs = res.data.map((m) => ({
+      return res.data.map((m) => ({
         messageId: m.messageId,
         text: m.text,
         senderId: m.sender.userId,
@@ -67,57 +72,47 @@ export default function ChatDetail() {
         imageUrl: m.imageUrl,
         isRead: m.isRead,
       }));
-      setMessages(msgs);
-
-      // Mark unread messages as read
-      const unreadIds = msgs
-        .filter((m) => !m.isRead && m.senderId !== currentUserId)
-        .map((m) => m.messageId);
-      if (unreadIds.length > 0) {
-        await axios.patch(
-          `${API_BASE}/api/chats/me/${id}/read`,
-          { messageIds: unreadIds },
-          { withCredentials: true },
-        );
-      }
     } catch (err) {
-      console.error('Failed to load messages:', err);
+      console.error('Load messages failed:', err);
+      return [];
     }
   };
 
-  // === FETCH CHAT OR USER ===
+  // === LOAD CHAT INFO ===
+  const loadChatInfo = async (id) => {
+    try {
+      const res = await axios.get(`${API_BASE}/api/chats/me/${id}`, {
+        withCredentials: true,
+      });
+      const chat = res.data;
+      setPartner({
+        userId: chat.otherUser.userId,
+        name: chat.otherUser.businessName || chat.otherUser.name,
+        avatar: chat.otherUser.pfpUrl,
+        categories: chat.otherUser.categories || [],
+      });
+    } catch (err) {
+      console.error('Load chat info failed:', err);
+    }
+  };
+
+  // === MAIN SETUP ===
   useEffect(() => {
     if (isNewChat) {
       if (!receiverId || !partnerFromState) return navigate('/supplier/chats');
-
-      setPartner({
-        userId: partnerFromState.userId,
-        name: partnerFromState.name,
-        avatar: partnerFromState.avatar,
-      });
+      setPartner(partnerFromState);
       setLoading(false);
     } else {
-      axios
-        .get(`${API_BASE}/api/chats/${chatId}`, { withCredentials: true })
-        .then((res) => {
-          const chat = res.data;
-          setPartner({
-            userId: chat.otherUser.userId,
-            name: chat.otherUser.businessName || chat.otherUser.name,
-            avatar: chat.otherUser.pfpUrl,
-          });
-          setCurrentChatId(chatId);
-          socket.emit('join_chat', chatId);
-          loadMessages(chatId); // ← Load messages
-          setLoading(false);
-        })
-        .catch(() => navigate('/supplier/chats'));
+      setCurrentChatId(chatId);
+      socket.emit('join_chat', chatId);
+
+      Promise.all([loadMessages(chatId), loadChatInfo(chatId)])
+        .then(([msgs]) => setMessages(msgs))
+        .finally(() => setLoading(false));
     }
 
     return () => {
-      if (currentChatId) {
-        socket.emit('leave_chat', currentChatId);
-      }
+      if (currentChatId) socket.emit('leave_chat', currentChatId);
     };
   }, [
     chatId,
@@ -128,14 +123,41 @@ export default function ChatDetail() {
     partnerFromState,
   ]);
 
-  // === SOCKET: NEW MESSAGE ===
+  // === SOCKET: ONLY ONE LISTENER ===
+  // === SOCKET: ONLY ONE LISTENER ===
   useEffect(() => {
-    const handleNewMessage = (data) => {
+    const handleMessage = (data) => {
       const msg = data.message || data;
-      if (msg.chatId !== currentChatId && !isNewChat) return;
+      if (!msg?.messageId) return;
+
+      if (isNewChat && msg.chatId && !currentChatId) {
+        setCurrentChatId(msg.chatId);
+        socket.emit('join_chat', msg.chatId);
+        navigate(`/supplier/chats/${msg.chatId}`, { replace: true });
+      }
 
       setMessages((prev) => {
+        // 1. IGNORE IF ALREADY EXISTS
         if (prev.some((m) => m.messageId === msg.messageId)) return prev;
+
+        // 2. REPLACE TEMP MESSAGE
+        const tempIndex = prev.findIndex((m) =>
+          m.messageId.startsWith('temp-'),
+        );
+        if (tempIndex !== -1) {
+          const updated = [...prev];
+          updated[tempIndex] = {
+            messageId: msg.messageId,
+            text: msg.text,
+            senderId: msg.sender.id,
+            createdAt: msg.createdAt,
+            imageUrl: msg.imageUrl,
+            isRead: true,
+          };
+          return updated;
+        }
+
+        // 3. ADD NEW
         return [
           ...prev,
           {
@@ -148,90 +170,95 @@ export default function ChatDetail() {
           },
         ];
       });
-
-      // Auto-mark as read if received
-      if (msg.sender.id !== currentUserId && currentChatId) {
-        axios
-          .patch(
-            `${API_BASE}/api/chats/me/${currentChatId}/read`,
-            { messageIds: [msg.messageId] },
-            { withCredentials: true },
-          )
-          .catch(() => {});
-      }
     };
 
-    socket.on('new_message', handleNewMessage);
-    return () => socket.off('new_message', handleNewMessage);
-  }, [currentChatId, isNewChat, currentUserId]);
+    socket.on('new_message', handleMessage);
+    socket.on('message_sent', handleMessage);
 
-  // === SEND TEXT MESSAGE (via WebSocket) ===
+    return () => {
+      socket.off('new_message', handleMessage);
+      socket.off('message_sent', handleMessage);
+    };
+  }, [isNewChat, currentChatId, navigate]);
+
+  // === SEND TEXT ===
   const sendMessage = () => {
     if (!input.trim()) return;
 
+    const tempId = `temp-${Date.now()}`;
     const payload = { text: input };
-    if (isNewChat) {
-      payload.receiverId = receiverId;
-    } else {
-      payload.chatId = currentChatId;
-    }
+
+    if (isNewChat) payload.receiverId = receiverId;
+    else payload.chatId = currentChatId;
+
+    // Show temp message immediately
+    setMessages((prev) => [
+      ...prev,
+      {
+        messageId: tempId,
+        text: input,
+        senderId: currentUserId,
+        createdAt: new Date().toISOString(),
+        imageUrl: null,
+        isRead: true,
+      },
+    ]);
 
     socket.emit('send_message', payload);
     setInput('');
   };
 
-  // === SEND IMAGE ===
   const sendImage = async (file) => {
-    if (!file) return;
+    if (!file || isNewChat || !currentChatId) {
+      alert('Send a text message first.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Max 5MB.');
+      return;
+    }
+
+    const tempId = `temp-img-${Date.now()}`;
+    const previewUrl = URL.createObjectURL(file);
+
+    // Show it immediately
+    setMessages((prev) => [
+      ...prev,
+      {
+        messageId: tempId,
+        text: null,
+        senderId: currentUserId,
+        createdAt: new Date().toISOString(),
+        imageUrl: previewUrl,
+        isRead: true,
+      },
+    ]);
 
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-      const res = await axios.post(
-        `${API_BASE}/api/chats/me/${currentChatId || receiverId}/upload`,
+      await axios.post(
+        `${API_BASE}/api/chats/me/${currentChatId}/upload`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         },
       );
-
-      const msg = res.data.data;
-      setMessages((prev) => [
-        ...prev,
-        {
-          messageId: msg.messageId,
-          text: null,
-          senderId: currentUserId,
-          createdAt: msg.createdAt,
-          imageUrl: msg.imageUrl,
-          isRead: true,
-        },
-      ]);
+      // backend emits new_message -> will replace temp
     } catch (err) {
-      console.error('Image upload failed:', err);
-      alert('Failed to send image. Max 5MB, PNG/JPEG/WEBP only.');
+      alert('Failed to send image.');
+      // Optionally remove temp image
+      setMessages((prev) => prev.filter((m) => m.messageId !== tempId));
     }
   };
-
-  // === HANDLE NEW CHAT CREATION ===
-  useEffect(() => {
-    if (isNewChat && messages.length > 0) {
-      const firstMsg = messages[0];
-      if (firstMsg.chatId) {
-        setCurrentChatId(firstMsg.chatId);
-        navigate(`/supplier/chats/${firstMsg.chatId}`, { replace: true });
-      }
-    }
-  }, [messages, isNewChat, navigate]);
 
   if (loading || !currentUserId)
     return <div className="chat-loading">{t('loading')}</div>;
 
   return (
     <div className="chat-detail">
-      {/* === HEADER === */}
       <div className="chat-header">
         <div className="chat-header-left">
           <div className="partner-avatar">
@@ -244,14 +271,9 @@ export default function ChatDetail() {
           <div className="partner-info">
             <div className="partner-name">{partner?.name}</div>
             <div className="partner-activity">
-              <p>
-                Business Activity:
-                {partner?.categories?.map((c) => (
-                  <span key={c.id} style={{ marginRight: '8px' }}>
-                    {c.name}
-                  </span>
-                ))}
-              </p>
+              {partner?.categories?.length > 0
+                ? partner.categories.map((c) => c.name).join(' • ')
+                : 'No categories'}
             </div>
           </div>
         </div>
@@ -263,11 +285,15 @@ export default function ChatDetail() {
           <div className="invoice-icon">
             <FaFileInvoiceDollar />
           </div>
-          <div className="invoice-label">Create an Invoice</div>
+          <div
+            className="invoice-label"
+            // onClick={navigate(`/supplier/invoices/new?buyer=${partner?.id}`)}
+          >
+            Create an Invoice
+          </div>
         </div>
       </div>
 
-      {/* === MESSAGES === */}
       <div className="chat-messages">
         {messages.length === 0 ? (
           <div className="no-messages">{t('noMessagesYet')}</div>
@@ -295,7 +321,6 @@ export default function ChatDetail() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* === INPUT === */}
       <div className="chat-input">
         <input
           ref={inputRef}
@@ -309,21 +334,12 @@ export default function ChatDetail() {
         <label className="upload-btn">
           <FaImage />
           <input
-            ref={fileInputRef}
             type="file"
             accept="image/png,image/jpeg,image/webp"
             style={{ display: 'none' }}
             onChange={(e) => {
               const file = e.target.files[0];
-              if (file && file.size > 5 * 1024 * 1024) {
-                alert('File too large. Max 5MB.');
-                return;
-              }
-              if (isNewChat) {
-                alert('Send a text message first to create the chat.');
-              } else {
-                sendImage(file);
-              }
+              if (file) sendImage(file);
               e.target.value = '';
             }}
           />
