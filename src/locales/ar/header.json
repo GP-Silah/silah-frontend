@@ -13,7 +13,7 @@
   "notifications": "الإشعارات",
   "viewAll": "عرض الكل",
   "markAllRead": "تحديد الكل كمقروء",
-  "noNotifications": "لا توجد إشعارات حتى الآن",
+  "noNewNotifications": "لا توجد إشعارات جديدة حتى الآن",
   "profileChoices": {
     "managedBy": "يدار بواسطة",
     "directMessaging": "الرسائل المباشرة",

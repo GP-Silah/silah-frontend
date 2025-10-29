@@ -13,5 +13,10 @@
   "thisMonth": "هذا الشهر",
   "markAllRead": "تحديد الكل كمقروء",
   "noNotifications": "لا توجد إشعارات",
-  "loading": "جاري التحميل..."
+  "loading": "جاري التحميل...",
+
+  "newOrders": "طلبات جديدة",
+  "newReviews": "تقييمات جديدة",
+  "bidsStatus": "حالة العرض",
+  "invoicesStatus": "حالة الفاتورة"
 }

@@ -236,6 +236,7 @@ header {
   padding: 16px 0;
   border-bottom: none;
   cursor: default;
+  justify-content: center;
 }
 
 .notification-footer {

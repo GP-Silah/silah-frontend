@@ -13,5 +13,10 @@
   "thisMonth": "This month",
   "markAllRead": "Mark all as read",
   "noNotifications": "No notifications found",
-  "loading": "Loading..."
+  "loading": "Loading...",
+
+  "newOrders": "New orders",
+  "newReviews": "New reviews",
+  "bidsStatus": "Bid status changed",
+  "invoicesStatus": "Invoice status changed"
 }

@@ -13,7 +13,7 @@
   "notifications": "Notifications",
   "viewAll": "View All",
   "markAllRead": "Mark All as Read",
-  "noNotifications": "No notifications yet",
+  "noNewNotifications": "No new notifications",
   "profileChoices": {
     "managedBy": "Account managed by",
     "directMessaging": "Direct Messaging",

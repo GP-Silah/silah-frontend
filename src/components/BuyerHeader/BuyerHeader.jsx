@@ -29,6 +29,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
 
   const [categories, setCategories] = useState([]);
   const { notifications, profilePics } = useNotifications(i18n.language);
+  const unreadNotifications = notifications.filter((n) => !n.isRead);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -186,18 +187,21 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
               {/* Title */}
               <div className="notif-title">{t('notifications')}</div>
 
-              {notifications.length === 0 ? (
-                <div className="notif-item empty">{t('noNotifications')}</div>
+              {/* === إذا لم يكن هناك إشعارات جديدة === */}
+              {unreadNotifications.length === 0 ? (
+                <div className="notif-item empty">
+                  {t('noNewNotifications') || 'No new notifications'}
+                </div>
               ) : (
                 <>
                   <ul className="notif-list">
-                    {notifications.map((n) => {
+                    {unreadNotifications.map((n) => {
                       const pfp = profilePics[n.sender.userId];
                       return (
                         <li
                           key={n.notificationId}
                           onClick={() => handleNotificationClick(n)}
-                          className={`notif-item ${n.isRead ? '' : 'unread'}`}
+                          className="notif-item unread" // ← دائمًا unread
                         >
                           {pfp ? (
                             <img src={pfp} alt="" className="notif-pfp" />
@@ -218,7 +222,10 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
                   <div className="notification-footer">
                     <button
                       className="view-all-btn"
-                      onClick={() => navigate('/buyer/notifications')}
+                      onClick={() => {
+                        navigate('/buyer/notifications');
+                        setDropdownOpen(false);
+                      }}
                     >
                       {t('viewAll')}
                     </button>
