@@ -1,0 +1,225 @@
+.service-details-supplier {
+  background-color: #fff;
+  padding: 50px 80px;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+.service-title {
+  font-size: 28px;
+  color: #4b2b88;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.created-on {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 3px;
+}
+
+.status-line {
+  font-size: 14px;
+  color: #666;
+}
+
+.status-badge.published {
+  background-color: #e4f7e0;
+  color: #26813a;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin-left: 6px;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-unpublish {
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 50px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* ===== Basic Info ===== */
+.two-columns {
+  display: flex;
+  gap: 50px;
+}
+
+.left-column,
+.right-column {
+  flex: 1;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background: #f8f5fa;
+  font-size: 14px;
+  margin-bottom: 15px;
+  resize: none;
+}
+
+textarea {
+  min-height: 120px;
+}
+
+.category-tip {
+  font-size: 13px;
+  color: #777;
+}
+
+/* ===== Images ===== */
+.image-tips ul {
+  margin: 0 0 15px 15px;
+  color: #444;
+  font-size: 13px;
+}
+
+.image-gallery {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.image-box {
+  width: 140px;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-upload {
+  width: 140px;
+  height: 140px;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #777;
+  cursor: pointer;
+}
+
+.image-upload span {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+/* ===== Price ===== */
+.price-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 200px;
+}
+
+.currency {
+  font-weight: 600;
+}
+
+.negotiable {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #444;
+  font-size: 14px;
+}
+
+/* ===== Availability ===== */
+.availability-box {
+  background-color: #f1f1fa;
+  color: #4b2b88;
+  font-weight: 600;
+  padding: 10px 15px;
+  border-radius: 6px;
+  width: fit-content;
+}
+
+.availability-note {
+  font-size: 13px;
+  color: #666;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ===== Footer ===== */
+.footer-btn {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.btn-save {
+  background-color: #5c2d91;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 40px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.btn-save:hover {
+  background-color: #4a2375;
+}
