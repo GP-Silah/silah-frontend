@@ -1,0 +1,37 @@
+{
+  "pageTitle": "Service Details",
+  "status": {
+    "label": "Status:",
+    "published": "Published"
+  },
+  "createdOn": "Created on:",
+  "basicInfo": {
+    "title": "Basic Information",
+    "name": "Name",
+    "description": "Description",
+    "categoryTitle": "Service Category",
+    "tip": "This information will help us categorize your service correctly."
+  },
+  "images": {
+    "title": "Images",
+    "tip1": "Use at least 1050px by 1050px images.",
+    "tip2": "Use a white or natural background.",
+    "tip3": "Include front, side, and close-up views.",
+    "upload": "Upload Image"
+  },
+  "price": {
+    "title": "Price",
+    "label": "Price",
+    "currency": "SAR",
+    "note": "Price negotiable based on project scope"
+  },
+  "availability": {
+    "title": "Service Details",
+    "note": "Service availability refers to the times of day when the service is offered."
+  },
+  "buttons": {
+    "save": "Save",
+    "unpublish": "Unpublish",
+    "delete": "Delete"
+  }
+}
