@@ -1,33 +1,22 @@
 {
   "pageTitle": "Service Details",
-  "createdOn": "Created on",
   "status": {
-    "label": "Service Status:",
+    "label": "Status:",
     "published": "Published"
   },
-  "buttons": {
-    "unpublish": "Unpublish",
-    "delete": "Delete",
-    "save": "Save"
-  },
+  "createdOn": "Created on:",
   "basicInfo": {
     "title": "Basic Information",
-    "detailsTitle": "Service Details",
-    "tipText": "Build buyers confidence with a clear, detailed service listing.",
     "name": "Name",
     "description": "Description",
     "categoryTitle": "Service Category",
-    "categoryTip": "This information will help us categorize your service.",
-    "categoryLabel": "Category",
-    "tip": "This Service will appear to buyers in:"
+    "tip": "This information will help us categorize your service correctly."
   },
   "images": {
     "title": "Images",
-    "subtitle": "Image Tips",
-    "tip1": "Use at least 1050px by 1050px.",
+    "tip1": "Use at least 1050px by 1050px images.",
     "tip2": "Use a white or natural background.",
-    "tip3": "Ensure bright lighting with minimal shadows.",
-    "tip4": "Include front, side, and close-up views.",
+    "tip3": "Include front, side, and close-up views.",
     "upload": "Upload Image"
   },
   "price": {
@@ -37,7 +26,12 @@
     "note": "Price negotiable based on project scope"
   },
   "availability": {
-    "title": "Service Availability",
-    "note": "Service availability refers to the times or days when the service is offered by you. This ensures buyers know when they can expect the service to be provided, allowing them to plan accordingly."
+    "title": "Service Details",
+    "note": "Service availability refers to the times of day when the service is offered."
+  },
+  "buttons": {
+    "save": "Save",
+    "unpublish": "Unpublish",
+    "delete": "Delete"
   }
 }
