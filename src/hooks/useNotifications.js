@@ -5,6 +5,7 @@ export const useNotifications = (lang, onNewNotification) => {
   const [notifications, setNotifications] = useState([]);
   const [profilePics, setProfilePics] = useState({});
   const eventSourceRef = useRef(null);
+  const seenIdsRef = useRef(new Set());
 
   useEffect(() => {
     const fetchInitial = async () => {
@@ -14,6 +15,7 @@ export const useNotifications = (lang, onNewNotification) => {
           { params: { lang }, withCredentials: true },
         );
         setNotifications(data);
+        data.forEach((n) => seenIdsRef.current.add(n.notificationId));
       } catch (err) {
         console.error('Failed to load notifications', err);
       }
@@ -36,19 +38,12 @@ export const useNotifications = (lang, onNewNotification) => {
         const parsed = JSON.parse(e.data);
         const notif = parsed.data ? JSON.parse(parsed.data) : parsed;
 
-        const isDuplicate = notifications.some(
-          (n) => n.notificationId === notif.notificationId,
-        );
-        if (isDuplicate) return;
+        if (seenIdsRef.current.has(notif.notificationId)) return;
+        seenIdsRef.current.add(notif.notificationId);
 
         setNotifications((prev) => [notif, ...prev]);
+        onNewNotification?.(notif);
 
-        // Trigger toast
-        if (onNewNotification) {
-          onNewNotification(notif);
-        }
-
-        // Fetch profile picture
         const senderId = notif.sender?.userId;
         if (senderId && !profilePics[senderId]) {
           try {
@@ -71,15 +66,15 @@ export const useNotifications = (lang, onNewNotification) => {
     };
 
     es.onerror = () => {
-      console.error('SSE error');
-      es.close();
+      console.error('SSE error – browser will retry');
     };
 
     return () => {
       es.close();
       eventSourceRef.current = null;
+      seenIdsRef.current.clear();
     };
-  }, [lang, notifications, profilePics]);
+  }, [lang, onNewNotification]);
 
   const markAllAsRead = async (ids) => {
     try {
