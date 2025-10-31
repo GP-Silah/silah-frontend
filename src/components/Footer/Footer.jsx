@@ -1,9 +1,19 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // ← أضف useLocation
 import './Footer.css';
 
 function Footer() {
   const { t } = useTranslation('footer');
+  const location = useLocation();
+
+  // إخفاء الـ Footer في صفحات الدردشة فقط
+  const isChatPage =
+    location.pathname.includes('/chats/') ||
+    location.pathname.includes('/chat/');
+
+  if (isChatPage) {
+    return null; // لا تُعرض الـ Footer
+  }
 
   return (
     <footer className="footer">

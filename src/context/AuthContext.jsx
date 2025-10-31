@@ -11,6 +11,35 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState('guest');
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
+  const [supplierStatus, setSupplierStatus] = useState(null);
+
+  const INACTIVE_NOTICE_KEY = 'inactiveSupplierNoticeClosed';
+
+  const showInactiveSupplierNotice = () => {
+    const isClosed = sessionStorage.getItem(INACTIVE_NOTICE_KEY) === '1';
+    if (isClosed) return;
+
+    const isArabic = i18n.language === 'ar';
+
+    Swal.fire({
+      icon: 'warning',
+      title: isArabic
+        ? 'لقد تجاوزت حدود الخطة الأساسية'
+        : 'You exceeded basic plan limits',
+      text: isArabic
+        ? 'سيتم إخفاء واجهة متجرك ومنتجاتك مؤقتًا من المشترين حتى يتم الدفع.'
+        : 'Your storefront and products shall be temporarily hidden from buyers until payment is made.',
+      confirmButtonText: isArabic ? 'فهمت' : 'Got it',
+      confirmButtonColor: '#8a52a7',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      customClass: {
+        popup: 'swal-rtl',
+      },
+    }).then(() => {
+      sessionStorage.setItem(INACTIVE_NOTICE_KEY, '1');
+    });
+  };
 
   const handleLogout = async () => {
     try {
@@ -24,6 +53,8 @@ export function AuthProvider({ children }) {
     } finally {
       setUser(null);
       setRole('guest');
+      setSupplierStatus(null);
+      sessionStorage.removeItem(INACTIVE_NOTICE_KEY);
     }
   };
 
@@ -33,8 +64,32 @@ export function AuthProvider({ children }) {
         `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
         { withCredentials: true },
       );
-      setUser(res.data);
-      setRole(res.data.role?.toLowerCase() || 'guest');
+      const userData = res.data;
+      setUser(userData);
+      const userRole = userData.role?.toLowerCase() || 'guest';
+      setRole(userRole);
+
+      // === إذا كان supplier → جلب بيانات المورد ===
+      if (userRole === 'supplier') {
+        try {
+          const supplierRes = await axios.get(
+            `${import.meta.env.VITE_BACKEND_URL}/api/suppliers/me`,
+            { withCredentials: true },
+          );
+          const status = supplierRes.data.supplierStatus;
+          setSupplierStatus(status);
+
+          // === إظهار التنبيه إذا INACTIVE ولم يُغلق ===
+          if (status === 'INACTIVE') {
+            showInactiveSupplierNotice();
+          }
+        } catch (supplierErr) {
+          console.error('Failed to fetch supplier data:', supplierErr);
+          setSupplierStatus(null);
+        }
+      } else {
+        setSupplierStatus(null);
+      }
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
         const message = err.response?.data?.error?.message;
@@ -51,10 +106,12 @@ export function AuthProvider({ children }) {
 
         setUser(null);
         setRole('guest');
+        setSupplierStatus(null);
       } else {
         console.error('Fetch user failed:', err);
         setUser(null);
         setRole('guest');
+        setSupplierStatus(null);
       }
     } finally {
       setLoading(false);
@@ -100,6 +157,7 @@ export function AuthProvider({ children }) {
         role,
         loading,
         switching,
+        supplierStatus,
         handleLogout,
         fetchUser,
         switchRole,

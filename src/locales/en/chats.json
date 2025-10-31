@@ -1,0 +1,22 @@
+{
+  "pageTitle": "Chats",
+  "allMessages": "All Messages",
+  "unreadMessages": "Unread",
+  "readMessages": "Read",
+  "allDays": "All Days",
+  "today": "Today",
+  "thisWeek": "This Week",
+  "thisMonth": "This Month",
+  "type": "Type",
+  "date": "Date",
+  "searchPlaceholder": "Search chats or users...",
+  "noSearchResults": "No results found",
+  "noChats": "No chats yet",
+  "loading": "Loading...",
+  "errorLoadingChats": "Failed to load chats. Please try again.",
+  "startNewChat": "Start new chat",
+  "imageMessage": "[Image]",
+  "noMessagesYet": "No messages yet. Start the conversation!",
+  "typeMessage": "Type a message...",
+  "chatWith": "Chat With {{otherUser}}"
+}

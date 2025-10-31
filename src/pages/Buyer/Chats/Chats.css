@@ -1,0 +1,326 @@
+/* ChatsBuyer.css — Buyer Blue Theme (Figma Clean) */
+:root {
+  --silah-blue: #517fbf; /* Main Blue */
+  --blue-light: #e3edf6; /* Card BG */
+  --blue-lighter: #f1f5fc; /* Avatar Circle */
+  --blue-hover: #476dae; /* Hover Blue */
+  --blue-border: #a3c4e0; /* Softer border */
+  --text: #2d3748; /* Dark readable text */
+  --text-muted: #64748b; /* Muted text (gray-blue) */
+  --white: #ffffff;
+  --shadow-blue: rgba(81, 127, 191, 0.12); /* Blue shadow */
+}
+
+/* ---------- PAGE ---------- */
+.chats-page {
+  background: transparent;
+  min-height: 100vh;
+  padding: 40px 60px;
+  font-family: system-ui, 'Tajawal', sans-serif;
+}
+
+/* ---------- HEADER ---------- */
+.chats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Search Bar */
+.chats-search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #e3edf6;
+  border-radius: 32px;
+  padding: 6px 12px;
+  width: 100%;
+  max-width: 600px;
+  margin-right: auto;
+}
+
+.chats-search-bar .search-icon {
+  margin-right: 8px;
+  color: var(--silah-blue);
+  font-size: 18px;
+}
+
+.chats-search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.chats-search-bar input::placeholder {
+  color: var(--silah-blue);
+  opacity: 0.7;
+}
+
+/* RTL: Push search bar slightly left */
+.chats-page[data-dir='rtl'] .chats-search-bar {
+  margin-right: 0;
+  margin-left: auto;
+  position: relative;
+  left: 50px;
+}
+
+@media (max-width: 1200px) {
+  .chats-page[data-dir='rtl'] .chats-search-bar {
+    left: 40px;
+  }
+}
+
+.chats-page[data-dir='rtl'] .chats-search-bar .search-icon {
+  margin-right: 0;
+  margin-left: 8px;
+}
+
+.chats-page[data-dir='rtl'] .chats-search-bar input {
+  text-align: right;
+}
+
+/* Filters – Top Right */
+.chats-filters-right {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Filter Inline */
+.chats-filter-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chats-filter-label {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* Dropdown Button */
+.page-dropdown button {
+  background: var(--white);
+  border: 1.5px solid var(--blue-border);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  width: 180px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--text);
+  transition: all 0.2s;
+}
+
+.page-dropdown button:hover {
+  border-color: var(--silah-blue);
+  box-shadow: 0 0 0 3px rgba(81, 127, 191, 0.15);
+}
+
+/* Dropdown Menu */
+.page-dropdown-menu {
+  position: absolute;
+  top: 110%;
+  background: var(--white);
+  border: 1.5px solid var(--blue-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px var(--shadow-blue);
+  width: 180px;
+  z-index: 10;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.page-dropdown-item {
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.2s;
+}
+
+.page-dropdown-item:hover {
+  background: var(--blue-light);
+}
+
+/* Dropdown positioning (same as notifications) */
+.page-type-menu {
+  position: absolute;
+  top: 170px;
+  left: 76.5%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+.page-date-menu {
+  position: absolute;
+  top: 170px;
+  left: 80%;
+  transform: translateX(50%);
+  z-index: 1000;
+}
+
+/* ---------- LIST ---------- */
+.chats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chats-item {
+  position: relative;
+  background: var(--blue-light);
+  border: 1.5px solid var(--blue-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px var(--shadow-blue);
+}
+
+.chats-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-blue);
+  border-color: var(--silah-blue);
+}
+
+.chats-item.chats-unread {
+  border-left: 4px solid var(--silah-blue);
+  background: #edf4fb;
+}
+
+.chats-unread-dot {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--silah-blue);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(81, 127, 191, 0.2);
+}
+
+/* Avatar Circle */
+.chats-avatar-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--blue-lighter);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--silah-blue);
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.chats-item:hover .chats-avatar-circle {
+  background: #d6e4f5;
+  transform: scale(1.05);
+}
+
+.chats-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Content */
+.chats-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.chats-title {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 15px;
+  margin-bottom: 4px;
+  text-align: start;
+}
+
+.chats-message {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Meta */
+.chats-meta {
+  text-align: right;
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.chats-date {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.chats-unread-badge {
+  background: var(--silah-blue);
+  color: white;
+  font-size: 11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* Start New Chat Button */
+.chats-start-btn {
+  background: transparent;
+  border: none;
+  color: var(--silah-blue);
+  font-size: 18px;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s;
+}
+
+.chats-start-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Full-width divider under search results */
+.chats-search-divider-full {
+  margin: 16px 0;
+  border-top: 1.5px solid var(--blue-border);
+}
+
+/* Loading / Empty */
+.chats-loading,
+.chats-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* RTL Text Alignment */
+.chats-page[data-dir='rtl'] .chats-title,
+.chats-page[data-dir='rtl'] .chats-message {
+  text-align: right;
+}

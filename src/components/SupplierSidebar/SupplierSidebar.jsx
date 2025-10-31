@@ -99,7 +99,7 @@ const SupplierSidebar = ({ unreadCount }) => {
           </Link>
         </li>
         <li>
-          <Link to="/supplier/messages" className="sidebar-action">
+          <Link to="/supplier/chats" className="sidebar-action">
             <FaEnvelope /> {t('messages')}
           </Link>
         </li>
