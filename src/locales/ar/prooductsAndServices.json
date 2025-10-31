@@ -1,0 +1,22 @@
+{
+  "pageTitle": "المنتجات والخدمات",
+  "searchPlaceholder": "ابحث هنا...",
+  "filters": {
+    "all": "الكل",
+    "products": "المنتجات",
+    "services": "الخدمات"
+  },
+  "buttons": {
+    "product": "منتج +",
+    "service": "خدمة +"
+  },
+  "columns": {
+    "image": "الصورة",
+    "name": "اسم العنصر",
+    "price": "السعر للوحدة",
+    "stock": "المخزون",
+    "status": "الحالة",
+    "action": "الإجراء",
+    "predict": "تنبؤ الطلب"
+  }
+}
