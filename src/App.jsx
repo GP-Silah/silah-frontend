@@ -1,39 +1,43 @@
 import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import NotFound from './pages/NotFound/NotFound';
-import { useTranslation } from 'react-i18next';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Sidebar from './components/Sidebar/Sidebar';
 
-// Automatically import all .jsx pages in /pages
+// ✅ مزوّد الكاتالوج (مسار نسبي بدون alias)
+import { CatalogProvider } from './context/catalog/CatalogProvider';
+
+// تلقائيًا: استيراد كل الصفحات .jsx من مجلد /pages
 const pages = import.meta.glob('./pages/**/*.jsx');
 
 function App() {
   const { i18n } = useTranslation();
 
-  //  LocalStorage لجلب معلومات المستخدم من
+  // جلب المستخدم من LocalStorage
   const user = JSON.parse(localStorage.getItem('user')) || null;
 
-  //  الصفحات اللي ما نبي فيها السايدبار (زي login/signup)
+  // المسارات اللي نخفي فيها السايدبار (login / signup)
   const location = useLocation();
   const hideSidebarPaths = ['/login', '/signup'];
 
-  // Supplier منطق التحقق: يخفي السايدبار إذا المستخدم مو
+  // إظهار السايدبار فقط لو المستخدم Supplier
   const shouldHideSidebar =
     hideSidebarPaths.includes(location.pathname) ||
     !user ||
     user.role?.toLowerCase() !== 'supplier';
 
+  // توليد الراوتات تلقائيًا من أسماء الملفات داخل /pages
   const routeElements = Object.entries(pages).map(([filePath, resolver]) => {
-    // Remove ./pages prefix and .jsx extension
+    // إزالة ./pages و .jsx
     let routePath = filePath.replace('./pages', '').replace('.jsx', '');
 
-    // Split into parts
+    // تقسيم المسار إلى أجزاء صالحة
     const parts = routePath.split('/').filter(Boolean);
 
-    // Drop last part if it matches folder name (AboutUs/AboutUs.jsx -> AboutUs)
+    // إزالة التكرار لو كان اسم الملف يطابق اسم المجلد (AboutUs/AboutUs.jsx -> AboutUs)
     if (
       parts.length > 1 &&
       parts[parts.length - 1].toLowerCase() ===
@@ -42,7 +46,7 @@ function App() {
       parts.pop();
     }
 
-    // Convert to kebab-case
+    // تحويل إلى kebab-case
     routePath =
       '/' +
       parts
@@ -54,10 +58,10 @@ function App() {
         )
         .join('/');
 
-    // Special case: Landing page
+    // حالة خاصة: landing تكون هي الصفحة الرئيسية
     if (routePath === '/landing') routePath = '/';
 
-    // Lazy load component
+    // تحميل كسول للمكوّن
     const PageComponent = React.lazy(() =>
       resolver().then((mod) => ({ default: mod.default })),
     );
@@ -77,18 +81,20 @@ function App() {
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        {!shouldHideSidebar && <Sidebar />}
-        <div style={{ flex: 1, padding: '20px' }}>
-          {/* <Header />*/}
-          <Routes>
-            {routeElements}
-
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          {/* <Footer />*/}
+      {/* ✅ لفّ كل التطبيق داخل CatalogProvider */}
+      <CatalogProvider>
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          {!shouldHideSidebar && <Sidebar />}
+          <div style={{ flex: 1, padding: '20px' }}>
+            {/* <Header /> */}
+            <Routes>
+              {routeElements}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            {/* <Footer /> */}
+          </div>
         </div>
-      </div>
+      </CatalogProvider>
     </div>
   );
 }

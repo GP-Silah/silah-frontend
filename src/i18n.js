@@ -43,6 +43,10 @@ import EmailFlowAr from './locales/ar/EmailFlow.json?raw';
 import serviceEn from './locales/en/service.json?raw';
 import serviceAr from './locales/ar/service.json?raw';
 
+// ✅ جديد: ترجمات صفحة Products & Services (Supplier)
+import supplierListingsEn from './locales/en/supplierListings.json?raw';
+import supplierListingsAr from './locales/ar/supplierListings.json?raw';
+
 const resources = {
   en: {
     common: JSON.parse(commonEn),
@@ -60,12 +64,14 @@ const resources = {
     bidOffer: JSON.parse(bidOfferEn),
 
     product: JSON.parse(productEn),
+    service: JSON.parse(serviceEn),
 
     EmailFlow: JSON.parse(EmailFlowEn),
+
+    // ✅ جديد
+    supplierListings: JSON.parse(supplierListingsEn),
     settings: JSON.parse(settingsEn),
     buyerSettings: JSON.parse(buyerSettingsEn),
-    service: JSON.parse(serviceEn),
-    service: JSON.parse(serviceAr),
   },
   ar: {
     common: JSON.parse(commonAr),
@@ -81,12 +87,16 @@ const resources = {
     bids: JSON.parse(bidsAr),
     bidDetails: JSON.parse(bidDetailsAr),
     bidOffer: JSON.parse(bidOfferAr),
-    settings: JSON.parse(settingsAr),
-    buyerSettings: JSON.parse(buyerSettingsAr),
 
     product: JSON.parse(productAr),
+    service: JSON.parse(serviceAr),
 
     EmailFlow: JSON.parse(EmailFlowAr),
+
+    // ✅ جديد
+    supplierListings: JSON.parse(supplierListingsAr),
+    settings: JSON.parse(settingsAr),
+    buyerSettings: JSON.parse(buyerSettingsAr),
   },
 };
 

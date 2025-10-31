@@ -23,7 +23,7 @@ async function mockFetchProductById(id) {
     groupPricePerUnit: 7.5,
     status: 'PUBLISHED',
     createdAt: '2025-03-24T02:41:00Z',
-    stockQty: 24, // 👈 جديد: كمية المخزون الحالية (للمودال)
+    stockQty: 24, // 👈 كمية المخزون الحالية
   };
 }
 async function mockSaveProduct(payload) {
@@ -32,22 +32,22 @@ async function mockSaveProduct(payload) {
 }
 /* =================================================================== */
 
+/* ✅ ربط الكاتالوج المركزي */
+import { useCatalog } from '../../context/catalog/CatalogProvider';
+
 export default function SupplierProductDetails() {
   const { t, i18n } = useTranslation('product');
   const navigate = useNavigate();
   const location = useLocation();
   const [search] = useSearchParams();
-  const productId = search.get('id') || 'demo-1';
 
-  // // الصفحة للمورّد فقط
-  // useEffect(() => {
-  //   try {
-  //     const user = JSON.parse(localStorage.getItem('user') || 'null');
-  //     const role = (user?.role || user?.type || '').toLowerCase();
-  //     if (role !== 'supplier')
-  //       navigate('/SupplierOverview (Home)', { replace: true });
-  //   } catch (_) {}
-  // }, [location.pathname, navigate]);
+  // لو عندك id بالـ query ?id=... أو جاي من navigate(state.id)
+  const urlId = search.get('id') || 'demo-1';
+  const incomingId = location.state?.id || null;
+  const effectiveId = incomingId || urlId;
+
+  // كاتالوج (المصدر المشترك)
+  const { upsertItem, items } = useCatalog();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,6 +55,7 @@ export default function SupplierProductDetails() {
   const [msg, setMsg] = useState('');
 
   const [form, setForm] = useState({
+    id: '',
     name: '',
     description: '',
     category: '',
@@ -70,7 +71,8 @@ export default function SupplierProductDetails() {
     groupPricePerUnit: '',
     status: 'PUBLISHED',
     createdAt: '',
-    stockQty: 0, // 👈 جديد
+    stockQty: 0,
+    favorite: false,
   });
 
   // مودال تحديث المخزون
@@ -96,34 +98,93 @@ export default function SupplierProductDetails() {
       .replace(',', '');
   }, [form.createdAt, i18n.language]);
 
+  // جلب البيانات (أو التحميل من الكاتالوج إن كانت موجودة)
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const data = await mockFetchProductById(productId);
-        setForm({ ...data });
+        // لو موجودة بالكاتالوج جاهزة، استخدمها مباشرةً
+        const fromCatalog = items.find(
+          (x) => x.id === effectiveId && x.type === 'product',
+        );
+        if (fromCatalog) {
+          setForm((prev) => ({
+            ...prev,
+            id: fromCatalog.id,
+            name: fromCatalog.name,
+            description: prev.description, // إن كان عندك وصف محفوظ في الباك، بدليه لاحقًا
+            category: prev.category,
+            images: prev.images || [],
+            pricePerUnit: fromCatalog.price ?? '',
+            currency: prev.currency,
+            caseQty: prev.caseQty,
+            minOrderQty: prev.minOrderQty,
+            maxOrderQty: prev.maxOrderQty,
+            groupEnabled: prev.groupEnabled,
+            groupMinQty: prev.groupMinQty,
+            groupDeadline: prev.groupDeadline,
+            groupPricePerUnit: prev.groupPricePerUnit,
+            status: (fromCatalog.status || 'unpublished').toUpperCase(),
+            createdAt: prev.createdAt,
+            stockQty: fromCatalog.stock ?? 0,
+            favorite: !!fromCatalog.favorite,
+          }));
+        } else {
+          const data = await mockFetchProductById(effectiveId);
+          setForm({ ...data });
+          // مزامنة أولية مع الكاتالوج
+          syncToCatalog({ ...data });
+        }
       } catch {
         setError(t('errors.fetch'));
       } finally {
         setLoading(false);
       }
     })();
-  }, [productId, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveId, t]);
 
   const setField = (name, value) => setForm((p) => ({ ...p, [name]: value }));
 
-  // تبديل حالة النشر Publish/Unpublish
-  const handleTogglePublish = () => {
-    setForm((prev) => ({
-      ...prev,
-      status: prev.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED',
-    }));
-    setMsg(
-      t(
-        `messages.${form.status === 'PUBLISHED' ? 'unpublished' : 'published'}`,
+  /* ✅ دالة مساعدة لتحديث الكاتالوج وفق حقلّات التفاصيل */
+  const syncToCatalog = (data) => {
+    const payload = {
+      id: data.id || effectiveId || crypto.randomUUID(),
+      type: 'product',
+      name: data.name?.trim() || '',
+      price: Number(data.pricePerUnit ?? 0),
+      stock: Number(
+        data.stockQty === '' || data.stockQty == null ? 0 : data.stockQty,
       ),
-    );
-    // لاحقًا: استدعاء API للتغيير الفعلي
+      status:
+        (data.status || 'UNPUBLISHED').toString().toLowerCase() === 'published'
+          ? 'published'
+          : 'unpublished',
+      img:
+        (Array.isArray(data.images) && data.images[0]) ||
+        '/assets/images/placeholder.png',
+      favorite: !!data.favorite,
+      images: data.images || [],
+    };
+    upsertItem(payload);
+  };
+
+  // تبديل حالة النشر Publish/Unpublish + مزامنة الكاتالوج
+  const handleTogglePublish = () => {
+    setForm((prev) => {
+      const nextStatus =
+        prev.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED';
+      const next = { ...prev, status: nextStatus };
+      setMsg(
+        t(
+          `messages.${
+            nextStatus === 'PUBLISHED' ? 'published' : 'unpublished'
+          }`,
+        ),
+      );
+      syncToCatalog(next);
+      return next;
+    });
   };
 
   async function onSave(e) {
@@ -133,8 +194,15 @@ export default function SupplierProductDetails() {
     setError('');
     try {
       const res = await mockSaveProduct(form);
-      if (res.ok) setMsg(t('messages.saved'));
-      else setError(t('errors.save'));
+      if (res.ok) {
+        // ✅ حدّث الكاتالوج بالمعلومات النهائية
+        syncToCatalog(form);
+        setMsg(t('messages.saved'));
+        // رجوع للّستنج
+        navigate('/supplier/products-and-services');
+      } else {
+        setError(t('errors.save'));
+      }
     } catch {
       setError(t('errors.save'));
     } finally {
@@ -149,10 +217,12 @@ export default function SupplierProductDetails() {
   };
   const applyStockUpdate = () => {
     const qty = Number(newStockQty || 0);
-    setForm((prev) => ({ ...prev, stockQty: qty }));
+    const next = { ...form, stockQty: qty };
+    setForm(next);
     setShowStockModal(false);
     setMsg(t('stock.updated'));
-    // لاحقًا: API لتحديث المخزون
+    // ✅ مزامنة مع الكاتالوج
+    syncToCatalog(next);
   };
 
   const handleTopAction = (type) => {
@@ -299,6 +369,8 @@ export default function SupplierProductDetails() {
                     const arr = [...form.images];
                     arr.splice(i, 1);
                     setField('images', arr);
+                    // مزامنة فورية اختيارية
+                    syncToCatalog({ ...form, images: arr });
                   }}
                   aria-label={t('images.remove')}
                 >
@@ -314,7 +386,10 @@ export default function SupplierProductDetails() {
                   const file = e.target.files?.[0];
                   if (!file) return;
                   const url = URL.createObjectURL(file);
-                  setField('images', [...(form.images || []), url]);
+                  const arr = [...(form.images || []), url];
+                  setField('images', arr);
+                  // مزامنة فورية اختيارية
+                  syncToCatalog({ ...form, images: arr });
                 }}
               />
               <span>
@@ -338,6 +413,9 @@ export default function SupplierProductDetails() {
               step="0.01"
               value={form.pricePerUnit}
               onChange={(e) => setField('pricePerUnit', e.target.value)}
+              onBlur={() =>
+                syncToCatalog({ ...form, pricePerUnit: e.target.value })
+              }
             />
             <span className="pd-prefix">{form.currency}</span>
           </div>

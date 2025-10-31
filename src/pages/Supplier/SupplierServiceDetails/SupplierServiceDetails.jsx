@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './SupplierProductDetails.css';
 
-/* ========= */
+/* ========= (Mock) بدّلي لاحقًا بالـ endpoints الحقيقية ========= */
 async function mockFetchServiceById(id) {
   return {
     id,
@@ -13,11 +13,11 @@ async function mockFetchServiceById(id) {
     category: 'Design > Logos & Branding Design',
     images: ['/assets/mock/service1.jpg', '/assets/mock/service2.jpg'],
     price: 50,
-    negotiable: true, // قابل للتفاوض
+    negotiable: true,
     currency: '﷼',
     status: 'PUBLISHED',
     createdAt: '2025-03-24T09:40:00Z',
-    availability: '24/7', // التوفّر
+    availability: '24/7',
   };
 }
 async function mockSaveService(payload) {
@@ -26,14 +26,23 @@ async function mockSaveService(payload) {
 }
 /* =================================================================== */
 
+/* ✅ ربط الكاتالوج المركزي */
+import { useCatalog } from '../../context/catalog/CatalogProvider';
+
 export default function SupplierServiceDetails() {
   const { t, i18n } = useTranslation('service');
   const navigate = useNavigate();
   const location = useLocation();
   const [search] = useSearchParams();
-  const serviceId = search.get('id') || 'demo-svc-1';
 
-  // السماح فقط للمورّد
+  // يدعم الفتح عبر state.id أو ?id=
+  const urlId = search.get('id') || 'demo-svc-1';
+  const incomingId = location.state?.id || null;
+  const effectiveId = incomingId || urlId;
+
+  const { upsertItem, items } = useCatalog();
+
+  // السماح فقط للمورّد (تبقينها كما هي)
   useEffect(() => {
     try {
       const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -41,7 +50,8 @@ export default function SupplierServiceDetails() {
       if (role !== 'supplier')
         navigate('/SupplierOverview (Home)', { replace: true });
     } catch (_) {}
-  }, [location.pathname, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -49,6 +59,7 @@ export default function SupplierServiceDetails() {
   const [msg, setMsg] = useState('');
 
   const [form, setForm] = useState({
+    id: '',
     name: '',
     description: '',
     category: '',
@@ -59,6 +70,7 @@ export default function SupplierServiceDetails() {
     status: 'PUBLISHED',
     createdAt: '',
     availability: '24/7',
+    favorite: false,
   });
 
   useEffect(() => {
@@ -80,34 +92,85 @@ export default function SupplierServiceDetails() {
       .replace(',', '');
   }, [form.createdAt, i18n.language]);
 
+  // جلب البيانات أو التحميل من الكاتالوج إن كانت موجودة
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
-        const data = await mockFetchServiceById(serviceId);
-        setForm({ ...data });
+        const fromCatalog = items.find(
+          (x) => x.id === effectiveId && x.type === 'service',
+        );
+        if (fromCatalog) {
+          setForm((prev) => ({
+            ...prev,
+            id: fromCatalog.id,
+            name: fromCatalog.name,
+            // الحقول التالية تُحفظ من الباك غالبًا — خليها من prev لحين ربط API
+            description: prev.description,
+            category: prev.category,
+            images: fromCatalog.images || prev.images || [],
+            price: fromCatalog.price ?? prev.price ?? '',
+            negotiable: prev.negotiable ?? false,
+            currency: prev.currency ?? '﷼',
+            status: (fromCatalog.status || 'unpublished').toUpperCase(),
+            createdAt: prev.createdAt,
+            availability: prev.availability ?? '24/7',
+            favorite: !!fromCatalog.favorite,
+          }));
+        } else {
+          const data = await mockFetchServiceById(effectiveId);
+          setForm({ ...data });
+          // مزامنة أولية مع الكاتالوج
+          syncToCatalog({ ...data });
+        }
       } catch {
         setError(t('errors.fetch'));
       } finally {
         setLoading(false);
       }
     })();
-  }, [serviceId, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveId, t]);
 
   const setField = (name, value) => setForm((p) => ({ ...p, [name]: value }));
 
-  // تبديل حالة النشر Publish/Unpublish
+  /* ✅ دالة مساعدة: مزامنة تفاصيل الخدمة مع الكاتالوج */
+  const syncToCatalog = (data) => {
+    const payload = {
+      id: data.id || effectiveId || crypto.randomUUID(),
+      type: 'service',
+      name: (data.name || '').trim(),
+      price: Number(data.price ?? 0),
+      stock: null, // خدمة ما فيها مخزون
+      status:
+        (data.status || 'UNPUBLISHED').toString().toLowerCase() === 'published'
+          ? 'published'
+          : 'unpublished',
+      img:
+        (Array.isArray(data.images) && data.images[0]) ||
+        '/assets/images/placeholder.png',
+      favorite: !!data.favorite,
+      images: data.images || [],
+    };
+    upsertItem(payload);
+  };
+
+  // تبديل حالة النشر + مزامنة الكاتالوج
   const handleTogglePublish = () => {
-    setForm((prev) => ({
-      ...prev,
-      status: prev.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED',
-    }));
-    setMsg(
-      t(
-        `messages.${form.status === 'PUBLISHED' ? 'unpublished' : 'published'}`,
-      ),
-    );
-    // لاحقًا: استدعاء API فعلي
+    setForm((prev) => {
+      const nextStatus =
+        prev.status === 'PUBLISHED' ? 'UNPUBLISHED' : 'PUBLISHED';
+      const next = { ...prev, status: nextStatus };
+      setMsg(
+        t(
+          `messages.${
+            nextStatus === 'PUBLISHED' ? 'published' : 'unpublished'
+          }`,
+        ),
+      );
+      syncToCatalog(next);
+      return next;
+    });
   };
 
   async function onSave(e) {
@@ -117,8 +180,14 @@ export default function SupplierServiceDetails() {
     setError('');
     try {
       const res = await mockSaveService(form);
-      if (res.ok) setMsg(t('messages.saved'));
-      else setError(t('errors.save'));
+      if (res.ok) {
+        // مزامنة نهائية مع الكاتالوج + رجوع للّستنج
+        syncToCatalog(form);
+        setMsg(t('messages.saved'));
+        navigate('/supplier/products-and-services');
+      } else {
+        setError(t('errors.save'));
+      }
     } catch {
       setError(t('errors.save'));
     } finally {
@@ -159,7 +228,6 @@ export default function SupplierServiceDetails() {
           </div>
         </div>
         <div className="pd-actions">
-          {/* نفس أماكن الأزرار، لكن لا يوجد Update Stock للخدمة */}
           <button
             className="pd-btn ghost"
             onClick={() => handleTopAction('unpublish')}
@@ -167,6 +235,22 @@ export default function SupplierServiceDetails() {
             {form.status === 'PUBLISHED'
               ? t('actions.unpublish')
               : t('actions.publish')}
+          </button>
+          <button
+            className="pd-btn ghost"
+            onClick={() => {
+              // مثال: تحديث فوري للصورة الرئيسية ينعكس في اللستنج
+              const arr = [...(form.images || [])];
+              if (arr.length > 1) {
+                const [first] = arr.splice(0, 1);
+                arr.push(first);
+                setField('images', arr);
+                syncToCatalog({ ...form, images: arr });
+                setMsg(t('images.reordered'));
+              }
+            }}
+          >
+            {t('actions.reorderImages', 'Reorder Images')}
           </button>
           <button
             className="pd-btn danger"
@@ -191,6 +275,7 @@ export default function SupplierServiceDetails() {
                 type="text"
                 value={form.name}
                 onChange={(e) => setField('name', e.target.value)}
+                onBlur={() => syncToCatalog({ ...form, name: form.name })}
                 maxLength={240}
                 placeholder={t('placeholders.name')}
               />
@@ -258,6 +343,8 @@ export default function SupplierServiceDetails() {
                     const arr = [...form.images];
                     arr.splice(i, 1);
                     setField('images', arr);
+                    // مزامنة فورية مع اللستنج
+                    syncToCatalog({ ...form, images: arr });
                   }}
                   aria-label={t('images.remove')}
                 >
@@ -273,7 +360,10 @@ export default function SupplierServiceDetails() {
                   const file = e.target.files?.[0];
                   if (!file) return;
                   const url = URL.createObjectURL(file);
-                  setField('images', [...(form.images || []), url]);
+                  const arr = [...(form.images || []), url];
+                  setField('images', arr);
+                  // مزامنة فورية مع اللستنج
+                  syncToCatalog({ ...form, images: arr });
                 }}
               />
               <span>
@@ -297,6 +387,7 @@ export default function SupplierServiceDetails() {
               step="0.01"
               value={form.price}
               onChange={(e) => setField('price', e.target.value)}
+              onBlur={() => syncToCatalog({ ...form, price: form.price })}
             />
             <span className="pd-prefix">{form.currency}</span>
           </div>
