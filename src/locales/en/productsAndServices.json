@@ -1,0 +1,22 @@
+{
+  "pageTitle": "Products & Services",
+  "searchPlaceholder": "Search here...",
+  "filters": {
+    "all": "All",
+    "products": "Products",
+    "services": "Services"
+  },
+  "buttons": {
+    "product": "Product +",
+    "service": "Service +"
+  },
+  "columns": {
+    "image": "Image",
+    "name": "Item Name",
+    "price": "Unit Price",
+    "stock": "Stock",
+    "status": "Status",
+    "action": "Action",
+    "predict": "Predict Demand"
+  }
+}
