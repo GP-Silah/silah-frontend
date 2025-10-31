@@ -11,7 +11,9 @@ function Footer() {
     location.pathname.includes('/chats/') ||
     location.pathname.includes('/chat/');
 
-  if (isChatPage) {
+  const isPaymentCallbackPage = location.pathname.includes('callback');
+
+  if (isChatPage || isPaymentCallbackPage) {
     return null; // لا تُعرض الـ Footer
   }
 

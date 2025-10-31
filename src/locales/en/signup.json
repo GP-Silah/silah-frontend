@@ -35,6 +35,9 @@
     "emailExists": "An account with this email already exists.",
     "unknownError": "An unknown error occurred. Please try again.",
     "networkError": "Could not connect to the server. Please check your connection.",
-    "invalidCity": "City name can only contain letters"
+    "invalidCity": "City name can only contain letters",
+    "wathqTemporary": "Temporary issue with Wathq provider or connection failure.",
+    "wathqNotFound": "The provided CRN does not exist in Wathq records.",
+    "wathqSuspended": "The CRN exists but is not active."
   }
 }

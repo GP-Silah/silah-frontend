@@ -130,6 +130,12 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     // setDropdownOpen(false); // Close dropdown
   };
 
+  const isPaymentCallbackPage = location.pathname.includes('/callback');
+
+  if (isPaymentCallbackPage) {
+    return null; // Don't show on callback page
+  }
+
   return (
     <header
       className={`buyer-header ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}
