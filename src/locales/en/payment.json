@@ -1,12 +1,17 @@
 {
   "payment": {
-    "loading": "Loading payment form..."
+    "loading": "Loading payment form...",
+    "redirecting": "Redirecting in {{seconds}}…"
   },
   "success": {
-    "cardSaved": "Card saved successfully"
+    "cardSaved": "Card saved successfully",
+    "orderCompleted": "Order completed successfully",
+    "invoicePaid": "Invoice paid successfully"
   },
   "errors": {
     "saveCardFailed": "Failed to save card. Try again.",
+    "checkoutFailed": "Checkout failed.",
+    "paymentFailed": "Payment failed.",
     "missingChargeId": "Missing charge ID. Card save process failed."
   }
 }
