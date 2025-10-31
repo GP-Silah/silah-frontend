@@ -1,127 +1,219 @@
 import React, { useEffect, useState } from 'react';
 import './ServiceDetails.css';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 
 export default function ServiceDetailsSupplier() {
   const { t, i18n } = useTranslation('serviceDetails');
-  const [service, setService] = useState(null);
+
+  const [service, setService] = useState({
+    name: 'Logo Design',
+    createdOn: '24/Mar/2025',
+    time: '9:40 AM',
+    status: 'Published',
+    category: 'Design Services > Logo & Branding Design',
+    description:
+      'Our logo design service offers a creative and personalized approach to brand identity...',
+    price: '50',
+    negotiable: true,
+    availability: 'Available 24/7',
+    images: ['/images/sample1.png', '/images/sample2.png'],
+  });
 
   useEffect(() => {
     document.title = t('pageTitle');
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n.language, t]);
 
-  useEffect(() => {
-    // استبدلي هذا الرابط بالـ API الفعلي الخاص بعرض تفاصيل الخدمة
-    axios
-      .get('https://api.silah.site/api/supplier/services/123')
-      .then((res) => setService(res.data))
-      .catch((err) => console.error('Error fetching service:', err));
-  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setService((prev) => ({ ...prev, [name]: value }));
+  };
 
-  if (!service) {
-    return <div className="loading">{t('loading')}</div>;
-  }
+  const toggleNegotiable = () => {
+    setService((prev) => ({ ...prev, negotiable: !prev.negotiable }));
+  };
 
   return (
-    <div className="service-details-supplier">
-      {/* ===== Header ===== */}
-      <div className="header-section">
+    <div className="service-details">
+      {/* HEADER */}
+      <div className="sticky-header">
         <div className="header-left">
-          <h2 className="service-title">{service.name}</h2>
-          <p className="created-on">
-            {t('createdOn')} {service.created_at} - {service.created_time}
-          </p>
-          <p className="status-line">
-            {t('status.label')}{' '}
-            <span className="status-badge published">
-              {t('status.published')}
-            </span>
-          </p>
+          <h1 className="service-title">{service.name}</h1>
+          <div className="sub-info">
+            <p>
+              {t('createdOn')} {service.createdOn} – {service.time}
+            </p>
+            <p>
+              {t('status.label')}{' '}
+              <span className="status-badge">{t('status.published')}</span>
+            </p>
+          </div>
         </div>
 
-        <div className="header-right">
-          <button className="btn-unpublish">{t('buttons.unpublish')}</button>
-          <button className="btn-delete">{t('buttons.delete')}</button>
+        <div className="header-buttons">
+          <button className="unpublish-btn">{t('buttons.unpublish')}</button>
+          <button className="delete-btn">{t('buttons.delete')}</button>
         </div>
       </div>
 
-      {/* ===== Basic Information ===== */}
-      <section className="section basic-info">
-        <h3 className="section-title">{t('basicInfo.title')}</h3>
-        <div className="two-columns">
-          <div className="left-column">
+      {/* BASIC INFO */}
+      <section className="section">
+        <h2>{t('basicInfo.title')}</h2>
+        <div className="columns">
+          <div className="left">
+            <h3>{t('basicInfo.detailsTitle')}</h3>
+            <p className="tip">{t('basicInfo.tipText')}</p>
+
             <label>{t('basicInfo.name')}</label>
-            <input type="text" value={service.name} readOnly />
+            <input
+              name="name"
+              type="text"
+              value={service.name}
+              onChange={handleChange}
+            />
 
             <label>{t('basicInfo.description')}</label>
-            <textarea value={service.description} readOnly></textarea>
+            <textarea
+              name="description"
+              value={service.description}
+              onChange={handleChange}
+            />
           </div>
 
-          <div className="right-column">
-            <label>{t('basicInfo.categoryTitle')}</label>
-            <select disabled>
-              <option>{service.category}</option>
+          <div className="right">
+            <h3>{t('basicInfo.categoryTitle')}</h3>
+            <p className="tip">{t('basicInfo.categoryTip')}</p>
+
+            <label>{t('basicInfo.categoryLabel')}</label>
+            <select
+              name="category"
+              value={service.category}
+              onChange={handleChange}
+            >
+              <option>Design Services &gt; Logo & Branding Design</option>
+              <option>Web Design</option>
+              <option>Social Media Design</option>
             </select>
-            <p className="category-tip">{t('basicInfo.tip')}</p>
           </div>
         </div>
       </section>
 
-      {/* ===== Images ===== */}
-      <section className="section images-section">
-        <h3 className="section-title">{t('images.title')}</h3>
-        <div className="image-tips">
-          <ul>
-            <li>{t('images.tip1')}</li>
-            <li>{t('images.tip2')}</li>
-            <li>{t('images.tip3')}</li>
-          </ul>
-        </div>
+      {/* IMAGES */}
+      <section className="section">
+        <h2>{t('images.title')}</h2>
+        <p className="tip">{t('images.subtitle')}</p>
+        <ul className="image-tips">
+          <li>{t('images.tip1')}</li>
+          <li>{t('images.tip2')}</li>
+          <li>{t('images.tip3')}</li>
+          <li>{t('images.tip4')}</li>
+        </ul>
+
+        {/* Image Upload Section */}
         <div className="image-gallery">
-          {service.images && service.images.length > 0 ? (
-            service.images.map((img, index) => (
-              <div key={index} className="image-box">
-                <img src={img} alt={`service-${index}`} />
-              </div>
-            ))
-          ) : (
-            <p>{t('images.noImages')}</p>
-          )}
-          <div className="image-upload">
+          {service.images.map((src, i) => (
+            <div
+              key={i}
+              className="image-box"
+              onClick={() => document.getElementById(`fileInput-${i}`).click()}
+            >
+              <img src={src} alt={`img-${i}`} />
+              <input
+                id={`fileInput-${i}`}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      const newImages = [...service.images];
+                      newImages[i] = reader.result;
+                      setService({ ...service, images: newImages });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </div>
+          ))}
+
+          {/* Upload new image box */}
+          <div
+            className="upload-box"
+            onClick={() => document.getElementById('newImageInput').click()}
+          >
             <span>📤</span>
             <p>{t('images.upload')}</p>
+            <input
+              id="newImageInput"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    setService((prev) => ({
+                      ...prev,
+                      images: [...prev.images, reader.result],
+                    }));
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
           </div>
         </div>
       </section>
 
-      {/* ===== Price ===== */}
-      <section className="section price-section">
-        <h3 className="section-title">{t('price.title')}</h3>
-        <div className="price-input">
-          <label>{t('price.label')}</label>
-          <input type="text" value={service.price} readOnly />
+      {/* PRICE */}
+      <section className="section">
+        <h2>{t('price.title')}</h2>
+
+        <label>{t('price.label')}</label>
+        <div className="price-box">
+          <input
+            type="text"
+            name="price"
+            value={service.price}
+            onChange={handleChange}
+          />
           <span className="currency">{t('price.currency')}</span>
         </div>
-        {service.negotiable && (
-          <label className="negotiable">
-            <input type="checkbox" checked readOnly />
-            {t('price.note')}
-          </label>
-        )}
+
+        <label className="checkbox">
+          <input
+            type="checkbox"
+            checked={service.negotiable}
+            onChange={toggleNegotiable}
+          />
+          <span>{t('price.note')}</span>
+        </label>
       </section>
 
-      {/* ===== Availability ===== */}
-      <section className="section availability-section">
-        <h3 className="section-title">{t('availability.title')}</h3>
-        <div className="availability-box">{service.availability}</div>
-        <p className="availability-note">{t('availability.note')}</p>
+      {/* AVAILABILITY */}
+      <section className="section">
+        <h2>{t('availability.title')}</h2>
+        <div className="availability">
+          <select
+            name="availability"
+            value={service.availability}
+            onChange={handleChange}
+          >
+            <option>Available 24/7</option>
+            <option>Weekdays only</option>
+            <option>Weekends only</option>
+          </select>
+        </div>
+        <p className="availability-tip">{t('availability.note')}</p>
       </section>
 
-      {/* ===== Save Button ===== */}
-      <div className="footer-btn">
-        <button className="btn-save">{t('buttons.save')}</button>
+      {/* SAVE */}
+      <div className="save-btn">
+        <button>{t('buttons.save')}</button>
       </div>
     </div>
   );

@@ -1,0 +1,167 @@
+.products-page {
+  background: #fff;
+  padding: 30px 50px;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+/* 🔹 FILTER BAR */
+.filter-bar {
+  background-color: #fff; /* نفس اللون الرمادي البنفسجي */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+/* مربع البحث */
+.search-container {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a6c90;
+  font-size: 14px;
+}
+
+.search-input {
+  background: #ede1f5;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 14px 8px 35px; /* مساحة لأيقونة العدسة */
+  width: 190px;
+  font-size: 14px;
+  color: #333;
+}
+
+.search-input::placeholder {
+  color: #7a6c90;
+}
+
+/* الفلاتر (All / Products / Services) */
+.filter-options {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.filter-options input[type='radio'] {
+  accent-color: #5c2d91;
+  margin-right: 5px;
+}
+
+/* الأزرار البنفسجية */
+.add-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-purple {
+  background-color: #5c2d91;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-purple:hover {
+  background-color: #4a2375;
+}
+
+/* ACTION BAR */
+.action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #222;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.action-icons {
+  display: flex;
+  gap: 18px;
+}
+
+.action-icons button {
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.2s ease;
+}
+
+.action-icons button:hover {
+  color: #5c2d91;
+}
+
+.action-icons .delete:hover {
+  color: #c94b4b;
+}
+
+/* TABLE */
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.items-table th,
+.items-table td {
+  border-bottom: 1px solid #ccc;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.items-table th {
+  font-weight: 600;
+}
+
+.item-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.status-badge {
+  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-badge.published {
+  background-color: #eaf3e5;
+  color: #1b8a5a;
+}
+
+.status-badge.unpublished {
+  background-color: #e5edf7;
+  color: #4166a4;
+}
+
+.predict {
+  color: #5c2d91;
+  font-weight: 500;
+  cursor: pointer;
+}

@@ -1,100 +1,98 @@
-.service-details-supplier {
-  background-color: #fff;
-  padding: 50px 80px;
+.service-details {
+  background: #fff;
+  padding: 40px 80px;
   font-family: 'Poppins', sans-serif;
   color: #333;
-  min-height: 100vh;
 }
 
-/* ===== Header ===== */
-.header-section {
+/* Sticky header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 20px 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
+  z-index: 100;
+  border-bottom: 1px solid #ddd;
 }
 
-.service-title {
+.header-left h1 {
   font-size: 28px;
-  color: #4b2b88;
-  font-weight: 700;
-  margin-bottom: 5px;
+  color: #2f235a;
+  margin-bottom: 6px;
 }
 
-.created-on {
+.header-left p {
   font-size: 14px;
-  color: #666;
-  margin-bottom: 3px;
+  margin: 2px 0;
+  color: #555;
 }
 
-.status-line {
-  font-size: 14px;
-  color: #666;
-}
-
-.status-badge.published {
-  background-color: #e4f7e0;
-  color: #26813a;
-  font-weight: 600;
-  font-size: 13px;
-  padding: 3px 10px;
+.status-badge {
+  background: #e1f4e1;
+  color: #1a7b3d;
+  padding: 3px 8px;
   border-radius: 6px;
-  margin-left: 6px;
+  font-size: 13px;
 }
 
-.header-right {
+.header-buttons {
   display: flex;
   gap: 10px;
 }
 
-.btn-unpublish {
-  background: #f5f5f5;
-  color: #333;
+.unpublish-btn {
+  background: #f3f3f3;
   border: none;
+  padding: 8px 16px;
   border-radius: 6px;
-  padding: 8px 20px;
-  font-weight: 600;
   cursor: pointer;
 }
 
-.btn-delete {
-  background: #d9534f;
-  color: white;
+.delete-btn {
+  background: #e74c3c;
   border: none;
+  color: #fff;
+  padding: 8px 16px;
   border-radius: 6px;
-  padding: 8px 20px;
-  font-weight: 600;
   cursor: pointer;
 }
 
-/* ===== Sections ===== */
+/* Sections */
 .section {
-  margin-bottom: 50px;
+  margin-top: 35px;
 }
 
-.section-title {
+.section h2 {
   font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  color: #2f2f2f;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
 }
 
-/* ===== Basic Info ===== */
-.two-columns {
+.columns {
   display: flex;
   gap: 50px;
 }
 
-.left-column,
-.right-column {
+.left,
+.right {
   flex: 1;
+}
+
+.tip {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 10px;
 }
 
 label {
   display: block;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   color: #444;
 }
 
@@ -104,29 +102,19 @@ select {
   width: 100%;
   border: 1px solid #ccc;
   border-radius: 6px;
+  background: #f8f7fa;
   padding: 10px;
-  background: #f8f5fa;
-  font-size: 14px;
   margin-bottom: 15px;
-  resize: none;
+  font-size: 14px;
+  color: #333;
 }
 
 textarea {
   min-height: 120px;
+  resize: none;
 }
 
-.category-tip {
-  font-size: 13px;
-  color: #777;
-}
-
-/* ===== Images ===== */
-.image-tips ul {
-  margin: 0 0 15px 15px;
-  color: #444;
-  font-size: 13px;
-}
-
+/* Images */
 .image-gallery {
   display: flex;
   gap: 12px;
@@ -136,9 +124,9 @@ textarea {
 .image-box {
   width: 140px;
   height: 140px;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  background: #f0f0f0;
+  background: #eee;
 }
 
 .image-box img {
@@ -147,79 +135,108 @@ textarea {
   object-fit: cover;
 }
 
-.image-upload {
+.upload-box {
   width: 140px;
   height: 140px;
-  border: 2px dashed #aaa;
-  border-radius: 8px;
+  border: 2px dashed #ccc;
+  border-radius: 6px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   color: #777;
+}
+
+.image-box,
+.upload-box {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.image-box:hover,
+.upload-box:hover {
+  transform: scale(1.03);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
-.image-upload span {
-  font-size: 24px;
-  margin-bottom: 5px;
-}
-
-/* ===== Price ===== */
-.price-input {
+/* Price */
+.price-box {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 200px;
+  gap: 8px;
+  width: 220px;
 }
 
 .currency {
   font-weight: 600;
 }
 
-.negotiable {
-  margin-top: 10px;
+.checkbox {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #444;
   font-size: 14px;
+  color: #444;
 }
 
-/* ===== Availability ===== */
-.availability-box {
-  background-color: #f1f1fa;
-  color: #4b2b88;
-  font-weight: 600;
-  padding: 10px 15px;
+.price-box input {
+  flex: 1;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  width: fit-content;
+  padding: 10px;
+  font-size: 14px;
+  background-color: #f7f4fa;
 }
 
-.availability-note {
+.currency {
+  font-weight: 600;
+  color: #333;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+.checkbox input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Availability */
+.availability select {
+  width: 200px;
+}
+
+.availability-tip {
   font-size: 13px;
   color: #666;
-  margin-top: 8px;
-  line-height: 1.5;
+  margin-top: 10px;
 }
 
-/* ===== Footer ===== */
-.footer-btn {
-  text-align: center;
+/* Save button */
+.save-btn {
+  display: flex;
+  justify-content: center;
   margin-top: 40px;
 }
 
-.btn-save {
-  background-color: #5c2d91;
+.save-btn button {
+  background: #5c2d91;
   color: #fff;
   border: none;
   border-radius: 6px;
   padding: 12px 40px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  font-size: 15px;
 }
 
-.btn-save:hover {
-  background-color: #4a2375;
+.save-btn button:hover {
+  background: #4b2375;
 }
