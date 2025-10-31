@@ -1,0 +1,22 @@
+{
+  "pageTitle": "المحادثات",
+  "allMessages": "جميع الرسائل",
+  "unreadMessages": "غير مقروءة",
+  "readMessages": "مقروءة",
+  "allDays": "جميع الأيام",
+  "today": "اليوم",
+  "thisWeek": "هذا الأسبوع",
+  "thisMonth": "هذا الشهر",
+  "type": "النوع",
+  "date": "التاريخ",
+  "searchPlaceholder": "ابحث في المحادثات أو المستخدمين...",
+  "noSearchResults": "لم يتم العثور على نتائج",
+  "noChats": "لا توجد محادثات بعد",
+  "loading": "جاري التحميل...",
+  "errorLoadingChats": "فشل تحميل المحادثات. حاول مرة أخرى.",
+  "startNewChat": "بدء محادثة جديدة",
+  "imageMessage": "[صورة]",
+  "noMessagesYet": "لا توجد رسائل بعد. ابدأ المحادثة!",
+  "typeMessage": "اكتب رسالة...",
+  "chatWith": "محادثة مع {{otherUser}}"
+}

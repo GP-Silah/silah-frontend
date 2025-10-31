@@ -1,0 +1,245 @@
+/* === RESET SCROLL & FULL HEIGHT === */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* منع التمرير على الصفحة */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === CHAT DETAIL (Full Height) === */
+.chat-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* تملأ الصفحة */
+  background: #ffffff;
+  font-family: system-ui, 'Tajawal', sans-serif;
+  overflow: hidden; /* منع أي scroll خارجي */
+}
+
+/* === HEADER (Fixed Height) === */
+.chat-header {
+  flex-shrink: 0; /* لا يتقلص */
+  padding: 16px 20px;
+  background: #ffffff;
+  border-bottom: 1.5px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 80px;
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.partner-avatar,
+.partner-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.partner-avatar.placeholder {
+  background: #f3e8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8a52a7;
+}
+
+.partner-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.partner-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: #2d1b3d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.partner-activity {
+  font-size: 12px;
+  color: #7c6992;
+  margin-top: -2px;
+}
+
+/* === INVOICE BUTTON (RIGHT) === */
+.chat-header-right {
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-header-right:hover {
+  transform: translateY(-1px);
+}
+
+.invoice-icon {
+  width: 36px;
+  height: 36px;
+  background: #8a52a7;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 4px;
+  font-size: 18px;
+}
+
+.invoice-label {
+  font-size: 11px;
+  color: #8a52a7;
+  font-weight: 500;
+}
+
+/* === MESSAGES (Scrollable Area Only) === */
+.chat-messages {
+  flex: 1; /* يأخذ كل المساحة المتبقية */
+  padding: 20px;
+  overflow-y: auto; /* التمرير هنا فقط */
+  -webkit-overflow-scrolling: touch; /* للموبايل */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #faf9fb;
+}
+
+.no-messages {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7c6992;
+  font-style: italic;
+  font-size: 15px;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.message {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.message.sent {
+  align-self: flex-end;
+  background: #8a52a7;
+  color: white;
+}
+
+.message.received {
+  align-self: flex-start;
+  background: #f0f0f0;
+  color: #2d1b3d;
+}
+
+.message-image {
+  max-width: 220px;
+  border-radius: 12px;
+  margin-top: 6px;
+  display: block;
+}
+
+.message-time {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.7;
+  text-align: right;
+}
+
+/* === INPUT (Fixed Height) === */
+.chat-input {
+  flex-shrink: 0; /* لا يتقلص */
+  height: 110px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-top: 1.5px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid #e5d4ed;
+  border-radius: 24px;
+  outline: none;
+  font-size: 14px;
+}
+
+.chat-input input:focus {
+  border-color: #8a52a7;
+}
+
+.upload-btn,
+.send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 18px;
+}
+
+.upload-btn {
+  background: #f3e8ff;
+  color: #8a52a7;
+  border: 1.5px solid #e5d4ed;
+}
+
+.upload-btn:hover {
+  background: #e8d4f5;
+  transform: scale(1.05);
+}
+
+.send-btn {
+  background: #8a52a7;
+  color: white;
+  border: none;
+  font-size: 12px;
+}
+
+.send-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #7a4796;
+  transform: scale(1.05);
+}
+
+/* === LOADING === */
+.chat-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #7c6992;
+  font-size: 15px;
+}
