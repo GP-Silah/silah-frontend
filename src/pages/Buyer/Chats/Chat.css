@@ -213,3 +213,22 @@ body,
   color: #7c6992;
   font-size: 15px;
 }
+
+.read-receipt {
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.message.sent .read-receipt {
+  color: #a4e2ff; /* light blue */
+}
+
+.message.sent .read-receipt::before {
+  content: '✓';
+  margin-right: 4px;
+  color: #28a745;
+  font-weight: bold;
+}
