@@ -1,14 +1,31 @@
-/* Chat.css — Clean White Theme (Supplier & Buyer) */
+/* === RESET SCROLL & FULL HEIGHT === */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* منع التمرير على الصفحة */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === CHAT DETAIL (Full Height) === */
 .chat-detail {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100vh; /* تملأ الصفحة */
   background: #ffffff;
   font-family: system-ui, 'Tajawal', sans-serif;
+  overflow: hidden; /* منع أي scroll خارجي */
 }
 
-/* === HEADER === */
+/* === HEADER (Fixed Height) === */
 .chat-header {
+  flex-shrink: 0; /* لا يتقلص */
   padding: 16px 20px;
   background: #ffffff;
   border-bottom: 1.5px solid #e5e5e5;
@@ -93,16 +110,16 @@
   font-weight: 500;
 }
 
-/* === MESSAGES === */
+/* === MESSAGES (Scrollable Area Only) === */
 .chat-messages {
-  flex: 1;
+  flex: 1; /* يأخذ كل المساحة المتبقية */
   padding: 20px;
-  overflow-y: auto;
+  overflow-y: auto; /* التمرير هنا فقط */
+  -webkit-overflow-scrolling: touch; /* للموبايل */
   display: flex;
   flex-direction: column;
   gap: 12px;
   background: #faf9fb;
-  height: 475px;
 }
 
 .no-messages {
@@ -151,8 +168,10 @@
   text-align: right;
 }
 
-/* === INPUT === */
+/* === INPUT (Fixed Height) === */
 .chat-input {
+  flex-shrink: 0; /* لا يتقلص */
+  height: 110px;
   padding: 16px 20px;
   background: #ffffff;
   border-top: 1.5px solid #e5e5e5;

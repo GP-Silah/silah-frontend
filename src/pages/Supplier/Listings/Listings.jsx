@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-// مسار نسبي من هذا الملف إلى كتالوج
-import { useCatalog } from '../../context/catalog/CatalogProvider';
+import { useCatalog } from '@/context/catalog/CatalogProvider';
 import './ProductsAndServices.css';
 
 export default function ProductsAndServices() {

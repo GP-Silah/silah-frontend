@@ -129,16 +129,16 @@ export default function ChatDetail() {
 
     const handleNewMessage = (data) => {
       const msg = data.message || data;
-      console.log('=== NEW_MESSAGE DEBUG ===');
-      console.log('- senderId:', msg.senderId);
-      console.log('- currentUserId:', currentUserId);
-      console.log('- Full msg:', JSON.stringify(msg, null, 2));
 
       if (!msg?.messageId) return;
 
       // === BLOCK MY MESSAGES ===
-      if (msg.senderId === currentUserId) {
-        console.log('🚫 BLOCKED: new_message from ME');
+      // Extract sender ID safely
+      const senderId = msg.senderId || msg.sender?.userId;
+      if (!senderId) return; // safety
+
+      if (senderId === currentUserId) {
+        console.log('BLOCKED: new_message from ME (senderId:', senderId, ')');
         return;
       }
 
@@ -155,13 +155,12 @@ export default function ChatDetail() {
         return;
       }
 
-      console.log('✅ ADDING incoming message');
       setMessages((prev) => [
         ...prev,
         {
           messageId: msg.messageId,
           text: msg.text || null,
-          senderId: msg.senderId, // ← TRUST THIS (it's OTHER user)
+          senderId: senderId,
           createdAt: msg.createdAt,
           imageUrl: msg.imageUrl || null,
           isRead: msg.isRead || false,
@@ -199,16 +198,11 @@ export default function ChatDetail() {
     ]);
 
     socket.emit('send_message', payload, (ack) => {
-      console.log('=== ACK FULL DATA ===', JSON.stringify(ack, null, 2));
-
-      if (!ack?.message) {
-        console.log('NO ACK MESSAGE');
-        return;
-      }
+      if (!ack?.message) return;
 
       const backendMsg = ack.message;
+      const senderId = backendMsg.senderId || backendMsg.sender?.userId;
 
-      // === CRITICAL: FORCE SENDER = ME ===
       setMessages((prev) => {
         const idx = prev.findIndex((m) => m.messageId === tempId);
         if (idx === -1) return prev;
@@ -217,7 +211,7 @@ export default function ChatDetail() {
         updated[idx] = {
           messageId: backendMsg.messageId,
           text: backendMsg.text,
-          senderId: currentUserId, // ← FORCE MY ID
+          senderId: currentUserId, // ← STILL FORCE (safe)
           createdAt: backendMsg.createdAt,
           imageUrl: backendMsg.imageUrl || null,
           isRead: true,
