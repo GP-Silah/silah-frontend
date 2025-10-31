@@ -1,24 +1,85 @@
+// src/pages/Listings.jsx   (or wherever you keep it)
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useCatalog } from '@/context/catalog/CatalogProvider';
 import './ProductsAndServices.css';
 
+/* -------------------------------------------------
+   Fake data – edit / add as many items as you want
+   ------------------------------------------------- */
+const FAKE_ITEMS = [
+  {
+    id: 'p1',
+    type: 'product',
+    name: 'Wireless Headphones',
+    img: 'https://via.placeholder.com/80?text=Headphones',
+    price: 79.99,
+    stock: 42,
+    status: 'published',
+    favorite: true,
+  },
+  {
+    id: 'p2',
+    type: 'product',
+    name: 'USB-C Cable 2m',
+    img: 'https://via.placeholder.com/80?text=Cable',
+    price: 12.5,
+    stock: 150,
+    status: 'unpublished',
+    favorite: false,
+  },
+  {
+    id: 's1',
+    type: 'service',
+    name: 'Website Redesign',
+    img: 'https://via.placeholder.com/80?text=Web',
+    price: 1200,
+    stock: null,
+    status: 'published',
+    favorite: false,
+  },
+  {
+    id: 's2',
+    type: 'service',
+    name: 'SEO Audit',
+    img: 'https://via.placeholder.com/80?text=SEO',
+    price: 350,
+    stock: null,
+    status: 'unpublished',
+    favorite: true,
+  },
+  {
+    id: 'p3',
+    type: 'product',
+    name: 'Bluetooth Speaker',
+    img: 'https://via.placeholder.com/80?text=Speaker',
+    price: 49.99,
+    stock: 23,
+    status: 'published',
+    favorite: false,
+  },
+];
+
+/* -------------------------------------------------
+   Component
+   ------------------------------------------------- */
 export default function ProductsAndServices() {
   const { t, i18n } = useTranslation('supplierListings');
   const navigate = useNavigate();
-  const { items, toggleFavorite, setStatusBulk, duplicateBulk, removeItems } =
-    useCatalog();
 
+  // State
+  const [items] = useState(FAKE_ITEMS); // <-- fake data
   const [filter, setFilter] = useState('all'); // all | product | service
   const [q, setQ] = useState('');
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState({}); // { id: true }
   const dir = i18n.dir();
 
-  // فلترة حسب النوع والبحث
+  // -------------------------------------------------
+  // Filtering
+  // -------------------------------------------------
   const filtered = useMemo(() => {
     return items.filter((it) => {
-      const byType = filter === 'all' ? true : it.type === filter;
+      const byType = filter === 'all' || it.type === filter;
       const byQuery =
         !q || it.name.toLowerCase().includes(q.trim().toLowerCase());
       return byType && byQuery;
@@ -29,17 +90,32 @@ export default function ProductsAndServices() {
   const allChecked = ids.length > 0 && ids.every((id) => selected[id]);
   const selectedIds = Object.keys(selected).filter((id) => selected[id]);
 
-  const toggleAll = () =>
+  // -------------------------------------------------
+  // Selection helpers
+  // -------------------------------------------------
+  const toggleAll = () => {
     setSelected((prev) => {
       const next = { ...prev };
       if (allChecked) ids.forEach((id) => delete next[id]);
       else ids.forEach((id) => (next[id] = true));
       return next;
     });
+  };
 
   const toggleOne = (id) => setSelected((s) => ({ ...s, [id]: !s[id] }));
 
-  // أكشنات جماعية
+  // -------------------------------------------------
+  // Fake “API” actions – just mutate the local array
+  // -------------------------------------------------
+  const mutate = (mutator) => {
+    // In a real app you would call the backend here.
+    // For demo we just keep everything in-memory.
+    // (No setItems because we want the component to stay pure)
+    console.warn('FAKE API call – not persisted');
+    // If you ever want the UI to reflect changes instantly, uncomment:
+    // setItems(mutator);
+  };
+
   const bulk = {
     edit: () => {
       const first = selectedIds[0];
@@ -53,19 +129,47 @@ export default function ProductsAndServices() {
         { state: { id: item.id } },
       );
     },
-    publish: () => setStatusBulk(selectedIds, 'published'),
-    unpublish: () => setStatusBulk(selectedIds, 'unpublished'),
-    duplicate: () => duplicateBulk(selectedIds),
-    delete: () => removeItems(selectedIds),
+    publish: () =>
+      mutate((list) =>
+        list.map((x) =>
+          selectedIds.includes(x.id) ? { ...x, status: 'published' } : x,
+        ),
+      ),
+    unpublish: () =>
+      mutate((list) =>
+        list.map((x) =>
+          selectedIds.includes(x.id) ? { ...x, status: 'unpublished' } : x,
+        ),
+      ),
+    duplicate: () =>
+      mutate((list) => {
+        const toDup = list.filter((x) => selectedIds.includes(x.id));
+        const copies = toDup.map((x) => ({
+          ...x,
+          id: `${x.id}-copy-${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 6)}`,
+          name: `${x.name} (Copy)`,
+          status: 'unpublished',
+        }));
+        return [...copies, ...list];
+      }),
+    delete: () =>
+      mutate((list) => list.filter((x) => !selectedIds.includes(x.id))),
   };
 
+  const toggleFavorite = (id) =>
+    mutate((list) =>
+      list.map((x) => (x.id === id ? { ...x, favorite: !x.favorite } : x)),
+    );
+
   const goToCreate = (kind) => {
-    if (kind === 'product')
-      navigate('/supplier/product-details', { state: { create: true } });
-    else
-      navigate('/supplier/supplier-service-details', {
-        state: { create: true },
-      });
+    navigate(
+      kind === 'product'
+        ? '/supplier/product-details'
+        : '/supplier/supplier-service-details',
+      { state: { create: true } },
+    );
   };
 
   const renderStatus = (status) => (
@@ -74,13 +178,16 @@ export default function ProductsAndServices() {
     </span>
   );
 
+  // -------------------------------------------------
+  // Render
+  // -------------------------------------------------
   return (
     <div className="supplier-listings" dir={dir}>
-      {/* الشريط العلوي: بحث + فلاتر + أزرار إضافة */}
+      {/* Toolbar */}
       <div className="sl-toolbar">
         <div className="sl-search">
           <span className="sl-search-icon" aria-hidden>
-            🔍
+            Search
           </span>
           <input
             type="text"
@@ -90,38 +197,21 @@ export default function ProductsAndServices() {
           />
         </div>
 
-        <div
-          className="sl-filters"
-          role="radiogroup"
-          aria-label={t('filterLabel')}
-        >
-          <label className={`sl-radio ${filter === 'all' ? 'active' : ''}`}>
-            <input
-              type="radio"
-              name="type"
-              checked={filter === 'all'}
-              onChange={() => setFilter('all')}
-            />
-            {t('all')}
-          </label>
-          <label className={`sl-radio ${filter === 'product' ? 'active' : ''}`}>
-            <input
-              type="radio"
-              name="type"
-              checked={filter === 'product'}
-              onChange={() => setFilter('product')}
-            />
-            {t('products')}
-          </label>
-          <label className={`sl-radio ${filter === 'service' ? 'active' : ''}`}>
-            <input
-              type="radio"
-              name="type"
-              checked={filter === 'service'}
-              onChange={() => setFilter('service')}
-            />
-            {t('services')}
-          </label>
+        <div className="sl-filters" role="radiogroup">
+          {['all', 'product', 'service'].map((f) => (
+            <label
+              key={f}
+              className={`sl-radio ${filter === f ? 'active' : ''}`}
+            >
+              <input
+                type="radio"
+                name="type"
+                checked={filter === f}
+                onChange={() => setFilter(f)}
+              />
+              {t(f === 'all' ? 'all' : f + 's')}
+            </label>
+          ))}
         </div>
 
         <div className="sl-add-actions">
@@ -140,7 +230,7 @@ export default function ProductsAndServices() {
         </div>
       </div>
 
-      {/* شريط الأكشنات الجماعية */}
+      {/* Bulk actions */}
       <div className="sl-bulk">
         <span>{t('selectHint')}</span>
         <div className="sl-bulk-actions">
@@ -154,7 +244,7 @@ export default function ProductsAndServices() {
         </div>
       </div>
 
-      {/* الجدول */}
+      {/* Table */}
       <div className="sl-table-wrap">
         <table className="sl-table">
           <thead>
@@ -168,7 +258,7 @@ export default function ProductsAndServices() {
               </th>
               <th>{t('image')}</th>
               <th className="w-name">{t('itemName')}</th>
-              <th className="w-fav">❤</th>
+              <th className="w-fav">Heart</th>
               <th>{t('unitPrice')}</th>
               <th>{t('stock')}</th>
               <th>{t('status')}</th>
@@ -220,11 +310,10 @@ export default function ProductsAndServices() {
                   </td>
                   <td className="sl-fav">
                     <button
-                      aria-label={t('toggleFavorite')}
                       className={`heart ${it.favorite ? 'on' : ''}`}
                       onClick={() => toggleFavorite(it.id)}
                     >
-                      ♥
+                      Heart
                     </button>
                   </td>
                   <td>{it.price != null ? it.price : '-'}</td>

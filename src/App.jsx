@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import { ToastProvider } from '@/context/NotificationPopupToast/NotificationContext';
+import NotificationListener from '@/components/NotificationListener';
 
 // Layouts
 import BuyerLayout from './layouts/BuyerLayout';
@@ -21,6 +23,9 @@ export default function App() {
   const { role, loading } = useAuth();
 
   if (loading) return null; // show spinner from ProtectedRoute
+
+  // Determine theme (buyer = blue, supplier = purple)
+  const isBuyer = role === 'buyer';
 
   const redirectByRole = () => {
     if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
@@ -78,6 +83,8 @@ export default function App() {
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
+      {/* <ToastProvider isBuyer={isBuyer}> */}
+      {/* <NotificationListener /> */}
       <React.Suspense fallback={null}>
         <Routes>
           {/* Public layout */}
@@ -139,6 +146,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </React.Suspense>
+      {/* </ToastProvider> */}
     </div>
   );
 }
