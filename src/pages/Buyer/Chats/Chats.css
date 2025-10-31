@@ -215,6 +215,7 @@
   height: 44px;
   border-radius: 50%;
   background: var(--blue-lighter);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
