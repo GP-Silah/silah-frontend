@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
-export const useNotifications = (lang) => {
+export const useNotifications = (lang, onNewNotification) => {
   const [notifications, setNotifications] = useState([]);
   const [profilePics, setProfilePics] = useState({});
   const eventSourceRef = useRef(null);
+  const seenIdsRef = useRef(new Set());
 
   useEffect(() => {
-    // Initial fetch
     const fetchInitial = async () => {
       try {
         const { data } = await axios.get(
@@ -15,6 +15,7 @@ export const useNotifications = (lang) => {
           { params: { lang }, withCredentials: true },
         );
         setNotifications(data);
+        data.forEach((n) => seenIdsRef.current.add(n.notificationId));
       } catch (err) {
         console.error('Failed to load notifications', err);
       }
@@ -22,7 +23,6 @@ export const useNotifications = (lang) => {
 
     fetchInitial();
 
-    // SSE
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
@@ -38,16 +38,14 @@ export const useNotifications = (lang) => {
         const parsed = JSON.parse(e.data);
         const notif = parsed.data ? JSON.parse(parsed.data) : parsed;
 
-        // Avoid duplicates
-        setNotifications((prev) =>
-          prev.some((n) => n.notificationId === notif.notificationId)
-            ? prev
-            : [notif, ...prev],
-        );
+        if (seenIdsRef.current.has(notif.notificationId)) return;
+        seenIdsRef.current.add(notif.notificationId);
 
-        // Fetch profile pic
-        const senderId = notif.sender.userId;
-        if (!profilePics[senderId]) {
+        setNotifications((prev) => [notif, ...prev]);
+        onNewNotification?.(notif);
+
+        const senderId = notif.sender?.userId;
+        if (senderId && !profilePics[senderId]) {
           try {
             const { data } = await axios.get(
               `${
@@ -68,15 +66,15 @@ export const useNotifications = (lang) => {
     };
 
     es.onerror = () => {
-      console.error('SSE error');
-      es.close();
+      console.error('SSE error – browser will retry');
     };
 
     return () => {
       es.close();
       eventSourceRef.current = null;
+      seenIdsRef.current.clear();
     };
-  }, [lang]);
+  }, [lang, onNewNotification]);
 
   const markAllAsRead = async (ids) => {
     try {
@@ -95,7 +93,6 @@ export const useNotifications = (lang) => {
     }
   };
 
-  // === Mark Single as Read ===
   const markSingleAsRead = async (notificationId) => {
     try {
       const { data } = await axios.patch(
@@ -105,15 +102,11 @@ export const useNotifications = (lang) => {
         {},
         { withCredentials: true },
       );
-
-      // Update local state with response data
       setNotifications((prev) =>
-        prev.map(
-          (n) => (n.notificationId === notificationId ? data : n), // Use full response
-        ),
+        prev.map((n) => (n.notificationId === notificationId ? data : n)),
       );
     } catch (err) {
-      console.error('Failed to mark single notification as read', err);
+      console.error('Failed to mark single as read', err);
     }
   };
 

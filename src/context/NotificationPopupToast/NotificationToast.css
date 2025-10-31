@@ -1,0 +1,152 @@
+/* Toast.css */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+[dir='ltr'] .toast-container {
+  left: 20px;
+}
+
+[dir='rtl'] .toast-container {
+  right: 20px;
+}
+
+.toast-item {
+  background: var(--card-bg, #e3edf6);
+  border: 1.5px solid var(--border, #a3c4e0);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 320px;
+  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+  position: relative;
+}
+
+.toast-item.unread {
+  border-left: 4px solid var(--accent, #517fbf);
+}
+
+.toast-icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--icon-bg, #f1f5fc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent, #517fbf);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-weight: 600;
+  color: var(--text, #2d3748);
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  color: var(--muted, #64748b);
+  font-size: 13px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--muted, #64748b);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.toast-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--text, #2d3748);
+}
+
+/* Buyer Theme */
+.toast-container.buyer {
+  --accent: #517fbf;
+  --card-bg: #e3edf6;
+  --border: #a3c4e0;
+  --icon-bg: #f1f5fc;
+  --text: #2d3748;
+  --muted: #64748b;
+}
+
+/* Supplier Theme */
+.toast-container.supplier {
+  --accent: #8a52a7;
+  --card-bg: #fdf8ff;
+  --border: #e5d4ed;
+  --icon-bg: #f3e8ff;
+  --text: #2d1b3d;
+  --muted: #7c6992;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ----- RTL slide-in ----- */
+@keyframes slideInLTR {
+  from {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+@keyframes slideInRTL {
+  from {
+    transform: translateX(100%) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Apply the correct animation */
+.toast-item {
+  animation: slideInLTR 0.3s ease;
+}
+[dir='rtl'] .toast-item {
+  animation: slideInRTL 0.3s ease;
+}
