@@ -179,8 +179,23 @@ function Signup() {
             }));
             setStep(3);
             return;
-          } else {
-            alert(t('errors.unknownError'));
+          } else if (msg.includes('Temporary issue with provider')) {
+            alert(t('errors.wathqTemporary'));
+            return;
+          } else if (msg.includes('does not exist in Wathq records')) {
+            setFormErrors((prev) => ({
+              ...prev,
+              commercialRegister: t('errors.wathqNotFound'),
+            }));
+            setStep(1);
+            return;
+          } else if (msg.includes('not active')) {
+            setFormErrors((prev) => ({
+              ...prev,
+              commercialRegister: t('errors.wathqSuspended'),
+            }));
+            setStep(1);
+            return;
           }
         } else {
           alert(t('errors.networkError'));
