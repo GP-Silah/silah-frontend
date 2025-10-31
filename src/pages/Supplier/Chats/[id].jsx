@@ -104,7 +104,7 @@ export default function ChatDetail() {
       setLoading(false);
     } else {
       setCurrentChatId(chatId);
-      socket.emit('join_chat', chatId);
+      socket.emit('join_chat', chatId); // JOIN EARLY
 
       Promise.all([loadMessages(chatId), loadChatInfo(chatId)])
         .then(([msgs]) => setMessages(msgs))
@@ -123,91 +123,113 @@ export default function ChatDetail() {
     partnerFromState,
   ]);
 
-  // === SOCKET: ONLY ONE LISTENER ===
-  // === SOCKET: ONLY ONE LISTENER ===
+  // === SOCKET ===
   useEffect(() => {
-    const handleMessage = (data) => {
+    if (!currentUserId) return;
+
+    const handleNewMessage = (data) => {
       const msg = data.message || data;
+      console.log('=== NEW_MESSAGE DEBUG ===');
+      console.log('- senderId:', msg.senderId);
+      console.log('- currentUserId:', currentUserId);
+      console.log('- Full msg:', JSON.stringify(msg, null, 2));
+
       if (!msg?.messageId) return;
 
-      if (isNewChat && msg.chatId && !currentChatId) {
-        setCurrentChatId(msg.chatId);
-        socket.emit('join_chat', msg.chatId);
-        navigate(`/supplier/chats/${msg.chatId}`, { replace: true });
+      // === BLOCK MY MESSAGES ===
+      if (msg.senderId === currentUserId) {
+        console.log('🚫 BLOCKED: new_message from ME');
+        return;
       }
 
-      setMessages((prev) => {
-        // 1. IGNORE IF ALREADY EXISTS
-        if (prev.some((m) => m.messageId === msg.messageId)) return prev;
+      // New chat handling...
+      if (isNewChat && msg.chatId && !currentChatId) {
+        // ... unchanged
+        return;
+      }
 
-        // 2. REPLACE TEMP MESSAGE
-        const tempIndex = prev.findIndex((m) =>
-          m.messageId.startsWith('temp-'),
-        );
-        if (tempIndex !== -1) {
-          const updated = [...prev];
-          updated[tempIndex] = {
-            messageId: msg.messageId,
-            text: msg.text,
-            senderId: msg.sender.id,
-            createdAt: msg.createdAt,
-            imageUrl: msg.imageUrl,
-            isRead: true,
-          };
-          return updated;
-        }
+      // === DUPLICATE CHECK ===
+      const alreadyExists = messages.some((m) => m.messageId === msg.messageId);
+      if (alreadyExists) {
+        console.log('🚫 BLOCKED: duplicate messageId:', msg.messageId);
+        return;
+      }
 
-        // 3. ADD NEW
-        return [
-          ...prev,
-          {
-            messageId: msg.messageId,
-            text: msg.text,
-            senderId: msg.sender.id,
-            createdAt: msg.createdAt,
-            imageUrl: msg.imageUrl,
-            isRead: true,
-          },
-        ];
-      });
+      console.log('✅ ADDING incoming message');
+      setMessages((prev) => [
+        ...prev,
+        {
+          messageId: msg.messageId,
+          text: msg.text || null,
+          senderId: msg.senderId, // ← TRUST THIS (it's OTHER user)
+          createdAt: msg.createdAt,
+          imageUrl: msg.imageUrl || null,
+          isRead: msg.isRead || false,
+        },
+      ]);
     };
 
-    socket.on('new_message', handleMessage);
-    socket.on('message_sent', handleMessage);
-
-    return () => {
-      socket.off('new_message', handleMessage);
-      socket.off('message_sent', handleMessage);
-    };
-  }, [isNewChat, currentChatId, navigate]);
+    socket.on('new_message', handleNewMessage);
+    return () => socket.off('new_message', handleNewMessage);
+  }, [currentUserId, isNewChat, currentChatId, navigate, messages]);
 
   // === SEND TEXT ===
   const sendMessage = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !currentUserId) return;
 
     const tempId = `temp-${Date.now()}`;
     const payload = { text: input };
-
     if (isNewChat) payload.receiverId = receiverId;
-    else payload.chatId = currentChatId;
+    else {
+      payload.chatId = currentChatId;
+      payload.receiverId = partner?.userId;
+    }
 
-    // Show temp message immediately
+    // OPTIMISTIC (ALWAYS SENT)
     setMessages((prev) => [
       ...prev,
       {
         messageId: tempId,
         text: input,
-        senderId: currentUserId,
+        senderId: currentUserId, // ← FORCE THIS
         createdAt: new Date().toISOString(),
         imageUrl: null,
-        isRead: true,
+        isRead: false,
       },
     ]);
 
-    socket.emit('send_message', payload);
+    socket.emit('send_message', payload, (ack) => {
+      console.log('=== ACK FULL DATA ===', JSON.stringify(ack, null, 2));
+
+      if (!ack?.message) {
+        console.log('NO ACK MESSAGE');
+        return;
+      }
+
+      const backendMsg = ack.message;
+
+      // === CRITICAL: FORCE SENDER = ME ===
+      setMessages((prev) => {
+        const idx = prev.findIndex((m) => m.messageId === tempId);
+        if (idx === -1) return prev;
+
+        const updated = [...prev];
+        updated[idx] = {
+          messageId: backendMsg.messageId,
+          text: backendMsg.text,
+          senderId: currentUserId, // ← FORCE MY ID
+          createdAt: backendMsg.createdAt,
+          imageUrl: backendMsg.imageUrl || null,
+          isRead: true,
+        };
+        return updated;
+      });
+    });
+
     setInput('');
   };
 
+  // === SEND IMAGE ===
   const sendImage = async (file) => {
     if (!file || isNewChat || !currentChatId) {
       alert('Send a text message first.');
@@ -218,10 +240,9 @@ export default function ChatDetail() {
       return;
     }
 
-    const tempId = `temp-img-${Date.now()}`;
+    const tempId = `temp-${Date.now()}`;
     const previewUrl = URL.createObjectURL(file);
 
-    // Show it immediately
     setMessages((prev) => [
       ...prev,
       {
@@ -246,10 +267,9 @@ export default function ChatDetail() {
           withCredentials: true,
         },
       );
-      // backend emits new_message -> will replace temp
+      console.log('IMAGE UPLOADED');
     } catch (err) {
       alert('Failed to send image.');
-      // Optionally remove temp image
       setMessages((prev) => prev.filter((m) => m.messageId !== tempId));
     }
   };
@@ -278,20 +298,27 @@ export default function ChatDetail() {
           </div>
         </div>
 
-        <div
+        <button
           className="chat-header-right"
-          onClick={() => alert('Create Invoice')}
+          onClick={() =>
+            navigate(`/supplier/invoices/new?buyer=${partner?.userId}`)
+          }
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '14px',
+            color: '#007bff',
+          }}
         >
           <div className="invoice-icon">
             <FaFileInvoiceDollar />
           </div>
-          <div
-            className="invoice-label"
-            // onClick={navigate(`/supplier/invoices/new?buyer=${partner?.id}`)}
-          >
-            Create an Invoice
-          </div>
-        </div>
+          <div className="invoice-label">Create an Invoice</div>
+        </button>
       </div>
 
       <div className="chat-messages">

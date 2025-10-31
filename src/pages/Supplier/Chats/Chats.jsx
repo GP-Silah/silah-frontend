@@ -36,13 +36,6 @@ export default function ChatsSupplier() {
   useEffect(() => {
     if (socketInitialized.current) return;
 
-    socket.connect();
-
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket');
-      socket.emit('join_user');
-    });
-
     socket.on('new_message', (data) => {
       const msg = data.message || data;
       if (!msg?.chatId) return;
@@ -72,13 +65,6 @@ export default function ChatsSupplier() {
     });
 
     socketInitialized.current = true;
-
-    return () => {
-      socket.off('connect');
-      socket.off('new_message');
-      socket.disconnect();
-      socketInitialized.current = false;
-    };
   }, [t]);
 
   const fetchChats = useCallback(async () => {
