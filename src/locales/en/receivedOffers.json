@@ -1,10 +1,22 @@
 {
   "pageTitle": "Bidding Offers",
-  "offerDate": "Offer Date",
+  "offerDate": "Offer Submitted On",
   "supplier": "Supplier",
   "proposedAmount": "Proposed Amount",
-  "completionTime": "Project Completion Time",
-  "decline": "Decline Offer",
-  "accept": "Accept Offer",
-  "viewDetails": "View Details"
+  "completionTime": "Completion Date",
+  "decline": "Decline",
+  "accept": "Accept",
+  "viewDetails": "View Details",
+  "noOffersMessage": "You haven't received any offers yet.",
+  "openNewBid": "Open a new bid",
+  "loadingOffers": "Loading offers...",
+  "fetchError": "Failed to load offers. Please try again.",
+  "updateError": "Failed to update offer.",
+  "offerAccepted": "Offer accepted successfully!",
+  "offerDeclined": "Offer declined.",
+  "offerUpdated": "This offer has already been reviewed.",
+  "missingBidId": "Bid ID is missing.",
+  "status.PENDING": "Pending",
+  "status.ACCEPTED": "Accepted",
+  "status.DECLINED": "Declined"
 }

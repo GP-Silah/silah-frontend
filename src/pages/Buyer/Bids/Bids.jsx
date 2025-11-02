@@ -140,9 +140,7 @@ export default function BidsYouCreated() {
                   {isOpenForOffers ? (
                     <button
                       className="btn btn-primary"
-                      onClick={() =>
-                        navigate(`/buyer/bids/${bid.bidId}/offers`)
-                      }
+                      onClick={() => navigate(`/buyer/offers/${bid.bidId}`)}
                     >
                       {t('viewOffers')}
                     </button>

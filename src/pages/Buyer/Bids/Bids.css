@@ -198,3 +198,65 @@
   margin-inline-end: 6px;
   color: var(--purple);
 }
+
+/* -------------------------------------------------
+   Page container – keep original padding, just centre
+   ------------------------------------------------- */
+.bids-page {
+  min-height: 100vh;
+  background: #fff;
+  padding: 32px 40px 80px;
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Tajawal', sans-serif;
+  display: flex; /* NEW */
+  flex-direction: column; /* NEW */
+  align-items: center; /* NEW – centre everything */
+}
+
+/* -------------------------------------------------
+   Header – keep the 13 % offset you had, but inside a centred container
+   ------------------------------------------------- */
+.bids-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0 16px;
+  width: 100%;
+  max-width: 900px; /* same as card max-width */
+  padding: 0 20px; /* optional inner padding */
+}
+
+/* keep the original 13 % offsets */
+.bids-title {
+  margin-inline-start: 13%;
+}
+.create-bid-btn {
+  margin-inline-end: 13%;
+}
+
+/* -------------------------------------------------
+   List – centred, max-width
+   ------------------------------------------------- */
+.bids-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* NEW – centre cards */
+  gap: 18px;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 900px; /* NEW – same as card */
+}
+
+/* -------------------------------------------------
+   Card – fill the container, keep original 85 % width
+   ------------------------------------------------- */
+.bid-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 18px 20px;
+  width: 85%; /* keep your original width */
+  max-width: 900px; /* NEW – cap at 900 px */
+  margin: 0 auto; /* centre if narrower */
+}

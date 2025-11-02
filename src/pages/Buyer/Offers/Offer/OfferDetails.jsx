@@ -3,7 +3,7 @@ import './OfferDetails.css';
 import { useTranslation } from 'react-i18next';
 
 export default function OfferDetails() {
-  const { t, i18n } = useTranslation(['offerDetails', 'common']);
+  const { t, i18n } = useTranslation('offerDetails');
 
   useEffect(() => {
     document.title = t('pageTitle.offerDetails', { ns: 'common' });

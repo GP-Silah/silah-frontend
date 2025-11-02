@@ -1,0 +1,6 @@
+# robots.txt for https://silah.site
+
+User-agent: *
+Allow: /
+
+#Sitemap: https://silah.site/sitemap.xml
