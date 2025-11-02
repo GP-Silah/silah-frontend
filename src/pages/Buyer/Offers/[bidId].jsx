@@ -104,9 +104,9 @@ export default function BiddingOffersBuyer() {
   const hasOffers = offers.length > 0;
 
   return (
-    <div className="bids-container">
-      <div className="bids-header">
-        <h2 className="bids-title">{t('pageTitle')}</h2>
+    <div className="offers-container">
+      <div className="offers-header">
+        <h2 className="offers-title">{t('pageTitle')}</h2>
       </div>
 
       {/* LOADING */}
@@ -138,110 +138,105 @@ export default function BiddingOffersBuyer() {
 
       {/* OFFERS LIST */}
       {hasOffers && !loading && (
-        <div className="bids-list">
-          {offers.map((offer) => (
-            <div key={offer.offerId} className="bid-card">
-              <div className="offer-header">
-                <p className="offer-date">
-                  {t('offerDate')}: <span>{formatDate(offer.createdAt)}</span>
-                </p>
-              </div>
-
-              <div className="offer-body">
-                <div className="offer-logo">
-                  {offer.supplier.user.pfpUrl ? (
+        <div className="offers-list">
+          {offers.map((offer) => {
+            const supplier = offer.supplier;
+            return (
+              <article key={offer.offerId} className="offer-card">
+                {/* Clickable Supplier Header */}
+                <div
+                  className="supplier-header"
+                  onClick={() =>
+                    navigate(`/suppliers/storefront/${supplier.supplierId}`)
+                  }
+                >
+                  {supplier.user?.pfpUrl ? (
                     <img
-                      src={offer.supplier.user.pfpUrl}
-                      alt={offer.supplier.businessName}
-                      className="supplier-logo-img"
+                      src={supplier.user.pfpUrl}
+                      alt={supplier.businessName}
+                      className="supplier-avatar"
                     />
                   ) : (
-                    'LOGO'
+                    <div className="supplier-avatar-placeholder">LOGO</div>
                   )}
+                  <div className="supplier-info">
+                    <h3>{supplier.businessName || supplier.supplierName}</h3>
+                    <p className="supplier-date">
+                      {t('offerDate')}: {formatDate(offer.createdAt)}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="offer-info">
-                  <h3 className="offer-supplier">
-                    {offer.supplier.businessName || offer.supplier.supplierName}
-                  </h3>
-
-                  <p className="info-line">
-                    <span className="info-label">{t('proposedAmount')}:</span>{' '}
-                    <strong className="info-value">
-                      {offer.proposedAmount.toLocaleString()}
-                    </strong>
-                  </p>
-
-                  <p className="info-line">
-                    <span className="info-label">{t('completionTime')}:</span>{' '}
-                    <strong className="info-value">
+                {/* Offer Details */}
+                <div className="offer-details">
+                  <div className="detail-item">
+                    <span className="detail-label">{t('proposedAmount')}</span>
+                    <span className="detail-value">
+                      {offer.proposedAmount.toLocaleString()} SAR
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">{t('completionTime')}</span>
+                    <span className="detail-value">
                       {formatDate(offer.expectedCompletionTime)}
-                    </strong>
-                  </p>
+                    </span>
+                  </div>
+                </div>
 
-                  {offer.status !== 'PENDING' && (
-                    <p
+                {/* Status */}
+                {offer.status !== 'PENDING' && (
+                  <div style={{ margin: '12px 0' }}>
+                    <span
                       className={`status-badge status-${offer.status.toLowerCase()}`}
                     >
                       {t(`status.${offer.status}`)}
-                    </p>
-                  )}
-                </div>
-              </div>
+                    </span>
+                  </div>
+                )}
 
-              {/* BUTTONS */}
-              <div className="offer-buttons">
-                {/* LEFT: View Details */}
-                <button
-                  onClick={() =>
-                    navigate(`/buyer/offers/offer/${offer.offerId}`, {
-                      state: { offer },
-                    })
-                  }
-                  className="view-btn"
-                >
-                  {t('viewDetails')}
-                </button>
+                {/* Actions */}
+                <div className="offer-actions">
+                  <button
+                    className="view-details-btn"
+                    onClick={() =>
+                      navigate(`/buyer/offers/offer/${offer.offerId}`, {
+                        state: { offer },
+                      })
+                    }
+                  >
+                    {t('viewDetails')}
+                  </button>
 
-                {/* RIGHT: Actions */}
-                <div className="action-buttons">
-                  {offer.status === 'PENDING' ? (
-                    <>
-                      <button
-                        className="decline-btn"
-                        onClick={() =>
-                          handleStatusChange(offer.offerId, 'DECLINED')
-                        }
-                        disabled={updating[offer.offerId]}
-                      >
-                        {updating[offer.offerId] ? '...' : t('decline')}
-                      </button>
-                      <button
-                        className="accept-btn"
-                        onClick={() =>
-                          handleStatusChange(offer.offerId, 'ACCEPTED')
-                        }
-                        disabled={updating[offer.offerId]}
-                      >
-                        {updating[offer.offerId] ? '...' : t('accept')}
-                      </button>
-                    </>
-                  ) : (
-                    <div
-                      style={{
-                        width: '100%',
-                        textAlign: 'right',
-                        color: '#888',
-                        fontSize: '0.9rem',
-                      }}
-                    >
-                      {t('offerUpdated')}
-                    </div>
-                  )}
+                  <div className="action-group">
+                    {offer.status === 'PENDING' ? (
+                      <>
+                        <button
+                          className="decline-btn"
+                          onClick={() =>
+                            handleStatusChange(offer.offerId, 'DECLINED')
+                          }
+                          disabled={updating[offer.offerId]}
+                        >
+                          {updating[offer.offerId] ? '...' : t('decline')}
+                        </button>
+                        <button
+                          className="accept-btn"
+                          onClick={() =>
+                            handleStatusChange(offer.offerId, 'ACCEPTED')
+                          }
+                          disabled={updating[offer.offerId]}
+                        >
+                          {updating[offer.offerId] ? '...' : t('accept')}
+                        </button>
+                      </>
+                    ) : (
+                      <div className="reviewed-note">{t('offerUpdated')}</div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              </article>
+            );
+          })}
         </div>
       )}
     </div>

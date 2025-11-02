@@ -76,3 +76,60 @@
 .accept-btn:hover {
   background: #5b3f84;
 }
+
+/* -------------------------------------------------
+   Supplier block – centered, clickable
+   ------------------------------------------------- */
+.supplier-block {
+  margin: 20px 0 30px;
+  text-align: center;
+}
+
+.supplier-link {
+  display: block;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.supplier-link:hover {
+  transform: translateY(-2px);
+}
+
+.supplier-info-centered {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar */
+.supplier-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eee;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.supplier-avatar.placeholder {
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Text */
+.supplier-text {
+  text-align: center;
+}
+.supplier-name {
+  color: #5c2d91;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.supplier-city {
+  color: #777;
+  font-size: 0.9rem;
+}

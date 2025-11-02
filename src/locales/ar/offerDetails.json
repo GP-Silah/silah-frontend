@@ -1,0 +1,26 @@
+{
+  "pageTitle": {
+    "offerDetails": "تفاصيل العرض"
+  },
+  "supplierOfferDetails": "تفاصيل عرض {{supplier}}",
+  "offerSubtitle": "إليك العرض المقدم من المورد لمناقصتك. يمكنك مراجعة التفاصيل أدناه:",
+  "proposedAmount": "المبلغ المقترح",
+  "expectedCompletionTime": "مدة الإكمال المتوقعة",
+  "technicalOfferDetails": "تفاصيل العرض الفني",
+  "projectExecutionDuration": "مدة تنفيذ المشروع",
+  "notes": "ملاحظات",
+  "declineOffer": "رفض العرض",
+  "acceptOffer": "قبول العرض",
+  "sar": "ريال",
+  "loadingOffer": "جاري تحميل تفاصيل العرض...",
+  "offerNotFound": "العرض غير موجود.",
+  "missingOfferId": "معرف العرض مفقود.",
+  "fetchError": "فشل تحميل العرض.",
+  "updateError": "فشل تحديث العرض.",
+  "offerAccepted": "تم قبول العرض بنجاح!",
+  "offerDeclined": "تم رفض العرض.",
+  "backToOffers": "العودة إلى العروض",
+  "status.PENDING": "قيد الانتظار",
+  "status.ACCEPTED": "مقبول",
+  "status.DECLINED": "مرفوض"
+}

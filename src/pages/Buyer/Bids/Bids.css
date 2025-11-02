@@ -1,21 +1,31 @@
+/* -------------------------------------------------
+   Variables
+   ------------------------------------------------- */
 :root {
-  --bg: #f7f7fb;
-  --white: #fff;
-  --border: #e5e5ea;
-  --text: #1c1c1e;
-  --muted: #8e8e93;
-  --purple: #5c2d91;
-  --purple-2: #4b217c;
-  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --purple: #6f4e9e;
+  --purple-light: #ede6f7;
+  --purple-dark: #5c2d91;
+  --text: #1a1a1a;
+  --text-light: #666;
+  --border: #e8e8ed;
+  --shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --radius: 20px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* الصفحة العامة */
+/* -------------------------------------------------
+   Page
+   ------------------------------------------------- */
 .bids-page {
   min-height: 100vh;
   background: #fff;
-  padding: 32px 40px 80px;
+  padding: 40px 20px;
+  font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Tajawal', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* RTL/LTR */
@@ -28,235 +38,305 @@
   text-align: left;
 }
 
-/* الهيدر: العنوان + الزر */
+/* -------------------------------------------------
+   Header
+   ------------------------------------------------- */
 .bids-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin: 12px 0 16px;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 32px;
+  padding: 0 20px;
 }
 
 .bids-title {
-  color: #5c2d91;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 800;
-  margin-top: 15px;
-  margin-inline-start: 13%;
+  color: var(--purple-dark);
+  margin: 0;
 }
 
 .create-bid-btn {
   background: var(--purple);
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
-  /* transition: background 0.2s ease, transform 0.1s ease; */
-  margin-right: 13%;
-  margin-top: 5px;
-}
-.create-bid-btn:hover {
-  background: var(--purple-2);
-}
-.create-bid-btn:active {
-  transform: translateY(1px);
+  box-shadow: 0 4px 12px rgba(111, 78, 158, 0.25);
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* قائمة الكروت */
+.create-bid-btn:hover {
+  background: var(--purple-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(111, 78, 158, 0.3);
+}
+
+.create-bid-btn:active {
+  transform: translateY(0);
+}
+
+/* -------------------------------------------------
+   Bids List
+   ------------------------------------------------- */
 .bids-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  margin-top: 8px;
-}
-
-/* الكرت */
-.bid-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
-  padding: 18px 20px;
-  width: 85%;
+  gap: 24px;
+  width: 100%;
   max-width: 900px;
 }
 
-.top-note {
-  color: #b5b5be;
-  font-size: 13px;
-  margin: 0 0 6px;
+/* -------------------------------------------------
+   Bid Card – Floating Glassmorphism
+   ------------------------------------------------- */
+.bid-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(232, 232, 237, 0.5);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.bid-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: var(--radius);
+}
+
+.bid-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgba(111, 78, 158, 0.2);
+}
+
+/* -------------------------------------------------
+   Card Content
+   ------------------------------------------------- */
+.bid-published {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  font-weight: 500;
 }
 
 .bid-title {
-  font-size: 22px;
+  font-size: 1.5rem;
   font-weight: 800;
-  margin: 4px 0 8px;
-  color: #222;
+  color: var(--text);
+  margin: 0 0 12px;
+  line-height: 1.3;
 }
 
-.divider {
+.bid-divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--border),
+    transparent
+  );
+  margin: 16px 0;
   border: none;
-  border-top: 1px solid var(--border);
-  margin: 10px 0 12px;
-}
-.divider.thin {
-  margin: 8px 0 12px;
 }
 
-.activity {
-  margin: 0 0 6px;
-  line-height: 1.5;
-}
-.activity-label {
-  color: #5c2d91;
-  font-weight: 800;
-}
-.activity-text {
+.bid-activity {
+  font-size: 1rem;
+  line-height: 1.6;
   color: #333;
+  margin: 0 0 20px;
 }
 
-/* أسفل الكرت */
+.bid-activity strong {
+  color: var(--purple-dark);
+  font-weight: 700;
+}
+
+/* -------------------------------------------------
+   Footer – Meta + Actions
+   ------------------------------------------------- */
 .bid-footer {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
   align-items: flex-end;
   flex-wrap: wrap;
+  gap: 16px;
 }
 
-.meta {
-  display: flex;
-  gap: 26px;
-  flex-wrap: wrap;
-}
-
-.meta-block {
+.bid-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 210px;
-}
-.meta-label {
-  color: #696974;
-  font-size: 13px;
-  font-weight: 700;
-}
-.meta-value {
-  color: #222;
-  font-size: 14px;
-  font-weight: 700;
-}
-.with-icon .emoji {
-  margin-inline-end: 6px;
+  gap: 10px;
+  font-size: 0.9rem;
 }
 
-.actions {
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.meta-label {
+  color: #888;
+  min-width: 120px;
+}
+
+.meta-value {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.meta-icon {
+  color: var(--purple);
+  font-size: 0.9em;
+}
+
+/* -------------------------------------------------
+   Actions
+   ------------------------------------------------- */
+.bid-actions {
   display: flex;
   gap: 12px;
-  align-items: center;
+  flex-wrap: wrap;
 }
 
 .btn {
   border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
+  border-radius: 12px;
+  padding: 11px 20px;
   font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: var(--transition);
+  min-width: 120px;
+  position: relative;
+  overflow: hidden;
 }
+
 .btn-primary {
-  background: #5b3e6f; /* بنفسجي أغمق قليلًا حتى يطابق الصورة */
-  color: #fff;
+  background: var(--purple);
+  color: white;
 }
+
 .btn-primary:hover {
-  filter: brightness(0.95);
+  background: var(--purple-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(111, 78, 158, 0.3);
+}
+
+.btn-secondary {
+  background: var(--purple-light);
+  color: var(--purple-dark);
+}
+
+.btn-secondary:hover {
+  background: #e0d6f5;
+  transform: translateY(-2px);
 }
 
 .btn-disabled {
-  background: #f1eff6;
-  color: #7b7392;
-  border: 1px solid #e3e0ef;
+  background: #f5f5f7;
+  color: #aaa;
   cursor: not-allowed;
+  border: 1px dashed #ddd;
 }
 
-/* استجابة */
-@media (max-width: 720px) {
+/* Ripple effect */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.4);
+  opacity: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transition: all 0.6s;
+}
+
+.btn:active::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(40);
+  transition: 0s;
+}
+
+/* -------------------------------------------------
+   Empty / Loading / Error
+   ------------------------------------------------- */
+.bids-empty,
+.bids-loading,
+.bids-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.bids-error {
+  color: #e63946;
+  font-weight: 600;
+}
+
+/* -------------------------------------------------
+   Responsive
+   ------------------------------------------------- */
+@media (max-width: 768px) {
+  .bids-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .create-bid-btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .bid-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .bid-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
   .bids-page {
-    padding: 24px 18px 64px;
+    padding: 24px 16px;
   }
-  .meta {
-    gap: 14px;
+  .bid-card {
+    padding: 20px;
   }
-  .meta-block {
-    min-width: unset;
+  .bid-title {
+    font-size: 1.35rem;
   }
-}
-
-.cal-icon {
-  margin-inline-end: 6px;
-  color: var(--purple);
-}
-
-/* -------------------------------------------------
-   Page container – keep original padding, just centre
-   ------------------------------------------------- */
-.bids-page {
-  min-height: 100vh;
-  background: #fff;
-  padding: 32px 40px 80px;
-  color: var(--text);
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Tajawal', sans-serif;
-  display: flex; /* NEW */
-  flex-direction: column; /* NEW */
-  align-items: center; /* NEW – centre everything */
-}
-
-/* -------------------------------------------------
-   Header – keep the 13 % offset you had, but inside a centred container
-   ------------------------------------------------- */
-.bids-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 12px 0 16px;
-  width: 100%;
-  max-width: 900px; /* same as card max-width */
-  padding: 0 20px; /* optional inner padding */
-}
-
-/* keep the original 13 % offsets */
-.bids-title {
-  margin-inline-start: 13%;
-}
-.create-bid-btn {
-  margin-inline-end: 13%;
-}
-
-/* -------------------------------------------------
-   List – centred, max-width
-   ------------------------------------------------- */
-.bids-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* NEW – centre cards */
-  gap: 18px;
-  margin-top: 8px;
-  width: 100%;
-  max-width: 900px; /* NEW – same as card */
-}
-
-/* -------------------------------------------------
-   Card – fill the container, keep original 85 % width
-   ------------------------------------------------- */
-.bid-card {
-  background: var(--white);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
-  padding: 18px 20px;
-  width: 85%; /* keep your original width */
-  max-width: 900px; /* NEW – cap at 900 px */
-  margin: 0 auto; /* centre if narrower */
 }
