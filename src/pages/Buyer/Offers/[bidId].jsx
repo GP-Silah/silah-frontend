@@ -147,7 +147,7 @@ export default function BiddingOffersBuyer() {
                 <div
                   className="supplier-header"
                   onClick={() =>
-                    navigate(`/suppliers/storefront/${supplier.supplierId}`)
+                    navigate(`/storefronts/${supplier.supplierId}`)
                   }
                 >
                   {supplier.user?.pfpUrl ? (

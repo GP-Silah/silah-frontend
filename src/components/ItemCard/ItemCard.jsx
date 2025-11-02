@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import './ItemCard.css';
 
-function ItemCard({ type = 'product', item = {} }) {
+function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
   const { t } = useTranslation('wishlist');
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -153,6 +153,19 @@ function ItemCard({ type = 'product', item = {} }) {
             {type === 'service' && !isPriceNegotiable ? ' • Fixed' : ''}
           </div>
         </div>
+
+        {/* Alternatives Button */}
+        {showAlternatives && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/alternatives/${_id}`);
+            }}
+            className="alternatives-btn"
+          >
+            {t('findAlternatives')}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -161,6 +174,7 @@ function ItemCard({ type = 'product', item = {} }) {
 ItemCard.propTypes = {
   type: PropTypes.oneOf(['product', 'service']),
   item: PropTypes.object,
+  showAlternatives: PropTypes.bool,
 };
 
 export default ItemCard;

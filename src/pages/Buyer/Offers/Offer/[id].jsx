@@ -143,9 +143,7 @@ export default function OfferDetails() {
         <div className="supplier-block">
           <button
             className="supplier-link"
-            onClick={() =>
-              navigate(`/suppliers/storefront/${supplier.supplierId}`)
-            }
+            onClick={() => navigate(`/storefronts/${supplier.supplierId}`)}
             style={{ all: 'unset', cursor: 'pointer', width: '100%' }}
           >
             <div className="supplier-info-centered">

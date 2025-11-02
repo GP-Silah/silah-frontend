@@ -1,3 +1,5 @@
+import ItemCard from '@/components/ItemCard/ItemCard';
+
 export default function Homepage() {
   return (
     <div className="p-6">

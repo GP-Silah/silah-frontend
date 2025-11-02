@@ -84,3 +84,29 @@
   font-weight: 500;
   color: #374151;
 }
+
+.alternatives-btn {
+  margin-top: 0.75rem;
+  width: 100%;
+  background: #324669; /* ← NEW BLUE */
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(50, 70, 105, 0.2);
+}
+
+.alternatives-btn:hover {
+  background: #2a3a55; /* ← Darker blue */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(50, 70, 105, 0.3);
+}
+
+.alternatives-btn:active {
+  transform: translateY(0);
+  background: #22314d;
+}
