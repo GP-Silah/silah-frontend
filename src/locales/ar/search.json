@@ -1,0 +1,13 @@
+{
+  "pageTitle": "البحث | صلة",
+  "title": "نتائج البحث عن",
+  "filter": "تصفية",
+  "minPrice": "الحد الأدنى للسعر",
+  "maxPrice": "الحد الأعلى للسعر",
+  "placeholderMin": "أدخل رقم هنا",
+  "placeholderMax": "أدخل رقم هنا",
+  "clearFilters": "مسح التصفية",
+  "loading": "جاري التحميل...",
+  "noResults": "لا توجد نتائج لـ",
+  "error": "حدث خطأ. حاول مرة أخرى."
+}

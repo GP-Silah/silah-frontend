@@ -25,6 +25,10 @@ export default function Homepage() {
 
   const [searchText, setSearchText] = useState('');
 
+  useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t, i18n.language]);
+
   // === FETCH PRODUCTS & SERVICES ===
   useEffect(() => {
     const fetchData = async () => {

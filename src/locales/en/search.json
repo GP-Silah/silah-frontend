@@ -1,0 +1,13 @@
+{
+  "pageTitle": "Search | Silah",
+  "title": "Search results for",
+  "filter": "Filter",
+  "minPrice": "Minimum Price",
+  "maxPrice": "Maximum Price",
+  "placeholderMin": "Enter Number Here",
+  "placeholderMax": "Enter Number Here",
+  "clearFilters": "Clear Filters",
+  "loading": "Loading...",
+  "noResults": "No results found for",
+  "error": "Something went wrong. Please try again."
+}
