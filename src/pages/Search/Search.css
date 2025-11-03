@@ -13,7 +13,10 @@
   font-size: 1.75rem;
   font-weight: 800;
   color: #1a1a1a;
-  margin-bottom: 1rem;
+}
+
+.search-header h1 strong {
+  color: #324669;
 }
 
 .search-content {
@@ -35,8 +38,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  height: 350px;
+  gap: 1rem;
 }
 
 .filter-box h3 {
@@ -83,7 +85,7 @@
 }
 
 .clear-btn {
-  margin-top: 0;
+  margin-top: 0.5rem;
   background: none;
   border: none;
   color: #324669;
@@ -103,10 +105,15 @@
   padding: 3rem;
   color: #666;
   font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .status.error {
   color: #ef4444;
+}
+
+.status strong {
+  color: #324669;
 }
 
 .results-grid {

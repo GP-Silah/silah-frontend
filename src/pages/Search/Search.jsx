@@ -18,6 +18,12 @@ const TYPE_MAP = {
   },
 };
 
+const DISPLAY_TYPE = {
+  products: { en: 'Products', ar: 'المنتجات' },
+  services: { en: 'Services', ar: 'الخدمات' },
+  suppliers: { en: 'Suppliers', ar: 'الموردين' },
+};
+
 export default function SearchPage() {
   const { t, i18n } = useTranslation('search');
   const [searchParams] = useSearchParams();
@@ -30,6 +36,7 @@ export default function SearchPage() {
 
   const typeKey =
     TYPE_MAP[lang][rawType] || TYPE_MAP.en[rawType.toLowerCase()] || 'products';
+  const displayType = DISPLAY_TYPE[typeKey][lang];
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,14 +63,19 @@ export default function SearchPage() {
           endpoint = `/api/search/suppliers?name=${text}`;
         }
 
-        if (minPrice) endpoint += `&minPrice=${minPrice}`;
-        if (maxPrice) endpoint += `&maxPrice=${maxPrice}`;
+        // Add lang & price filters (only for products)
+        endpoint += `&lang=${lang}`;
+        if (typeKey === 'products') {
+          if (minPrice) endpoint += `&minPrice=${minPrice}`;
+          if (maxPrice) endpoint += `&maxPrice=${maxPrice}`;
+        }
 
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}${endpoint}`,
           { withCredentials: true },
         );
 
+        console.log(res.data);
         setItems(res.data || []);
       } catch (err) {
         setError(t('error'));
@@ -74,7 +86,7 @@ export default function SearchPage() {
     };
 
     if (text) search();
-  }, [text, typeKey, minPrice, maxPrice, t]);
+  }, [text, typeKey, minPrice, maxPrice, lang, t]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -92,56 +104,77 @@ export default function SearchPage() {
     navigate(`/search?type=${typeParam}&text=${encoded}`);
   };
 
+  // Smart no-results message
+  const getNoResultsMessage = () => {
+    const otherTypes = Object.keys(DISPLAY_TYPE)
+      .filter((k) => k !== typeKey)
+      .map((k) => DISPLAY_TYPE[k][lang])
+      .join(` ${t('or')} `);
+
+    return (
+      <p className="status">
+        {t('noResults')} "<strong>{text}</strong>" {t('in')}{' '}
+        <strong>{displayType}</strong>.
+        <br />
+        <span style={{ fontSize: '0.95rem', color: '#555' }}>
+          {t('trySearching')} {otherTypes}?
+        </span>
+      </p>
+    );
+  };
+
   return (
     <div className="search-page" dir={i18n.dir()}>
       <div className="search-header">
         <h1>
-          {t('title')} "{text}"
+          {t('title')} "<strong>{text}</strong>" {t('in')} {displayType}
         </h1>
       </div>
 
       <div className="search-content">
-        {/* Filters */}
-        <aside className="filters">
-          <div className="filter-box">
-            <h3>{t('filter')}</h3>
-            <div className="price-filter">
-              <label>{t('minPrice')}</label>
-              <input
-                type="number"
-                min="0"
-                placeholder={t('placeholderMin')}
-                value={minPrice}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '' || parseFloat(val) >= 0) setMinPrice(val);
-                }}
-              />
+        {/* Filters - Only show for Products */}
+        {typeKey === 'products' && (
+          <aside className="filters">
+            <div className="filter-box">
+              <h3>{t('filter')}</h3>
+              <div className="price-filter">
+                <label>{t('minPrice')}</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder={t('placeholderMin')}
+                  value={minPrice}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '' || parseFloat(val) >= 0) setMinPrice(val);
+                  }}
+                />
 
-              <label>{t('maxPrice')}</label>
-              <input
-                type="number"
-                min="0"
-                placeholder={t('placeholderMax')}
-                value={maxPrice}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === '' || parseFloat(val) >= 0) setMaxPrice(val);
+                <label>{t('maxPrice')}</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder={t('placeholderMax')}
+                  value={maxPrice}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '' || parseFloat(val) >= 0) setMaxPrice(val);
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={() => {
+                  setMinPrice('');
+                  setMaxPrice('');
                 }}
-              />
+                className="clear-btn"
+              >
+                {t('clearFilters')}
+              </button>
             </div>
-
-            <button
-              onClick={() => {
-                setMinPrice('');
-                setMaxPrice('');
-              }}
-              className="clear-btn"
-            >
-              {t('clearFilters') || 'Clear Filters'}
-            </button>
-          </div>
-        </aside>
+          </aside>
+        )}
 
         {/* Results */}
         <main className="results">
@@ -150,9 +183,7 @@ export default function SearchPage() {
           ) : error ? (
             <p className="status error">{error}</p>
           ) : items.length === 0 ? (
-            <p className="status">
-              {t('noResults')} "{text}"
-            </p>
+            getNoResultsMessage()
           ) : (
             <div className="results-grid">
               {items.map((item) => {

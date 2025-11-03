@@ -105,13 +105,13 @@ export default function BuyerNotifications() {
 
     switch (n.relatedEntityType) {
       case 'CHAT':
-        navigate(`/buyer/chats/${n.relatedEntityId}`);
+        navigate(`/buyer/chats`);
         break;
       case 'INVOICE':
         navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       case 'OFFER':
-        navigate(`/buyer/offers/${n.relatedEntityId}`);
+        // navigate(`/buyer/offers/${n.relatedEntityId}`); // he can't view them until deadline
         break;
       case 'ORDER':
         navigate(`/buyer/orders/${n.relatedEntityId}`);

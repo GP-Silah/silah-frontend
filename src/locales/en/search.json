@@ -1,6 +1,9 @@
 {
   "pageTitle": "Search | Silah",
   "title": "Search results for",
+  "in": "in",
+  "or": "or",
+  "trySearching": "Try searching in",
   "filter": "Filter",
   "minPrice": "Minimum Price",
   "maxPrice": "Maximum Price",

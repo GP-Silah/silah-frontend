@@ -14,21 +14,36 @@ import {
   FaGlobe,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 import { useNotifications } from '../../hooks/useNotifications';
 import './BuyerHeader.global.css';
 
+const TYPE_MAP = {
+  en: {
+    Products: 'products',
+    Services: 'services',
+    Suppliers: 'suppliers',
+  },
+  ar: {
+    المنتجات: 'products',
+    الخدمات: 'services',
+    الموردين: 'suppliers',
+  },
+};
+
 const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
-  // Receive from layout
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
 
   const [categories, setCategories] = useState([]);
-  const { notifications, profilePics } = useNotifications(i18n.language);
+  const { notifications, profilePics, markSingleAsRead } = useNotifications(
+    i18n.language,
+  );
   const unreadNotifications = notifications.filter((n) => !n.isRead);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -36,6 +51,11 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
 
   const dropdownRef = useRef(null);
   const profileRef = useRef(null);
+  const searchInputRef = useRef(null);
+  const selectRef = useRef(null);
+
+  const isPaymentCallbackPage = location.pathname.includes('/callback');
+  if (isPaymentCallbackPage) return null;
 
   // === Toggle Language ===
   const toggleLanguage = () => {
@@ -43,7 +63,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     i18n.changeLanguage(newLang);
   };
 
-  // === Fetch Categories Only ===
+  // === Fetch Categories ===
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
@@ -68,12 +88,12 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // === Mark All Notifications as Read ===
+  // === Mark All as Read ===
   const markAllAsRead = () => {
     const ids = notifications
       .filter((n) => !n.isRead)
       .map((n) => n.notificationId);
-    if (ids.length) markAllAsReadProp(ids); // ← Uses prop from Layout
+    if (ids.length) markAllAsReadProp(ids);
   };
 
   // === Handle Role Switch ===
@@ -81,8 +101,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
     if (switching) return;
     setSwitching(true);
     try {
-      const newRole = await switchRole(); // <--- CALL context's switchRole
-      // now navigate based on returned role (safe)
+      const newRole = await switchRole();
       if (newRole === 'supplier')
         navigate('/supplier/overview', { replace: true });
       else if (newRole === 'buyer')
@@ -101,20 +120,16 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
 
   // === Handle Notification Click ===
   const handleNotificationClick = (n) => {
-    if (!n.isRead) {
-      markSingleAsRead(n.notificationId);
-    }
-
-    // Navigate based on type
+    if (!n.isRead) markSingleAsRead(n.notificationId);
     switch (n.relatedEntityType) {
       case 'CHAT':
-        navigate(`/buyer/chats/${n.relatedEntityId}`);
+        navigate(`/buyer/chats`);
         break;
       case 'INVOICE':
         navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       case 'OFFER':
-        navigate(`/buyer/offers/${n.relatedEntityId}`);
+        // navigate(`/buyer/offers/${n.relatedEntityId}`); // he can't view them until deadline
         break;
       case 'ORDER':
         navigate(`/buyer/orders/${n.relatedEntityId}`);
@@ -123,18 +138,38 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
         navigate(`/buyer/invoices`);
         break;
       default:
-        // Stay
         break;
     }
-
-    // setDropdownOpen(false); // Close dropdown
+    setDropdownOpen(false);
   };
 
-  const isPaymentCallbackPage = location.pathname.includes('/callback');
+  // === SEARCH FUNCTION ===
+  const handleSearch = () => {
+    const text = searchInputRef.current?.value.trim();
+    if (!text) return;
 
-  if (isPaymentCallbackPage) {
-    return null; // Don't show on callback page
-  }
+    const selectValue = selectRef.current?.value;
+    const lang = i18n.language;
+
+    const typeKey =
+      TYPE_MAP[lang][selectValue] ||
+      TYPE_MAP.en[selectValue.toLowerCase()] ||
+      'products';
+    const typeParam =
+      lang === 'ar'
+        ? typeKey === 'products'
+          ? 'المنتجات'
+          : typeKey === 'services'
+          ? 'الخدمات'
+          : 'الموردين'
+        : selectValue;
+
+    navigate(`/search?type=${typeParam}&text=${encodeURIComponent(text)}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
 
   return (
     <header
@@ -151,20 +186,33 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
         <CategoryMegamenu categories={categories} lang={i18n.language} />
       </div>
 
-      {/* === Search === */}
+      {/* === SEARCH BAR === */}
       <div className="search-bar">
-        <FaSearch className="search-icon" />
-        <input type="text" placeholder={t('searchPlaceholder')} />
-        <select className="product-select">
-          <option>{t('tabs.products')}</option>
-          <option>{t('tabs.services')}</option>
-          <option>{t('tabs.suppliers')}</option>
+        <FaSearch
+          className="search-icon"
+          onClick={handleSearch}
+          style={{ cursor: 'pointer' }}
+        />
+        <input
+          type="text"
+          placeholder={t('searchPlaceholder')}
+          ref={searchInputRef}
+          onKeyDown={handleKeyDown}
+        />
+        <select
+          className="product-select"
+          ref={selectRef}
+          defaultValue={t('tabs.products')}
+        >
+          <option value={t('tabs.products')}>{t('tabs.products')}</option>
+          <option value={t('tabs.services')}>{t('tabs.services')}</option>
+          <option value={t('tabs.suppliers')}>{t('tabs.suppliers')}</option>
         </select>
       </div>
 
-      {/* === Right Section === */}
+      {/* === RIGHT SECTION === */}
       <div className="header-right">
-        {/* === Cart === */}
+        {/* Cart */}
         <button
           className="icon-btn"
           onClick={() => navigate('/buyer/cart')}
@@ -173,7 +221,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
           <FaShoppingCart />
         </button>
 
-        {/* === Notifications === */}
+        {/* Notifications */}
         <div className="notification-wrapper" ref={dropdownRef}>
           <button
             className="icon-btn"
@@ -190,10 +238,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
 
           {dropdownOpen && (
             <div className="notification-dropdown">
-              {/* Title */}
               <div className="notif-title">{t('notifications')}</div>
-
-              {/* === إذا لم يكن هناك إشعارات جديدة === */}
               {unreadNotifications.length === 0 ? (
                 <div className="notif-item empty">
                   {t('noNewNotifications') || 'No new notifications'}
@@ -207,7 +252,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
                         <li
                           key={n.notificationId}
                           onClick={() => handleNotificationClick(n)}
-                          className="notif-item unread" // ← دائمًا unread
+                          className="notif-item unread"
                         >
                           {pfp ? (
                             <img src={pfp} alt="" className="notif-pfp" />
@@ -224,7 +269,6 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
                       );
                     })}
                   </ul>
-
                   <div className="notification-footer">
                     <button
                       className="view-all-btn"
@@ -245,7 +289,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
           )}
         </div>
 
-        {/* === Profile === */}
+        {/* Profile */}
         <div className="profile-wrapper" ref={profileRef}>
           <button
             className="icon-btn"
@@ -266,7 +310,6 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
 
           {profileOpen && (
             <div className="profile-dropdown">
-              {/* Top Section */}
               <div className="profile-info">
                 <h4 className="business-name">
                   {user?.businessName || t('profileChoices.noBusinessName')}
@@ -275,10 +318,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
                   {t('profileChoices.managedBy')}: <span>{user?.name}</span>
                 </p>
               </div>
-
               <div className="divider" />
-
-              {/* Middle Section */}
               <div className="profile-actions">
                 <button
                   className="profile-item"
@@ -335,10 +375,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
                   <FaCog /> {t('profileChoices.settings')}
                 </button>
               </div>
-
               <div className="divider" />
-
-              {/* Bottom Section */}
               <div className="profile-actions">
                 <button
                   className="profile-item highlight"
@@ -361,7 +398,7 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
           )}
         </div>
 
-        {/* === Language Toggle === */}
+        {/* Language */}
         <button className="language-toggle" onClick={toggleLanguage}>
           <FaGlobe />
         </button>
