@@ -6,5 +6,7 @@
   "smartSearch": {
     "text": "Looking for a similar product? Type a name below, and we'll find the best matches for you!",
     "placeholder": "Type Text Here"
-  }
+  },
+  "loading": "Loading...",
+  "noItems": "No items available"
 }

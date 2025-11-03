@@ -1,16 +1,39 @@
 .item-card {
-  min-height: 22rem;
+  width: 16rem !important;
+  min-height: 22rem !important;
+  margin: 0 !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  width: 16rem;
   background: white;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+}
+
+/* Remove any external spacing */
+.item-card > * {
+  margin: 0 !important;
+}
+
+/* Enforce image height */
+.image-container img {
+  width: 100%;
+  height: 12rem !important;
+  object-fit: cover;
+  display: block;
+}
+
+/* Enforce content padding */
+.card-content {
+  padding: 1rem !important;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes price to bottom */
 }
 
 .item-card:hover {
@@ -51,7 +74,7 @@
 }
 
 .heart-btn:hover {
-  background: white;
+  background: rgb(252, 242, 242);
 }
 
 .card-content {
@@ -65,12 +88,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
 }
 
 .card-content p {
   font-size: 0.875rem;
   color: #6b7280;
   margin: 0.25rem 0;
+  text-align: center;
 }
 
 .rating-price {
@@ -90,8 +115,8 @@
 
 .rating span {
   line-height: 1;
-  position: relative;
-  top: 4.1px;
+  font-size: 0.875rem;
+  color: #374151;
 }
 
 .rating svg {
@@ -155,4 +180,15 @@
 .smart-search-icon {
   min-width: 20px !important;
   min-height: 20px !important;
+}
+
+.item-card {
+  width: 16rem !important;
+  min-height: 22rem !important;
+}
+
+@media (max-width: 768px) {
+  .item-card {
+    width: 14rem !important;
+  }
 }

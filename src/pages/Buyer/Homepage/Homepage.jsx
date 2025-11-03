@@ -2,136 +2,84 @@ import React, { useEffect, useRef, useState } from 'react';
 import ItemCard from '@/components/ItemCard/ItemCard';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './Homepage.css';
 
 export default function Homepage() {
   const { t, i18n } = useTranslation('homepage');
   const isRTL = i18n.dir() === 'rtl';
   const userName = 'Saad';
+  const navigate = useNavigate();
 
   const productCarouselRef = useRef(null);
   const serviceCarouselRef = useRef(null);
 
+  const [products, setProducts] = useState([]);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [productScroll, setProductScroll] = useState(0);
   const [serviceScroll, setServiceScroll] = useState(0);
 
+  const [searchText, setSearchText] = useState('');
+
+  // === FETCH PRODUCTS & SERVICES ===
   useEffect(() => {
-    document.title = t('pageTitle');
-  }, [t, i18n.language]);
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
 
-  // Fake Data
-  const fakeProducts = [
-    {
-      _id: 1,
-      name: 'Flat Beige Plate',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's1' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 45,
-      price: 150,
-      type: 'product',
-    },
-    {
-      _id: 2,
-      name: 'Luxury Perfume',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's2' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 150,
-      price: 320,
-      type: 'product',
-    },
-    {
-      _id: 3,
-      name: 'High Quality Beans',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's3' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 120,
-      price: 80,
-      type: 'product',
-    },
-    {
-      _id: 4,
-      name: 'Eyeliner Shadow',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's4' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 70,
-      price: 95,
-      type: 'product',
-    },
-    {
-      _id: 5,
-      name: 'Dropper Bottle',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's5' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 25,
-      price: 60,
-      type: 'product',
-    },
-  ];
+      try {
+        const lang = i18n.language === 'ar' ? 'ar' : 'en';
 
-  const fakeServices = [
-    {
-      _id: 6,
-      name: 'UI/UX Design',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's6' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 300,
-      price: 750,
-      isPriceNegotiable: true,
-      type: 'service',
-    },
-    {
-      _id: 7,
-      name: 'Card Design',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's7' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 150,
-      price: 150,
-      isPriceNegotiable: false,
-      type: 'service',
-    },
-    {
-      _id: 8,
-      name: 'Product Design',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's8' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 750,
-      price: 1200,
-      isPriceNegotiable: true,
-      type: 'service',
-    },
-    {
-      _id: 9,
-      name: 'Phone Repair',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's9' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 150,
-      price: 200,
-      isPriceNegotiable: true,
-      type: 'service',
-    },
-    {
-      _id: 10,
-      name: 'House Repair',
-      supplier: { businessName: 'Ama Amazing Co.', supplierId: 's10' },
-      imagesFilesUrls: [''],
-      avgRating: 4.8,
-      ratingsCount: 50,
-      price: 500,
-      isPriceNegotiable: false,
-      type: 'service',
-    },
-  ];
+        const [prodRes, servRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
+            headers: { 'accept-language': lang },
+            withCredentials: true,
+          }),
+          axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services`, {
+            headers: { 'accept-language': lang },
+            withCredentials: true,
+          }),
+        ]);
 
-  // Scroll handler
+        setProducts(prodRes.data || []);
+        setServices(servRes.data || []);
+      } catch (err) {
+        const msg = err.response?.data?.error?.message || err.message;
+        setError(msg);
+        console.error('API Error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [i18n.language]);
+
+  // === UPDATE ARROWS ON RESIZE + INITIAL ===
+  useEffect(() => {
+    const updateScroll = () => {
+      if (productCarouselRef.current)
+        setProductScroll(productCarouselRef.current.scrollLeft);
+      if (serviceCarouselRef.current)
+        setServiceScroll(serviceCarouselRef.current.scrollLeft);
+    };
+
+    updateScroll();
+    window.addEventListener('resize', updateScroll);
+    return () => window.removeEventListener('resize', updateScroll);
+  }, [products, services]);
+
+  // === RESET SCROLL ON LOAD ===
+  useEffect(() => {
+    if (productCarouselRef.current) productCarouselRef.current.scrollLeft = 0;
+    if (serviceCarouselRef.current) serviceCarouselRef.current.scrollLeft = 0;
+  }, []);
+
+  // === SCROLL HANDLER ===
   const scrollCarousel = (ref, direction, setScroll) => {
     if (!ref.current) return;
     const scrollAmount = 320;
@@ -149,13 +97,51 @@ export default function Homepage() {
     setScroll(newScroll);
   };
 
-  // Show arrows only if scrolled
+  // === ARROW VISIBILITY ===
   const canGoLeft = (scroll) => scroll > 50;
   const canGoRight = (ref, scroll) => {
     if (!ref.current) return false;
     const max = ref.current.scrollWidth - ref.current.clientWidth;
-    return scroll < max - 50;
+    return max > 10 && scroll < max - 10;
   };
+
+  // === SMART SEARCH SUBMIT ===
+  const handleSmartSearch = (e) => {
+    e.preventDefault();
+    if (searchText.trim()) {
+      navigate(`/alternatives?text=${encodeURIComponent(searchText.trim())}`);
+    }
+  };
+
+  // === MAP API → ITEMCARD PROPS ===
+  const mapProduct = (p) => ({
+    _id: p.productId,
+    name: p.name,
+    supplier: {
+      businessName: p.supplier?.businessName || 'Unknown',
+      supplierId: p.supplierId,
+    },
+    imagesFilesUrls: p.imagesFilesUrls || [],
+    avgRating: p.avgRating || 0,
+    ratingsCount: p.ratingsCount || 0,
+    price: p.price || 0,
+    type: 'product',
+  });
+
+  const mapService = (s) => ({
+    _id: s.serviceId,
+    name: s.name,
+    supplier: {
+      businessName: s.supplier?.businessName || 'Unknown',
+      supplierId: s.supplierId,
+    },
+    imagesFilesUrls: s.imagesFilesUrls || [],
+    avgRating: s.avgRating || 0,
+    ratingsCount: s.ratingsCount || 0,
+    price: s.price || 0,
+    isPriceNegotiable: s.isPriceNegotiable || false,
+    type: 'service',
+  });
 
   return (
     <div className="homepage-container" dir={i18n.dir()}>
@@ -168,41 +154,67 @@ export default function Homepage() {
       <section className="section-outer">
         <h2 className="section-title">{t('productsTitle')}</h2>
         <div className="section full-width">
-          <div className="carousel-wrapper">
-            <div
-              className="carousel"
-              ref={productCarouselRef}
-              onScroll={(e) => setProductScroll(e.currentTarget.scrollLeft)}
-            >
-              {fakeProducts.map((item) => (
-                <ItemCard key={item._id} item={item} type="product" />
-              ))}
+          {loading ? (
+            <p className="text-center py-8">{t('loading', { ns: 'common' })}</p>
+          ) : error ? (
+            <p className="text-center py-8 text-red-600">{error}</p>
+          ) : (
+            <div className="carousel-wrapper">
+              <div
+                className="carousel"
+                ref={productCarouselRef}
+                onScroll={(e) => setProductScroll(e.currentTarget.scrollLeft)}
+              >
+                {products.length > 0 ? (
+                  products.map((p) => (
+                    <ItemCard
+                      key={p.productId}
+                      item={mapProduct(p)}
+                      type="product"
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 pl-4">
+                    {t('noItems', { ns: 'common' })}
+                  </p>
+                )}
+              </div>
+
+              {canGoLeft(productScroll) && (
+                <button
+                  className="carousel-arrow left"
+                  onClick={() =>
+                    scrollCarousel(productCarouselRef, 'left', setProductScroll)
+                  }
+                >
+                  {isRTL ? (
+                    <ChevronRight size={20} />
+                  ) : (
+                    <ChevronLeft size={20} />
+                  )}
+                </button>
+              )}
+
+              {canGoRight(productCarouselRef, productScroll) && (
+                <button
+                  className="carousel-arrow right"
+                  onClick={() =>
+                    scrollCarousel(
+                      productCarouselRef,
+                      'right',
+                      setProductScroll,
+                    )
+                  }
+                >
+                  {isRTL ? (
+                    <ChevronLeft size={20} />
+                  ) : (
+                    <ChevronRight size={20} />
+                  )}
+                </button>
+              )}
             </div>
-
-            {/* Left Arrow */}
-            {canGoLeft(productScroll) && (
-              <button
-                className="carousel-arrow left"
-                onClick={() =>
-                  scrollCarousel(productCarouselRef, 'left', setProductScroll)
-                }
-              >
-                {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-              </button>
-            )}
-
-            {/* Right Arrow */}
-            {canGoRight(productCarouselRef, productScroll) && (
-              <button
-                className="carousel-arrow right"
-                onClick={() =>
-                  scrollCarousel(productCarouselRef, 'right', setProductScroll)
-                }
-              >
-                {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </section>
 
@@ -210,53 +222,86 @@ export default function Homepage() {
       <section className="section-outer">
         <h2 className="section-title">{t('servicesTitle')}</h2>
         <div className="section full-width">
-          <div className="carousel-wrapper">
-            <div
-              className="carousel"
-              ref={serviceCarouselRef}
-              onScroll={(e) => setServiceScroll(e.currentTarget.scrollLeft)}
-            >
-              {fakeServices.map((item) => (
-                <ItemCard key={item._id} item={item} type="service" />
-              ))}
+          {loading ? (
+            <p className="text-center py-8">{t('loading', { ns: 'common' })}</p>
+          ) : error ? (
+            <p className="text-center py-8 text-red-600">{error}</p>
+          ) : (
+            <div className="carousel-wrapper">
+              <div
+                className="carousel"
+                ref={serviceCarouselRef}
+                onScroll={(e) => setServiceScroll(e.currentTarget.scrollLeft)}
+              >
+                {services.length > 0 ? (
+                  services.map((s) => (
+                    <ItemCard
+                      key={s.serviceId}
+                      item={mapService(s)}
+                      type="service"
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 pl-4">
+                    {t('noItems', { ns: 'common' })}
+                  </p>
+                )}
+              </div>
+
+              {canGoLeft(serviceScroll) && (
+                <button
+                  className="carousel-arrow left"
+                  onClick={() =>
+                    scrollCarousel(serviceCarouselRef, 'left', setServiceScroll)
+                  }
+                >
+                  {isRTL ? (
+                    <ChevronRight size={20} />
+                  ) : (
+                    <ChevronLeft size={20} />
+                  )}
+                </button>
+              )}
+
+              {canGoRight(serviceCarouselRef, serviceScroll) && (
+                <button
+                  className="carousel-arrow right"
+                  onClick={() =>
+                    scrollCarousel(
+                      serviceCarouselRef,
+                      'right',
+                      setServiceScroll,
+                    )
+                  }
+                >
+                  {isRTL ? (
+                    <ChevronLeft size={20} />
+                  ) : (
+                    <ChevronRight size={20} />
+                  )}
+                </button>
+              )}
             </div>
-
-            {canGoLeft(serviceScroll) && (
-              <button
-                className="carousel-arrow left"
-                onClick={() =>
-                  scrollCarousel(serviceCarouselRef, 'left', setServiceScroll)
-                }
-              >
-                {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-              </button>
-            )}
-
-            {canGoRight(serviceCarouselRef, serviceScroll) && (
-              <button
-                className="carousel-arrow right"
-                onClick={() =>
-                  scrollCarousel(serviceCarouselRef, 'right', setServiceScroll)
-                }
-              >
-                {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
-              </button>
-            )}
-          </div>
+          )}
         </div>
       </section>
 
-      {/* Smart Search */}
+      {/* === SMART SEARCH === */}
       <section className="smart-search-section">
         <p className="smart-search-text">{t('smartSearch.text')}</p>
-        <div className="smart-search-input-wrapper">
+        <form
+          onSubmit={handleSmartSearch}
+          className="smart-search-input-wrapper"
+        >
           <Search className="smart-search-icon" size={20} />
           <input
             type="text"
             placeholder={t('smartSearch.placeholder')}
             className="smart-search-input"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
           />
-        </div>
+        </form>
       </section>
     </div>
   );

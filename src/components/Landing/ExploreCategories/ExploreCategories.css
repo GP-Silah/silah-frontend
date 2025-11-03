@@ -48,17 +48,11 @@
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 180px);
-  gap: 175px;
-  justify-content: start;
-  margin-top: 20px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
 }
 
 .active-filter {
@@ -92,4 +86,44 @@
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+}
+
+/* FORCE ITEMCARD TO BE CONSISTENT */
+.cards-grid .item-card {
+  width: 100% !important;
+  min-height: 22rem !important;
+}
+
+.cards-grid .item-card .card-content {
+  padding: 1rem !important;
+}
+
+.cards-grid .item-card .image-container img {
+  height: 12rem !important;
+}
+
+.cards-grid .item-card > div {
+  margin: 0 !important;
+}
+
+.cards-grid .item-card .image-container {
+  margin-bottom: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
 }
