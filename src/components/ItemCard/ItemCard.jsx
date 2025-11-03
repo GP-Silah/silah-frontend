@@ -4,10 +4,12 @@ import { Heart, Star } from 'lucide-react';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import './ItemCard.css';
 
 function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
   const { t } = useTranslation('wishlist');
+  const navigate = useNavigate();
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -111,9 +113,24 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
     }
   };
 
+  // ---- Card Click (navigate to product/service) ----
+  const handleCardClick = () => {
+    if (!_id) return;
+    const path = type === 'product' ? `/products/${_id}` : `/services/${_id}`;
+    navigate(path);
+  };
+
+  // ---- Supplier Click ----
+  const handleSupplierClick = (e) => {
+    e.stopPropagation();
+    if (!supplierId) return;
+    navigate(`/suppliers/storefront/${supplierId}`);
+  };
+
   return (
     <div
       className={`item-card ${loading ? 'opacity-70 pointer-events-none' : ''}`}
+      onClick={handleCardClick}
     >
       {/* Image */}
       <div className="image-container">
@@ -137,7 +154,9 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
       {/* Card content */}
       <div className="card-content">
         <h3>{name}</h3>
-        <p>{supplierName}</p>
+        <p className="supplier-name clickable" onClick={handleSupplierClick}>
+          {supplierName}
+        </p>
 
         {/* Rating and price */}
         <div className="rating-price">

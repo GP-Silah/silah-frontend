@@ -1,4 +1,8 @@
 .item-card {
+  min-height: 22rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
   width: 16rem;
   background: white;
@@ -30,6 +34,10 @@
 }
 
 .heart-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
@@ -77,6 +85,17 @@
   align-items: center;
   gap: 0.25rem;
   color: #facc15;
+  line-height: 1;
+}
+
+.rating span {
+  line-height: 1;
+  position: relative;
+  top: 4.1px;
+}
+
+.rating svg {
+  vertical-align: middle;
 }
 
 .price {
@@ -109,4 +128,31 @@
 .alternatives-btn:active {
   transform: translateY(0);
   background: #22314d;
+}
+
+/* Clickable Supplier Name */
+.supplier-name {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.supplier-name:hover {
+  color: #324669;
+  text-decoration: underline;
+}
+
+.supplier-name.clickable {
+  display: inline-block;
+}
+
+/* Fix Lucide icons with width: 0 */
+.heart-btn svg,
+.carousel-arrow svg,
+.smart-search-icon {
+  min-width: 20px !important;
+  min-height: 20px !important;
 }
