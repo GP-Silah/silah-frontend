@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import ItemCard from '@/components/ItemCard/ItemCard';
+import SupplierSearchResult from '@/components/SupplierSearchResult/SupplierSearchResult';
 import './Search.css';
 
 const TYPE_MAP = {
@@ -29,17 +30,15 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isRTL = i18n.dir() === 'rtl';
-
   const rawType = searchParams.get('type') || (isRTL ? 'المنتجات' : 'Products');
   const text = searchParams.get('text') || '';
   const lang = i18n.language;
-
   const typeKey =
     TYPE_MAP[lang][rawType] || TYPE_MAP.en[rawType.toLowerCase()] || 'products';
   const displayType = DISPLAY_TYPE[typeKey][lang];
 
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Start false
   const [error, setError] = useState(null);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -50,9 +49,14 @@ export default function SearchPage() {
 
   useEffect(() => {
     const search = async () => {
+      if (!text.trim()) {
+        setLoading(false);
+        setItems([]);
+        return;
+      }
+
       setLoading(true);
       setError(null);
-
       try {
         let endpoint = '';
         if (typeKey === 'products') {
@@ -60,10 +64,9 @@ export default function SearchPage() {
         } else if (typeKey === 'services') {
           endpoint = `/api/search/services?name=${text}`;
         } else if (typeKey === 'suppliers') {
-          endpoint = `/api/search/suppliers?name=${text}`;
+          endpoint = `/api/search/suppliers?name=${text}&businessName=${text}`;
         }
 
-        // Add lang & price filters (only for products)
         endpoint += `&lang=${lang}`;
         if (typeKey === 'products') {
           if (minPrice) endpoint += `&minPrice=${minPrice}`;
@@ -74,8 +77,6 @@ export default function SearchPage() {
           `${import.meta.env.VITE_BACKEND_URL}${endpoint}`,
           { withCredentials: true },
         );
-
-        console.log(res.data);
         setItems(res.data || []);
       } catch (err) {
         setError(t('error'));
@@ -85,14 +86,13 @@ export default function SearchPage() {
       }
     };
 
-    if (text) search();
+    search();
   }, [text, typeKey, minPrice, maxPrice, lang, t]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     const formText = e.target.search.value.trim();
     if (!formText) return;
-
     const encoded = encodeURIComponent(formText);
     const typeParam = isRTL
       ? typeKey === 'products'
@@ -104,13 +104,11 @@ export default function SearchPage() {
     navigate(`/search?type=${typeParam}&text=${encoded}`);
   };
 
-  // Smart no-results message
   const getNoResultsMessage = () => {
     const otherTypes = Object.keys(DISPLAY_TYPE)
       .filter((k) => k !== typeKey)
       .map((k) => DISPLAY_TYPE[k][lang])
       .join(` ${t('or')} `);
-
     return (
       <p className="status">
         {t('noResults')} "<strong>{text}</strong>" {t('in')}{' '}
@@ -123,6 +121,8 @@ export default function SearchPage() {
     );
   };
 
+  const showEmptySearch = !text.trim() && !loading;
+
   return (
     <div className="search-page" dir={i18n.dir()}>
       <div className="search-header">
@@ -130,7 +130,6 @@ export default function SearchPage() {
           {t('title')} "<strong>{text}</strong>" {t('in')} {displayType}
         </h1>
       </div>
-
       <div className="search-content">
         {/* Filters - Only show for Products */}
         {typeKey === 'products' && (
@@ -149,7 +148,6 @@ export default function SearchPage() {
                     if (val === '' || parseFloat(val) >= 0) setMinPrice(val);
                   }}
                 />
-
                 <label>{t('maxPrice')}</label>
                 <input
                   type="number"
@@ -162,7 +160,6 @@ export default function SearchPage() {
                   }}
                 />
               </div>
-
               <button
                 onClick={() => {
                   setMinPrice('');
@@ -178,7 +175,9 @@ export default function SearchPage() {
 
         {/* Results */}
         <main className="results">
-          {loading ? (
+          {showEmptySearch ? (
+            <p className="status">{t('enterSearchText')}</p>
+          ) : loading ? (
             <p className="status">{t('loading')}</p>
           ) : error ? (
             <p className="status error">{error}</p>
@@ -187,6 +186,15 @@ export default function SearchPage() {
           ) : (
             <div className="results-grid">
               {items.map((item) => {
+                if (typeKey === 'suppliers') {
+                  return (
+                    <SupplierSearchResult
+                      key={item.supplierId}
+                      supplier={item}
+                    />
+                  );
+                }
+
                 const mapped = {
                   _id: item.productId || item.serviceId || item.supplierId,
                   name: item.name || item.businessName,

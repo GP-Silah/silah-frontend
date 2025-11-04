@@ -12,5 +12,9 @@
   "clearFilters": "Clear Filters",
   "loading": "Loading...",
   "noResults": "No results found for",
-  "error": "Something went wrong. Please try again."
+  "error": "Something went wrong. Please try again.",
+  "enterSearchText": "Please enter a search term to begin.",
+  "loadingItems": "Loading items...",
+  "noItemsInStore": "No items are currently available in this store.",
+  "noBio": "No bio available."
 }

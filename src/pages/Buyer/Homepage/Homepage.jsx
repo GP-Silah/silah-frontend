@@ -4,13 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import './Homepage.css';
 
 export default function Homepage() {
   const { t, i18n } = useTranslation('homepage');
   const isRTL = i18n.dir() === 'rtl';
-  const userName = 'Saad';
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userName = user.name;
 
   const productCarouselRef = useRef(null);
   const serviceCarouselRef = useRef(null);
