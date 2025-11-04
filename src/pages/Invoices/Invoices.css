@@ -1,0 +1,137 @@
+.invoices-page {
+  background: #fff;
+  padding: 40px 60px;
+  font-family: 'Poppins', sans-serif;
+  color: #222;
+  min-height: 100vh;
+}
+
+/* Filter bar (top gray area) */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background-color: #f5f3f8;
+  padding: 10px 20px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+}
+
+.filter-bar span {
+  font-weight: 600;
+  color: #333;
+}
+
+.filter-bar label {
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filter-bar input[type='radio'] {
+  accent-color: #5c2d91;
+}
+
+/* Title */
+.page-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: #2b2b2b;
+  margin-bottom: 15px;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  color: #555;
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #5c2d91;
+}
+
+.tab-btn.active {
+  color: #5c2d91;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: #5c2d91;
+  border-radius: 2px;
+}
+
+/* Table */
+.invoices-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.invoices-table th {
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 600;
+  color: #444;
+  font-size: 14px;
+  padding: 12px 8px;
+  border-bottom: 2px solid #222;
+}
+
+.invoices-table td {
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+  padding: 14px 8px;
+  border-bottom: 1px solid #ccc;
+  color: #333;
+}
+
+/* Status colors */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.accepted {
+  background-color: #fff7d4;
+  color: #9f7700;
+}
+
+.status-badge.rejected {
+  background-color: #f5c4c4;
+  color: #a02222;
+}
+
+.status-badge.partiallyPaid {
+  background-color: #ffe8c6;
+  color: #a46a00;
+}
+
+.status-badge.fullyPaid {
+  background-color: #d9f2d7;
+  color: #1b7a39;
+}
