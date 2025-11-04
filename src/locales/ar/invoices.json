@@ -1,0 +1,31 @@
+{
+  "showInvoicesFor": "عرض الفواتير لـ",
+  "filter": {
+    "all": "الكل",
+    "products": "المنتجات",
+    "services": "الخدمات",
+    "bids": "العطاءات",
+    "groupPurchases": "المشتريات الجماعية"
+  },
+  "pageTitle": "فواتيرك",
+  "tabs": {
+    "all": "الكل",
+    "accepted": "مقبولة",
+    "rejected": "مرفوضة",
+    "partiallyPaid": "مدفوعة جزئياً",
+    "fullyPaid": "مدفوعة بالكامل"
+  },
+  "table": {
+    "invoice": "رقم الفاتورة",
+    "created": "تاريخ الإنشاء",
+    "buyer": "المشتري",
+    "status": "حالة الفاتورة",
+    "total": "الإجمالي"
+  },
+  "status": {
+    "accepted": "مقبولة",
+    "rejected": "مرفوضة",
+    "partiallyPaid": "مدفوعة جزئياً",
+    "fullyPaid": "مدفوعة بالكامل"
+  }
+}

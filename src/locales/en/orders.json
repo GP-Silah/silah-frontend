@@ -1,0 +1,24 @@
+{
+  "pageTitle": "Your Orders",
+  "subtitle": "Orders get the status “Completed” once the buyer confirms delivery.",
+  "tabs": {
+    "all": "All",
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "completed": "Completed"
+  },
+  "table": {
+    "order": "Order",
+    "ordered": "Ordered",
+    "buyer": "Buyer",
+    "status": "Order Status",
+    "total": "Total"
+  },
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "completed": "Completed"
+  }
+}
