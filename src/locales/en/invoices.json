@@ -1,0 +1,31 @@
+{
+  "showInvoicesFor": "Show invoices for",
+  "filter": {
+    "all": "All",
+    "products": "Products",
+    "services": "Services",
+    "bids": "Bids",
+    "groupPurchases": "Group Purchases"
+  },
+  "pageTitle": "Your Invoices",
+  "tabs": {
+    "all": "All",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "partiallyPaid": "Partially Paid",
+    "fullyPaid": "Fully Paid"
+  },
+  "table": {
+    "invoice": "Invoice",
+    "created": "Created",
+    "buyer": "Buyer",
+    "status": "Invoice Status",
+    "total": "Total"
+  },
+  "status": {
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "partiallyPaid": "Partially Paid",
+    "fullyPaid": "Fully Paid"
+  }
+}
