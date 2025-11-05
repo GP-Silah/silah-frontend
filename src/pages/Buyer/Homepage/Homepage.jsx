@@ -21,25 +21,15 @@ export default function Homepage() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [productScroll, setProductScroll] = useState(0);
-  const [serviceScroll, setServiceScroll] = useState(0);
-
   const [searchText, setSearchText] = useState('');
-
-  useEffect(() => {
-    document.title = t('pageTitle');
-  }, [t, i18n.language]);
 
   // === FETCH PRODUCTS & SERVICES ===
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const lang = i18n.language === 'ar' ? 'ar' : 'en';
-
         const [prodRes, servRes] = await Promise.all([
           axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products`, {
             headers: { 'accept-language': lang },
@@ -50,7 +40,6 @@ export default function Homepage() {
             withCredentials: true,
           }),
         ]);
-
         setProducts(prodRes.data || []);
         setServices(servRes.data || []);
       } catch (err) {
@@ -61,23 +50,13 @@ export default function Homepage() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [i18n.language]);
 
-  // === UPDATE ARROWS ON RESIZE + INITIAL ===
+  // === PAGE TITLE ===
   useEffect(() => {
-    const updateScroll = () => {
-      if (productCarouselRef.current)
-        setProductScroll(productCarouselRef.current.scrollLeft);
-      if (serviceCarouselRef.current)
-        setServiceScroll(serviceCarouselRef.current.scrollLeft);
-    };
-
-    updateScroll();
-    window.addEventListener('resize', updateScroll);
-    return () => window.removeEventListener('resize', updateScroll);
-  }, [products, services]);
+    document.title = t('pageTitle');
+  }, [t, i18n.language]);
 
   // === RESET SCROLL ON LOAD ===
   useEffect(() => {
@@ -85,33 +64,41 @@ export default function Homepage() {
     if (serviceCarouselRef.current) serviceCarouselRef.current.scrollLeft = 0;
   }, []);
 
-  // === SCROLL HANDLER ===
-  const scrollCarousel = (ref, direction, setScroll) => {
-    if (!ref.current) return;
-    const scrollAmount = 320;
-    const maxScroll = ref.current.scrollWidth - ref.current.clientWidth;
-    const current = ref.current.scrollLeft;
-
-    let newScroll;
-    if (direction === 'right') {
-      newScroll = Math.min(current + scrollAmount, maxScroll);
-    } else {
-      newScroll = Math.max(current - scrollAmount, 0);
-    }
-
-    ref.current.scrollTo({ left: newScroll, behavior: 'smooth' });
-    setScroll(newScroll);
+  // === RTL-AWARE SCROLL LOGIC ===
+  const getScrollStart = (ref) => {
+    if (!ref.current) return 0;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    return isRTL ? scrollWidth - clientWidth - scrollLeft : scrollLeft;
   };
 
-  // === ARROW VISIBILITY ===
-  const canGoLeft = (scroll) => scroll > 50;
-  const canGoRight = (ref, scroll) => {
+  const canGoBack = (ref) => getScrollStart(ref) > 50;
+  const canGoForward = (ref) => {
     if (!ref.current) return false;
     const max = ref.current.scrollWidth - ref.current.clientWidth;
-    return max > 10 && scroll < max - 10;
+    return max > 10 && getScrollStart(ref) < max - 10;
   };
 
-  // === SMART SEARCH SUBMIT ===
+  const scrollCarousel = (ref, direction) => {
+    if (!ref.current) return;
+    const scrollAmount = 320;
+    const { scrollWidth, clientWidth, scrollLeft } = ref.current;
+    const maxScroll = scrollWidth - clientWidth;
+
+    let targetScroll;
+    if (direction === 'right') {
+      targetScroll = isRTL
+        ? Math.max(scrollLeft - scrollAmount, 0)
+        : Math.min(scrollLeft + scrollAmount, maxScroll);
+    } else {
+      targetScroll = isRTL
+        ? Math.min(scrollLeft + scrollAmount, maxScroll)
+        : Math.max(scrollLeft - scrollAmount, 0);
+    }
+
+    ref.current.scrollTo({ left: targetScroll, behavior: 'smooth' });
+  };
+
+  // === SMART SEARCH ===
   const handleSmartSearch = (e) => {
     e.preventDefault();
     if (searchText.trim()) {
@@ -166,11 +153,7 @@ export default function Homepage() {
             <p className="text-center py-8 text-red-600">{error}</p>
           ) : (
             <div className="carousel-wrapper">
-              <div
-                className="carousel"
-                ref={productCarouselRef}
-                onScroll={(e) => setProductScroll(e.currentTarget.scrollLeft)}
-              >
+              <div className="carousel" ref={productCarouselRef}>
                 {products.length > 0 ? (
                   products.map((p) => (
                     <ItemCard
@@ -186,12 +169,10 @@ export default function Homepage() {
                 )}
               </div>
 
-              {canGoLeft(productScroll) && (
+              {canGoBack(productCarouselRef) && (
                 <button
                   className="carousel-arrow left"
-                  onClick={() =>
-                    scrollCarousel(productCarouselRef, 'left', setProductScroll)
-                  }
+                  onClick={() => scrollCarousel(productCarouselRef, 'left')}
                 >
                   {isRTL ? (
                     <ChevronRight size={20} />
@@ -201,16 +182,10 @@ export default function Homepage() {
                 </button>
               )}
 
-              {canGoRight(productCarouselRef, productScroll) && (
+              {canGoForward(productCarouselRef) && (
                 <button
                   className="carousel-arrow right"
-                  onClick={() =>
-                    scrollCarousel(
-                      productCarouselRef,
-                      'right',
-                      setProductScroll,
-                    )
-                  }
+                  onClick={() => scrollCarousel(productCarouselRef, 'right')}
                 >
                   {isRTL ? (
                     <ChevronLeft size={20} />
@@ -234,11 +209,7 @@ export default function Homepage() {
             <p className="text-center py-8 text-red-600">{error}</p>
           ) : (
             <div className="carousel-wrapper">
-              <div
-                className="carousel"
-                ref={serviceCarouselRef}
-                onScroll={(e) => setServiceScroll(e.currentTarget.scrollLeft)}
-              >
+              <div className="carousel" ref={serviceCarouselRef}>
                 {services.length > 0 ? (
                   services.map((s) => (
                     <ItemCard
@@ -254,12 +225,10 @@ export default function Homepage() {
                 )}
               </div>
 
-              {canGoLeft(serviceScroll) && (
+              {canGoBack(serviceCarouselRef) && (
                 <button
                   className="carousel-arrow left"
-                  onClick={() =>
-                    scrollCarousel(serviceCarouselRef, 'left', setServiceScroll)
-                  }
+                  onClick={() => scrollCarousel(serviceCarouselRef, 'left')}
                 >
                   {isRTL ? (
                     <ChevronRight size={20} />
@@ -269,16 +238,10 @@ export default function Homepage() {
                 </button>
               )}
 
-              {canGoRight(serviceCarouselRef, serviceScroll) && (
+              {canGoForward(serviceCarouselRef) && (
                 <button
                   className="carousel-arrow right"
-                  onClick={() =>
-                    scrollCarousel(
-                      serviceCarouselRef,
-                      'right',
-                      setServiceScroll,
-                    )
-                  }
+                  onClick={() => scrollCarousel(serviceCarouselRef, 'right')}
                 >
                   {isRTL ? (
                     <ChevronLeft size={20} />
