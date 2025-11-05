@@ -116,12 +116,6 @@
   color: #324669;
 }
 
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: 1.5rem;
-}
-
 /* RTL */
 .search-page[dir='rtl'] .search-content {
   grid-template-columns: 1fr auto;
