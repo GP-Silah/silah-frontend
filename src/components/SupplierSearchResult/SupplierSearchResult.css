@@ -3,7 +3,7 @@
    ======================================== */
 
 /* ———————————— PARENT: STACK SUPPLIERS VERTICALLY ———————————— */
-.results-grid {
+.results-grid-supplier {
   display: flex;
   flex-direction: column;
   width: 100%;
