@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Heart, Star } from 'lucide-react';
 import Swal from 'sweetalert2';
@@ -15,9 +15,10 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
 
   // Safe fallbacks
   const {
-    _id = item.productId || item.serviceId || null, // real items should have this
+    _id = item.productId || item.serviceId || null,
     name = 'No Name',
     supplier = {},
+    supplierId = supplier.supplierId,
     imagesFilesUrls = [],
     avgRating = 0,
     ratingsCount = 0,
@@ -31,11 +32,41 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
   const image =
     imagesFilesUrls[0] || 'https://placehold.co/300x200?text=No+Image';
 
+  // --- Check wishlist on mount ---
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/wishlist`,
+          { withCredentials: true },
+        );
+        const wishlist = res.data || [];
+
+        const isFavorited = wishlist.some((entry) => {
+          if (type === 'product') {
+            return (
+              entry.itemType === 'PRODUCT' && entry.product?.productId === _id
+            );
+          } else {
+            return (
+              entry.itemType === 'SERVICE' && entry.service?.serviceId === _id
+            );
+          }
+        });
+
+        setFavorited(isFavorited);
+      } catch (err) {
+        console.error('Failed to load wishlist:', err);
+      }
+    };
+
+    if (_id) fetchWishlist();
+  }, [_id, type]);
+
   // ---- Favorite Handler ----
   const handleFavorite = async (e) => {
     e.stopPropagation();
 
-    // For demo/static usage
     if (!_id) {
       await Swal.fire({
         icon: 'info',
@@ -47,7 +78,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
       return;
     }
 
-    // Real API call
     try {
       setLoading(true);
       const res = await axios.patch(
@@ -56,64 +86,30 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
         { withCredentials: true },
       );
 
-      const { message, isAdded } = res.data;
+      const { isAdded } = res.data;
       setFavorited(isAdded);
 
       await Swal.fire({
         icon: 'success',
         title: t('successTitle'),
-        text: t(`${isAdded ? 'added' : 'removed'}`),
+        text: t(isAdded ? 'added' : 'removed'),
         confirmButtonColor: '#476DAE',
         confirmButtonText: t('ok'),
       });
     } catch (err) {
-      const status = err.response?.status;
-      const msg = err.response?.data?.error?.message;
-
-      // Detailed error handling
-      if (status === 400) {
-        Swal.fire({
-          icon: 'error',
-          title: t('error.badRequestTitle'),
-          text: t('error.badRequestText'),
-          confirmButtonText: t('ok'),
-        });
-      } else if (status === 401) {
-        Swal.fire({
-          icon: 'warning',
-          title: t('error.unauthorizedTitle'),
-          text: t('error.unauthorizedText'),
-          confirmButtonText: t('ok'),
-        });
-      } else if (status === 403) {
-        Swal.fire({
-          icon: 'error',
-          title: t('error.forbiddenTitle'),
-          text: t('error.forbiddenText'),
-          confirmButtonText: t('ok'),
-        });
-      } else if (status === 404) {
-        Swal.fire({
-          icon: 'error',
-          title: t('error.notFoundTitle'),
-          text: t('error.notFoundText'),
-          confirmButtonText: t('ok'),
-        });
-      } else {
-        console.error('Wishlist toggle failed:', err);
-        Swal.fire({
-          icon: 'error',
-          title: t('error.genericTitle'),
-          text: t('error.genericText'),
-          confirmButtonText: t('ok'),
-        });
-      }
+      console.error('Wishlist toggle failed:', err);
+      Swal.fire({
+        icon: 'error',
+        title: t('error.genericTitle'),
+        text: t('error.genericText'),
+        confirmButtonText: t('ok'),
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // ---- Card Click (navigate to product/service) ----
+  // ---- Card Click ----
   const handleCardClick = () => {
     if (!_id) return;
     const path = type === 'product' ? `/products/${_id}` : `/services/${_id}`;
@@ -141,12 +137,17 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
         />
 
         {/* Heart icon */}
-        <button onClick={handleFavorite} className="heart-btn">
+        <button
+          onClick={handleFavorite}
+          className="heart-btn"
+          disabled={loading}
+        >
           <Heart
             fill={favorited ? '#ef4444' : 'none'}
             stroke="#ef4444"
             strokeWidth={2}
-            size={20}
+            size={22}
+            className="transition-transform duration-200 hover:scale-110"
           />
         </button>
       </div>
@@ -158,7 +159,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
           {supplierName}
         </p>
 
-        {/* Rating and price */}
         <div className="rating-price">
           <div className="rating">
             <Star fill="#facc15" stroke="#facc15" size={16} />
@@ -173,7 +173,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
           </div>
         </div>
 
-        {/* Alternatives Button */}
         {showAlternatives && (
           <button
             onClick={(e) => {

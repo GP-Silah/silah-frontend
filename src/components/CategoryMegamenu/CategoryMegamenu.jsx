@@ -12,7 +12,7 @@ export default function CategoryMegamenu({ categories, lang }) {
   const services = categories.filter((c) => c.usedFor === 'SERVICE');
 
   const handleCategoryClick = (id) => {
-    navigate(`/items?categoryId=${id}`);
+    navigate(`/browse/items?categoryId=${id}`);
   };
 
   const handleMouseEnter = () => {
