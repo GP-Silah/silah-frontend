@@ -184,7 +184,11 @@ export default function SearchPage() {
           ) : items.length === 0 ? (
             getNoResultsMessage()
           ) : (
-            <div className="results-grid">
+            <div
+              className={
+                typeKey === 'suppliers' ? 'suppliers-grid' : 'results-grid'
+              }
+            >
               {items.map((item) => {
                 if (typeKey === 'suppliers') {
                   return (

@@ -26,6 +26,14 @@
   align-items: start;
 }
 
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(16rem, 1fr)
+  ); /* ← MULTI-COLUMN GRID */
+}
+
 .filters {
   width: fit-content;
 }
