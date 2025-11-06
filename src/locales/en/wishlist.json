@@ -17,5 +17,7 @@
     "notFoundText": "The item you tried to favorite could not be found.",
     "genericTitle": "Error",
     "genericText": "Something went wrong. Please try again later."
-  }
+  },
+  "pageTitle": "Wishlist",
+  "title": "Your Wishlist"
 }
