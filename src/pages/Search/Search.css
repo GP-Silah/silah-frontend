@@ -1,3 +1,6 @@
+/* =====================
+   SEARCH PAGE BASE
+===================== */
 .search-page {
   max-width: 1400px;
   margin: 0 auto;
@@ -5,6 +8,9 @@
   font-family: 'Tajawal', sans-serif;
 }
 
+/* =====================
+   HEADER
+===================== */
 .search-header {
   margin-bottom: 2rem;
 }
@@ -19,25 +25,39 @@
   color: #324669;
 }
 
+/* =====================
+   MAIN LAYOUT
+===================== */
 .search-content {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 260px 1fr; /* filters | results */
+  grid-template-areas: 'filters results';
   gap: 2rem;
   align-items: start;
 }
 
-.results-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(16rem, 1fr)
-  ); /* ← MULTI-COLUMN GRID */
-}
-
 .filters {
+  grid-area: filters;
   width: fit-content;
 }
 
+.results {
+  grid-area: results;
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+  min-height: 60vh;
+}
+
+/* RTL: swap areas (results first, filters last = right side) */
+.search-page[dir='rtl'] .search-content {
+  grid-template-columns: 1fr 260px; /* results | filters */
+  grid-template-areas: 'results filters';
+}
+
+/* =====================
+   FILTER BOX
+===================== */
 .filter-box {
   background: #f9fafb;
   padding: 1.5rem;
@@ -104,10 +124,20 @@
   align-self: center;
 }
 
-.results {
-  min-height: 60vh;
+/* RTL text alignment inside filters */
+.search-page[dir='rtl'] .filter-box h3,
+.search-page[dir='rtl'] .price-filter label,
+.search-page[dir='rtl'] .clear-btn {
+  text-align: right;
 }
 
+.search-page[dir='rtl'] .clear-btn {
+  align-self: flex-end;
+}
+
+/* =====================
+   STATUS MESSAGES
+===================== */
 .status {
   text-align: center;
   padding: 3rem;
@@ -124,25 +154,48 @@
   color: #324669;
 }
 
-/* RTL */
-.search-page[dir='rtl'] .search-content {
-  grid-template-columns: 1fr auto;
+/* =====================
+   RESULTS GRID
+===================== */
+.results-grid {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
 }
 
-.search-page[dir='rtl'] .filter-box h3,
-.search-page[dir='rtl'] .price-filter label,
-.search-page[dir='rtl'] .clear-btn {
+/* =====================
+   RTL GRID FIX
+===================== */
+.search-page[dir='rtl'] .results {
+  justify-self: stretch;
+  width: 100%;
+}
+
+.search-page[dir='rtl'] .results-grid {
+  direction: ltr; /* make cards flow horizontally */
+  width: 100%;
+  grid-auto-flow: row dense;
+  justify-items: start;
+  text-align: left;
+}
+
+.search-page[dir='rtl'] .results-grid .item-card {
+  direction: rtl; /* keep content inside each card RTL */
   text-align: right;
 }
 
-.search-page[dir='rtl'] .clear-btn {
-  align-self: flex-end;
-}
-
-/* Mobile */
+/* =====================
+   MOBILE RESPONSIVE
+===================== */
 @media (max-width: 768px) {
   .search-content {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'filters'
+      'results';
   }
 
   .filter-box {
@@ -154,4 +207,24 @@
   .clear-btn {
     align-self: center;
   }
+}
+
+/* === RTL: Force Results on LEFT, Filters on RIGHT === */
+.search-page[dir='rtl'] .search-content {
+  grid-template-columns: 1fr 260px !important;
+  grid-template-areas: 'results filters' !important;
+  gap: 2rem;
+  direction: ltr; /* Optional: helps grid flow */
+}
+
+/* Ensure filters stick to the right edge */
+.search-page[dir='rtl'] .filters {
+  justify-self: end;
+  margin-left: auto;
+}
+
+/* Ensure results take full left space */
+.search-page[dir='rtl'] .results {
+  justify-self: start;
+  margin-right: 0;
 }

@@ -100,7 +100,7 @@
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(180px, 1fr);
-  gap: 4rem; /* ← YOUR WIDE GAP */
+  gap: 8rem; /* ← YOUR WIDE GAP */
   overflow-x: auto;
   overflow-y: hidden;
   padding: 0 0; /* ← YOUR PADDING (no cut with wide gap) */

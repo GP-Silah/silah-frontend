@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import GuestHeader from '@/components/GuestHeader/GuestHeader';
 import BuyerHeader from '@/components/BuyerHeader/BuyerHeader';
 import DemoBanner from '@/components/DemoBanner/DemoBanner';
+import Footer from '@/components/Footer/Footer';
 
 export default function SharedLayout() {
   const { role } = useAuth();
@@ -19,6 +20,7 @@ export default function SharedLayout() {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 }
