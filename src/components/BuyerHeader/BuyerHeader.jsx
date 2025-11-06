@@ -34,17 +34,18 @@ const TYPE_MAP = {
   },
 };
 
-const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
+const BuyerHeader = ({
+  unreadCount,
+  notifications,
+  profilePics,
+  markSingleAsRead,
+  markAllAsRead,
+}) => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
   const location = useLocation();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
-
   const [categories, setCategories] = useState([]);
-  const { notifications, profilePics, markSingleAsRead } = useNotifications(
-    i18n.language,
-  );
-  const unreadNotifications = notifications.filter((n) => !n.isRead);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
@@ -53,6 +54,8 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
   const profileRef = useRef(null);
   const searchInputRef = useRef(null);
   const selectRef = useRef(null);
+
+  const unreadNotifications = notifications.filter((n) => !n.isRead);
 
   const isPaymentCallbackPage = location.pathname.includes('/callback');
   if (isPaymentCallbackPage) return null;
@@ -89,11 +92,8 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
   }, []);
 
   // === Mark All as Read ===
-  const markAllAsRead = () => {
-    const ids = notifications
-      .filter((n) => !n.isRead)
-      .map((n) => n.notificationId);
-    if (ids.length) markAllAsReadProp(ids);
+  const handleMarkAllAsRead = () => {
+    markAllAsRead(); // ← هذا الآن يعمل ويحدّث العداد
   };
 
   // === Handle Role Switch ===
@@ -239,52 +239,58 @@ const BuyerHeader = ({ unreadCount, markAllAsReadProp }) => {
           {dropdownOpen && (
             <div className="notification-dropdown">
               <div className="notif-title">{t('notifications')}</div>
+
               {unreadNotifications.length === 0 ? (
                 <div className="notif-item empty">
                   {t('noNewNotifications') || 'No new notifications'}
                 </div>
               ) : (
-                <>
-                  <ul className="notif-list">
-                    {unreadNotifications.map((n) => {
-                      const pfp = profilePics[n.sender.userId];
-                      return (
-                        <li
-                          key={n.notificationId}
-                          onClick={() => handleNotificationClick(n)}
-                          className="notif-item unread"
-                        >
-                          {pfp ? (
-                            <img src={pfp} alt="" className="notif-pfp" />
-                          ) : (
-                            <div className="notif-pfp-placeholder">
-                              {n.sender.name[0].toUpperCase()}
-                            </div>
-                          )}
-                          <div className="notification-content">
-                            <strong>{n.title}</strong>
-                            <p>{n.content}</p>
+                <ul className="notif-list">
+                  {unreadNotifications.map((n) => {
+                    const pfp = profilePics[n.sender.userId];
+                    return (
+                      <li
+                        key={n.notificationId}
+                        onClick={() => handleNotificationClick(n)}
+                        className="notif-item unread"
+                      >
+                        {pfp ? (
+                          <img src={pfp} alt="" className="notif-pfp" />
+                        ) : (
+                          <div className="notif-pfp-placeholder">
+                            {n.sender.name[0].toUpperCase()}
                           </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  <div className="notification-footer">
-                    <button
-                      className="view-all-btn"
-                      onClick={() => {
-                        navigate('/buyer/notifications');
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      {t('viewAll')}
-                    </button>
-                    <button className="mark-read-btn" onClick={markAllAsRead}>
-                      {t('markAllRead')}
-                    </button>
-                  </div>
-                </>
+                        )}
+                        <div className="notification-content">
+                          <strong>{n.title}</strong>
+                          <p>{n.content}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
+
+              {/* ← هذا الجزء يظهر دائمًا */}
+              <div className="notification-footer">
+                <button
+                  className="view-all-btn"
+                  onClick={() => {
+                    navigate('/buyer/notifications');
+                    setDropdownOpen(false);
+                  }}
+                >
+                  {t('viewAll')}
+                </button>
+                {unreadNotifications.length > 0 && (
+                  <button
+                    className="mark-read-btn"
+                    onClick={handleMarkAllAsRead}
+                  >
+                    {t('markAllRead')}
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </div>

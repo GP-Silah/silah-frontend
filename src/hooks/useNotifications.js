@@ -76,20 +76,27 @@ export const useNotifications = (lang, onNewNotification) => {
     };
   }, [lang, onNewNotification]);
 
-  const markAllAsRead = async (ids) => {
+  const markAllAsRead = async () => {
+    const unreadIds = notifications
+      .filter((n) => !n.isRead)
+      .map((n) => n.notificationId);
+
+    if (unreadIds.length === 0) return;
+
     try {
       await axios.patch(
         `${import.meta.env.VITE_BACKEND_URL}/api/notifications/read-many`,
-        { notificationIds: ids },
+        { notificationIds: unreadIds },
         { withCredentials: true },
       );
+
       setNotifications((prev) =>
         prev.map((n) =>
-          ids.includes(n.notificationId) ? { ...n, isRead: true } : n,
+          unreadIds.includes(n.notificationId) ? { ...n, isRead: true } : n,
         ),
       );
     } catch (err) {
-      console.error('Failed to mark read', err);
+      console.error('Failed to mark all as read', err);
     }
   };
 

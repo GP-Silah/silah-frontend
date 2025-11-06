@@ -4,10 +4,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import { ToastProvider } from '@/context/NotificationPopupToast/NotificationContext';
+import NotificationListener from '@/components/NotificationListener';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
-import SharedLayout from './layouts/SharedLayout'; // ← NEW
+import SharedLayout from './layouts/SharedLayout';
 import BuyerLayout from './layouts/BuyerLayout';
 import SupplierLayout from './layouts/SupplierLayout';
 
@@ -22,6 +24,9 @@ export default function App() {
   const { role, loading } = useAuth();
 
   if (loading) return null;
+
+  // Determine theme (buyer = blue, supplier = purple)
+  const isBuyer = role === 'buyer';
 
   const redirectByRole = () => {
     if (role === 'buyer') return <Navigate to="/buyer/homepage" replace />;
@@ -89,65 +94,70 @@ export default function App() {
 
   return (
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
-      <React.Suspense fallback={null}>
-        <Routes>
-          {/* 1. PUBLIC PAGES (login, signup, 404) */}
-          <Route element={<PublicLayout />}>
-            {layoutRoutes.public.map(({ path, Component }) => (
-              <Route key={path} path={path} element={<Component />} />
-            ))}
-          </Route>
+      <ToastProvider isBuyer={isBuyer}>
+        <NotificationListener />
+        <React.Suspense fallback={null}>
+          <Routes>
+            {/* 1. PUBLIC PAGES (login, signup, 404) */}
+            <Route element={<PublicLayout />}>
+              {layoutRoutes.public.map(({ path, Component }) => (
+                <Route key={path} path={path} element={<Component />} />
+              ))}
+            </Route>
 
-          {/* 2. SHARED PAGES (search, product, storefront, about) */}
-          <Route element={<SharedLayout />}>
-            <Route index element={redirectByRole()} />
-            <Route path="landing" element={<Landing />} />
-            {layoutRoutes.shared.map(({ path, Component }) => (
-              <Route
-                key={path}
-                path={path.replace(/^\//, '')}
-                element={<Component />}
-              />
-            ))}
-          </Route>
-
-          {/* 3. BUYER PRIVATE PAGES */}
-          <Route
-            element={<ProtectedRoute allowedRoles={['buyer']} redirectTo="/" />}
-          >
-            <Route path="/buyer/*" element={<BuyerLayout />}>
-              {layoutRoutes.buyer.map(({ path, Component }) => (
+            {/* 2. SHARED PAGES (search, product, storefront, about) */}
+            <Route element={<SharedLayout />}>
+              <Route index element={redirectByRole()} />
+              <Route path="landing" element={<Landing />} />
+              {layoutRoutes.shared.map(({ path, Component }) => (
                 <Route
                   key={path}
-                  path={path.replace(/^\/buyer\//, '')}
+                  path={path.replace(/^\//, '')}
                   element={<Component />}
                 />
               ))}
             </Route>
-          </Route>
 
-          {/* 4. SUPPLIER PRIVATE PAGES */}
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={['supplier']} redirectTo="/" />
-            }
-          >
-            <Route path="/supplier/*" element={<SupplierLayout />}>
-              {layoutRoutes.supplier.map(({ path, Component }) => (
-                <Route
-                  key={path}
-                  path={path.replace(/^\/supplier\//, '')}
-                  element={<Component />}
-                />
-              ))}
+            {/* 3. BUYER PRIVATE PAGES */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['buyer']} redirectTo="/" />
+              }
+            >
+              <Route path="/buyer/*" element={<BuyerLayout />}>
+                {layoutRoutes.buyer.map(({ path, Component }) => (
+                  <Route
+                    key={path}
+                    path={path.replace(/^\/buyer\//, '')}
+                    element={<Component />}
+                  />
+                ))}
+              </Route>
             </Route>
-          </Route>
 
-          {/* 5. ROOT & 404 */}
-          <Route path="/" element={redirectByRole()} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </React.Suspense>
+            {/* 4. SUPPLIER PRIVATE PAGES */}
+            <Route
+              element={
+                <ProtectedRoute allowedRoles={['supplier']} redirectTo="/" />
+              }
+            >
+              <Route path="/supplier/*" element={<SupplierLayout />}>
+                {layoutRoutes.supplier.map(({ path, Component }) => (
+                  <Route
+                    key={path}
+                    path={path.replace(/^\/supplier\//, '')}
+                    element={<Component />}
+                  />
+                ))}
+              </Route>
+            </Route>
+
+            {/* 5. ROOT & 404 */}
+            <Route path="/" element={redirectByRole()} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </React.Suspense>
+      </ToastProvider>
     </div>
   );
 }

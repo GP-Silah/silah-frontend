@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNotifications } from '@/hooks/useNotifications';
 import {
   FaEnvelope,
   FaFileInvoice,
@@ -26,33 +26,25 @@ export default function BuyerNotifications() {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
-  const [notifications, setNotifications] = useState([]);
+  // ← استخدم useNotifications
+  const { notifications, markAllAsRead, markSingleAsRead } = useNotifications(
+    i18n.language,
+  );
+
   const [loading, setLoading] = useState(true);
   const [typeOpen, setTypeOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(t('allNotifications'));
   const [selectedDate, setSelectedDate] = useState(t('allDays'));
 
-  // === Fetch Notifications ===
+  // === Loading فقط أول مرة ===
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`,
-          { params: { lang: i18n.language }, withCredentials: true },
-        );
-        setNotifications(data);
-      } catch (err) {
-        console.error('Failed to load notifications', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (notifications.length > 0) {
+      setLoading(false);
+    }
+  }, [notifications]);
 
-    fetchNotifications();
-  }, [i18n.language]);
-
+  // === Close dropdowns ===
   useEffect(() => {
     const handleClick = (e) => {
       if (!e.target.closest('.page-dropdown')) {
@@ -64,45 +56,9 @@ export default function BuyerNotifications() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  // === Mark Single as Read ===
-  const markAsRead = async (id) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/${id}/read`,
-        {},
-        { withCredentials: true },
-      );
-      setNotifications((prev) =>
-        prev.map((n) => (n.notificationId === id ? { ...n, isRead: true } : n)),
-      );
-    } catch (err) {
-      console.error('Failed to mark as read', err);
-    }
-  };
-
-  // === Mark All as Read ===
-  const markAllAsRead = async () => {
-    const ids = notifications
-      .filter((n) => !n.isRead)
-      .map((n) => n.notificationId);
-    if (!ids.length) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/read-many`,
-        { notificationIds: ids },
-        { withCredentials: true },
-      );
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    } catch (err) {
-      console.error('Failed to mark all as read', err);
-    }
-  };
-
   // === Handle Click ===
   const handleNotificationClick = (n) => {
-    if (!n.isRead) markAsRead(n.notificationId);
-
+    if (!n.isRead) markSingleAsRead(n.notificationId);
     switch (n.relatedEntityType) {
       case 'CHAT':
         navigate(`/buyer/chats`);
@@ -111,7 +67,6 @@ export default function BuyerNotifications() {
         navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       case 'OFFER':
-        // navigate(`/buyer/offers/${n.relatedEntityId}`); // he can't view them until deadline
         break;
       case 'ORDER':
         navigate(`/buyer/orders/${n.relatedEntityId}`);
@@ -136,7 +91,6 @@ export default function BuyerNotifications() {
       };
       if (typeMap[selectedType] !== n.relatedEntityType) return false;
     }
-
     if (selectedDate !== t('allDays')) {
       const today = new Date();
       const created = new Date(n.createdAt);
@@ -149,7 +103,6 @@ export default function BuyerNotifications() {
       )
         return false;
     }
-
     return true;
   });
 
@@ -157,6 +110,7 @@ export default function BuyerNotifications() {
     <div className="buyer-notif-page" data-dir={dir}>
       <div className="page-notif-header">
         <div className="page-filters-center">
+          {/* === Type Filter === */}
           <div className="page-notif-filter-inline">
             <span className="page-filter-label">{t('type')}</span>
             <div className="page-dropdown">
@@ -192,6 +146,7 @@ export default function BuyerNotifications() {
             </div>
           </div>
 
+          {/* === Date Filter === */}
           <div className="page-notif-filter-inline">
             <span className="page-filter-label">{t('date')}</span>
             <div className="page-dropdown">
@@ -226,11 +181,13 @@ export default function BuyerNotifications() {
           </div>
         </div>
 
+        {/* === Mark All as Read Button === */}
         <button className="page-mark-all-btn" onClick={markAllAsRead}>
           {t('markAllRead')}
         </button>
       </div>
 
+      {/* === Notifications List === */}
       <div className="page-notif-list">
         {loading ? (
           <div className="page-loading">{t('loading')}</div>
@@ -246,16 +203,13 @@ export default function BuyerNotifications() {
                 onClick={() => handleNotificationClick(n)}
               >
                 {!n.isRead && <span className="page-unread-dot" />}
-
                 <div className="page-notif-icon-circle">
                   <Icon />
                 </div>
-
                 <div className="page-notif-content">
                   <div className="page-notif-title">{n.title}</div>
                   <div className="page-notif-message">{n.content}</div>
                 </div>
-
                 <div className="page-notif-meta">
                   <div className="page-notif-date">
                     {formatDate(n.createdAt, i18n.language)}
@@ -268,7 +222,7 @@ export default function BuyerNotifications() {
                       className="page-mark-read-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        markAsRead(n.notificationId);
+                        markSingleAsRead(n.notificationId);
                       }}
                     >
                       <FaCheck />
@@ -284,7 +238,7 @@ export default function BuyerNotifications() {
   );
 }
 
-// Helpers
+// === Helpers ===
 const formatDate = (iso, lang) => {
   const date = new Date(iso);
   return date.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {

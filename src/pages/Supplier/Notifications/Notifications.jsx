@@ -107,7 +107,7 @@ export default function NotificationsSupplier() {
 
     switch (n.relatedEntityType) {
       case 'CHAT':
-        navigate(`/supplier/chats/${n.relatedEntityId}`);
+        navigate(`/supplier/chats/`);
         break;
       case 'ORDER':
         navigate(`/supplier/orders/${n.relatedEntityId}`);

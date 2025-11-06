@@ -8,13 +8,21 @@ import { useTranslation } from 'react-i18next';
 
 export default function BuyerLayout() {
   const { i18n } = useTranslation();
-  const { notifications, markAllAsRead } = useNotifications(i18n.language);
+  const { notifications, profilePics, markSingleAsRead, markAllAsRead } =
+    useNotifications(i18n.language);
+
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   return (
     <>
       <DemoBanner />
-      <BuyerHeader unreadCount={unreadCount} markAsRead={markAllAsRead} />{' '}
+      <BuyerHeader
+        unreadCount={unreadCount}
+        notifications={notifications}
+        profilePics={profilePics}
+        markSingleAsRead={markSingleAsRead}
+        markAllAsRead={markAllAsRead}
+      />
       <main>
         <Outlet />
       </main>
