@@ -1,0 +1,12 @@
+{
+  "pageTitle": "Browse By Category",
+  "browsing": "Browsing",
+  "browsingUnknown": "Browsing (unknown category)",
+  "categories": "Categories",
+  "loadingCategories": "Loading categories...",
+  "loadingItems": "Loading items...",
+  "noItemsFound": "No items found for this category.",
+  "invalidCategoryId": "The selected category was not found.",
+  "noCategoryProvided": "No category selected. Choose a category from the menu.",
+  "fetchError": "Failed to load items. Please try again later."
+}

@@ -1,0 +1,243 @@
+:root {
+  --silah-blue: #517fbf; /* Main Blue */
+  --blue-light: #e3edf6; /* Card BG */
+  --blue-lighter: #f1f5fc; /* Avatar Circle */
+  --blue-hover: #476dae; /* Hover Blue */
+  --blue-border: #a3c4e0; /* Softer border */
+  --text: #2d3748; /* Dark readable text */
+  --text-muted: #64748b; /* Muted text (gray-blue) */
+  --white: #ffffff;
+  --shadow-blue: rgba(81, 127, 191, 0.12); /* Blue shadow */
+}
+
+/* Layout */
+.browse-by-category {
+  padding: 20px;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial;
+  color: var(--text);
+  /* background-color: var(--blue-lighter); */
+}
+
+.container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Side menu */
+.side-menu {
+  width: 260px;
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--white);
+  /* box-shadow: 0 6px 18px var(--shadow-blue); */
+  /* border: 1px solid var(--blue-border); */
+  height: fit-content;
+  position: relative;
+  top: 47px;
+}
+
+.side-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu-main {
+  cursor: default;
+}
+
+.menu-main-title {
+  font-weight: 600;
+  padding: 6px 4px;
+  cursor: pointer;
+  color: var(--text);
+  transition: color 0.2s ease;
+}
+
+.menu-main-title:hover {
+  color: var(--blue-hover);
+}
+
+.menu-main.active > .menu-main-title {
+  color: var(--silah-blue);
+}
+
+.menu-divider {
+  height: 1px;
+  background: var(--blue-border);
+  margin: 8px 0;
+  border-radius: 1px;
+}
+
+.menu-sub-list {
+  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-sub {
+  padding: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.menu-sub:hover {
+  background: var(--blue-light);
+  color: var(--blue-hover);
+}
+
+.menu-sub.active {
+  font-weight: 700;
+  color: var(--silah-blue);
+  background: var(--blue-light);
+}
+
+/* Back button inside side-menu */
+.menu-main-title.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.menu-main-title.back-button:hover {
+  color: var(--blue-hover);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-height: 400px;
+  /* background: var(--white); */
+  /* border: 1px solid var(--blue-border); */
+  border-radius: 12px;
+  /* box-shadow: 0 6px 18px var(--shadow-blue); */
+  padding: 20px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.heading {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-main {
+  font-weight: 700;
+  color: var(--silah-blue);
+}
+
+.breadcrumb-sub {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.breadcrumb-sep {
+  color: var(--text-muted);
+}
+
+/* Items grid */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6rem;
+}
+
+.item-wrapper {
+  display: block;
+}
+
+/* Fallback ItemCard styles */
+.item-card {
+  border-radius: 10px;
+  overflow: hidden;
+  /* background: var(--white); */
+  /* border: 1px solid var(--blue-border); */
+  /* box-shadow: 0 6px 14px var(--shadow-blue); */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-blue);
+}
+
+.item-card-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  background-color: var(--blue-lighter);
+}
+
+.item-card-body {
+  padding: 10px;
+}
+
+.item-price {
+  margin: 6px 0 0;
+  font-weight: 600;
+  color: var(--silah-blue);
+}
+
+/* Small utilities */
+.muted {
+  color: var(--text-muted);
+}
+
+.error {
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.06);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.no-items {
+  color: var(--text-muted);
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--blue-light);
+}
+
+/* RTL support */
+.rtl {
+  direction: rtl;
+}
+
+.ltr {
+  direction: ltr;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+  .side-menu {
+    width: 100%;
+    top: 0;
+  }
+}
