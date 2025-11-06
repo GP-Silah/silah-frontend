@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useNotifications } from '@/hooks/useNotifications';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
   FaEnvelope,
   FaFileInvoice,
@@ -26,10 +25,7 @@ export default function BuyerNotifications() {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
-  // ← استخدم useNotifications
-  const { notifications, markAllAsRead, markSingleAsRead } = useNotifications(
-    i18n.language,
-  );
+  const { notifications, markAllAsRead, markSingleAsRead } = useOutletContext(); // ← من Layout
 
   const [loading, setLoading] = useState(true);
   const [typeOpen, setTypeOpen] = useState(false);

@@ -13,6 +13,13 @@ export default function BuyerLayout() {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
+  const contextValue = {
+    notifications,
+    markAllAsRead,
+    markSingleAsRead,
+    unreadCount,
+  };
+
   return (
     <>
       <DemoBanner />
@@ -24,7 +31,7 @@ export default function BuyerLayout() {
         markAllAsRead={markAllAsRead}
       />
       <main>
-        <Outlet />
+        <Outlet context={contextValue} />
       </main>
       <Footer />
     </>

@@ -104,6 +104,19 @@
   transition: all 0.2s;
 }
 
+.page-mark-read-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--silah-blue);
+  stroke: none;
+  display: block;
+  flex-shrink: 0;
+}
+
+.page-mark-read-btn:hover svg {
+  fill: white;
+}
+
 .page-mark-all-btn:hover {
   background: var(--blue-hover);
   transform: translateY(-1px);
@@ -143,8 +156,8 @@
 
 .page-unread-dot {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 32px;
+  left: 6px;
   width: 10px;
   height: 10px;
   background: var(--silah-blue);
