@@ -1,0 +1,20 @@
+{
+  "pageTitle": "Search | Silah",
+  "title": "Search results for",
+  "in": "in",
+  "or": "or",
+  "trySearching": "Try searching in",
+  "filter": "Filter",
+  "minPrice": "Minimum Price",
+  "maxPrice": "Maximum Price",
+  "placeholderMin": "Enter Number Here",
+  "placeholderMax": "Enter Number Here",
+  "clearFilters": "Clear Filters",
+  "loading": "Loading...",
+  "noResults": "No results found for",
+  "error": "Something went wrong. Please try again.",
+  "enterSearchText": "Please enter a search term to begin.",
+  "loadingItems": "Loading items...",
+  "noItemsInStore": "No items are currently available in this store.",
+  "noBio": "No bio available."
+}

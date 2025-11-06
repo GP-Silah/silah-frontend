@@ -18,5 +18,6 @@
   "imageMessage": "[صورة]",
   "noMessagesYet": "لا توجد رسائل بعد. ابدأ المحادثة!",
   "typeMessage": "اكتب رسالة...",
-  "chatWith": "محادثة مع {{otherUser}}"
+  "chatWith": "محادثة مع {{otherUser}}",
+  "draft": "مسودة"
 }

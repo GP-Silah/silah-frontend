@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './GuestHeader.css';
 import { FaGlobe, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
@@ -6,10 +6,26 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
 
+const TYPE_MAP = {
+  en: {
+    Products: 'products',
+    Services: 'services',
+    Suppliers: 'suppliers',
+  },
+  ar: {
+    المنتجات: 'products',
+    الخدمات: 'services',
+    الموردين: 'suppliers',
+  },
+};
+
 const GuestHeader = () => {
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+
+  const searchInputRef = useRef(null);
+  const selectRef = useRef(null);
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'ar' ? 'en' : 'ar';
@@ -24,6 +40,38 @@ const GuestHeader = () => {
       .then((res) => setCategories(res.data))
       .catch((err) => console.error('Failed to load categories', err));
   }, [i18n.language]);
+
+  const handleSearch = () => {
+    const text = searchInputRef.current?.value.trim();
+    if (!text) return;
+
+    const selectValue = selectRef.current?.value;
+    const lang = i18n.language;
+
+    // Map display value → backend key
+    const typeKey =
+      TYPE_MAP[lang][selectValue] ||
+      TYPE_MAP.en[selectValue.toLowerCase()] ||
+      'products';
+
+    // Arabic URL param
+    const typeParam =
+      lang === 'ar'
+        ? typeKey === 'products'
+          ? 'المنتجات'
+          : typeKey === 'services'
+          ? 'الخدمات'
+          : 'الموردين'
+        : selectValue;
+
+    navigate(`/search?type=${typeParam}&text=${encodeURIComponent(text)}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <header className={`header ${i18n.language === 'ar' ? 'rtl' : 'ltr'}`}>
@@ -40,12 +88,25 @@ const GuestHeader = () => {
       </div>
 
       <div className="search-bar">
-        <FaSearch className="search-icon" />
-        <input type="text" placeholder={t('searchPlaceholder')} />
-        <select className="product-select">
-          <option>{t('tabs.products')}</option>
-          <option>{t('tabs.services')}</option>
-          <option>{t('tabs.suppliers')}</option>
+        <FaSearch
+          className="search-icon"
+          onClick={handleSearch}
+          style={{ cursor: 'pointer' }}
+        />
+        <input
+          type="text"
+          placeholder={t('searchPlaceholder')}
+          ref={searchInputRef}
+          onKeyDown={handleKeyDown}
+        />
+        <select
+          className="product-select"
+          ref={selectRef}
+          defaultValue={t('tabs.products')}
+        >
+          <option value={t('tabs.products')}>{t('tabs.products')}</option>
+          <option value={t('tabs.services')}>{t('tabs.services')}</option>
+          <option value={t('tabs.suppliers')}>{t('tabs.suppliers')}</option>
         </select>
       </div>
 

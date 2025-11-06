@@ -22,7 +22,7 @@ export const ToastProvider = ({ children, isBuyer = true }) => {
     const id = `${notification.notificationId}-${Date.now()}`;
     const timeoutId = setTimeout(() => removeToast(id), 3000);
 
-    playBeep();
+    // playBeep();
     setToasts((prev) => [...prev, { id, notification, timeoutId }]);
   };
 

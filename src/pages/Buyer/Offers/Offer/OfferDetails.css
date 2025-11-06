@@ -1,0 +1,135 @@
+.offer-details-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px 100px;
+  background: #f9f9f9;
+  min-height: 100vh;
+}
+
+.offer-details-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 750px;
+}
+
+.offer-title {
+  color: #5c2d91;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.offer-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+.offer-info p {
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.offer-info strong {
+  color: #2f3c73;
+  font-weight: 600;
+}
+
+.offer-btns {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 35px;
+}
+
+.decline-btn,
+.accept-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.decline-btn {
+  background: #e9e9ee;
+  color: #2f3c73;
+}
+
+.decline-btn:hover {
+  background: #dad9e0;
+}
+
+.accept-btn {
+  background: #6f4e9e;
+  color: #fff;
+}
+
+.accept-btn:hover {
+  background: #5b3f84;
+}
+
+/* -------------------------------------------------
+   Supplier block – centered, clickable
+   ------------------------------------------------- */
+.supplier-block {
+  margin: 20px 0 30px;
+  text-align: center;
+}
+
+.supplier-link {
+  display: block;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.supplier-link:hover {
+  transform: translateY(-2px);
+}
+
+.supplier-info-centered {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar */
+.supplier-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #eee;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.supplier-avatar.placeholder {
+  background: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* Text */
+.supplier-text {
+  text-align: center;
+}
+.supplier-name {
+  color: #5c2d91;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.supplier-city {
+  color: #777;
+  font-size: 0.9rem;
+}

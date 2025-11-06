@@ -667,6 +667,20 @@ const SupplierSettings = () => {
                 </label>
               </div>
               <div className="grid-2 mt-16">
+                <label className="full-width">
+                  <span>{t('store.bio')}</span>
+                  <textarea
+                    rows={4}
+                    value={store.bio}
+                    onChange={(e) =>
+                      setStore({ ...store, bio: e.target.value })
+                    }
+                    placeholder={t('placeholders.bio')}
+                    className="bio-textarea"
+                  />
+                </label>
+              </div>
+              <div className="grid-2 mt-16">
                 <label>
                   <span>{t('store.city')}</span>
                   <input

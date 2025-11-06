@@ -1,4 +1,5 @@
 {
+  "findAlternatives": "Find Alternatives",
   "ok": "OK",
   "demoTitle": "Demo Mode",
   "demoText": "This is a demo preview. Favoriting is disabled in static mode.",
@@ -16,5 +17,7 @@
     "notFoundText": "The item you tried to favorite could not be found.",
     "genericTitle": "Error",
     "genericText": "Something went wrong. Please try again later."
-  }
+  },
+  "pageTitle": "Wishlist",
+  "title": "Your Wishlist"
 }

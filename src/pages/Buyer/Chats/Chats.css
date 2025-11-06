@@ -324,3 +324,8 @@
 .chats-page[data-dir='rtl'] .chats-message {
   text-align: right;
 }
+
+.chats-message.draft {
+  color: #e63946; /* أحمر ناعم */
+  font-style: italic;
+}

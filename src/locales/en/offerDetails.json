@@ -1,0 +1,26 @@
+{
+  "pageTitle": {
+    "offerDetails": "Offer Details"
+  },
+  "supplierOfferDetails": "{{supplier}} Offer Details",
+  "offerSubtitle": "Here is the offer submitted by the supplier for your bidding. You can review the details below:",
+  "proposedAmount": "Proposed Amount",
+  "expectedCompletionTime": "Expected Completion Time",
+  "technicalOfferDetails": "Technical Offer Details",
+  "projectExecutionDuration": "Project Execution Duration",
+  "notes": "Notes",
+  "declineOffer": "Decline Offer",
+  "acceptOffer": "Accept Offer",
+  "sar": "SAR",
+  "loadingOffer": "Loading offer details...",
+  "offerNotFound": "Offer not found.",
+  "missingOfferId": "Offer ID is missing.",
+  "fetchError": "Failed to load offer.",
+  "updateError": "Failed to update offer.",
+  "offerAccepted": "Offer accepted successfully!",
+  "offerDeclined": "Offer declined.",
+  "backToOffers": "Back to Offers",
+  "status.PENDING": "Pending",
+  "status.ACCEPTED": "Accepted",
+  "status.DECLINED": "Declined"
+}

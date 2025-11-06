@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import {
   FaEnvelope,
@@ -27,32 +27,20 @@ export default function NotificationsSupplier() {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
-  const [notifications, setNotifications] = useState([]);
+  const { notifications, markAllAsRead, markSingleAsRead } = useOutletContext(); // ← من Layout
+
   const [loading, setLoading] = useState(true);
   const [typeOpen, setTypeOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(t('allNotifications'));
   const [selectedDate, setSelectedDate] = useState(t('allDays'));
 
-  // === Fetch Notifications ===
+  // === Loading فقط أول مرة ===
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        setLoading(true);
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/notifications/me`,
-          { params: { lang: i18n.language }, withCredentials: true },
-        );
-        setNotifications(data);
-      } catch (err) {
-        console.error('Failed to load notifications', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchNotifications();
-  }, [i18n.language]);
+    if (notifications.length > 0) {
+      setLoading(false);
+    }
+  }, [notifications]);
 
   // === Close dropdowns on outside click ===
   useEffect(() => {
@@ -66,48 +54,13 @@ export default function NotificationsSupplier() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  // === Mark Single as Read ===
-  const markAsRead = async (id) => {
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/${id}/read`,
-        {},
-        { withCredentials: true },
-      );
-      setNotifications((prev) =>
-        prev.map((n) => (n.notificationId === id ? { ...n, isRead: true } : n)),
-      );
-    } catch (err) {
-      console.error('Failed to mark as read', err);
-    }
-  };
-
-  // === Mark All as Read ===
-  const markAllAsRead = async () => {
-    const ids = notifications
-      .filter((n) => !n.isRead)
-      .map((n) => n.notificationId);
-    if (!ids.length) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/read-many`,
-        { notificationIds: ids },
-        { withCredentials: true },
-      );
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-    } catch (err) {
-      console.error('Failed to mark all as read', err);
-    }
-  };
-
   // === Handle Click ===
   const handleNotificationClick = (n) => {
-    if (!n.isRead) markAsRead(n.notificationId);
+    if (!n.isRead) markSingleAsRead(n.notificationId);
 
     switch (n.relatedEntityType) {
       case 'CHAT':
-        navigate(`/supplier/chats/${n.relatedEntityId}`);
+        navigate(`/supplier/chats/`);
         break;
       case 'ORDER':
         navigate(`/supplier/orders/${n.relatedEntityId}`);
@@ -276,7 +229,7 @@ export default function NotificationsSupplier() {
                       className="page-mark-read-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        markAsRead(n.notificationId);
+                        markSingleAsRead(n.notificationId);
                       }}
                     >
                       <FaCheck />

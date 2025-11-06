@@ -131,8 +131,8 @@
 
 .page-unread-dot {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 32px;
+  left: 6px;
   width: 10px;
   height: 10px;
   background: var(--silah-purple);
@@ -198,6 +198,19 @@
   cursor: pointer;
   margin-top: 8px;
   transition: 0.2s;
+}
+
+.page-mark-read-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--silah-purple);
+  stroke: none;
+  display: block;
+  flex-shrink: 0;
+}
+
+.page-mark-read-btn:hover svg {
+  fill: #7a4796;
 }
 
 .page-mark-read-btn:hover {

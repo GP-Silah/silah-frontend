@@ -71,67 +71,57 @@ export default function BidsYouCreated() {
         </button>
       </div>
 
-      {/* Loading / Error */}
+      {/* States */}
       {loading && <div className="bids-loading">{t('loading')}</div>}
       {error && <div className="bids-error">{error}</div>}
-
-      {/* Bids list */}
       {!loading && !error && bids.length === 0 && (
         <p className="bids-empty">{t('noBids')}</p>
       )}
 
+      {/* Bids List */}
       <section className="bids-list">
         {bids.map((bid) => {
           const isOpenForOffers =
             new Date(bid.submissionDeadline) <= new Date();
+          const refNumber =
+            bid.bidId.match(/\d/g)?.slice(0, 10).join('') || '—';
 
           return (
             <article key={bid.bidId} className="bid-card">
-              {/* Published date */}
-              <p className="muted top-note">
-                {t('dateOfPublication')}:{' '}
-                <span>{formatDate(bid.createdAt)}</span>
+              <p className="bid-published">
+                {t('dateOfPublication')}: {formatDate(bid.createdAt)}
               </p>
 
-              {/* Title */}
               <h3 className="bid-title">{bid.bidName}</h3>
-              <hr className="divider" />
+              <hr className="bid-divider" />
 
-              {/* Main activity */}
-              <p className="activity">
-                <strong className="activity-label">{t('mainActivity')}:</strong>{' '}
-                <span className="activity-text">{bid.mainActivity}</span>
+              <p className="bid-activity">
+                <strong>{t('mainActivity')}:</strong> {bid.mainActivity}
               </p>
 
-              <hr className="divider thin" />
-
-              {/* Footer */}
               <div className="bid-footer">
-                <div className="meta">
-                  <div className="meta-block">
+                <div className="bid-meta">
+                  <div className="meta-item">
                     <span className="meta-label">{t('referenceNumber')}:</span>
-                    <span className="meta-value">
-                      {bid.bidId.match(/\d/g)?.slice(0, 10).join('') || '—'}
-                    </span>
+                    <span className="meta-value">{refNumber}</span>
                   </div>
-
-                  <div className="meta-block">
+                  <div className="meta-item">
                     <span className="meta-label">
                       {t('submissionDeadline')}:
                     </span>
-                    <span className="meta-value with-icon">
+                    <span className="meta-value">
                       <FontAwesomeIcon
                         icon={faCalendarAlt}
-                        className="cal-icon"
+                        className="meta-icon"
                       />
                       {formatDate(bid.submissionDeadline)}
                     </span>
                   </div>
                 </div>
 
-                <div className="actions">
+                <div className="bid-actions">
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-secondary"
                     onClick={() => navigate(`/buyer/bids/${bid.bidId}`)}
                   >
                     {t('viewDetails')}
@@ -140,9 +130,7 @@ export default function BidsYouCreated() {
                   {isOpenForOffers ? (
                     <button
                       className="btn btn-primary"
-                      onClick={() =>
-                        navigate(`/buyer/bids/${bid.bidId}/offers`)
-                      }
+                      onClick={() => navigate(`/buyer/offers/${bid.bidId}`)}
                     >
                       {t('viewOffers')}
                     </button>
