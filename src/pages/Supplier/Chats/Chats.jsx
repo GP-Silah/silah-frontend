@@ -93,19 +93,27 @@ export default function ChatsSupplier() {
         withCredentials: true,
       });
 
-      const formatted = res.data.map((chat) => ({
-        chatId: chat.chatId,
-        partnerId: chat.otherUser.userId,
-        partnerName: chat.otherUser.businessName || chat.otherUser.name,
-        partnerAvatar: chat.otherUser.pfpUrl || '',
-        lastMessage: chat.lastMessageIsImage
-          ? t('imageMessage')
-          : chat.lastMessageText || '',
-        lastMessageTime: chat.lastMessageAt,
-        unreadCount: chat.unreadCount || 0,
-        categories: chat.otherUser.categories || [],
-        isRead: (chat.unreadCount || 0) === 0,
-      }));
+      const formatted = res.data.map((chat) => {
+        const draftKey = `chat_draft_${chat.chatId}`;
+        const draft = localStorage.getItem(draftKey) || '';
+
+        return {
+          chatId: chat.chatId,
+          partnerId: chat.otherUser.userId,
+          partnerName: chat.otherUser.businessName || chat.otherUser.name,
+          partnerAvatar: chat.otherUser.pfpUrl || '',
+          lastMessage: draft
+            ? `${t('draft')}: ${draft}` // ← "Draft: ..."
+            : chat.lastMessageIsImage
+            ? t('imageMessage')
+            : chat.lastMessageText || '',
+          lastMessageTime: chat.lastMessageAt,
+          unreadCount: chat.unreadCount || 0,
+          categories: chat.otherUser.categories || [],
+          isRead: (chat.unreadCount || 0) === 0,
+          hasDraft: !!draft, // اختياري: للـ styling
+        };
+      });
 
       setChats(formatted);
     } catch (err) {
@@ -136,20 +144,28 @@ export default function ChatsSupplier() {
           withCredentials: true,
         });
 
-        const chatResults = chatRes.data.map((chat) => ({
-          chatId: chat.chatId,
-          partnerId: chat.otherUser.userId,
-          partnerName: chat.otherUser.businessName || chat.otherUser.name,
-          partnerAvatar: chat.otherUser.pfpUrl || '',
-          lastMessage: chat.lastMessageIsImage
-            ? t('imageMessage')
-            : chat.lastMessageText || '',
-          lastMessageTime: chat.lastMessageAt,
-          unreadCount: chat.unreadCount || 0,
-          isRead: (chat.unreadCount || 0) === 0,
-          categories: chat.otherUser.categories || [],
-          isNewUser: false,
-        }));
+        const chatResults = chatRes.data.map((chat) => {
+          const draftKey = `chat_draft_${chat.chatId}`;
+          const draft = localStorage.getItem(draftKey) || '';
+
+          return {
+            chatId: chat.chatId,
+            partnerId: chat.otherUser.userId,
+            partnerName: chat.otherUser.businessName || chat.otherUser.name,
+            partnerAvatar: chat.otherUser.pfpUrl || '',
+            lastMessage: draft
+              ? `${t('draft')}: ${draft}`
+              : chat.lastMessageIsImage
+              ? t('imageMessage')
+              : chat.lastMessageText || '',
+            hasDraft: !!draft,
+            lastMessageTime: chat.lastMessageAt,
+            unreadCount: chat.unreadCount || 0,
+            isRead: (chat.unreadCount || 0) === 0,
+            categories: chat.otherUser.categories || [],
+            isNewUser: false,
+          };
+        });
 
         const userRes = await axios.get(`${API_BASE}/api/search/users`, {
           params: { name: searchQuery },
@@ -328,7 +344,11 @@ export default function ChatsSupplier() {
 
                     <div className="chats-content">
                       <div className="chats-title">{item.partnerName}</div>
-                      <div className="chats-message">
+                      <div
+                        className={`chats-message ${
+                          item.hasDraft ? 'draft' : ''
+                        }`}
+                      >
                         {item.lastMessage.length > 60
                           ? `${item.lastMessage.slice(0, 60)}...`
                           : item.lastMessage}

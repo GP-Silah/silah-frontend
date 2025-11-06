@@ -841,6 +841,11 @@ iframe[src*='tap-'] {
   background: transparent; /* No background change */
 }
 
+.bio-textarea {
+  resize: vertical; /* let user make it taller */
+  min-height: 80px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 700px) {
   .saved-card {

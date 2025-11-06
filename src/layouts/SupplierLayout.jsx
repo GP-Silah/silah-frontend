@@ -8,8 +8,17 @@ import { useTranslation } from 'react-i18next';
 
 export default function SupplierLayout() {
   const { i18n } = useTranslation();
-  const { notifications, markAllAsRead } = useNotifications(i18n.language);
+  const { notifications, profilePics, markSingleAsRead, markAllAsRead } =
+    useNotifications(i18n.language);
+
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+
+  const contextValue = {
+    notifications,
+    markAllAsRead,
+    markSingleAsRead,
+    unreadCount,
+  };
 
   return (
     <>
@@ -17,7 +26,7 @@ export default function SupplierLayout() {
       <div className="supplier-layout-container">
         <SupplierSidebar unreadCount={unreadCount} />{' '}
         <main className="supplier-main">
-          <Outlet />
+          <Outlet context={contextValue} />
         </main>
       </div>
     </>

@@ -1,0 +1,168 @@
+/* ========================================
+   SUPPLIER SEARCH RESULT – PFP RTL FIXED ONLY
+   ======================================== */
+
+/* ———————————— PARENT: STACK SUPPLIERS VERTICALLY ———————————— */
+.suppliers-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+/* ———————————— SUPPLIER CARD ———————————— */
+.supplier-result {
+  background: #faf7fc;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-family: 'Tajawal', sans-serif;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ———————————— HEADER: Avatar | Info | Rating ———————————— */
+.supplier-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.supplier-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.supplier-info {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-inline-end: auto;
+}
+
+.supplier-name {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  text-align: start;
+  margin-inline-start: 0;
+}
+
+.supplier-city {
+  margin: 0.25rem 0 0;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.supplier-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #324669;
+  white-space: nowrap;
+  margin-inline-start: 1rem;
+  flex-shrink: 0;
+}
+
+.rating-count {
+  color: #888;
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+
+/* ———————————— BIO & ITEMS ———————————— */
+.supplier-bio {
+  color: #444;
+  line-height: 1.6;
+  margin: 1rem 0;
+  font-size: 1rem;
+}
+
+.supplier-items {
+  margin-top: 1rem;
+}
+
+/* ———————————— ITEMS GRID: YOUR STYLE, FULLY VISIBLE ———————————— */
+.supplier-items .items-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(180px, 1fr);
+  gap: 8rem; /* ← YOUR WIDE GAP */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0; /* ← YOUR PADDING (no cut with wide gap) */
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 1rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.supplier-items .items-grid > * {
+  scroll-snap-align: start;
+}
+
+.supplier-items .items-grid::-webkit-scrollbar {
+  height: 6px;
+}
+.supplier-items .items-grid::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+/* ———————————— EMPTY STATE ———————————— */
+.status,
+.no-items {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+.no-items {
+  color: #999;
+}
+
+/* ———————————— RTL: ONLY PFP LOGIC ———————————— */
+.supplier-result[dir='rtl'] .supplier-header {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+/* ———————————— MOBILE RESPONSIVE ———————————— */
+@media (max-width: 768px) {
+  .supplier-header {
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .supplier-info,
+  .supplier-rating {
+    margin: 0;
+  }
+
+  .supplier-result[dir='rtl'] .supplier-header {
+    flex-direction: column;
+  }
+
+  .supplier-items .items-grid {
+    grid-auto-columns: minmax(140px, 1fr);
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+  }
+}

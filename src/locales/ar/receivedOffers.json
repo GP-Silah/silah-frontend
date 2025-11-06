@@ -1,10 +1,22 @@
 {
   "pageTitle": "عروض المناقصات",
-  "offerDate": "تاريخ العرض",
+  "offerDate": "تاريخ كتابة العرض",
   "supplier": "المورد",
   "proposedAmount": "المبلغ المقترح",
-  "completionTime": "مدة التنفيذ",
-  "decline": "رفض العرض",
-  "accept": "قبول العرض",
-  "viewDetails": "عرض التفاصيل"
+  "completionTime": "تاريخ الإكمال",
+  "decline": "رفض",
+  "accept": "قبول",
+  "viewDetails": "عرض التفاصيل",
+  "noOffersMessage": "لم تتلقَ أي عروض حتى الآن.",
+  "openNewBid": "افتح مناقصة جديدة",
+  "loadingOffers": "جاري تحميل العروض...",
+  "fetchError": "فشل تحميل العروض. يرجى المحاولة مرة أخرى.",
+  "updateError": "فشل تحديث العرض.",
+  "offerAccepted": "تم قبول العرض بنجاح!",
+  "offerDeclined": "تم رفض العرض.",
+  "offerUpdated": "تمت مراجعة هذا العرض مسبقًا.",
+  "missingBidId": "معرف المناقصة مفقود.",
+  "status.PENDING": "قيد الانتظار",
+  "status.ACCEPTED": "مقبول",
+  "status.DECLINED": "مرفوض"
 }
