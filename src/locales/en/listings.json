@@ -1,0 +1,40 @@
+{
+  "pageTitle": "Products & Services",
+  "searchPlaceholder": "Search here...",
+  "filters": {
+    "all": "All",
+    "products": "Products",
+    "services": "Services"
+  },
+  "buttons": {
+    "addProduct": "Create a New Product",
+    "addService": "Create a New Service"
+  },
+  "selectHint": "Select item(s) to take an action",
+  "actions": {
+    "edit": "Edit",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "duplicate": "Duplicate",
+    "delete": "Delete"
+  },
+  "columns": {
+    "image": "Image",
+    "name": "Item Name",
+    "wishlist": "Wishlist",
+    "price": "Unit Price",
+    "stock": "Stock",
+    "status": "Status",
+    "predict": "Predict Demand"
+  },
+  "type": {
+    "product": "Product",
+    "service": "Service"
+  },
+  "status": {
+    "published": "Published",
+    "unpublished": "Unpublished"
+  },
+  "empty": "No items to show",
+  "wishlistBlur": "Upgrade to Premium to see wishlist count"
+}

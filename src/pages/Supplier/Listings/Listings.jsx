@@ -1,252 +1,216 @@
-// src/pages/Listings.jsx   (or wherever you keep it)
-import React, { useMemo, useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import './ProductsAndServices.css';
+import { useAuth } from '@/context/AuthContext';
+import {
+  FaEdit,
+  FaCopy,
+  FaTrashAlt,
+  FaSearch,
+  FaHeart,
+  FaRegEye,
+  FaRegEyeSlash,
+} from 'react-icons/fa';
+import './Listings.css';
 
-/* -------------------------------------------------
-   Fake data – edit / add as many items as you want
-   ------------------------------------------------- */
 const FAKE_ITEMS = [
   {
     id: 'p1',
     type: 'product',
-    name: 'Wireless Headphones',
-    img: 'https://via.placeholder.com/80?text=Headphones',
-    price: 79.99,
-    stock: 42,
+    name: 'Amber - 45ml Soy Candle',
+    img: '/images/candle1.png',
+    price: 42,
+    stock: 26,
     status: 'published',
-    favorite: true,
+    wishlist: 12,
   },
   {
     id: 'p2',
     type: 'product',
-    name: 'USB-C Cable 2m',
-    img: 'https://via.placeholder.com/80?text=Cable',
-    price: 12.5,
-    stock: 150,
-    status: 'unpublished',
-    favorite: false,
-  },
-  {
-    id: 's1',
-    type: 'service',
-    name: 'Website Redesign',
-    img: 'https://via.placeholder.com/80?text=Web',
-    price: 1200,
-    stock: null,
+    name: 'Amber - 250ml Soy Candle',
+    img: '/images/candle2.png',
+    price: 42,
+    stock: 26,
     status: 'published',
-    favorite: false,
-  },
-  {
-    id: 's2',
-    type: 'service',
-    name: 'SEO Audit',
-    img: 'https://via.placeholder.com/80?text=SEO',
-    price: 350,
-    stock: null,
-    status: 'unpublished',
-    favorite: true,
+    wishlist: 8,
   },
   {
     id: 'p3',
     type: 'product',
-    name: 'Bluetooth Speaker',
-    img: 'https://via.placeholder.com/80?text=Speaker',
-    price: 49.99,
-    stock: 23,
+    name: 'Amber - 45ml Soy Candle',
+    img: '/images/candle3.png',
+    price: 42,
+    stock: 0,
+    status: 'unpublished',
+    wishlist: 3,
+  },
+  {
+    id: 's1',
+    type: 'service',
+    name: 'Logo Design',
+    img: '/images/logo.png',
+    price: 23,
+    stock: null,
     status: 'published',
-    favorite: false,
+    wishlist: 5,
+  },
+  {
+    id: 's2',
+    type: 'service',
+    name: 'Website Redesign',
+    img: '/images/web.png',
+    price: null,
+    stock: null,
+    status: 'published',
+    wishlist: 15,
   },
 ];
 
-/* -------------------------------------------------
-   Component
-   ------------------------------------------------- */
-export default function ProductsAndServices() {
-  const { t, i18n } = useTranslation('supplierListings');
+export default function Listings() {
+  const { t, i18n } = useTranslation('listings');
   const navigate = useNavigate();
+  const { user, role, supplierStatus } = useAuth();
+  const isRTL = i18n.dir() === 'rtl';
 
-  // State
-  const [items] = useState(FAKE_ITEMS); // <-- fake data
-  const [filter, setFilter] = useState('all'); // all | product | service
-  const [q, setQ] = useState('');
-  const [selected, setSelected] = useState({}); // { id: true }
-  const dir = i18n.dir();
+  const isSupplier = role === 'supplier';
+  const isActive = supplierStatus === 'ACTIVE';
+  const isPremium = user?.plan === 'PREMIUM';
 
-  // -------------------------------------------------
-  // Filtering
-  // -------------------------------------------------
+  const [items] = useState(FAKE_ITEMS);
+  const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
+  const [selected, setSelected] = useState({});
+
+  // ──────────────────────────────────────────────────────────────────────
+  // 1. Add a new state for the tooltip
+  // ──────────────────────────────────────────────────────────────────────
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    if (!isPremium) {
+      setShowTooltip(true); // show on mount / refresh
+      const timer = setTimeout(() => {
+        setShowTooltip(false); // hide after 3 seconds
+      }, 3000);
+      return () => clearTimeout(timer); // cleanup if component unmounts early
+    }
+  }, [isPremium]); // re-run only when premium status changes
+
+  useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t, i18n.language]);
+
   const filtered = useMemo(() => {
-    return items.filter((it) => {
-      const byType = filter === 'all' || it.type === filter;
-      const byQuery =
-        !q || it.name.toLowerCase().includes(q.trim().toLowerCase());
-      return byType && byQuery;
+    return items.filter((item) => {
+      const matchesType = filter === 'all' || item.type === filter;
+      const matchesSearch =
+        !search || item.name.toLowerCase().includes(search.toLowerCase());
+      return matchesType && matchesSearch;
     });
-  }, [items, filter, q]);
+  }, [items, filter, search]);
 
-  const ids = filtered.map((x) => x.id);
-  const allChecked = ids.length > 0 && ids.every((id) => selected[id]);
   const selectedIds = Object.keys(selected).filter((id) => selected[id]);
+  const allChecked =
+    filtered.length > 0 && filtered.every((it) => selected[it.id]);
 
-  // -------------------------------------------------
-  // Selection helpers
-  // -------------------------------------------------
   const toggleAll = () => {
-    setSelected((prev) => {
-      const next = { ...prev };
-      if (allChecked) ids.forEach((id) => delete next[id]);
-      else ids.forEach((id) => (next[id] = true));
-      return next;
-    });
+    const newSel = {};
+    if (!allChecked) filtered.forEach((it) => (newSel[it.id] = true));
+    setSelected(newSel);
   };
 
-  const toggleOne = (id) => setSelected((s) => ({ ...s, [id]: !s[id] }));
-
-  // -------------------------------------------------
-  // Fake “API” actions – just mutate the local array
-  // -------------------------------------------------
-  const mutate = (mutator) => {
-    // In a real app you would call the backend here.
-    // For demo we just keep everything in-memory.
-    // (No setItems because we want the component to stay pure)
-    console.warn('FAKE API call – not persisted');
-    // If you ever want the UI to reflect changes instantly, uncomment:
-    // setItems(mutator);
+  const toggleOne = (id) => {
+    setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const bulk = {
-    edit: () => {
-      const first = selectedIds[0];
-      if (!first) return;
-      const item = items.find((x) => x.id === first);
-      if (!item) return;
-      navigate(
-        item.type === 'product'
-          ? '/supplier/product-details'
-          : '/supplier/supplier-service-details',
-        { state: { id: item.id } },
-      );
-    },
-    publish: () =>
-      mutate((list) =>
-        list.map((x) =>
-          selectedIds.includes(x.id) ? { ...x, status: 'published' } : x,
-        ),
-      ),
-    unpublish: () =>
-      mutate((list) =>
-        list.map((x) =>
-          selectedIds.includes(x.id) ? { ...x, status: 'unpublished' } : x,
-        ),
-      ),
-    duplicate: () =>
-      mutate((list) => {
-        const toDup = list.filter((x) => selectedIds.includes(x.id));
-        const copies = toDup.map((x) => ({
-          ...x,
-          id: `${x.id}-copy-${Date.now()}-${Math.random()
-            .toString(36)
-            .slice(2, 6)}`,
-          name: `${x.name} (Copy)`,
-          status: 'unpublished',
-        }));
-        return [...copies, ...list];
-      }),
-    delete: () =>
-      mutate((list) => list.filter((x) => !selectedIds.includes(x.id))),
-  };
-
-  const toggleFavorite = (id) =>
-    mutate((list) =>
-      list.map((x) => (x.id === id ? { ...x, favorite: !x.favorite } : x)),
-    );
-
-  const goToCreate = (kind) => {
+  const goToDetails = (item) => {
     navigate(
-      kind === 'product'
+      item.type === 'product'
+        ? '/supplier/product-details'
+        : '/supplier/supplier-service-details',
+      { state: { id: item.id } },
+    );
+  };
+
+  const goToCreate = (type) => {
+    navigate(
+      type === 'product'
         ? '/supplier/product-details'
         : '/supplier/supplier-service-details',
       { state: { create: true } },
     );
   };
 
-  const renderStatus = (status) => (
-    <span className={`sl-status ${status === 'published' ? 'pub' : 'unpub'}`}>
-      {status === 'published' ? t('published') : t('unpublished')}
-    </span>
-  );
+  const handlePredict = (id) => {
+    navigate(`/supplier/demand/${id}`);
+  };
 
-  // -------------------------------------------------
-  // Render
-  // -------------------------------------------------
   return (
-    <div className="supplier-listings" dir={dir}>
+    <div className="listings-page" dir={i18n.dir()}>
       {/* Toolbar */}
-      <div className="sl-toolbar">
-        <div className="sl-search">
-          <span className="sl-search-icon" aria-hidden>
-            Search
-          </span>
+      <div className="toolbar">
+        <div className="search-box">
+          <FaSearch className="search-icon" />
           <input
             type="text"
             placeholder={t('searchPlaceholder')}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
-        <div className="sl-filters" role="radiogroup">
-          {['all', 'product', 'service'].map((f) => (
+        <div className="ls-filters">
+          {['all', 'products', 'services'].map((f) => (
             <label
               key={f}
-              className={`sl-radio ${filter === f ? 'active' : ''}`}
+              className={`filter-radio ${filter === f ? 'active' : ''}`}
             >
               <input
                 type="radio"
-                name="type"
+                name="filter"
                 checked={filter === f}
                 onChange={() => setFilter(f)}
               />
-              {t(f === 'all' ? 'all' : f + 's')}
+              {t(`filters.${f}`)}
             </label>
           ))}
         </div>
 
-        <div className="sl-add-actions">
-          <button
-            className="sl-btn sl-btn-outline"
-            onClick={() => goToCreate('product')}
-          >
-            + {t('addProduct')}
+        <div className="add-buttons">
+          <button className="btn-outline" onClick={() => goToCreate('product')}>
+            {t('buttons.addProduct')}
           </button>
-          <button
-            className="sl-btn sl-btn-primary"
-            onClick={() => goToCreate('service')}
-          >
-            + {t('addService')}
+          <button className="btn-primary" onClick={() => goToCreate('service')}>
+            {t('buttons.addService')}
           </button>
         </div>
       </div>
 
-      {/* Bulk actions */}
-      <div className="sl-bulk">
+      {/* Action Bar */}
+      <div className="action-bar">
         <span>{t('selectHint')}</span>
-        <div className="sl-bulk-actions">
-          <button onClick={bulk.edit}>{t('edit')}</button>
-          <button onClick={bulk.publish}>{t('publish')}</button>
-          <button onClick={bulk.unpublish}>{t('unpublish')}</button>
-          <button onClick={bulk.duplicate}>{t('duplicate')}</button>
-          <button className="danger" onClick={bulk.delete}>
-            {t('delete')}
+        <div className="action-buttons">
+          <button className="action-btn">
+            <FaEdit /> {t('actions.edit')}
+          </button>
+          <button className="action-btn">
+            <FaRegEye /> {t('actions.publish')}
+          </button>
+          <button className="action-btn">
+            <FaRegEyeSlash /> {t('actions.unpublish')}
+          </button>
+          <button className="action-btn">
+            <FaCopy /> {t('actions.duplicate')}
+          </button>
+          <button className="action-btn danger">
+            <FaTrashAlt /> {t('actions.delete')}
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="sl-table-wrap">
-        <table className="sl-table">
+      <div className="table-container">
+        <table className="listings-table">
           <thead>
             <tr>
               <th>
@@ -256,13 +220,18 @@ export default function ProductsAndServices() {
                   onChange={toggleAll}
                 />
               </th>
-              <th>{t('image')}</th>
-              <th className="w-name">{t('itemName')}</th>
-              <th className="w-fav">Heart</th>
-              <th>{t('unitPrice')}</th>
-              <th>{t('stock')}</th>
-              <th>{t('status')}</th>
-              <th className="w-action">{t('predict')}</th>
+              <th>{t('columns.image')}</th>
+              <th>{t('columns.name')}</th>
+              <th className="wishlist-header">
+                <FaHeart className="wishlist-header-icon" />
+                {!isPremium && showTooltip && (
+                  <div className="wishlist-tooltip">{t('wishlistBlur')}</div>
+                )}
+              </th>
+              <th>{t('columns.price')}</th>
+              <th>{t('columns.stock')}</th>
+              <th>{t('columns.status')}</th>
+              <th>{t('columns.predict')}</th>
             </tr>
           </thead>
           <tbody>
@@ -273,58 +242,54 @@ export default function ProductsAndServices() {
                 </td>
               </tr>
             ) : (
-              filtered.map((it) => (
-                <tr key={it.id} className={`row-${it.type}`}>
-                  <td>
+              filtered.map((item) => (
+                <tr
+                  key={item.id}
+                  onClick={() => goToDetails(item)}
+                  className="clickable-row"
+                >
+                  <td onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
-                      checked={!!selected[it.id]}
-                      onChange={() => toggleOne(it.id)}
+                      checked={!!selected[item.id]}
+                      onChange={() => toggleOne(item.id)}
                     />
                   </td>
                   <td>
-                    <div className="sl-thumb">
-                      <img
-                        src={it.img || '/assets/images/placeholder.png'}
-                        alt={it.name}
-                      />
+                    <div className="thumb">
+                      <img src={item.img} alt={item.name} />
                     </div>
                   </td>
-                  <td className="sl-name">
-                    <div className="sl-type-tag">
-                      {it.type === 'product' ? t('product') : t('service')}
-                    </div>
-                    <button
-                      className="sl-link"
-                      onClick={() =>
-                        navigate(
-                          it.type === 'product'
-                            ? '/supplier/product-details'
-                            : '/supplier/supplier-service-details',
-                          { state: { id: it.id } },
-                        )
-                      }
-                    >
-                      {it.name}
-                    </button>
-                  </td>
-                  <td className="sl-fav">
-                    <button
-                      className={`heart ${it.favorite ? 'on' : ''}`}
-                      onClick={() => toggleFavorite(it.id)}
-                    >
-                      Heart
-                    </button>
-                  </td>
-                  <td>{it.price != null ? it.price : '-'}</td>
-                  <td>{it.stock != null ? it.stock : '-'}</td>
-                  <td>{renderStatus(it.status)}</td>
                   <td>
-                    <button
-                      className="sl-btn sl-btn-ghost"
-                      onClick={() => console.log('predict', it.id)}
+                    <div className="name-cell">
+                      <span className="type-tag">{t(`type.${item.type}`)}</span>
+                      <span className="item-name">{item.name}</span>
+                    </div>
+                  </td>
+                  <td>
+                    {isPremium ? (
+                      <span className="wishlist-count">{item.wishlist}</span>
+                    ) : (
+                      <span className="wishlist-blurred">—</span>
+                    )}
+                  </td>
+                  <td>{item.price != null ? item.price : '—'}</td>
+                  <td>{item.stock != null ? item.stock : '—'}</td>
+                  <td>
+                    <span
+                      className={`status-badge ${
+                        item.status === 'published' ? 'pub' : 'unpub'
+                      }`}
                     >
-                      {t('predict')}
+                      {t(`status.${item.status}`)}
+                    </span>
+                  </td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="predict-btn"
+                      onClick={() => handlePredict(item.id)}
+                    >
+                      {t('columns.predict')}
                     </button>
                   </td>
                 </tr>

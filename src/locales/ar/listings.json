@@ -1,0 +1,40 @@
+{
+  "pageTitle": "المنتجات والخدمات",
+  "searchPlaceholder": "ابحث هنا...",
+  "filters": {
+    "all": "الكل",
+    "products": "المنتجات",
+    "services": "الخدمات"
+  },
+  "buttons": {
+    "addProduct": "إنشاء منتج جديد",
+    "addService": "إنشاء خدمة جديدة"
+  },
+  "selectHint": "اختر عنصرًا لاتخاذ إجراء",
+  "actions": {
+    "edit": "تعديل",
+    "publish": "نشر",
+    "unpublish": "إلغاء النشر",
+    "duplicate": "نسخ",
+    "delete": "حذف"
+  },
+  "columns": {
+    "image": "الصورة",
+    "name": "اسم العنصر",
+    "wishlist": "المفضلة",
+    "price": "السعر للوحدة",
+    "stock": "المخزون",
+    "status": "الحالة",
+    "predict": "تنبؤ الطلب"
+  },
+  "type": {
+    "product": "منتج",
+    "service": "خدمة"
+  },
+  "status": {
+    "published": "منشور",
+    "unpublished": "غير منشور"
+  },
+  "empty": "لا توجد عناصر للعرض",
+  "wishlistBlur": "قم بترقية الخطة لمشاهدة عدد المفضلة"
+}
