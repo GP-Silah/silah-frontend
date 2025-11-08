@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -11,111 +11,228 @@ import {
   FaRegEye,
   FaRegEyeSlash,
 } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 import './Listings.css';
 
-const FAKE_ITEMS = [
-  {
-    id: 'p1',
-    type: 'product',
-    name: 'Amber - 45ml Soy Candle',
-    img: '/images/candle1.png',
-    price: 42,
-    stock: 26,
-    status: 'published',
-    wishlist: 12,
-  },
-  {
-    id: 'p2',
-    type: 'product',
-    name: 'Amber - 250ml Soy Candle',
-    img: '/images/candle2.png',
-    price: 42,
-    stock: 26,
-    status: 'published',
-    wishlist: 8,
-  },
-  {
-    id: 'p3',
-    type: 'product',
-    name: 'Amber - 45ml Soy Candle',
-    img: '/images/candle3.png',
-    price: 42,
-    stock: 0,
-    status: 'unpublished',
-    wishlist: 3,
-  },
-  {
-    id: 's1',
-    type: 'service',
-    name: 'Logo Design',
-    img: '/images/logo.png',
-    price: 23,
-    stock: null,
-    status: 'published',
-    wishlist: 5,
-  },
-  {
-    id: 's2',
-    type: 'service',
-    name: 'Website Redesign',
-    img: '/images/web.png',
-    price: null,
-    stock: null,
-    status: 'published',
-    wishlist: 15,
-  },
-];
+const API_BASE = `${import.meta.env.VITE_BACKEND_URL}`;
 
 export default function Listings() {
   const { t, i18n } = useTranslation('listings');
   const navigate = useNavigate();
-  const { user, role, supplierStatus } = useAuth();
-  const isRTL = i18n.dir() === 'rtl';
+  const { user, role, supplierStatus, supplierId } = useAuth();
 
+  const isRTL = i18n.dir() === 'rtl';
   const isSupplier = role === 'supplier';
   const isActive = supplierStatus === 'ACTIVE';
   const isPremium = user?.plan === 'PREMIUM';
 
-  const [items] = useState(FAKE_ITEMS);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState({});
-
-  // ──────────────────────────────────────────────────────────────────────
-  // 1. Add a new state for the tooltip
-  // ──────────────────────────────────────────────────────────────────────
   const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
-    if (!isPremium) {
-      setShowTooltip(true); // show on mount / refresh
-      const timer = setTimeout(() => {
-        setShowTooltip(false); // hide after 3 seconds
-      }, 3000);
-      return () => clearTimeout(timer); // cleanup if component unmounts early
-    }
-  }, [isPremium]); // re-run only when premium status changes
-
-  useEffect(() => {
     document.title = t('pageTitle');
+    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
   }, [t, i18n.language]);
 
-  const filtered = useMemo(() => {
-    return items.filter((item) => {
-      const matchesType = filter === 'all' || item.type === filter;
-      const matchesSearch =
-        !search || item.name.toLowerCase().includes(search.toLowerCase());
-      return matchesType && matchesSearch;
+  // Tooltip: show for 3s on mount if not premium
+  useEffect(() => {
+    if (!isPremium) {
+      setShowTooltip(true);
+      const timer = setTimeout(() => setShowTooltip(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isPremium]);
+
+  // ----------------------------------------------------------------------
+  //  FETCH ALL ITEMS – axios + withCredentials
+  // ----------------------------------------------------------------------
+  const fetchItems = useCallback(async () => {
+    if (!supplierId) {
+      setLoading(false); // prevent stuck loading
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const [prodRes, servRes] = await Promise.all([
+        axios.get(`${API_BASE}/api/products/supplier/${supplierId}`, {
+          withCredentials: true,
+          headers: { 'accept-language': i18n.language },
+        }),
+        axios.get(`${API_BASE}/api/services/supplier/${supplierId}`, {
+          withCredentials: true,
+          headers: { 'accept-language': i18n.language },
+        }),
+      ]);
+
+      const products = prodRes.data || [];
+      const services = servRes.data || [];
+
+      const mapProduct = (p) => ({
+        id: p.productId,
+        type: 'product',
+        name: p.name,
+        img: p.imagesFilesUrls?.[0] || '/images/placeholder.png',
+        price: p.price,
+        stock: p.stock,
+        status: p.isPublished ? 'published' : 'unpublished',
+        wishlist: p.wishlistCount || 0,
+      });
+
+      const mapService = (s) => ({
+        id: s.serviceId,
+        type: 'service',
+        name: s.name,
+        img: s.imagesFilesUrls?.[0] || '/images/placeholder.png',
+        price: s.price,
+        stock: null,
+        status: s.isPublished ? 'published' : 'unpublished',
+        wishlist: s.wishlistCount || 0,
+      });
+
+      const mapped = [...products.map(mapProduct), ...services.map(mapService)];
+      setItems(mapped);
+    } catch (err) {
+      const message =
+        err.response?.data?.error?.message || t('errors.fetchFailed');
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  }, [supplierId, i18n.language, t]);
+
+  // Re-run when supplierId becomes available
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems, supplierId]);
+
+  // ----------------------------------------------------------------------
+  //  SEARCH – axios + withCredentials
+  // ----------------------------------------------------------------------
+  useEffect(() => {
+    if (!search.trim()) {
+      fetchItems();
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await axios.get(
+          `${API_BASE}/api/search/supplier/catalog?name=${encodeURIComponent(
+            search,
+          )}`,
+          {
+            withCredentials: true,
+            headers: { 'accept-language': i18n.language },
+          },
+        );
+
+        const results = res.data || [];
+        const mapped = results.map((r) =>
+          r.productId
+            ? {
+                id: r.productId,
+                type: 'product',
+                name: r.name,
+                img: r.imagesFilesUrls?.[0] || '/images/placeholder.png',
+                price: r.price,
+                stock: r.stock,
+                status: r.isPublished ? 'published' : 'unpublished',
+                wishlist: r.wishlistCount || 0,
+              }
+            : {
+                id: r.serviceId,
+                type: 'service',
+                name: r.name,
+                img: r.imagesFilesUrls?.[0] || '/images/placeholder.png',
+                price: r.price,
+                stock: null,
+                status: r.isPublished ? 'published' : 'unpublished',
+                wishlist: r.wishlistCount || 0,
+              },
+        );
+        setItems(mapped);
+      } catch {
+        toast.error(t('errors.searchFailed'));
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search, t, i18n.language]);
+
+  // ----------------------------------------------------------------------
+  //  BULK ACTIONS – axios + withCredentials
+  // ----------------------------------------------------------------------
+  const performBulkAction = async (action) => {
+    if (!selectedIds.length) return;
+
+    const promises = selectedIds.map(async (id) => {
+      const item = items.find((i) => i.id === id);
+      if (!item) return;
+
+      const endpoint = item.type === 'product' ? 'products' : 'services';
+      const url = `${API_BASE}/api/${endpoint}/${id}${
+        action === 'duplicate' ? '/clone' : ''
+      }`;
+
+      try {
+        if (action === 'delete') {
+          await axios.delete(url, { withCredentials: true });
+        } else if (action === 'duplicate') {
+          await axios.post(url, {}, { withCredentials: true });
+        } else {
+          await axios.patch(
+            url,
+            { isPublished: action === 'publish' },
+            {
+              withCredentials: true,
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
+        }
+      } catch (err) {
+        const message =
+          err.response?.data?.error?.message || t('errors.actionFailed');
+        throw new Error(message);
+      }
     });
-  }, [items, filter, search]);
+
+    toast.promise(Promise.all(promises), {
+      loading: t(`actions.${action}ing`),
+      success: () => {
+        setSelected({});
+        fetchItems();
+        return t(`actions.${action}Success`);
+      },
+      error: (err) => err.message,
+    });
+  };
+
+  // ----------------------------------------------------------------------
+  //  UI LOGIC (unchanged)
+  // ----------------------------------------------------------------------
+  const filtered = useMemo(() => {
+    return items.filter((item) => filter === 'all' || item.type === filter);
+  }, [items, filter]);
 
   const selectedIds = Object.keys(selected).filter((id) => selected[id]);
   const allChecked =
     filtered.length > 0 && filtered.every((it) => selected[it.id]);
+  const canEdit = selectedIds.length === 1;
 
   const toggleAll = () => {
     const newSel = {};
-    if (!allChecked) filtered.forEach((it) => (newSel[it.id] = true));
+    if (!allChecked) {
+      filtered.forEach((it) => {
+        newSel[it.id] = true;
+      });
+    }
     setSelected(newSel);
   };
 
@@ -126,18 +243,14 @@ export default function Listings() {
   const goToDetails = (item) => {
     navigate(
       item.type === 'product'
-        ? '/supplier/product-details'
-        : '/supplier/supplier-service-details',
-      { state: { id: item.id } },
+        ? `/supplier/products/${item.id}`
+        : `/supplier/services/${item.id}`,
     );
   };
 
   const goToCreate = (type) => {
     navigate(
-      type === 'product'
-        ? '/supplier/product-details'
-        : '/supplier/supplier-service-details',
-      { state: { create: true } },
+      type === 'product' ? '/supplier/products/new' : '/supplier/services/new',
     );
   };
 
@@ -145,6 +258,9 @@ export default function Listings() {
     navigate(`/supplier/demand/${id}`);
   };
 
+  // ----------------------------------------------------------------------
+  //  RENDER
+  // ----------------------------------------------------------------------
   return (
     <div className="listings-page" dir={i18n.dir()}>
       {/* Toolbar */}
@@ -190,19 +306,37 @@ export default function Listings() {
       <div className="action-bar">
         <span>{t('selectHint')}</span>
         <div className="action-buttons">
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            disabled={!canEdit}
+            onClick={() =>
+              goToDetails(items.find((i) => i.id === selectedIds[0]))
+            }
+          >
             <FaEdit /> {t('actions.edit')}
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => performBulkAction('publish')}
+          >
             <FaRegEye /> {t('actions.publish')}
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => performBulkAction('unpublish')}
+          >
             <FaRegEyeSlash /> {t('actions.unpublish')}
           </button>
-          <button className="action-btn">
+          <button
+            className="action-btn"
+            onClick={() => performBulkAction('duplicate')}
+          >
             <FaCopy /> {t('actions.duplicate')}
           </button>
-          <button className="action-btn danger">
+          <button
+            className="action-btn danger"
+            onClick={() => performBulkAction('delete')}
+          >
             <FaTrashAlt /> {t('actions.delete')}
           </button>
         </div>
@@ -235,7 +369,13 @@ export default function Listings() {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={8} className="empty">
+                  {t('loading')}
+                </td>
+              </tr>
+            ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={8} className="empty">
                   {t('empty')}
@@ -257,7 +397,13 @@ export default function Listings() {
                   </td>
                   <td>
                     <div className="thumb">
-                      <img src={item.img} alt={item.name} />
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        onError={(e) =>
+                          (e.currentTarget.src = '/images/placeholder.png')
+                        }
+                      />
                     </div>
                   </td>
                   <td>

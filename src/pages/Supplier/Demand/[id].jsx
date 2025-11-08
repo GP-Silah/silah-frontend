@@ -35,6 +35,12 @@ export default function DemandPrediction() {
   const { user, role, supplierStatus } = useAuth();
   const isRTL = i18n.dir() === 'rtl';
 
+  useEffect(() => {
+    document.title = t('pageTitle');
+    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.setAttribute('dir', dir);
+  }, [t, i18n.language]);
+
   // -----------------------------------------------------------------
   // 1. STATE
   // -----------------------------------------------------------------

@@ -16,12 +16,19 @@
     "publish": "نشر",
     "unpublish": "إلغاء النشر",
     "duplicate": "نسخ",
-    "delete": "حذف"
+    "delete": "حذف",
+    "publishing": "جاري النشر…",
+    "unpublishing": "جاري إلغاء النشر…",
+    "duplicating": "جاري النسخ…",
+    "deleting": "جاري الحذف…",
+    "publishSuccess": "تم النشر بنجاح",
+    "unpublishSuccess": "تم إلغاء النشر بنجاح",
+    "duplicateSuccess": "تم النسخ بنجاح",
+    "deleteSuccess": "تم الحذف بنجاح"
   },
   "columns": {
     "image": "الصورة",
     "name": "اسم العنصر",
-    "wishlist": "المفضلة",
     "price": "السعر للوحدة",
     "stock": "المخزون",
     "status": "الحالة",
@@ -35,6 +42,12 @@
     "published": "منشور",
     "unpublished": "غير منشور"
   },
+  "loading": "جاري التحميل…",
   "empty": "لا توجد عناصر للعرض",
+  "errors": {
+    "fetchFailed": "فشل جلب البيانات",
+    "searchFailed": "فشل البحث",
+    "actionFailed": "فشل تنفيذ الإجراء"
+  },
   "wishlistBlur": "قم بترقية الخطة لمشاهدة عدد المفضلة"
 }
