@@ -1,0 +1,11 @@
+{
+  "pageTitle": "البدائل",
+  "title": "بدائل لـ",
+  "invalidBoth": "لا يمكن تقديم كل من itemId و text معًا.",
+  "invalidMissing": "يجب تقديم إما itemId أو text.",
+  "itemNotFound": "العنصر المطلوب غير موجود.",
+  "genericError": "حدث خطأ ما. حاول مرة أخرى.",
+  "noResults": "لم يتم العثور على بدائل لـ",
+  "loading": "جاري التحميل…",
+  "enterSearchText": "يرجى إدخال نص بحث أو عنصر."
+}

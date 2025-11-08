@@ -177,7 +177,7 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/alternatives/${_id}`);
+              navigate(`/buyer/alternatives?itemId=${_id}`);
             }}
             className="alternatives-btn"
           >
