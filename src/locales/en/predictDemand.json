@@ -1,0 +1,20 @@
+{
+  "pageTitle": "Stock Demand Forecast",
+  "title": "Stock Demand Forecast",
+  "subtitle": "AI-powered insights to help you plan ahead for the next three months",
+  "chartLabel": "Predicted Demand for the Next Three Months",
+  "demandLabel": "Demand",
+  "currentStockLabel": "Current Stock",
+  "restockAdvice": "To avoid shortages, consider restocking {{count}} units as per AI demand predictions.",
+  "teaserTitle": "Want to see future stock demand?",
+  "teaserText": "Upgrade to Premium for AI predictions!",
+  "upgradeNow": "Upgrade Now",
+  "loading": "Loading forecast…",
+  "invalidId": "Invalid product ID.",
+  "notEnoughData": "Not enough sales data to generate a forecast.",
+  "upgradeRequired": "Upgrade plan to access this feature",
+  "forbidden": "You do not have permission to view this forecast.",
+  "productNotFoundOrNotYours": "Product not found or you don't own it.",
+  "aiUnavailable": "AI service is temporarily unavailable.",
+  "genericError": "Something went wrong. Please try again."
+}

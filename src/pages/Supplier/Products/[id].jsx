@@ -721,7 +721,7 @@ export default function SupplierProductDetails() {
 
           <button
             className="pd-btn ghost"
-            onClick={() => console.log('predict')}
+            onClick={navigate(`/supplier/demand/${id}`)}
             disabled={isCreateMode} // <-- disable in create mode
           >
             <FiClock /> {t('actions.predictDemand')}
