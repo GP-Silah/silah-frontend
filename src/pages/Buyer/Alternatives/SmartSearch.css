@@ -97,3 +97,16 @@
     gap: 1rem;
   }
 }
+
+/* ===================== RTL GRID FLOW – RIGHT-TO-LEFT ===================== */
+.smart-search-page[dir='rtl'] .results-grid {
+  direction: rtl; /* THIS IS THE KEY */
+  justify-items: end; /* align items to the right */
+  text-align: right;
+}
+
+/* Keep card content RTL (text, buttons, etc.) */
+.smart-search-page[dir='rtl'] .results-grid .item-card {
+  direction: rtl;
+  text-align: right;
+}

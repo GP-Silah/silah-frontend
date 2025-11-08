@@ -16,8 +16,8 @@ export default function Alternatives() {
   const lang = i18n.language;
   const isRTL = i18n.dir() === 'rtl';
 
-  const [items, setItems] = useState([]); // array of {item, rank}
-  const [originalQuery, setOriginalQuery] = useState(''); // name of the source item / text
+  const [items, setItems] = useState([]); // [{ item, rank }]
+  const [originalQuery, setOriginalQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,10 +26,13 @@ export default function Alternatives() {
     document.title = t('pageTitle');
   }, [t, i18n.language]);
 
-  // -----------------------------------------------------------------
-  // 1. Validation
-  // -----------------------------------------------------------------
+  // ==================================================================
+  // MAIN EFFECT
+  // ==================================================================
   useEffect(() => {
+    // -----------------------------------------------------------------
+    // 1. Validate query params
+    // -----------------------------------------------------------------
     if (rawItemId && rawText) {
       setError(t('invalidBoth'));
       setLoading(false);
@@ -42,7 +45,7 @@ export default function Alternatives() {
     }
 
     // -----------------------------------------------------------------
-    // 2. Resolve the *original* name (only when we have an itemId)
+    // 2. Resolve original item name (only if itemId provided)
     // -----------------------------------------------------------------
     const resolveOriginal = async () => {
       if (!rawItemId) {
@@ -50,73 +53,87 @@ export default function Alternatives() {
         return;
       }
 
+      const base = import.meta.env.VITE_BACKEND_URL;
+
       try {
-        const base = import.meta.env.VITE_BACKEND_URL;
-        // try product first
-        const prod = await axios.get(
+        // Try product first
+        const res = await axios.get(
           `${base}/api/products/${rawItemId}?lang=${lang}`,
           {
             withCredentials: true,
           },
         );
-        setOriginalQuery(prod.data.name);
+        setOriginalQuery(res.data.name);
       } catch (e1) {
-        // not a product → try service
+        // Not a product → try service
         try {
-          const serv = await axios.get(
+          const res = await axios.get(
             `${base}/api/services/${rawItemId}?lang=${lang}`,
             {
               withCredentials: true,
             },
           );
-          setOriginalQuery(serv.data.name);
+          setOriginalQuery(res.data.name);
         } catch (e2) {
+          // Invalid ID (404 or malformed) → show user-friendly error
           setError(t('itemNotFound'));
           setLoading(false);
         }
       }
     };
 
-    resolveOriginal().then(() => {
-      if (error) return; // already set above
-      // -----------------------------------------------------------------
-      // 3. Call the AI smart-search endpoint
-      // -----------------------------------------------------------------
-      const callSmart = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-          const base = import.meta.env.VITE_BACKEND_URL;
-          const body = rawItemId ? { itemId: rawItemId } : { text };
-          const res = await axios.post(
-            `${base}/api/smart-search?lang=${lang}`,
-            body,
-            { withCredentials: true },
-          );
+    // -----------------------------------------------------------------
+    // 3. Call AI smart-search
+    // -----------------------------------------------------------------
+    const callSmartSearch = async () => {
+      setLoading(true);
+      setError(null);
 
-          console.log(res.data);
+      try {
+        const base = import.meta.env.VITE_BACKEND_URL;
+        const body = rawItemId ? { itemId: rawItemId } : { text };
+        const res = await axios.post(
+          `${base}/api/smart-search?lang=${lang}`,
+          body,
+          {
+            withCredentials: true,
+          },
+        );
 
-          // API always returns top-10 (or less)
-          setItems((res.data ?? []).slice(0, 10));
-        } catch (err) {
-          const msg =
-            err.response?.data?.error?.message ||
-            err.response?.data?.message ||
-            t('genericError');
-          setError(msg);
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
-      };
+        // Sort by rank (rank 1 = first)
+        const sorted = (res.data ?? [])
+          .sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity))
+          .slice(0, 10); // max 10
 
-      callSmart();
-    });
+        setItems(sorted);
+      } catch (err) {
+        const msg =
+          err.response?.data?.error?.message ||
+          err.response?.data?.message ||
+          t('genericError');
+        setError(msg);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // -----------------------------------------------------------------
+    // Execute flow
+    // -----------------------------------------------------------------
+    if (rawItemId) {
+      resolveOriginal().then(() => {
+        if (!error) callSmartSearch();
+      });
+    } else {
+      setOriginalQuery(text);
+      callSmartSearch();
+    }
   }, [rawItemId, rawText, text, lang, t, error]);
 
-  // -----------------------------------------------------------------
-  // UI helpers
-  // -----------------------------------------------------------------
+  // ==================================================================
+  // UI HELPERS
+  // ==================================================================
   const noResults = () => (
     <p className="status">
       {t('noResults')} "<strong>{originalQuery}</strong>".
@@ -162,7 +179,7 @@ export default function Alternatives() {
                     price: item.price ?? 0,
                     type: item.productId ? 'product' : 'service',
                   };
-                  console.log(mapped);
+
                   return (
                     <ItemCard
                       key={`${mapped._id}-${idx}`}
