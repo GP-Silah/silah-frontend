@@ -96,7 +96,17 @@ export default function Listings() {
         wishlist: s.wishlistCount || 0,
       });
 
-      const mapped = [...products.map(mapProduct), ...services.map(mapService)];
+      const mapped = [
+        // Products: newest first
+        ...(products || [])
+          .map(mapProduct)
+          .sort((a, b) => b.createdAt - a.createdAt),
+
+        // Services: newest first
+        ...(services || [])
+          .map(mapService)
+          .sort((a, b) => b.createdAt - a.createdAt),
+      ];
       setItems(mapped);
     } catch (err) {
       const message =
@@ -218,7 +228,16 @@ export default function Listings() {
   //  UI LOGIC (unchanged)
   // ----------------------------------------------------------------------
   const filtered = useMemo(() => {
-    return items.filter((item) => filter === 'all' || item.type === filter);
+    if (filter === 'all') return items;
+
+    // map UI label → real item.type
+    const typeMap = {
+      products: 'product',
+      services: 'service',
+    };
+
+    const target = typeMap[filter];
+    return target ? items.filter((i) => i.type === target) : items;
   }, [items, filter]);
 
   const selectedIds = Object.keys(selected).filter((id) => selected[id]);
@@ -431,12 +450,14 @@ export default function Listings() {
                     </span>
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    <button
-                      className="predict-btn"
-                      onClick={() => handlePredict(item.id)}
-                    >
-                      {t('columns.predict')}
-                    </button>
+                    {item.type === 'product' && ( // ← only products
+                      <button
+                        className="predict-btn"
+                        onClick={() => handlePredict(item.id)}
+                      >
+                        {t('columns.predict')}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
