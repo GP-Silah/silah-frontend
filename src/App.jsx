@@ -1,4 +1,3 @@
-// App.jsx
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 import { ToastProvider } from '@/context/NotificationPopupToast/NotificationContext';
 import NotificationListener from '@/components/NotificationListener';
+import { Toaster } from 'react-hot-toast';
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout';
@@ -96,6 +96,15 @@ export default function App() {
     <div className={i18n.language === 'ar' ? 'lang-ar' : 'lang-en'}>
       <ToastProvider isBuyer={isBuyer}>
         <NotificationListener />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            // optional: you can tweak style per language
+            style: {
+              direction: i18n.dir(), // forces correct text direction inside toast
+            },
+          }}
+        />
         <React.Suspense fallback={null}>
           <Routes>
             {/* 1. PUBLIC PAGES (login, signup, 404) */}

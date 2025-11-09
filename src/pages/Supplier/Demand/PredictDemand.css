@@ -1,0 +1,263 @@
+/* ===================== BASE ===================== */
+.predict-demand-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* ===================== HEADER ===================== */
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  /* padding-top: 100px; */
+}
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+.subtitle {
+  color: #555;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ===================== PREMIUM FORECAST SECTION ===================== */
+.forecast-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.product-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-direction: row;
+  justify-content: center;
+}
+.predict-demand-page[dir='rtl'] .product-card {
+  flex-direction: row-reverse;
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}
+.product-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.chart-label {
+  font-size: 1rem;
+  color: #444;
+  margin: 1.5rem 0 1rem;
+  text-align: center;
+}
+
+.chart-container {
+  margin-bottom: 1.5rem;
+}
+
+/* ===================== TEASER SECTION (NON-PREMIUM) ===================== */
+.teaser-section {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.teaser-content {
+  text-align: center;
+  max-width: 400px;
+}
+.teaser-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem;
+}
+.teaser-text {
+  color: #555;
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+
+.upgrade-btn {
+  background: #5c2d91;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.upgrade-btn:hover {
+  background: #4a1f7a;
+}
+
+.blurred-chart {
+  opacity: 0.3;
+  filter: blur(2px);
+  padding: 1rem;
+}
+
+.restock-advice {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #222;
+  margin: 1.5rem 0 0;
+}
+.restock-advice.blurred {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* ===================== RTL ===================== */
+.predict-demand-page[dir='rtl'] {
+  text-align: right;
+}
+.predict-demand-page[dir='rtl'] .chart-label,
+.predict-demand-page[dir='rtl'] .restock-advice {
+  text-align: center;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+  .product-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .predict-demand-page[dir='rtl'] .product-card {
+    flex-direction: column;
+  }
+  .chart-container,
+  .blurred-chart {
+    height: 250px;
+  }
+}
+
+/* ===================== BASE – FILL SUPPLIER LAYOUT ===================== */
+.predict-demand-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: 'Tajawal', sans-serif;
+
+  /* Make the page fill the supplier-main height */
+  min-height: calc(100vh - 64px); /* subtract header height if any */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* ===================== HEADER – KEEP AT TOP ===================== */
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  width: 100%;
+}
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+.subtitle {
+  color: #555;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ===================== PREMIUM FORECAST SECTION ===================== */
+.forecast-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== TEASER SECTION – FULL HEIGHT + FULL BLUR ===================== */
+.teaser-section {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: #f8f9fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  /* flex: 1; */
+  min-height: 500px; /* fallback if flex fails */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Full-page blur overlay */
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Blurred chart – stretch to fill */
+.blurred-chart {
+  flex: 1;
+  min-height: 300px;
+  opacity: 0.25;
+  filter: blur(3px);
+  padding: 1.5rem;
+}
+
+/* Restock advice – outside blur, at bottom */
+.restock-advice.blurred {
+  margin-top: auto;
+  padding-top: 1rem;
+  color: #aaa;
+  font-style: italic;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Let main grow and center content */
+.content-area {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}

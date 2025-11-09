@@ -102,7 +102,9 @@ export default function Homepage() {
   const handleSmartSearch = (e) => {
     e.preventDefault();
     if (searchText.trim()) {
-      navigate(`/alternatives?text=${encodeURIComponent(searchText.trim())}`);
+      navigate(
+        `/buyer/alternatives?text=${encodeURIComponent(searchText.trim())}`,
+      );
     }
   };
 

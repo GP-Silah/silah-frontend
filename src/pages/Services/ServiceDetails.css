@@ -1,0 +1,282 @@
+/* --------------------------------------------------------------
+   ServiceDetails – global container
+   -------------------------------------------------------------- */
+.service-details {
+  max-width: 124 Flights0px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* --------------------------------------------------------------
+   Supplier bar (clickable)
+   -------------------------------------------------------------- */
+.sd-supplier-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+.sd-sup-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.sd-sup-info h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+.sd-sup-rating,
+.sd-sup-city {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* --------------------------------------------------------------
+   Hero (pink background)
+   -------------------------------------------------------------- */
+.sd-hero {
+  display: flex;
+  /* flex-wrap: wrap; */
+  gap: 2rem;
+  padding: 2rem 0;
+  border-radius: 12px;
+}
+
+/* Force content first in RTL */
+[data-dir='rtl'] .sd-hero-content {
+  order: 1;
+}
+[data-dir='rtl'] .sd-hero-images {
+  order: 2;
+}
+
+/* LTR: images first */
+[data-dir='ltr'] .sd-hero-images {
+  order: 1;
+}
+[data-dir='ltr'] .sd-hero-content {
+  order: 2;
+}
+
+.sd-hero-images {
+  flex: 1 1 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.sd-hero-main {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.sd-hero-thumbs {
+  display: flex;
+  gap: 0.75rem;
+}
+.sd-thumb {
+  width: 48%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Hero content */
+.sd-hero-content {
+  flex: 1 1 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.sd-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sd-title {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+.sd-heart-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.sd-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+.sd-price-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.sd-currency {
+  width: 20px;
+  height: 20px;
+}
+.sd-negotiable {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.sd-negotiate-hint {
+  color: #555;
+  font-size: 0.95rem;
+}
+.sd-availability {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #444;
+}
+.sd-request-btn {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #6d28d9;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sd-request-btn:hover {
+  background: #5b21b6;
+}
+
+/* --------------------------------------------------------------
+   Description
+   -------------------------------------------------------------- */
+.sd-description h2 {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+}
+.sd-description p {
+  line-height: 1.6;
+  color: #333;
+}
+
+/* --------------------------------------------------------------
+   Reviews section
+   -------------------------------------------------------------- */
+.sd-reviews h2 {
+  margin: 2rem 0 1rem;
+  font-size: 1.5rem;
+}
+.sd-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.sd-no-reviews {
+  color: #777;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------
+   Loading / error
+   -------------------------------------------------------------- */
+.sd-loading,
+.sd-error {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+}
+.sd-error {
+  color: #b91c1c;
+}
+
+/* --------------------------------------------------------------
+   RTL tweaks
+   -------------------------------------------------------------- */
+[data-dir='rtl'] .sd-supplier-bar {
+  flex-direction: inherit;
+}
+[data-dir='rtl'] .sd-hero-thumbs {
+  flex-direction: row-reverse;
+}
+[data-dir='rtl'] .sd-hero {
+  flex-direction: row-reverse;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sd-hero {
+    flex-direction: column;
+  }
+  .sd-hero-images,
+  .sd-hero-content {
+    flex: 1 1 auto;
+  }
+  .sd-hero-main {
+    max-height: 260px;
+  }
+}
+
+.sd-hero {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-radius: 12px;
+}
+
+.sd-hero-images,
+.sd-hero-content {
+  flex: 1 1 380px; /* same base size */
+}
+
+/* Only wrap on small screens */
+@media (max-width: 768px) {
+  .sd-hero {
+    flex-wrap: wrap;
+  }
+  .sd-hero-images,
+  .sd-hero-content {
+    flex: 1 1 100%;
+  }
+}
+
+/* --------------------------------------------------------------
+   RTL: Force correct order
+   -------------------------------------------------------------- */
+[data-dir='rtl'] .sd-hero-content {
+  order: 1;
+}
+[data-dir='rtl'] .sd-hero-images {
+  order: 2;
+}
+
+[data-dir='ltr'] .sd-hero-images {
+  order: 1;
+}
+[data-dir='ltr'] .sd-hero-content {
+  order: 2;
+}
+
+/* Existing RTL tweaks */
+[data-dir='rtl'] .sd-supplier-bar {
+  flex-direction: inherit;
+}
+[data-dir='rtl'] .sd-hero-thumbs {
+  flex-direction: row-reverse;
+}
