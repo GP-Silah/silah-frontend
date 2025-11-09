@@ -27,9 +27,8 @@ The frontend handles:
 - **Framework:** React 18 + Vite
 - **Routing:** react-router-dom v6
 - **State Management:** React Context + Hooks
-- **Styling:** CSS Modules / SCSS
+- **Styling:** CSS
 - **Translation:** react-i18next
-- **Form Validation:** Yup + React Hook Form
 - **Testing:** Vitest + React Testing Library
 - **Bundling:** Vite (HMR, optimized build)
 - **Version Control:** Git + GitHub
@@ -83,7 +82,7 @@ This starts Vite dev server with HMR. The default URL: `http://localhost:5173`
 
 ## Project Structure
 
-```
+```bash
 src/
 ├─ components/       # Reusable UI components
 ├─ pages/            # Each page folder contains a page component

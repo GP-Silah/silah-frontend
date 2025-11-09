@@ -1,0 +1,112 @@
+/* ===================== SMART SEARCH PAGE BASE ===================== */
+.smart-search-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* ===================== HEADER ===================== */
+.search-header {
+  margin-bottom: 2rem;
+}
+.search-header h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+.search-header h1 strong {
+  color: #517fbf; /* Updated to match your color scheme */
+}
+
+/* ===================== LAYOUT ===================== */
+.search-content {
+  display: block;
+}
+.results {
+  width: 100%;
+  min-width: 0;
+}
+
+/* ===================== FULL-WIDTH BLUE SECTION (same as homepage) ===================== */
+.full-width {
+  background: #e3edf6; /* Light blue from your scheme */
+  border-radius: 1rem;
+  padding: 2rem 1.5rem; /* Inner padding */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+  max-width: 100vw;
+  box-sizing: border-box;
+}
+
+/* Inner wrapper to keep grid centered within max-width */
+.results-grid-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ===================== RESULTS GRID (inside full-width) ===================== */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1.5rem;
+  padding: 0; /* padding is now on .full-width */
+  width: 100%;
+}
+
+/* ===================== STATUS MESSAGES ===================== */
+.status {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+.status.error {
+  color: #ef4444;
+}
+.status strong {
+  color: #517fbf;
+}
+
+/* ===================== RTL FIXES ===================== */
+.smart-search-page[dir='rtl'] .search-content {
+  direction: rtl;
+}
+.smart-search-page[dir='rtl'] .results-grid {
+  direction: ltr;
+  justify-items: start;
+}
+.smart-search-page[dir='rtl'] .results-grid .item-card {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+  .full-width {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    width: calc(100% + 3rem);
+    padding: 1.5rem 1rem;
+    border-radius: 0.75rem;
+  }
+  .results-grid {
+    gap: 1rem;
+  }
+}
+
+/* ===================== RTL GRID FLOW – RIGHT-TO-LEFT ===================== */
+.smart-search-page[dir='rtl'] .results-grid {
+  direction: rtl; /* THIS IS THE KEY */
+  justify-items: end; /* align items to the right */
+  text-align: right;
+}
+
+/* Keep card content RTL (text, buttons, etc.) */
+.smart-search-page[dir='rtl'] .results-grid .item-card {
+  direction: rtl;
+  text-align: right;
+}

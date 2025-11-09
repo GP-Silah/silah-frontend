@@ -1,0 +1,11 @@
+{
+  "pageTitle": "Alternatives",
+  "title": "Alternatives for",
+  "invalidBoth": "You cannot provide both itemId and text.",
+  "invalidMissing": "Either itemId or text is required.",
+  "itemNotFound": "The requested item could not be found.",
+  "genericError": "Something went wrong. Please try again.",
+  "noResults": "No alternatives found for",
+  "loading": "Loading…",
+  "enterSearchText": "Please provide a search term or item."
+}

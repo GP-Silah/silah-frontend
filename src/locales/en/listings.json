@@ -1,0 +1,53 @@
+{
+  "pageTitle": "Products & Services",
+  "searchPlaceholder": "Search here...",
+  "filters": {
+    "all": "All",
+    "products": "Products",
+    "services": "Services"
+  },
+  "buttons": {
+    "addProduct": "Create a New Product",
+    "addService": "Create a New Service"
+  },
+  "selectHint": "Select item(s) to take an action",
+  "actions": {
+    "edit": "Edit",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "publishing": "Publishing…",
+    "unpublishing": "Unpublishing…",
+    "duplicating": "Duplicating…",
+    "deleting": "Deleting…",
+    "publishSuccess": "Published successfully",
+    "unpublishSuccess": "Unpublished successfully",
+    "duplicateSuccess": "Duplicated successfully",
+    "deleteSuccess": "Deleted successfully"
+  },
+  "columns": {
+    "image": "Image",
+    "name": "Item Name",
+    "price": "Unit Price",
+    "stock": "Stock",
+    "status": "Status",
+    "predict": "Predict Demand"
+  },
+  "type": {
+    "product": "Product",
+    "service": "Service"
+  },
+  "status": {
+    "published": "Published",
+    "unpublished": "Unpublished"
+  },
+  "loading": "Loading…",
+  "empty": "No items to show",
+  "errors": {
+    "fetchFailed": "Failed to fetch data",
+    "searchFailed": "Search failed",
+    "actionFailed": "Action failed"
+  },
+  "wishlistBlur": "Upgrade to Premium to see wishlist count"
+}

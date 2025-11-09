@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
   const [supplierStatus, setSupplierStatus] = useState(null);
+  const [supplierId, setSupplierId] = useState(null);
 
   const INACTIVE_NOTICE_KEY = 'inactiveSupplierNoticeClosed';
 
@@ -76,8 +77,9 @@ export function AuthProvider({ children }) {
             `${import.meta.env.VITE_BACKEND_URL}/api/suppliers/me`,
             { withCredentials: true },
           );
-          const status = supplierRes.data.supplierStatus;
-          setSupplierStatus(status);
+          const supplierData = supplierRes.data;
+          setSupplierStatus(supplierData.supplierStatus);
+          setSupplierId(supplierData.supplierId);
 
           // === إظهار التنبيه إذا INACTIVE ولم يُغلق ===
           if (status === 'INACTIVE') {
@@ -158,6 +160,7 @@ export function AuthProvider({ children }) {
         loading,
         switching,
         supplierStatus,
+        supplierId,
         handleLogout,
         fetchUser,
         switchRole,
