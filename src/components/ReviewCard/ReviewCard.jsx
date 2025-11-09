@@ -8,7 +8,7 @@ export default function ReviewCard({ review }) {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
   const buyerName = review.buyer?.name || t('anonymous');
-  const rating = review.itemRating ?? 0;
+  const rating = review.itemRating ?? 5;
   const comment = review.writtenReviewOfItem ?? '';
   const date = new Date(review.createdAt).toLocaleDateString(
     i18n.language === 'ar' ? 'ar-EG' : 'en-US',

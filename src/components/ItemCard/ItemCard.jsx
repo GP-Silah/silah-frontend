@@ -120,7 +120,7 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
   const handleSupplierClick = (e) => {
     e.stopPropagation();
     if (!supplierId) return;
-    navigate(`/suppliers/storefront/${supplierId}`);
+    navigate(`/storefronts/${supplierId}`);
   };
 
   return (
