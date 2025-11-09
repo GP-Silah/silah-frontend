@@ -1,0 +1,17 @@
+{
+  "title": "إنشاء فاتورة",
+  "invoiceNumber": "رقم الفاتورة",
+  "invoiceNumberPlaceholder": "أدخل رقم الفاتورة",
+  "clientName": "اسم العميل",
+  "clientNamePlaceholder": "أدخل اسم العميل",
+  "deliveryDate": "تاريخ التسليم",
+  "termsOfPayment": "شروط الدفع",
+  "partiallyPaid": "دُفع جزئياً",
+  "fullyPaid": "دُفع كلياً",
+  "item": "العنصر",
+  "qty": "الكمية",
+  "unitPrice": "سعر الوحدة",
+  "totalPrice": "السعر الإجمالي",
+  "actions": "إجراءات",
+  "createInvoice": "إنشاء الفاتورة"
+}
