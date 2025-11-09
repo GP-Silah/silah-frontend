@@ -1,0 +1,42 @@
+{
+  "pageTitle": "واجهة متجر {{businessName}}",
+  "pageTitleFallback": "متجر المورد",
+  "listingsTitle": "العروض",
+  "products": "منتجات",
+  "services": "خدمات",
+  "reviewsTitle": "آراء المشترين عنا",
+  "negotiable": "قابل للتفاوض",
+  "fixed": "ثابت",
+  "description": "هذا المورد غير نشط.",
+  "loading": "جاري تحميل المتجر...",
+  "noReviews": "لا توجد آراء بعد.",
+  "wishlist": {
+    "successTitle": "تم تحديث قائمة الرغبات",
+    "added": "تمت الإضافة إلى قائمة الرغبات",
+    "removed": "تمت الإزالة من قائمة الرغبات",
+    "errorTitle": "خطأ",
+    "errorText": "فشل تحديث قائمة الرغبات"
+  },
+  "errors": {
+    "title": "حدث خطأ ما",
+    "noId": "لم يتم تقديم معرف المورد",
+    "generic": "حدث خطأ"
+  },
+  "status": {
+    "closed": {
+      "title": "المتجر مغلق",
+      "default": "هذا المتجر مغلق مؤقتًا.",
+      "back": "العودة"
+    },
+    "inactive": {
+      "title": "المتجر غير نشط",
+      "message": "هذا المورد غير نشط حاليًا. تواصل معه لإعادة التفعيل."
+    }
+  },
+  "filter": {
+    "all": "جميع العروض",
+    "products": "منتجات",
+    "services": "خدمات"
+  },
+  "noItems": "لا توجد عناصر في هذه الفئة."
+}

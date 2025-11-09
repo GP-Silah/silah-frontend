@@ -304,9 +304,7 @@ export default function ProductDetails() {
       {/* SUPPLIER BAR */}
       <div
         className="pd-supplier-bar"
-        onClick={() =>
-          supplierId && navigate(`/suppliers/storefront/${supplierId}`)
-        }
+        onClick={() => supplierId && navigate(`/storefronts/${supplierId}`)}
       >
         <img
           src={supplierAvatar || '/avatar-placeholder.png'}

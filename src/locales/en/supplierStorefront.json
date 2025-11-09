@@ -1,0 +1,42 @@
+{
+  "pageTitle": "{{businessName}} Storefront",
+  "pageTitleFallback": "Supplier Store",
+  "listingsTitle": "Listings",
+  "products": "Products",
+  "services": "Services",
+  "reviewsTitle": "What Others Have Said About Us",
+  "negotiable": "Negotiable",
+  "fixed": "Fixed",
+  "description": "This supplier is inactive.",
+  "loading": "Loading store...",
+  "noReviews": "No reviews yet.",
+  "wishlist": {
+    "successTitle": "Wishlist Updated",
+    "added": "Added to wishlist",
+    "removed": "Removed from wishlist",
+    "errorTitle": "Error",
+    "errorText": "Failed to update wishlist"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "noId": "No supplier ID provided",
+    "generic": "An error occurred"
+  },
+  "status": {
+    "closed": {
+      "title": "Store is Closed",
+      "default": "This store is temporarily closed.",
+      "back": "Go Back"
+    },
+    "inactive": {
+      "title": "Store Inactive",
+      "message": "This supplier is currently inactive. Contact them to reactivate."
+    }
+  },
+  "filter": {
+    "all": "All Listings",
+    "products": "Products",
+    "services": "Services"
+  },
+  "noItems": "No items in this category."
+}

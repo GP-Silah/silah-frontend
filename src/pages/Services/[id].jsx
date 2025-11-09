@@ -178,9 +178,7 @@ export default function ServiceDetails() {
       {/* ---------- SUPPLIER BAR ---------- */}
       <div
         className="sd-supplier-bar"
-        onClick={() =>
-          supplierId && navigate(`/suppliers/storefront/${supplierId}`)
-        }
+        onClick={() => supplierId && navigate(`/storefront/${supplierId}`)}
       >
         <img
           src={supplierAvatar || '/avatar-placeholder.png'}
