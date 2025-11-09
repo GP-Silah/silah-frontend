@@ -1,0 +1,17 @@
+{
+  "title": "Create Invoice",
+  "invoiceNumber": "Invoice Number",
+  "invoiceNumberPlaceholder": "Enter invoice number",
+  "clientName": "Client Name",
+  "clientNamePlaceholder": "Enter client name",
+  "deliveryDate": "Delivery Date",
+  "termsOfPayment": "Terms of Payment",
+  "partiallyPaid": "Partially Paid",
+  "fullyPaid": "Fully Paid",
+  "item": "Item",
+  "qty": "Qty",
+  "unitPrice": "Unit Price",
+  "totalPrice": "Total Price",
+  "actions": "Actions",
+  "createInvoice": "Create Invoice"
+}
