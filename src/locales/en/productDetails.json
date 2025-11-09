@@ -1,0 +1,40 @@
+{
+  "pageTitle": "{{name}} - Product Details",
+  "pageTitleFallback": "Product Details",
+  "loading": "Loading…",
+  "quantityLabel": "Item Quantity (Minimum {{min}}, Maximum {{max}})",
+  "caseOf": "Case of {{n}}",
+  "enterQuantity": "Enter quantity",
+  "addToCart": "Add to Cart",
+  "loginToAdd": "Login to add to cart",
+  "addedToCart": "Added to cart!",
+  "groupPurchase": {
+    "title": "Group Purchase",
+    "tooltip": "A group forms when 5 buyers from the same city request the same product. If their combined order meets the supplier's minimum requirement before the deadline, the purchase is confirmed. When you join, a Pre-Invoice is created so you can track its status. If the group is successful, your Pre-Invoice becomes an Invoice, and you can proceed with payment.",
+    "active": "{{buyers}} buyer(s) joined ({{needed}} needed) — {{hours}}h left",
+    "price": "Group Price",
+    "save": "Save {{percent}}%",
+    "join": "Join {{others}} others and Save {{percent}}%",
+    "start": "Start Group Purchase",
+    "customQuantity": "Custom Quantity for Group Purchase"
+  },
+  "groupStarted": "Group purchase started!",
+  "groupJoined": "Joined group purchase!",
+  "descriptionTitle": "Description",
+  "reviewsTitle": "What Others Have Said",
+  "noReviews": "No reviews yet.",
+  "wishlist": {
+    "successTitle": "Wishlist updated",
+    "added": "Added to wishlist",
+    "removed": "Removed from wishlist",
+    "errorTitle": "Error",
+    "errorText": "Could not update wishlist"
+  },
+  "validation": {
+    "positive": "Quantity must be positive",
+    "multipleOfCase": "Must be a multiple of case quantity ({{case}})",
+    "min": "Minimum order quantity: {{min}}",
+    "max": "Maximum order quantity: {{max}}"
+  },
+  "error": "Error"
+}
