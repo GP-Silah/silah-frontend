@@ -1,0 +1,381 @@
+/* src/pages/SupplierStorefront.css */
+.ss-storefront {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #fff;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* BANNER */
+.ss-banner {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+.ss-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.8);
+}
+
+/* SUPPLIER INFO */
+.ss-supplier-info {
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+.ss-logo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #eee;
+  flex-shrink: 0;
+}
+.ss-info {
+  flex: 1;
+}
+.ss-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.ss-supplier-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+}
+.ss-chat-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.ss-chat-btn:hover {
+  background: #f0e6ff;
+}
+.ss-rating,
+.ss-location {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #555;
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+}
+.ss-bio {
+  color: #444;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+  max-width: 700px;
+}
+
+/* LISTINGS */
+.ss-listings-section {
+  background: #faf7fc;
+  padding: 3rem 1rem;
+  margin: 2rem calc(50% - 50vw);
+  width: 100vw;
+}
+.ss-listings-header {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+}
+.ss-listings-header h2 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+  color: #2b2b2b;
+}
+.ss-listings-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+.ss-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* REVIEWS */
+.ss-reviews-section {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 1rem;
+}
+.ss-reviews-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.ss-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.ss-no-reviews {
+  color: #777;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* STATES */
+.ss-closed,
+.ss-blurred {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  padding: 2rem;
+}
+.ss-closed-card {
+  text-align: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+.ss-closed-card h1 {
+  margin: 1rem 0;
+  color: #dc2626;
+}
+.ss-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #6d28d9;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* BLUR OVERLAY — FIXED */
+.ss-blur-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: auto;
+}
+.ss-blur-message {
+  text-align: center;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  border: 1px solid #e5e7eb;
+}
+.ss-blur-message h3 {
+  margin: 1rem 0 0.5rem;
+  color: #92400e;
+  font-size: 1.4rem;
+}
+.ss-blur-message p {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* BLURRED CONTENT */
+.ss-content.ss-blurred-content {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.7;
+}
+
+/* LOADING & ERROR */
+.ss-loading,
+.ss-error {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+.ss-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f3e8ff;
+  border-top: 4px solid #6d28d9;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RTL */
+[data-dir='rtl'] .ss-name-row {
+  flex-direction: row-reverse;
+}
+[data-dir='rtl'] .ss-supplier-info {
+  flex-direction: row-reverse;
+}
+
+/* FILTER LAYOUT */
+.ss-filter-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.ss-filter-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 1rem;
+}
+[data-dir='rtl'] .ss-filter-sidebar {
+  padding-right: 0;
+  padding-left: 1rem;
+}
+.ss-filter-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--white);
+  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--blue-border);
+  white-space: nowrap;
+  font-size: 16px;
+  gap: 0.2rem;
+}
+.ss-filter-btn:hover {
+  background-color: var(--blue-light);
+  border-color: var(--silah-blue);
+}
+.ss-filter-btn.active {
+  background-color: var(--silah-blue);
+  color: var(--white);
+  border-color: var(--silah-blue);
+}
+.ss-count {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.ss-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.ss-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}
+.ss-no-items {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .ss-filter-layout {
+    grid-template-columns: 1fr;
+  }
+  .ss-filter-sidebar {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-bottom: 1px solid var(--blue-border);
+    padding-bottom: 1rem;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+  .ss-filter-btn {
+    align-items: center;
+    padding: 0.6rem 1rem;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .ss-count {
+    font-size: 1.2rem;
+  }
+  .ss-label {
+    font-size: 0.85rem;
+  }
+}
+
+/* CSS Variables */
+:root {
+  --silah-blue: #517fbf;
+  --blue-light: #e3edf6;
+  --blue-border: #a3c4e0;
+  --text: #2d3748;
+  --text-muted: #64748b;
+  --white: #ffffff;
+}
+
+/* STATES */
+.ss-blurred {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* BLUR OVERLAY — FULL SCREEN */
+.ss-blur-overlay {
+  /* position: absolute; */
+  inset: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+.ss-blur-message {
+  text-align: center;
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  max-width: 420px;
+  border: 1px solid #e5e7eb;
+}
+
+.ss-blur-message h3 {
+  margin: 1rem 0 0.5rem;
+  color: #92400e;
+  font-size: 1.4rem;
+}
+
+.ss-blur-message p {
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* BLURRED CONTENT */
+.ss-blurred-content {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.75;
+}
