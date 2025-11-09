@@ -1,0 +1,27 @@
+{
+  "pageTitle": "{{name}} - تفاصيل الخدمة",
+  "pageTitleFallback": "تفاصيل الخدمة",
+  "loading": "جاري التحميل…",
+  "negotiable": "قابل للتفاوض",
+  "contactToNegotiate": "تواصل مع المورد لتفاوض السعر",
+  "requestService": "طلب الخدمة من {{name}}",
+  "loginToRequest": "سجل الدخول لتتمكن من طلب الخدمة",
+  "descriptionTitle": "الوصف",
+  "availability": {
+    "TWENTY_FOUR_SEVEN": "24/7",
+    "EVERYDAY": "كل يوم",
+    "WEEKDAYS": "أيام الأسبوع",
+    "WEEKENDS": "عطلة نهاية الأسبوع",
+    "APPOINTMENT": "بالموعد"
+  },
+  "reviewsTitle": "آراء الآخرين",
+  "noReviews": "لا توجد تقييمات بعد.",
+  "anonymous": "مجهول",
+  "wishlist": {
+    "successTitle": "تم تحديث قائمة الرغبات",
+    "added": "تمت الإضافة إلى قائمة الرغبات",
+    "removed": "تمت الإزالة من قائمة الرغبات",
+    "errorTitle": "خطأ",
+    "errorText": "تعذّر تحديث قائمة الرغبات"
+  }
+}

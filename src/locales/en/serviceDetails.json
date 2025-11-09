@@ -1,0 +1,27 @@
+{
+  "pageTitle": "{{name}} - Service Details",
+  "pageTitleFallback": "Service Details",
+  "loading": "Loading…",
+  "negotiable": "Negotiable",
+  "contactToNegotiate": "Contact the supplier to negotiate the price",
+  "requestService": "Request Service from {{name}}",
+  "loginToRequest": "Login to request service",
+  "descriptionTitle": "Description",
+  "availability": {
+    "TWENTY_FOUR_SEVEN": "24/7",
+    "EVERYDAY": "Everyday",
+    "WEEKDAYS": "Weekdays",
+    "WEEKENDS": "Weekends",
+    "APPOINTMENT": "By Appointment"
+  },
+  "reviewsTitle": "What Others Have Said",
+  "noReviews": "No reviews yet.",
+  "anonymous": "Anonymous",
+  "wishlist": {
+    "successTitle": "Wishlist updated",
+    "added": "Added to wishlist",
+    "removed": "Removed from wishlist",
+    "errorTitle": "Error",
+    "errorText": "Could not update wishlist"
+  }
+}
