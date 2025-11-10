@@ -3,15 +3,14 @@ import { useTranslation } from 'react-i18next';
 import './LegalPages.css';
 
 const PrivacyPolicy = () => {
-
   const { t, i18n } = useTranslation('privacy');
 
   useEffect(() => {
-    document.title = t('pageTitle.privacy', {ns: 'common'});
+    document.title = t('pageTitle.privacy', { ns: 'common' });
   }, [t, i18n.language]);
 
   return (
-    <main className="legal-container">
+    <div className="legal-container">
       <h1>{t('title')}</h1>
       <p>{t('intro')}</p>
 
@@ -65,7 +64,7 @@ const PrivacyPolicy = () => {
 
       <h2>{t('changes.title')}</h2>
       <p>{t('changes.text')}</p>
-    </main>
+    </div>
   );
 };
 
