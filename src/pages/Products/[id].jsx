@@ -329,8 +329,23 @@ export default function ProductDetails() {
 
       {/* HERO */}
       <section className="pd-hero" style={{ backgroundColor: '#FAF7FC' }}>
-        <div className="pd-hero-images">
-          <img src={heroImg} alt={name} className="pd-hero-main" />
+        {/* HERO IMAGE WITH BADGE */}
+        <div
+          className={`pd-hero-images ${
+            product.stock <= 0 ? 'out-of-stock' : ''
+          }`}
+        >
+          <div className="relative">
+            <img src={heroImg} alt={name} className="pd-hero-main" />
+
+            {/* OUT OF STOCK BADGE */}
+            {product.stock <= 0 && (
+              <div className="out-of-stock-badge">
+                {i18n.language === 'ar' ? 'غير متوفر' : 'Out of Stock'}
+              </div>
+            )}
+          </div>
+
           {(thumb1 || thumb2) && (
             <div className="pd-hero-thumbs">
               {thumb1 && <img src={thumb1} alt="" className="pd-thumb" />}
@@ -368,36 +383,53 @@ export default function ProductDetails() {
           </div>
 
           {/* QUANTITY INPUT */}
-          <div className="pd-quantity-section">
-            <label className="pd-quantity-label">
-              {t('quantityLabel', {
-                min: minOrderQuantity,
-                max: maxOrderQuantity || '∞',
-              })}{' '}
-              ({t('caseOf', { n: caseQuantity })})
-            </label>
-            <input
-              type="number"
-              min={minOrderQuantity}
-              step={caseQuantity}
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              placeholder={t('enterQuantity')}
-              className="pd-quantity-input"
-            />
-            {qtyError && <div className="pd-qty-error">{qtyError}</div>}
-          </div>
+          {product.stock > 0 ?? (
+            <div className="pd-quantity-section">
+              <label className="pd-quantity-label">
+                {t('quantityLabel', {
+                  min: minOrderQuantity,
+                  max: maxOrderQuantity || '∞',
+                })}{' '}
+                ({t('caseOf', { n: caseQuantity })})
+              </label>
+              <input
+                type="number"
+                min={minOrderQuantity}
+                step={caseQuantity}
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                placeholder={t('enterQuantity')}
+                className="pd-quantity-input"
+              />
+              {qtyError && <div className="pd-qty-error">{qtyError}</div>}
+            </div>
+          )}
 
-          {/* ADD TO CART */}
+          {/* ADD TO CART OR ALTERNATIVES */}
           {isBuyer ? (
-            <button
-              onClick={addToCart}
-              disabled={!quantity || qtyError}
-              className="pd-add-btn"
-            >
-              <ShoppingCart size={20} />
-              {t('addToCart')}
-            </button>
+            product.stock > 0 ? (
+              <button
+                onClick={addToCart}
+                disabled={!quantity || qtyError}
+                className="pd-add-btn"
+              >
+                <ShoppingCart size={20} />
+                {t('addToCart')}
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate(`/buyer/alternatives?itemId=${id}`)}
+                className="pd-add-btn"
+                style={{
+                  background: '#ef4444',
+                  margin: '10px',
+                  marginInlineStart: '10px',
+                  width: 'fit-content',
+                }}
+              >
+                {t('findAlternatives') || 'Find Alternatives'}
+              </button>
+            )
           ) : (
             <button disabled className="pd-add-btn" style={{ opacity: 0.5 }}>
               {t('loginToAdd')}
@@ -405,7 +437,7 @@ export default function ProductDetails() {
           )}
 
           {/* GROUP PURCHASE */}
-          {allowGroupPurchase && (
+          {allowGroupPurchase && product.stock > 0 && (
             <div className="pd-group-section">
               {/* Header */}
               <div className="pd-group-header">

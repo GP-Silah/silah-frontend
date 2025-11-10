@@ -149,6 +149,7 @@ function WishlistPage() {
                 key={item._id}
                 item={item}
                 type={item.type}
+                isAvailable={item.type === 'product' ? item.stock > 0 : true}
                 showAlternatives={true}
               />
             ))

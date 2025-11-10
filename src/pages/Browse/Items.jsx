@@ -248,7 +248,10 @@ export default function BrowseByCategoryItems() {
                   key={it.productId ?? it.serviceId ?? it.id}
                   className="item-wrapper"
                 >
-                  <EffectiveItemCard item={it} />
+                  <EffectiveItemCard
+                    item={it}
+                    isAvailable={it.productId ? it.stock > 0 : true}
+                  />
                 </div>
               ))}
             </div>

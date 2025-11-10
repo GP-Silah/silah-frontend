@@ -121,6 +121,7 @@ export default function Homepage() {
     ratingsCount: p.ratingsCount || 0,
     price: p.price || 0,
     type: 'product',
+    isAvailable: p.stock > 0,
   });
 
   const mapService = (s) => ({
@@ -136,6 +137,7 @@ export default function Homepage() {
     price: s.price || 0,
     isPriceNegotiable: s.isPriceNegotiable || false,
     type: 'service',
+    isAvailable: true,
   });
 
   return (
@@ -162,6 +164,7 @@ export default function Homepage() {
                       key={p.productId}
                       item={mapProduct(p)}
                       type="product"
+                      isAvailable={mapProduct(p).isAvailable}
                     />
                   ))
                 ) : (
