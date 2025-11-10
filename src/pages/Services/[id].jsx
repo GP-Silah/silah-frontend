@@ -133,15 +133,47 @@ export default function ServiceDetails() {
   // --------------------------------------------------------------
   // 5. OPEN CHAT
   // --------------------------------------------------------------
-  const openChat = () => {
-    if (!service?.supplier?.user?.userId) return;
+  const openChat = async () => {
+    if (!supplier?.user?.userId) return;
+
     const partner = {
       userId: service.supplier.user.userId,
       name: service.supplier.user.businessName || service.supplier.user.name,
       avatar: service.supplier.user.pfpUrl,
       categories: service.supplier.user.categories || [],
     };
-    navigate(`/buyer/chats/new?with=${partner.userId}`, { state: { partner } });
+
+    try {
+      // 1. Fetch all chats
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/chats/me`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      const chats = res.data || [];
+
+      // 2. Find existing chat with this supplier
+      const existingChat = chats.find(
+        (chat) => chat.otherUser?.userId === partner.userId,
+      );
+
+      // 3. Navigate correctly
+      if (existingChat) {
+        navigate(`/buyer/chats/${existingChat.chatId}`);
+      } else {
+        navigate(`/buyer/chats/new?with=${partner.userId}`, {
+          state: { partner },
+        });
+      }
+    } catch (err) {
+      console.error('Failed to check chat history:', err);
+      // Fallback: go to new chat (safe)
+      navigate(`/buyer/chats/new?with=${partner.userId}`, {
+        state: { partner },
+      });
+    }
   };
 
   // --------------------------------------------------------------
@@ -178,7 +210,7 @@ export default function ServiceDetails() {
       {/* ---------- SUPPLIER BAR ---------- */}
       <div
         className="sd-supplier-bar"
-        onClick={() => supplierId && navigate(`/storefront/${supplierId}`)}
+        onClick={() => supplierId && navigate(`/storefronts/${supplierId}`)}
       >
         <img
           src={supplierAvatar || '/avatar-placeholder.png'}

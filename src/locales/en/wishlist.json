@@ -1,5 +1,7 @@
 {
   "findAlternatives": "Find Alternatives",
+  "loginRequired": "Login Required",
+  "loginToContinue": "Please log in to save items to your wishlist.",
   "ok": "OK",
   "demoTitle": "Demo Mode",
   "demoText": "This is a demo preview. Favoriting is disabled in static mode.",

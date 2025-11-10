@@ -10,7 +10,7 @@ const TermsOfService = () => {
   }, [t, i18n.language]);
 
   return (
-    <main className="legal-container">
+    <div className="legal-container">
       <h1>{t('title')}</h1>
       <p>{t('intro')}</p>
 
@@ -46,7 +46,7 @@ const TermsOfService = () => {
 
       <h2>9. {t('contact.title')}</h2>
       <p>{t('contact.text')}</p>
-    </main>
+    </div>
   );
 };
 

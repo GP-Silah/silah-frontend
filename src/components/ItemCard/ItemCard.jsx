@@ -98,6 +98,23 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
       });
     } catch (err) {
       console.error('Wishlist toggle failed:', err);
+
+      const errorMessage = err.response?.data?.error?.message;
+
+      // CUSTOM LOGIN ALERT
+      if (errorMessage === 'No token found in cookies') {
+        await Swal.fire({
+          icon: 'warning',
+          title: t('loginRequired'),
+          text: t('loginToContinue'),
+          confirmButtonColor: '#476DAE',
+          confirmButtonText: t('ok'),
+          allowOutsideClick: false,
+        });
+        return;
+      }
+
+      // FALLBACK: Any other error
       Swal.fire({
         icon: 'error',
         title: t('error.genericTitle'),

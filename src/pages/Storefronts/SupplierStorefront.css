@@ -223,10 +223,10 @@
 
 /* RTL */
 [data-dir='rtl'] .ss-name-row {
-  flex-direction: row-reverse;
+  flex-direction: inherit;
 }
 [data-dir='rtl'] .ss-supplier-info {
-  flex-direction: row-reverse;
+  flex-direction: inherit;
 }
 
 /* FILTER LAYOUT */

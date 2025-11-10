@@ -86,14 +86,47 @@ export default function SupplierStorefront() {
   };
 
   // ——————————————————————— OPEN CHAT (SAFE) ———————————————————————
-  const openChat = () => {
+  const openChat = async () => {
     if (!supplier?.user?.userId) return;
+
     const partner = {
       userId: supplier.user.userId,
       name: supplier.businessName || supplier.user.name,
       avatar: supplier.user.pfpUrl || PLACEHOLD_PFP,
+      categories: supplier.user.categories || [],
     };
-    navigate(`/buyer/chats/new?with=${partner.userId}`, { state: { partner } });
+
+    try {
+      // 1. Fetch all chats
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/chats/me`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      const chats = res.data || [];
+
+      // 2. Find existing chat with this supplier
+      const existingChat = chats.find(
+        (chat) => chat.otherUser?.userId === partner.userId,
+      );
+
+      // 3. Navigate correctly
+      if (existingChat) {
+        navigate(`/buyer/chats/${existingChat.chatId}`);
+      } else {
+        navigate(`/buyer/chats/new?with=${partner.userId}`, {
+          state: { partner },
+        });
+      }
+    } catch (err) {
+      console.error('Failed to check chat history:', err);
+      // Fallback: go to new chat (safe)
+      navigate(`/buyer/chats/new?with=${partner.userId}`, {
+        state: { partner },
+      });
+    }
   };
 
   // ——————————————————————— ACTIVE STORE CONTENT (SAFE) ———————————————————————
@@ -122,7 +155,7 @@ export default function SupplierStorefront() {
           <div className="ss-info">
             <div className="ss-name-row">
               <h1 className="ss-supplier-name">{displayName}</h1>
-              {supplier.storeStatus === 'OPEN' && (
+              {supplier.storeStatus === 'OPEN' && isBuyer && (
                 <button onClick={openChat} className="ss-chat-btn">
                   <MessageCircle size={20} />
                 </button>
@@ -182,12 +215,7 @@ export default function SupplierStorefront() {
                 <p className="ss-no-items">{t('noItems')}</p>
               ) : (
                 filteredItems.map((item) => (
-                  <ItemCard
-                    key={item._id}
-                    type={item.type}
-                    item={item}
-                    showAlternatives={isBuyer}
-                  />
+                  <ItemCard key={item._id} type={item.type} item={item} />
                 ))
               )}
             </div>
