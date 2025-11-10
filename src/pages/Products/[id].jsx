@@ -383,7 +383,7 @@ export default function ProductDetails() {
           </div>
 
           {/* QUANTITY INPUT */}
-          {product.stock > 0 ?? (
+          {product.stock > 0 && (
             <div className="pd-quantity-section">
               <label className="pd-quantity-label">
                 {t('quantityLabel', {
