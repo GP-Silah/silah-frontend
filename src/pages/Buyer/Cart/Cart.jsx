@@ -1,9 +1,9 @@
-// src/pages/CartBuyer/CartBuyer.jsx
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Trash2 } from 'lucide-react';
+import { useCart } from '../../../context/CartContext';
 import Swal from 'sweetalert2';
 import './Cart.css';
 
@@ -12,6 +12,7 @@ const API = import.meta.env.VITE_BACKEND_URL;
 export default function CartBuyer() {
   const { t, i18n } = useTranslation('cart');
   const navigate = useNavigate();
+  const { refreshCart } = useCart();
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
@@ -19,6 +20,10 @@ export default function CartBuyer() {
   const [products, setProducts] = useState({}); // { productId: fullProduct }
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState({});
+
+  useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t, i18n.language]);
 
   // Fetch cart + all product details
   useEffect(() => {
@@ -95,6 +100,7 @@ export default function CartBuyer() {
         { withCredentials: true },
       );
       setCart(res.data);
+      refreshCart();
     } catch (err) {
       // REVERT ON ERROR
       setCart((prev) => {
@@ -123,6 +129,7 @@ export default function CartBuyer() {
       const res = await axios.delete(`${API}/api/carts/me/items/${itemId}`, {
         withCredentials: true,
       });
+      refreshCart();
 
       if (!res.data.suppliers || res.data.suppliers.length === 0) {
         setCart(null);
@@ -142,6 +149,7 @@ export default function CartBuyer() {
         `${API}/api/carts/me/suppliers/${supplierId}`,
         { withCredentials: true },
       );
+      refreshCart();
 
       // Normal success: cart still exists
       if (res.data.suppliers && res.data.suppliers.length > 0) {
@@ -172,6 +180,7 @@ export default function CartBuyer() {
     try {
       await axios.delete(`${API}/api/carts/me`, { withCredentials: true });
       setCart(null);
+      refreshCart();
     } catch (err) {
       Swal.fire({ icon: 'error', text: 'Failed to delete cart' });
     }

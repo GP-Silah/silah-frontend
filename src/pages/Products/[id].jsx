@@ -13,6 +13,7 @@ import {
 import Swal from 'sweetalert2';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import './ProductDetails.css';
 
 const API = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
@@ -22,6 +23,7 @@ export default function ProductDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { role } = useAuth();
+  const { refreshCart } = useCart();
   const isBuyer = role === 'buyer';
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
@@ -185,6 +187,7 @@ export default function ProductDetails() {
       );
       Swal.fire({ icon: 'success', title: t('addedToCart') });
       setQuantity('');
+      refreshCart();
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.message;
       Swal.fire({ icon: 'error', title: t('error'), text: msg });
