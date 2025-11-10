@@ -1,0 +1,12 @@
+{
+  "pageTitle": "Stock Demand Forecast",
+  "subtitle": "AI-powered insights to help you plan ahead for the next three months.",
+  "forecastedProduct": "Forecasted Product",
+  "productName": "Amber - 250ml Soy Candle",
+  "chartLabel": "Predicted Demand for the Next Three Months",
+  "legend": {
+    "demand": "Demand",
+    "stock": "Current Stock"
+  },
+  "note": "To avoid shortages, consider restocking {{count}} units as per AI demand predictions."
+}
