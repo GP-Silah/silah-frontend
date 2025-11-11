@@ -19,5 +19,7 @@
   "noMessagesYet": "لا توجد رسائل بعد. ابدأ المحادثة!",
   "typeMessage": "اكتب رسالة...",
   "chatWith": "محادثة مع {{otherUser}}",
-  "draft": "مسودة"
+  "draft": "مسودة",
+  "createInvoice": "إنشاء فاتورة",
+  "continueInvoice": "متابعة إنشاء الفاتورة"
 }

@@ -19,5 +19,7 @@
   "noMessagesYet": "No messages yet. Start the conversation!",
   "typeMessage": "Type a message...",
   "chatWith": "Chat With {{otherUser}}",
-  "draft": "Draft"
+  "draft": "Draft",
+  "createInvoice": "Create an Invoice",
+  "continueInvoice": "Continue Creating Invoice"
 }
