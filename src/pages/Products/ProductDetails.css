@@ -227,3 +227,29 @@
   margin: 0.5rem 0;
   font-size: 0.9rem;
 }
+
+/* OUT OF STOCK BADGE */
+.out-of-stock-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+/* Gray out hero if out of stock */
+.pd-hero-images {
+  position: relative;
+}
+
+.pd-hero-images.out-of-stock {
+  opacity: 0.6;
+}

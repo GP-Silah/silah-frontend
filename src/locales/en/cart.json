@@ -1,4 +1,5 @@
 {
+  "pageTitle": "Cart | Silah",
   "title": "Your Cart ({{count}} Suppliers)",
   "deleteAll": "Delete All",
   "outOfStock": "Out of Stock",
@@ -6,5 +7,33 @@
   "deliveryFees": "Delivery Fees",
   "cartTotal": "Cart Total",
   "checkout": "Checkout",
-  "removeOutOfStock": "Remove the out-of-stock items to proceed with checkout"
+  "removeOutOfStock": "Remove the out-of-stock items to proceed with checkout",
+  "searchSimilar": "Want to search similar products?",
+  "confirmRemoveItem": "Remove this item?",
+  "confirmRemoveSupplier": "Remove all items from this supplier?",
+  "confirmDeleteAll": "Delete entire cart?",
+  "emptyCart": "Your cart is empty",
+  "continueShopping": "Continue Shopping",
+  "summary": "Order Summary",
+  "minQty": "Minimum order is {{min}}",
+  "maxQty": "Maximum order is {{max}}",
+  "caseQty": "Quantity must be multiple of {{case}}",
+  "errorLoadingCart": "Failed to load cart",
+  "loading": "Loading...",
+  "quantityLabel": "Qty (Min {{min}}, Max {{max}})",
+  "caseOf": "Case of {{n}}",
+  "validation": {
+    "error": "Invalid quantity"
+  },
+  "noCard": {
+    "title": "Card Required",
+    "message": "You must save a payment card before checking out.",
+    "goToSettings": "Go to Payment Settings"
+  },
+  "processing": "Processing...",
+  "checkoutSuccess": {
+    "title": "Order Placed!",
+    "message": "Your order has been successfully placed with all suppliers.",
+    "continue": "Continue Shopping"
+  }
 }

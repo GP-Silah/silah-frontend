@@ -215,7 +215,14 @@ export default function SupplierStorefront() {
                 <p className="ss-no-items">{t('noItems')}</p>
               ) : (
                 filteredItems.map((item) => (
-                  <ItemCard key={item._id} type={item.type} item={item} />
+                  <ItemCard
+                    key={item._id}
+                    type={item.type}
+                    item={item}
+                    isAvailable={
+                      item.type === 'product' ? item.stock > 0 : true
+                    }
+                  />
                 ))
               )}
             </div>

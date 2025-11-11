@@ -7,11 +7,19 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import './ItemCard.css';
 
-function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
-  const { t } = useTranslation('wishlist');
+function ItemCard({
+  type = 'product',
+  item = {},
+  showAlternatives = false,
+  isAvailable = true,
+}) {
+  const { t, i18n } = useTranslation('wishlist');
   const navigate = useNavigate();
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const fixedMessage = i18n.language === 'ar' ? 'ثابت' : 'Fixed';
+  const outOfStockText = i18n.language === 'ar' ? 'غير متوفر' : 'Out of Stock';
 
   // Safe fallbacks
   const {
@@ -28,7 +36,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
 
   const supplierName =
     supplier.businessName || supplier.supplierName || 'Unknown Supplier';
-
   const image =
     imagesFilesUrls[0] || 'https://placehold.co/300x200?text=No+Image';
 
@@ -41,7 +48,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
           { withCredentials: true },
         );
         const wishlist = res.data || [];
-
         const isFavorited = wishlist.some((entry) => {
           if (type === 'product') {
             return (
@@ -53,20 +59,17 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
             );
           }
         });
-
         setFavorited(isFavorited);
       } catch (err) {
         console.error('Failed to load wishlist:', err);
       }
     };
-
     if (_id) fetchWishlist();
   }, [_id, type]);
 
   // ---- Favorite Handler ----
   const handleFavorite = async (e) => {
     e.stopPropagation();
-
     if (!_id) {
       await Swal.fire({
         icon: 'info',
@@ -85,10 +88,8 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
         {},
         { withCredentials: true },
       );
-
       const { isAdded } = res.data;
       setFavorited(isAdded);
-
       await Swal.fire({
         icon: 'success',
         title: t('successTitle'),
@@ -98,10 +99,8 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
       });
     } catch (err) {
       console.error('Wishlist toggle failed:', err);
-
       const errorMessage = err.response?.data?.error?.message;
 
-      // CUSTOM LOGIN ALERT
       if (errorMessage === 'No token found in cookies') {
         await Swal.fire({
           icon: 'warning',
@@ -114,7 +113,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
         return;
       }
 
-      // FALLBACK: Any other error
       Swal.fire({
         icon: 'error',
         title: t('error.genericTitle'),
@@ -129,6 +127,10 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
   // ---- Card Click ----
   const handleCardClick = () => {
     if (!_id) return;
+    if (!isAvailable && showAlternatives) {
+      navigate(`/buyer/alternatives?itemId=${_id}`);
+      return;
+    }
     const path = type === 'product' ? `/products/${_id}` : `/services/${_id}`;
     navigate(path);
   };
@@ -142,7 +144,11 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
 
   return (
     <div
-      className={`item-card ${loading ? 'opacity-70 pointer-events-none' : ''}`}
+      className={`
+    item-card
+    ${loading ? 'opacity-70 pointer-events-none' : ''}
+    ${!isAvailable ? 'out-of-stock' : ''}
+  `.trim()}
       onClick={handleCardClick}
     >
       {/* Image */}
@@ -152,7 +158,10 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
           alt={name}
           className="w-full h-40 object-cover transition-transform duration-300 hover:scale-105"
         />
-
+        {/* Out of Stock Badge */}
+        {!isAvailable && (
+          <div className="out-of-stock-badge">{outOfStockText}</div>
+        )}
         {/* Heart icon */}
         <button
           onClick={handleFavorite}
@@ -175,7 +184,6 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
         <p className="supplier-name clickable" onClick={handleSupplierClick}>
           {supplierName}
         </p>
-
         <div className="rating-price">
           <div className="rating">
             <Star fill="#facc15" stroke="#facc15" size={16} />
@@ -183,14 +191,15 @@ function ItemCard({ type = 'product', item = {}, showAlternatives = false }) {
               {avgRating.toFixed(1)} ({ratingsCount})
             </span>
           </div>
-
           <div className="price">
-            {price} SAR
-            {type === 'service' && !isPriceNegotiable ? ' • Fixed' : ''}
+            {price} <img src="/riyal.png" alt="SAR" className="sar" />
+            {type === 'service' && !isPriceNegotiable
+              ? ' •' + fixedMessage
+              : ''}
           </div>
         </div>
 
-        {showAlternatives && (
+        {showAlternatives && !isAvailable && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -210,6 +219,7 @@ ItemCard.propTypes = {
   type: PropTypes.oneOf(['product', 'service']),
   item: PropTypes.object,
   showAlternatives: PropTypes.bool,
+  isAvailable: PropTypes.bool,
 };
 
 export default ItemCard;

@@ -36,5 +36,6 @@
     "min": "Minimum order quantity: {{min}}",
     "max": "Maximum order quantity: {{max}}"
   },
-  "error": "Error"
+  "error": "Error",
+  "findAlternatives": "Find Alternatives"
 }

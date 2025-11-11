@@ -1,4 +1,5 @@
 {
+  "pageTitle": "السلة | صلة",
   "title": "سلتك ({{count}} موردين)",
   "deleteAll": "حذف الكل",
   "outOfStock": "غير متوفر بالمخزون",
@@ -6,5 +7,33 @@
   "deliveryFees": "رسوم التوصيل",
   "cartTotal": "إجمالي السلة",
   "checkout": "إتمام الطلب",
-  "removeOutOfStock": "احذف المنتجات غير المتوفرة لإكمال عملية الشراء"
+  "removeOutOfStock": "احذف المنتجات غير المتوفرة لإكمال عملية الشراء",
+  "searchSimilar": "هل ترغب في البحث عن منتجات مشابهة؟",
+  "confirmRemoveItem": "هل تريد حذف هذا العنصر؟",
+  "confirmRemoveSupplier": "هل تريد حذف جميع عناصر هذا المورد؟",
+  "confirmDeleteAll": "هل تريد حذف السلة بالكامل؟",
+  "emptyCart": "السلة فارغة",
+  "continueShopping": "مواصلة التسوق",
+  "summary": "ملخص الطلب",
+  "minQty": "الحد الأدنى للطلب هو {{min}}",
+  "maxQty": "الحد الأقصى للطلب هو {{max}}",
+  "caseQty": "الكمية يجب أن تكون مضاعفة لـ {{case}}",
+  "errorLoadingCart": "فشل تحميل السلة",
+  "loading": "جاري التحميل...",
+  "quantityLabel": "الكمية (الحد الأدنى {{min}}، الحد الأقصى {{max}})",
+  "caseOf": "عبوة من {{n}}",
+  "validation": {
+    "error": "كمية غير صالحة"
+  },
+  "noCard": {
+    "title": "لا يوجد بطاقة محفوظة",
+    "message": "تحتاج أن تقوم بحفظ بطاقة بنكية قبل أن تدفع.",
+    "goToSettings": "فلنذهب إلى إعدادات الدفع"
+  },
+  "processing": "جاري العمل...",
+  "checkoutSuccess": {
+    "title": "تم إنشاء طلبك!",
+    "message": "تم إنشاء طلبك بنجاح مع جميع الموردين.",
+    "continue": "أستمر بالتسوق"
+  }
 }
