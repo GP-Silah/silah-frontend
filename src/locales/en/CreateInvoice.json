@@ -1,6 +1,7 @@
 {
   "pageTitle": "Create an Invoice",
   "title": "Create an Invoice",
+  "continueInvoice": "Continue Creating Invoice",
   "invoiceNumber": "Invoice Number",
   "invoiceNumberNote": "Will be generated upon creation",
   "issueDate": "Issue Date",

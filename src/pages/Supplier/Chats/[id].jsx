@@ -358,6 +358,13 @@ export default function ChatDetail() {
     }
   };
 
+  // === CHECK FOR DRAFT ===
+  const hasInvoiceDraft = () => {
+    if (!partner?.userId) return false;
+    const key = `invoice_draft_${partner.userId}`;
+    return !!localStorage.getItem(key);
+  };
+
   // === LOADING STATE ===
   if (loading || !currentUserId)
     return <div className="chat-loading">{t('loading')}</div>;
@@ -387,9 +394,15 @@ export default function ChatDetail() {
 
         <button
           className="chat-header-right"
-          onClick={() =>
-            navigate(`/supplier/invoices/new?userId=${partner?.userId}`)
-          }
+          onClick={() => {
+            const draftKey = `invoice_draft_${partner?.userId}`;
+            const draft = localStorage.getItem(draftKey);
+            if (draft) {
+              navigate(`/supplier/invoices/new?userId=${partner?.userId}`);
+            } else {
+              navigate(`/supplier/invoices/new?userId=${partner?.userId}`);
+            }
+          }}
           style={{
             background: 'none',
             border: 'none',
@@ -404,7 +417,9 @@ export default function ChatDetail() {
           <div className="invoice-icon">
             <FaFileInvoiceDollar />
           </div>
-          <div className="invoice-label">Create an Invoice</div>
+          <div className="invoice-label">
+            {hasInvoiceDraft() ? t('continueInvoice') : t('createInvoice')}
+          </div>
         </button>
       </div>
 

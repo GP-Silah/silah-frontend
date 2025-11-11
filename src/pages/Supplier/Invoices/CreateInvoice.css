@@ -92,7 +92,7 @@
   background: #fff;
   border: 1px solid #eee8fb;
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .table-header {
@@ -195,10 +195,12 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
+  width: fit-content;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   opacity: 0;
   transition: opacity 0.2s;
+  display: flex;
+  justify-content: center;
 }
 
 .linked-icon:hover .linked-tooltip {
@@ -322,9 +324,9 @@
 }
 
 .search-box svg {
-  position: absolute;
+  position: relative;
   left: 12px;
-  top: 50%;
+  top: 60%;
   transform: translateY(-50%);
   color: #7a6c90;
 }
@@ -334,17 +336,20 @@
   padding: 0.75rem 1rem 0.75rem 2.5rem;
   border: 1px solid #e6e0ef;
   border-radius: 12px;
-  background: white;
+  background: #fff;
   font-size: 0.95rem;
 }
 
 .filters {
   display: flex;
   gap: 0.5rem;
-  background: white;
+  background: #fff;
   border: 1px solid #e6e0ef;
   border-radius: 12px;
   padding: 0.25rem;
+  position: relative;
+  top: 30%;
+  height: fit-content;
 }
 
 .filter {
@@ -355,8 +360,8 @@
 }
 
 .filter.active {
-  background: #6f42c1;
-  color: white;
+  background: #d9c9f0;
+  background-color: #e6e0ef;
 }
 
 .filter input {
@@ -538,7 +543,7 @@ html[dir='rtl'] .total-summary {
   left: auto;
   right: 50%;
   transform: translateX(50%);
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 
 /* RTL */
@@ -553,4 +558,69 @@ html[dir='rtl'] .create-btn-tooltip {
   text-align: center;
   color: #666;
   font-size: 1rem;
+}
+
+/* Listings Toolbar */
+.listings-toolbar {
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center; /* ← مهم: محاذاة عمودية */
+  flex-wrap: wrap;
+  background: #f7f4fb;
+  border-bottom: 1px solid #eee8fb;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 12px;
+  top: 50%; /* ← تم إصلاح الموقع */
+  transform: translateY(-50%);
+  color: #7a6c90;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #e6e0ef;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 0.95rem;
+  height: 100%; /* لضمان الارتفاع المتساوي */
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid #e6e0ef;
+  border-radius: 12px;
+  padding: 0.25rem;
+  height: fit-content;
+  align-self: center; /* ← لتوسيط الفلاتر عموديًا */
+}
+
+.filter {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter.active {
+  background: #6f42c1;
+  color: white;
+}
+
+.filter input {
+  display: none;
 }

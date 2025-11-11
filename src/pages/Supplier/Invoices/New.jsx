@@ -23,6 +23,7 @@ const CreateInvoice = () => {
   const navigate = useNavigate();
   const userId = searchParams.get('userId');
   const isRTL = i18n.dir() === 'rtl';
+  const INVOICE_DRAFT_KEY = `invoice_draft_${userId}`;
 
   // Form state
   const [deliveryDate, setDeliveryDate] = useState('');
@@ -147,6 +148,138 @@ const CreateInvoice = () => {
   useEffect(() => {
     if (showLinkModal) fetchListings();
   }, [showLinkModal, fetchListings]);
+
+  // === LOAD DRAFT ON MOUNT ===
+  useEffect(() => {
+    if (!userId || !buyer || !supplier) return;
+
+    const saved = localStorage.getItem(INVOICE_DRAFT_KEY);
+    if (!saved) return;
+
+    let draft;
+    try {
+      draft = JSON.parse(saved);
+    } catch (err) {
+      console.error('Failed to parse draft', err);
+      return;
+    }
+
+    // Restore form state
+    if (draft.deliveryDate) setDeliveryDate(draft.deliveryDate);
+    if (draft.termsOfPayment) setTermsOfPayment(draft.termsOfPayment);
+    if (draft.upfrontAmount) setUpfrontAmount(draft.upfrontAmount);
+    if (draft.uponDeliveryAmount)
+      setUponDeliveryAmount(draft.uponDeliveryAmount);
+    if (draft.notesAndTerms) setNotesAndTerms(draft.notesAndTerms);
+
+    // Restore items + linkedItem (fetch from backend)
+    if (draft.items && draft.items.length > 0) {
+      const restoreItems = async () => {
+        const restored = await Promise.all(
+          draft.items.map(async (item) => {
+            let linkedItem = null;
+
+            if (item.relatedProductId) {
+              try {
+                const res = await axios.get(
+                  `${API_BASE}/api/products/${item.relatedProductId}`,
+                  { withCredentials: true },
+                );
+                const p = res.data;
+                linkedItem = {
+                  id: p.productId,
+                  type: 'product',
+                  name: p.name,
+                  img: p.imagesFilesUrls?.[0] || '/images/placeholder.png',
+                  price: p.price,
+                };
+              } catch (err) {
+                console.warn('Failed to fetch product', item.relatedProductId);
+              }
+            } else if (item.relatedServiceId) {
+              try {
+                const res = await axios.get(
+                  `${API_BASE}/api/services/${item.relatedServiceId}`,
+                  { withCredentials: true },
+                );
+                const s = res.data;
+                linkedItem = {
+                  id: s.serviceId,
+                  type: 'service',
+                  name: s.name,
+                  img: s.imagesFilesUrls?.[0] || '/images/placeholder.png',
+                  price: s.price,
+                };
+              } catch (err) {
+                console.warn('Failed to fetch service', item.relatedServiceId);
+              }
+            }
+
+            return {
+              ...item,
+              totalPrice: item.quantity * item.unitPrice,
+              linkedItem,
+            };
+          }),
+        );
+
+        setItems([
+          ...restored,
+          {
+            name: '',
+            description: '',
+            agreedDetails: '',
+            quantity: 1,
+            unitPrice: 0,
+            totalPrice: 0,
+            relatedProductId: null,
+            relatedServiceId: null,
+            linkedItem: null,
+          },
+        ]);
+      };
+
+      restoreItems();
+    }
+  }, [userId, buyer, supplier, API_BASE]);
+
+  // === SAVE DRAFT ON ANY CHANGE ===
+  useEffect(() => {
+    if (!userId || !buyer || !supplier) return;
+
+    const draft = {
+      deliveryDate,
+      termsOfPayment,
+      upfrontAmount,
+      uponDeliveryAmount,
+      notesAndTerms,
+      items: items
+        .slice(0, -1)
+        .filter((i) => i.name)
+        .map((i) => ({
+          name: i.name,
+          description: i.description,
+          agreedDetails: i.agreedDetails,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          relatedProductId: i.relatedProductId || undefined,
+          relatedServiceId: i.relatedServiceId || undefined,
+          linkedItem: i.linkedItem || undefined, // ← نحفظ الكائن كامل
+        })),
+    };
+
+    localStorage.setItem(INVOICE_DRAFT_KEY, JSON.stringify(draft));
+  }, [
+    userId,
+    buyer,
+    supplier,
+    deliveryDate,
+    termsOfPayment,
+    upfrontAmount,
+    uponDeliveryAmount,
+    notesAndTerms,
+    items,
+  ]);
 
   // Auto-add row
   useEffect(() => {
@@ -340,6 +473,8 @@ const CreateInvoice = () => {
         headers: { 'Content-Type': 'application/json' },
       });
       toast.success(t('success'));
+      // CLEAR DRAFT
+      localStorage.removeItem(INVOICE_DRAFT_KEY);
       navigate(-1);
     } catch (err) {
       const msg = err.response?.data?.message || t('errors.createFailed');

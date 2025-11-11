@@ -1,6 +1,7 @@
 {
   "pageTitle": "إنشاء فاتورة",
   "title": "إنشاء فاتورة",
+  "continueInvoice": "متابعة إنشاء الفاتورة",
   "invoiceNumber": "رقم الفاتورة",
   "invoiceNumberNote": "سيتم توليده عند الإنشاء",
   "issueDate": "تاريخ الإصدار",
