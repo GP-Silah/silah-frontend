@@ -44,6 +44,15 @@ export default function ChatDetail() {
     inputRef.current?.focus();
   }, []);
 
+  // عند تحميل الصفحة → أخفِ الـ scroll
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      // عند مغادرة الصفحة → أعد الـ scroll
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   // Update page title
   useEffect(() => {
     document.title = t('chatWith', { otherUser: partner?.name });

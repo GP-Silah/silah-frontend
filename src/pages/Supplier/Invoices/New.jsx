@@ -80,7 +80,25 @@ const CreateInvoice = () => {
           withCredentials: true,
           headers: { 'accept-language': i18n.language },
         });
-        setBuyer(res.data);
+
+        const { buyer: buyerData, user } = res.data;
+
+        // تأكد أن buyer موجود
+        if (!buyerData?.buyerId) {
+          toast.error(t('errors.buyerNotFound'));
+          navigate(-1);
+          return;
+        }
+
+        setBuyer({
+          userId: user.userId,
+          buyerId: buyerData.buyerId, // ← المهم
+          name: user.name,
+          businessName: user.businessName,
+          city: user.city,
+          email: user.email,
+          pfpUrl: user.pfpUrl,
+        });
       } catch (err) {
         const msg = err.response?.data?.message || t('errors.userNotFound');
         toast.error(msg);
@@ -89,6 +107,7 @@ const CreateInvoice = () => {
         setFetchingBuyer(false);
       }
     };
+
     fetchBuyer();
   }, [userId, i18n.language, navigate, t]);
 
@@ -250,7 +269,7 @@ const CreateInvoice = () => {
     const draft = {
       deliveryDate,
       termsOfPayment,
-      upfrontAmount,
+      upfrontAmount: termsOfPayment === 'FULL' ? '0' : upfrontAmount,
       uponDeliveryAmount,
       notesAndTerms,
       items: items
@@ -361,6 +380,15 @@ const CreateInvoice = () => {
       }
     }
 
+    // === NEW: Validate linking ===
+    const filledItems = items.slice(0, -1).filter((i) => i.name);
+    const unlinkedItems = filledItems.filter(
+      (i) => !i.relatedProductId && !i.relatedServiceId,
+    );
+    if (unlinkedItems.length > 0) {
+      err.linking = t('validation.itemMustBeLinked');
+    }
+
     // Notes
     if (notesAndTerms.length > 500) err.notes = t('validation.notesTooLong');
 
@@ -395,7 +423,11 @@ const CreateInvoice = () => {
     totalItemsPrice,
   ]);
 
-  const isFormValid = Object.keys(errors).length === 0 && buyer && supplier;
+  const isFormValid =
+    Object.keys(errors).length === 0 &&
+    buyer &&
+    supplier &&
+    items.slice(0, -1).every((i) => i.relatedProductId || i.relatedServiceId);
 
   // Handlers
   const handleLinkClick = (index) => {
@@ -446,12 +478,13 @@ const CreateInvoice = () => {
 
   const handleCreateInvoice = async () => {
     const payload = {
-      buyerId: buyer.userId,
+      buyerId: buyer.buyerId,
       supplierId: supplier.supplierId,
       deliveryDate,
       termsOfPayment,
+      // مهم جدًا: للـ FULL، نرسل upfrontAmount = 0
       upfrontAmount:
-        termsOfPayment === 'PARTIAL' ? parseFloat(upfrontAmount) : 0,
+        termsOfPayment === 'PARTIAL' ? parseFloat(upfrontAmount) : 0, // ← دائمًا 0 للـ FULL
       notesAndTerms: notesAndTerms || undefined,
       items: items
         .slice(0, -1)
@@ -477,8 +510,10 @@ const CreateInvoice = () => {
       localStorage.removeItem(INVOICE_DRAFT_KEY);
       navigate(-1);
     } catch (err) {
-      const msg = err.response?.data?.message || t('errors.createFailed');
+      const msg =
+        err.response?.data?.error?.message || t('errors.createFailed');
       toast.error(msg);
+      console.log(err);
     }
   };
 
@@ -798,6 +833,11 @@ const CreateInvoice = () => {
         </table>
         {validationErrors.items && (
           <div className="error-text table-error">{validationErrors.items}</div>
+        )}
+        {validationErrors.linking && (
+          <div className="error-text table-error">
+            {validationErrors.linking}
+          </div>
         )}
         <div className="total-summary">
           <strong>

@@ -53,7 +53,8 @@
     "uponDeliveryPositive": "مبلغ عند التسليم يجب أن يكون أكبر من 0.",
     "paymentMustMatchTotal": "إجمالي الدفع يجب أن يساوي إجمالي الفاتورة.",
     "notesTooLong": "الملاحظات لا يمكن أن تتجاوز 500 حرف.",
-    "cannotDeleteLastItem": "لا يمكن حذف الصنف الأخير."
+    "cannotDeleteLastItem": "لا يمكن حذف الصنف الأخير.",
+    "itemMustBeLinked": "كل عنصر يجب أن يكون مرتبطًا بمنتج أو خدمة منشورة"
   },
   "errors": {
     "missingUserId": "معرف المستخدم مطلوب.",

@@ -624,3 +624,15 @@ html[dir='rtl'] .create-btn-tooltip {
 .filter input {
   display: none;
 }
+
+.unlinked-warning {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #d32f2f;
+  font-size: 0.8rem;
+}
+
+.required-hint {
+  font-weight: 600;
+}
