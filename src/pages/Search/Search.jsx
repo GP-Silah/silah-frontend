@@ -214,9 +214,15 @@ export default function SearchPage() {
                   ratingsCount: item.ratingsCount || 0,
                   price: item.price || 0,
                   type: typeKey.slice(0, -1),
+                  isAvailable: item.productId ? item.stock > 0 : true,
                 };
                 return (
-                  <ItemCard key={mapped._id} item={mapped} type={mapped.type} />
+                  <ItemCard
+                    key={mapped._id}
+                    item={mapped}
+                    type={mapped.type}
+                    isAvailable={mapped.isAvailable}
+                  />
                 );
               })}
             </div>

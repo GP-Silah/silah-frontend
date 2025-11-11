@@ -192,3 +192,38 @@
     width: 14rem !important;
   }
 }
+
+.sar {
+  position: relative;
+  bottom: -1.5px;
+  width: 16px;
+  height: 18px;
+  object-fit: contain; /* scale image without stretching */
+}
+
+/* OUT OF STOCK STYLES */
+.item-card.out-of-stock {
+  opacity: 0.6;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.item-card.out-of-stock:hover {
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.out-of-stock-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

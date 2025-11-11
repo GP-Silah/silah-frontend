@@ -178,6 +178,7 @@ export default function Alternatives() {
                     ratingsCount: item.ratingsCount ?? 0,
                     price: item.price ?? 0,
                     type: item.productId ? 'product' : 'service',
+                    isAvailable: item.productId ? item.stock > 0 : true,
                   };
 
                   return (
@@ -185,6 +186,7 @@ export default function Alternatives() {
                       key={`${mapped._id}-${idx}`}
                       item={mapped}
                       type={mapped.type}
+                      isAvailable={mapped.isAvailable}
                     />
                   );
                 })}

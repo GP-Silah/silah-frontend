@@ -17,8 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import CategoryMegamenu from '../CategoryMegamenu/CategoryMegamenu';
-import { useNotifications } from '../../hooks/useNotifications';
 import './BuyerHeader.global.css';
 
 const TYPE_MAP = {
@@ -41,9 +41,12 @@ const BuyerHeader = ({
   markSingleAsRead,
   markAllAsRead,
 }) => {
+  const location = useLocation();
+  const isPaymentCallbackPage = location.pathname.includes('/callback');
+  if (isPaymentCallbackPage) return null;
+
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
   const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -56,9 +59,7 @@ const BuyerHeader = ({
   const selectRef = useRef(null);
 
   const unreadNotifications = notifications.filter((n) => !n.isRead);
-
-  const isPaymentCallbackPage = location.pathname.includes('/callback');
-  if (isPaymentCallbackPage) return null;
+  const { totalItemsCount } = useCart();
 
   // === Toggle Language ===
   const toggleLanguage = () => {
@@ -89,6 +90,31 @@ const BuyerHeader = ({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      setCartLoading(true);
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/carts/me`,
+          {
+            withCredentials: true,
+          },
+        );
+        setTotalItemsCount(res.data.totalItemsCount || 0);
+      } catch (err) {
+        if (err.response?.status === 404) {
+          setTotalItemsCount(0); // No active cart
+        } else {
+          console.error('Failed to fetch cart:', err);
+        }
+      } finally {
+        setCartLoading(false);
+      }
+    };
+
+    fetchCartCount();
   }, []);
 
   // === Mark All as Read ===
@@ -219,6 +245,11 @@ const BuyerHeader = ({
           title={t('cart')}
         >
           <FaShoppingCart />
+          {totalItemsCount > 0 && (
+            <span className="notification-badge">
+              {totalItemsCount > 99 ? '99+' : totalItemsCount}
+            </span>
+          )}
         </button>
 
         {/* Notifications */}

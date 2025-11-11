@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { useCart } from '../../../context/CartContext';
 import './PaymentCallback.css';
 
 export default function PaymentCallback() {
   const { t } = useTranslation('payment');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { refreshCart } = useCart();
 
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -25,20 +27,22 @@ export default function PaymentCallback() {
       errorKey: 'errors.saveCardFailed',
     },
     checkout: {
-      confirmEndpoint: `${import.meta.env.VITE_BACKEND_URL}/api/cart/checkout`,
+      confirmEndpoint: `${
+        import.meta.env.VITE_BACKEND_URL
+      }/api/carts/me/checkout`,
       requestBody: (params) => ({ chargeId: params.get('tap_id') }),
-      redirectTo: (params) =>
-        `/order/confirmation?orderId=${params.get('orderId') || ''}`,
+      redirectTo: '/buyer/homepage',
       successKey: 'success.orderCompleted',
       errorKey: 'errors.checkoutFailed',
     },
     invoice: {
-      confirmEndpoint: `${import.meta.env.VITE_BACKEND_URL}/api/cart/checkout`,
+      confirmEndpoint: `${import.meta.env.VITE_BACKEND_URL}/api/invoices/pay`,
       requestBody: (params) => ({
         chargeId: params.get('tap_id'),
         invoiceId: params.get('invoiceId') || '',
       }),
-      redirectTo: (params) => `/invoices/${params.get('invoiceId') || ''}`,
+      redirectTo: (params) =>
+        `/buyer/invoices/${params.get('invoiceId') || ''}`,
       successKey: 'success.invoicePaid',
       errorKey: 'errors.paymentFailed',
     },
@@ -58,14 +62,25 @@ export default function PaymentCallback() {
       }
 
       try {
-        await axios.put(
-          config.confirmEndpoint,
-          config.requestBody(searchParams),
-          { withCredentials: true },
-        );
+        if (type === 'card') {
+          await axios.put(
+            config.confirmEndpoint,
+            config.requestBody(searchParams),
+            { withCredentials: true },
+          );
+        } else {
+          await axios.post(
+            config.confirmEndpoint,
+            config.requestBody(searchParams),
+            { withCredentials: true },
+          );
+        }
 
         setMessage(t(config.successKey));
         setIsSuccess(true);
+        if (type === 'checkout') {
+          await refreshCart();
+        }
       } catch (err) {
         setMessage(err.response?.data?.error?.message || t(config.errorKey));
         setIsSuccess(false);
