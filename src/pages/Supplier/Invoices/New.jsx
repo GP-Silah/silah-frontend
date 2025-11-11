@@ -10,6 +10,7 @@ import {
   FiInfo,
   FiSearch,
   FiX,
+  FiLink2,
 } from 'react-icons/fi';
 import { format } from 'date-fns';
 import './CreateInvoice.css';
@@ -20,8 +21,7 @@ const CreateInvoice = () => {
   const { t, i18n } = useTranslation('CreateInvoice');
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const buyerId = searchParams.get('buyerId');
-
+  const userId = searchParams.get('userId');
   const isRTL = i18n.dir() === 'rtl';
 
   // Form state
@@ -49,52 +49,49 @@ const CreateInvoice = () => {
   ]);
 
   // UI
-  const [loading, setLoading] = useState(true);
   const [fetchingBuyer, setFetchingBuyer] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkingIndex, setLinkingIndex] = useState(null);
   const [listings, setListings] = useState([]);
   const [listingsFilter, setListingsFilter] = useState('all');
   const [listingsSearch, setListingsSearch] = useState('');
+  const [validationErrors, setValidationErrors] = useState({});
 
   const issueDate = format(new Date(), 'dd/MM/yyyy');
 
   useEffect(() => {
     document.title = t('pageTitle');
-    const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.setAttribute('dir', dir);
-  }, [t, i18n.language]);
+    document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+  }, [t, isRTL]);
 
   // Fetch buyer
   useEffect(() => {
-    if (!buyerId) {
-      toast.error(t('errors.missingBuyerId'));
-      navigate('/supplier/invoices'); //! can we make it navigate one step back instead?
+    if (!userId) {
+      toast.error(t('errors.missingUserId'));
+      navigate(-1);
       return;
     }
 
     const fetchBuyer = async () => {
       setFetchingBuyer(true);
       try {
-        const res = await axios.get(`${API_BASE}/api/buyers/${buyerId}`, {
+        const res = await axios.get(`${API_BASE}/api/users/id/${userId}`, {
           withCredentials: true,
           headers: { 'accept-language': i18n.language },
         });
         setBuyer(res.data);
       } catch (err) {
-        const msg =
-          err.response?.data?.error?.message || t('errors.buyerNotFound');
+        const msg = err.response?.data?.message || t('errors.userNotFound');
         toast.error(msg);
-        navigate('/supplier/invoices'); //! can we make it navigate one step back instead?
+        navigate(-1);
       } finally {
         setFetchingBuyer(false);
       }
     };
-
     fetchBuyer();
-  }, [buyerId, i18n.language, navigate, t]);
+  }, [userId, i18n.language, navigate, t]);
 
-  // Fetch supplier (from auth or profile)
+  // Fetch supplier
   useEffect(() => {
     const fetchSupplier = async () => {
       try {
@@ -110,7 +107,8 @@ const CreateInvoice = () => {
     fetchSupplier();
   }, [i18n.language, t]);
 
-  // Fetch listings for modal
+  // Fetch listings
+  // === FETCH LISTINGS (INSIDE useCallback) ===
   const fetchListings = useCallback(async () => {
     if (!supplier?.supplierId) return;
     try {
@@ -138,7 +136,7 @@ const CreateInvoice = () => {
       const mapped = [
         ...(prodRes.data || []).map((p) => mapItem(p, 'product')),
         ...(servRes.data || []).map((s) => mapItem(s, 'service')),
-      ].filter((i) => i.isPublished);
+      ].filter((i) => i.isPublished === true); // ← CRITICAL: ONLY PUBLISHED
 
       setListings(mapped);
     } catch (err) {
@@ -155,6 +153,8 @@ const CreateInvoice = () => {
     const last = items[items.length - 1];
     if (
       last.name &&
+      last.description &&
+      last.agreedDetails &&
       last.quantity > 0 &&
       last.unitPrice > 0 &&
       items.length < 50
@@ -176,12 +176,12 @@ const CreateInvoice = () => {
     }
   }, [items]);
 
-  // Update total price
+  // Update total
   const updateItemTotal = (index) => {
     setItems((prev) => {
       const updated = [...prev];
-      const item = updated[index];
-      item.totalPrice = item.quantity * item.unitPrice;
+      updated[index].totalPrice =
+        updated[index].quantity * updated[index].unitPrice;
       return updated;
     });
   };
@@ -203,19 +203,66 @@ const CreateInvoice = () => {
     return sum === totalItemsPrice && upfront > 0 && upon > 0;
   }, [upfrontAmount, uponDeliveryAmount, totalItemsPrice, termsOfPayment]);
 
-  const isFormValid = useMemo(() => {
-    if (!buyer || !supplier) return false;
-    if (!deliveryDate || new Date(deliveryDate) <= new Date()) return false;
-    if (items.length < 2) return false; // at least one filled
-    if (
-      !items
-        .slice(0, -1)
-        .every((i) => i.name && i.quantity > 0 && i.unitPrice > 0)
-    )
-      return false;
-    if (notesAndTerms.length > 500) return false;
-    return isPaymentValid;
-  }, [buyer, supplier, deliveryDate, items, notesAndTerms, isPaymentValid]);
+  const errors = useMemo(() => {
+    const err = {};
+
+    // Delivery Date
+    if (!deliveryDate) err.deliveryDate = t('validation.deliveryDateRequired');
+    else if (new Date(deliveryDate) <= new Date())
+      err.deliveryDate = t('validation.deliveryDateFuture');
+
+    // Items
+    if (items.length < 2) err.items = t('validation.atLeastOneItem');
+    else {
+      const filledItems = items.slice(0, -1);
+      const missing = filledItems.filter(
+        (i) =>
+          !i.name ||
+          !i.description ||
+          !i.agreedDetails ||
+          i.quantity <= 0 ||
+          i.unitPrice <= 0,
+      );
+      if (missing.length > 0) {
+        err.items = t('validation.itemAllFieldsRequired');
+      }
+    }
+
+    // Notes
+    if (notesAndTerms.length > 500) err.notes = t('validation.notesTooLong');
+
+    // Payment
+    if (!isPaymentValid) {
+      const upfront = parseFloat(upfrontAmount) || 0;
+      const upon = parseFloat(uponDeliveryAmount) || 0;
+      const sum = upfront + upon;
+
+      if (termsOfPayment === 'PARTIAL') {
+        if (upfront <= 0) err.upfront = t('validation.upfrontPositive');
+        if (upon <= 0) err.uponDelivery = t('validation.uponDeliveryPositive');
+        if (sum !== totalItemsPrice)
+          err.payment = t('validation.paymentMustMatchTotal');
+      } else if (termsOfPayment === 'FULL') {
+        if (upon !== totalItemsPrice)
+          err.uponDelivery = t('validation.paymentMustMatchTotal');
+      }
+    }
+
+    setValidationErrors(err);
+    return err;
+  }, [
+    deliveryDate,
+    items,
+    notesAndTerms,
+    isPaymentValid,
+    termsOfPayment,
+    upfrontAmount,
+    uponDeliveryAmount,
+    t,
+    totalItemsPrice,
+  ]);
+
+  const isFormValid = Object.keys(errors).length === 0 && buyer && supplier;
 
   // Handlers
   const handleLinkClick = (index) => {
@@ -223,21 +270,33 @@ const CreateInvoice = () => {
     setShowLinkModal(true);
   };
 
+  const handleUnlink = (index) => {
+    setItems((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        relatedProductId: null,
+        relatedServiceId: null,
+        linkedItem: null,
+      };
+      return updated;
+    });
+  };
+
   const handleLinkSelect = (listing) => {
     setItems((prev) => {
       const updated = [...prev];
-      updated[linkingIndex] = {
-        ...updated[linkingIndex],
-        name: listing.name,
-        unitPrice: listing.price,
-        quantity:
-          listing.type === 'service' ? 1 : updated[linkingIndex].quantity,
-        relatedProductId: listing.type === 'product' ? listing.id : null,
-        relatedServiceId: listing.type === 'service' ? listing.id : null,
-        linkedItem: listing,
-      };
-      updated[linkingIndex].totalPrice =
-        updated[linkingIndex].quantity * listing.price;
+      const item = updated[linkingIndex];
+      // Only fill if empty
+      if (!item.name) item.name = listing.name;
+      if (!item.unitPrice) item.unitPrice = listing.price;
+      if (listing.type === 'service') item.quantity = 1;
+
+      item.relatedProductId = listing.type === 'product' ? listing.id : null;
+      item.relatedServiceId = listing.type === 'service' ? listing.id : null;
+      item.linkedItem = listing;
+
+      item.totalPrice = item.quantity * item.unitPrice;
       return updated;
     });
     setShowLinkModal(false);
@@ -245,13 +304,16 @@ const CreateInvoice = () => {
   };
 
   const handleDeleteRow = (index) => {
-    if (items.length <= 2) return;
+    if (items.length <= 2) {
+      toast.error(t('validation.cannotDeleteLastItem'));
+      return;
+    }
     setItems((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleCreateInvoice = async () => {
     const payload = {
-      buyerId: buyer.buyerId,
+      buyerId: buyer.userId,
       supplierId: supplier.supplierId,
       deliveryDate,
       termsOfPayment,
@@ -263,8 +325,8 @@ const CreateInvoice = () => {
         .filter((i) => i.name)
         .map((i) => ({
           name: i.name,
-          description: i.description || '',
-          agreedDetails: i.agreedDetails || '',
+          description: i.description,
+          agreedDetails: i.agreedDetails,
           quantity: i.quantity,
           unitPrice: i.unitPrice,
           relatedProductId: i.relatedProductId || undefined,
@@ -278,24 +340,30 @@ const CreateInvoice = () => {
         headers: { 'Content-Type': 'application/json' },
       });
       toast.success(t('success'));
-      navigate('/supplier/invoices');
+      navigate(-1);
     } catch (err) {
-      const msg =
-        err.response?.data?.error?.message || t('errors.createFailed');
+      const msg = err.response?.data?.message || t('errors.createFailed');
       toast.error(msg);
     }
   };
 
+  // === FILTERED LISTINGS (useMemo) ===
   const filteredListings = useMemo(() => {
     let filtered = listings;
-    if (listingsFilter !== 'all') {
-      filtered = filtered.filter((i) => i.type === listingsFilter);
+
+    // FILTER BY TYPE
+    if (listingsFilter === 'products') {
+      filtered = filtered.filter((i) => i.type === 'product');
+    } else if (listingsFilter === 'services') {
+      filtered = filtered.filter((i) => i.type === 'service');
     }
+
+    // SEARCH
     if (listingsSearch) {
-      filtered = filtered.filter((i) =>
-        i.name.toLowerCase().includes(listingsSearch.toLowerCase()),
-      );
+      const query = listingsSearch.toLowerCase();
+      filtered = filtered.filter((i) => i.name.toLowerCase().includes(query));
     }
+
     return filtered;
   }, [listings, listingsFilter, listingsSearch]);
 
@@ -306,8 +374,17 @@ const CreateInvoice = () => {
   return (
     <div className="create-invoice-page" dir={isRTL ? 'rtl' : 'ltr'}>
       <h1>{t('title')}</h1>
-
-      {/* Basic Info Grid */}
+      {/* Validation Summary */}
+      {Object.keys(errors).length > 0 && (
+        <div className="validation-summary">
+          {Object.values(errors).map((msg, i) => (
+            <div key={i} className="error-item">
+              <FiInfo /> {msg}
+            </div>
+          ))}
+        </div>
+      )}
+      {/* Info Grid */}
       <div className="info-grid">
         <div className="field">
           <label>{t('invoiceNumber')}</label>
@@ -324,8 +401,13 @@ const CreateInvoice = () => {
             value={deliveryDate}
             onChange={(e) => setDeliveryDate(e.target.value)}
             min={format(new Date(Date.now() + 86400000), 'yyyy-MM-dd')}
-            className="input"
+            className={`input ${validationErrors.deliveryDate ? 'error' : ''}`}
           />
+          {validationErrors.deliveryDate && (
+            <small className="error-text">
+              {validationErrors.deliveryDate}
+            </small>
+          )}
         </div>
         <div className="field">
           <label>{t('termsOfPayment')} *</label>
@@ -346,11 +428,14 @@ const CreateInvoice = () => {
                 type="number"
                 value={upfrontAmount}
                 onChange={(e) => setUpfrontAmount(e.target.value)}
-                min="0"
+                min="0.01"
                 step="0.01"
-                className="input"
+                className={`input ${validationErrors.upfront ? 'error' : ''}`}
                 placeholder="0.00"
               />
+              {validationErrors.upfront && (
+                <small className="error-text">{validationErrors.upfront}</small>
+              )}
             </div>
             <div className="field">
               <label>{t('uponDeliveryAmount')} *</label>
@@ -358,11 +443,20 @@ const CreateInvoice = () => {
                 type="number"
                 value={uponDeliveryAmount}
                 onChange={(e) => setUponDeliveryAmount(e.target.value)}
-                min="0"
+                min="0.01"
                 step="0.01"
-                className="input"
+                className={`input ${
+                  validationErrors.uponDelivery || validationErrors.payment
+                    ? 'error'
+                    : ''
+                }`}
                 placeholder="0.00"
               />
+              {(validationErrors.uponDelivery || validationErrors.payment) && (
+                <small className="error-text">
+                  {validationErrors.uponDelivery || validationErrors.payment}
+                </small>
+              )}
             </div>
           </>
         )}
@@ -373,16 +467,24 @@ const CreateInvoice = () => {
               type="number"
               value={uponDeliveryAmount}
               onChange={(e) => setUponDeliveryAmount(e.target.value)}
-              min="0"
+              min="0.01"
               step="0.01"
-              className="input"
+              className={`input ${
+                validationErrors.uponDelivery || validationErrors.payment
+                  ? 'error'
+                  : ''
+              }`}
               placeholder="0.00"
             />
+            {(validationErrors.uponDelivery || validationErrors.payment) && (
+              <small className="error-text">
+                {validationErrors.uponDelivery || validationErrors.payment}
+              </small>
+            )}
           </div>
         )}
       </div>
-
-      {/* Supplier & Buyer */}
+      {/* Parties */}
       <div className="party-section">
         <div className="party-card">
           <h3>{t('supplier')}</h3>
@@ -396,14 +498,13 @@ const CreateInvoice = () => {
         <div className="party-card">
           <h3>{t('buyer')}</h3>
           <p>
-            <strong>{buyer.user.businessName}</strong>
+            <strong>{buyer.businessName}</strong>
           </p>
-          <p>{buyer.user.name}</p>
-          <p>{buyer.user.city}</p>
-          <p>{buyer.user.email}</p>
+          <p>{buyer.name}</p>
+          <p>{buyer.city}</p>
+          <p>{buyer.email}</p>
         </div>
       </div>
-
       {/* Items Table */}
       <div className="table-container">
         <div className="table-header">
@@ -443,7 +544,6 @@ const CreateInvoice = () => {
                     }}
                     placeholder={t('itemPlaceholder')}
                     className="input small"
-                    disabled={!!item.linkedItem}
                   />
                 </td>
                 <td>
@@ -511,10 +611,9 @@ const CreateInvoice = () => {
                         return updated;
                       });
                     }}
-                    min="0"
+                    min="0.01"
                     step="0.01"
                     className="input small"
-                    disabled={!!item.linkedItem}
                   />
                 </td>
                 <td className="total-cell">{item.totalPrice.toFixed(2)}</td>
@@ -539,25 +638,38 @@ const CreateInvoice = () => {
                 </td>
                 <td>
                   {index < items.length - 1 && (
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDeleteRow(index)}
-                    >
-                      <FiTrash2 />
-                    </button>
+                    <div className="action-buttons">
+                      {item.linkedItem && (
+                        <button
+                          className="unlink-btn"
+                          onClick={() => handleUnlink(index)}
+                          title={t('unlink')}
+                        >
+                          <FiLink2 />
+                        </button>
+                      )}
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeleteRow(index)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {validationErrors.items && (
+          <div className="error-text table-error">{validationErrors.items}</div>
+        )}
         <div className="total-summary">
           <strong>
             {t('total')}: {totalItemsPrice.toFixed(2)} SAR
           </strong>
         </div>
       </div>
-
       {/* Notes */}
       <div className="notes-section">
         <label>{t('notesAndTerms')}</label>
@@ -566,20 +678,29 @@ const CreateInvoice = () => {
           onChange={(e) => setNotesAndTerms(e.target.value.slice(0, 500))}
           placeholder={t('notesPlaceholder')}
           rows="4"
-          className="textarea"
+          className={`textarea ${validationErrors.notes ? 'error' : ''}`}
         />
-        <small>{notesAndTerms.length}/500</small>
+        <small className={validationErrors.notes ? 'error-text' : ''}>
+          {notesAndTerms.length}/500
+        </small>
       </div>
-
       {/* Submit */}
-      <button
-        className="create-btn"
-        onClick={handleCreateInvoice}
-        disabled={!isFormValid}
-      >
-        {t('createInvoice')}
-      </button>
-
+      <div className="submit-wrapper">
+        <button
+          className="create-btn"
+          onClick={handleCreateInvoice}
+          disabled={!isFormValid}
+        >
+          {t('createInvoice')}
+        </button>
+        {!isFormValid && (
+          <div className="create-btn-tooltip">
+            {Object.values(errors).map((msg, i) => (
+              <div key={i}>{msg}</div>
+            ))}
+          </div>
+        )}
+      </div>
       {/* Link Modal */}
       {showLinkModal && (
         <div className="modal-overlay" onClick={() => setShowLinkModal(false)}>
@@ -590,6 +711,7 @@ const CreateInvoice = () => {
                 <FiX />
               </button>
             </div>
+
             <div className="listings-toolbar">
               <div className="search-box">
                 <FiSearch />
@@ -616,42 +738,51 @@ const CreateInvoice = () => {
                 ))}
               </div>
             </div>
+
             <div className="listings-table-container">
-              <table className="listings-table">
-                <thead>
-                  <tr>
-                    <th>{t('image')}</th>
-                    <th>{t('name')}</th>
-                    <th>{t('price')}</th>
-                    <th>{t('stock')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredListings.map((listing) => (
-                    <tr
-                      key={listing.id}
-                      onClick={() => handleLinkSelect(listing)}
-                      className="clickable"
-                    >
-                      <td>
-                        <div className="thumb">
-                          <img src={listing.img} alt="" />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="name-cell">
-                          <span className="tag">
-                            {t(`type.${listing.type}`)}
-                          </span>
-                          <span>{listing.name}</span>
-                        </div>
-                      </td>
-                      <td>{listing.price.toFixed(2)}</td>
-                      <td>{listing.stock !== null ? listing.stock : '—'}</td>
+              {filteredListings.length === 0 ? (
+                <div className="empty-modal">
+                  {listings.length === 0
+                    ? t('noPublishedListings')
+                    : t('noResultsFound')}
+                </div>
+              ) : (
+                <table className="listings-table">
+                  <thead>
+                    <tr>
+                      <th>{t('image')}</th>
+                      <th>{t('name')}</th>
+                      <th>{t('price')}</th>
+                      <th>{t('stock')}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredListings.map((listing) => (
+                      <tr
+                        key={listing.id}
+                        onClick={() => handleLinkSelect(listing)}
+                        className="clickable"
+                      >
+                        <td>
+                          <div className="thumb">
+                            <img src={listing.img} alt="" />
+                          </div>
+                        </td>
+                        <td>
+                          <div className="name-cell">
+                            <span className="tag">
+                              {t(`type.${listing.type}`)}
+                            </span>
+                            <span>{listing.name}</span>
+                          </div>
+                        </td>
+                        <td>{listing.price.toFixed(2)}</td>
+                        <td>{listing.stock !== null ? listing.stock : '-'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         </div>

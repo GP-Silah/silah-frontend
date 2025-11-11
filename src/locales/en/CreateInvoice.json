@@ -20,10 +20,14 @@
   "unitPrice": "Unit Price",
   "totalPrice": "Total Price",
   "link": "Link",
+  "unlink": "Unlink",
   "actions": "Actions",
   "linkTooltip": "Link to a published product or service to enable reviews.",
   "selectListing": "Select a Published Listing",
   "searchPlaceholder": "Search listings...",
+  "itemPlaceholder": "Item name",
+  "descPlaceholder": "Description",
+  "detailsPlaceholder": "Agreed details",
   "filters": {
     "all": "All",
     "products": "Products",
@@ -39,11 +43,24 @@
   "createInvoice": "Create Invoice",
   "loading": "Loading...",
   "success": "Invoice created successfully!",
+  "validation": {
+    "deliveryDateRequired": "Delivery date is required.",
+    "deliveryDateFuture": "Delivery date must be in the future.",
+    "atLeastOneItem": "Add at least one item.",
+    "itemAllFieldsRequired": "Item name, description, agreed details, quantity, and price are required.",
+    "upfrontPositive": "Upfront payment must be greater than 0.",
+    "uponDeliveryPositive": "Upon delivery amount must be greater than 0.",
+    "paymentMustMatchTotal": "Payment amounts must equal total invoice amount.",
+    "notesTooLong": "Notes cannot exceed 500 characters.",
+    "cannotDeleteLastItem": "Cannot delete the last item."
+  },
   "errors": {
-    "missingBuyerId": "Buyer ID is required.",
-    "buyerNotFound": "Buyer not found.",
+    "missingUserId": "User ID is required.",
+    "userNotFound": "User not found.",
     "supplierLoadFailed": "Failed to load supplier data.",
     "listingsLoadFailed": "Failed to load listings.",
     "createFailed": "Failed to create invoice."
-  }
+  },
+  "noPublishedListings": "You have no published listings yet.",
+  "noResultsFound": "No items match your search."
 }

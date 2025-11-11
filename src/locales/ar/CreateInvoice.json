@@ -20,10 +20,14 @@
   "unitPrice": "سعر الوحدة",
   "totalPrice": "الإجمالي",
   "link": "ربط",
+  "unlink": "إلغاء الربط",
   "actions": "إجراءات",
   "linkTooltip": "ربط بمنتج أو خدمة منشورة لتمكين المراجعات.",
   "selectListing": "اختر إعلانًا منشورًا",
-  "searchPlaceholder": "ابحث في الإعلانات...",
+  "searchPlaceholder": "ابحث في العناصر...",
+  "itemPlaceholder": "اسم الصنف",
+  "descPlaceholder": "الوصف",
+  "detailsPlaceholder": "التفاصيل المتفق عليها",
   "filters": {
     "all": "الكل",
     "products": "المنتجات",
@@ -39,11 +43,24 @@
   "createInvoice": "إنشاء الفاتورة",
   "loading": "جاري التحميل...",
   "success": "تم إنشاء الفاتورة بنجاح!",
+  "validation": {
+    "deliveryDateRequired": "تاريخ التسليم مطلوب.",
+    "deliveryDateFuture": "يجب أن يكون تاريخ التسليم في المستقبل.",
+    "atLeastOneItem": "أضف صنفًا واحدًا على الأقل.",
+    "itemAllFieldsRequired": "اسم الصنف والوصف والتفاصيل المتفق عليها والكمية والسعر مطلوبة.",
+    "upfrontPositive": "الدفعة المقدمة يجب أن تكون أكبر من 0.",
+    "uponDeliveryPositive": "مبلغ عند التسليم يجب أن يكون أكبر من 0.",
+    "paymentMustMatchTotal": "إجمالي الدفع يجب أن يساوي إجمالي الفاتورة.",
+    "notesTooLong": "الملاحظات لا يمكن أن تتجاوز 500 حرف.",
+    "cannotDeleteLastItem": "لا يمكن حذف الصنف الأخير."
+  },
   "errors": {
-    "missingBuyerId": "معرف المشتري مطلوب.",
-    "buyerNotFound": "المشتري غير موجود.",
+    "missingUserId": "معرف المستخدم مطلوب.",
+    "userNotFound": "المستخدم غير موجود.",
     "supplierLoadFailed": "فشل تحميل بيانات المورد.",
     "listingsLoadFailed": "فشل تحميل الإعلانات.",
     "createFailed": "فشل إنشاء الفاتورة."
-  }
+  },
+  "noPublishedListings": "ليس لديك إعلانات منشورة بعد.",
+  "noResultsFound": "لا توجد عناصر تطابق بحثك."
 }
