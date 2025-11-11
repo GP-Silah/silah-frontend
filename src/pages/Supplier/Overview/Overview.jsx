@@ -2,60 +2,76 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import "./Overview.css";
 
-
 function SupplierOverview() {
-  const { t } = useTranslation();
+  // نربط الصفحة بملف الترجمة supplierOverview.json
+  const { t } = useTranslation("supplierOverview");
+
+  // اسم المورد مؤقت
+  const supplierName = "Saad";
 
   return (
     <div className="supplier-overview">
-
       {/* العنوان */}
       <header className="overview-header">
-        <h1 className="overview-title">Welcome back, Saad! 👋</h1>
-        <p className="overview-subtitle">
-          Here&apos;s a quick overview of your business.
-        </p>
+        <h1 className="overview-title">
+          {t("header.title", { name: supplierName })}
+        </h1>
+        <p className="overview-subtitle">{t("header.subtitle")}</p>
       </header>
 
       {/* الكروت */}
       <section className="overview-cards">
+        {/* الكرت الأول */}
         <article className="overview-card">
           <div className="card-icon-wrapper">
-            <img src="/status-icon.png" alt="Store status" className="card-icon" />
+            <img
+              src="/status-icon.png"
+              alt={t("cards.status.title")}
+              className="card-icon"
+            />
           </div>
-          <h2 className="card-title">Store Status</h2>
-          <p className="card-main-text">Open for Business</p>
-          <button className="card-button">Store Settings</button>
+          <h2 className="card-title">{t("cards.status.title")}</h2>
+          <p className="card-main-text">{t("cards.status.text")}</p>
+          <button className="card-button">{t("cards.status.button")}</button>
         </article>
 
+        {/* الكرت الثاني */}
         <article className="overview-card">
           <div className="card-icon-wrapper">
-            <img src="/pending-icon.png" alt="Pending orders" className="card-icon" />
+            <img
+              src="/pending-icon.png"
+              alt={t("cards.pending.title")}
+              className="card-icon"
+            />
           </div>
-          <h2 className="card-title">Pending Orders</h2>
+          <h2 className="card-title">{t("cards.pending.title")}</h2>
           <p className="card-main-text card-number">5</p>
-          <button className="card-button">View</button>
+          <button className="card-button">{t("cards.pending.button")}</button>
         </article>
 
+        {/* الكرت الثالث */}
         <article className="overview-card">
           <div className="card-icon-wrapper">
-            <img src="/stock-icon.png" alt="Stock levels" className="card-icon" />
+            <img
+              src="/stock-icon.png"
+              alt={t("cards.stock.title")}
+              className="card-icon"
+            />
           </div>
-          <h2 className="card-title">Stock Levels</h2>
-          <p className="card-main-text">Very Low</p>
-          <button className="card-button">Update</button>
+          <h2 className="card-title">{t("cards.stock.title")}</h2>
+          <p className="card-main-text">{t("cards.stock.text")}</p>
+          <button className="card-button">{t("cards.stock.button")}</button>
         </article>
       </section>
 
-      {/* البلان */}
+      {/* الخطة */}
       <section className="overview-plan">
         <p className="plan-text">
-          Your Plan: <span className="plan-name">Basic</span>
+          {t("plan.label")}{" "}
+          <span className="plan-name">{t("plan.planName")}</span>
         </p>
-        <p className="plan-subtext">
-          Upgrade to Premium for AI Insights &amp; Unlimited Listings!
-        </p>
-        <button className="plan-button">Manage Plan</button>
+        <p className="plan-subtext">{t("plan.subtitle")}</p>
+        <button className="plan-button">{t("plan.button")}</button>
       </section>
     </div>
   );
