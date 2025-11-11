@@ -39,7 +39,10 @@ const CreateInvoice = () => {
     setItems(updatedItems);
 
     if (field === 'item' && value && index === items.length - 1) {
-      setItems([...items, { item: '', qty: 0, unitPrice: 0, totalPrice: 0, editing: true }]);
+      setItems([
+        ...items,
+        { item: '', qty: 0, unitPrice: 0, totalPrice: 0, editing: true },
+      ]);
     }
   };
 
@@ -59,7 +62,6 @@ const CreateInvoice = () => {
     <div className="invoice-page">
       <h1>{t('title')}</h1>
       <div className="invoice-form">
-
         <div className="invoice-field">
           <label>{t('invoiceNumber')}</label>
           <input
@@ -127,7 +129,9 @@ const CreateInvoice = () => {
                       <input
                         type="text"
                         value={entry.item}
-                        onChange={(e) => handleItemChange(index, 'item', e.target.value)}
+                        onChange={(e) =>
+                          handleItemChange(index, 'item', e.target.value)
+                        }
                         className="invoice-input"
                       />
                     ) : (
@@ -139,7 +143,13 @@ const CreateInvoice = () => {
                       <input
                         type="number"
                         value={entry.qty}
-                        onChange={(e) => handleItemChange(index, 'qty', parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          handleItemChange(
+                            index,
+                            'qty',
+                            parseFloat(e.target.value),
+                          )
+                        }
                         className="invoice-input"
                       />
                     ) : (
@@ -152,7 +162,11 @@ const CreateInvoice = () => {
                         type="number"
                         value={entry.unitPrice}
                         onChange={(e) =>
-                          handleItemChange(index, 'unitPrice', parseFloat(e.target.value))
+                          handleItemChange(
+                            index,
+                            'unitPrice',
+                            parseFloat(e.target.value),
+                          )
                         }
                         className="invoice-input"
                       />
@@ -181,7 +195,6 @@ const CreateInvoice = () => {
         <button className="create-invoice-btn" onClick={handleSubmit}>
           {t('createInvoice')}
         </button>
-
       </div>
     </div>
   );
