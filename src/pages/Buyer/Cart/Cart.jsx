@@ -17,9 +17,11 @@ export default function CartBuyer() {
   document.documentElement.dir = dir;
 
   const [cart, setCart] = useState(null);
+  const [hasCard, setHasCard] = useState(null);
   const [products, setProducts] = useState({}); // { productId: fullProduct }
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState({});
+  const [processingCheckout, setProcessingCheckout] = useState(false);
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -76,6 +78,21 @@ export default function CartBuyer() {
 
     fetchAll();
   }, [i18n.language]);
+
+  // Add useEffect to check card
+  useEffect(() => {
+    const checkCard = async () => {
+      try {
+        const res = await axios.get(`${API}/api/buyers/me/card`, {
+          withCredentials: true,
+        });
+        setHasCard(res.data.message !== 'No card found');
+      } catch (err) {
+        setHasCard(false);
+      }
+    };
+    if (cart) checkCard();
+  }, [cart]);
 
   const adjustQuantity = async (item, delta) => {
     const product = products[item.productId];
@@ -190,6 +207,57 @@ export default function CartBuyer() {
     cart?.suppliers?.some((s) =>
       s.cartItems.some((item) => !item.isAvailable),
     ) || false;
+
+  const startCheckout = async () => {
+    if (hasOutOfStock) return;
+    if (hasCard === false) {
+      Swal.fire({
+        icon: 'warning',
+        title: t('noCard.title'),
+        text: t('noCard.message'),
+        confirmButtonText: t('noCard.goToSettings'),
+        cancelButtonText: t('cancel'),
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/buyer/settings?tab=payment');
+        }
+      });
+      return;
+    }
+
+    setProcessingCheckout(true);
+    try {
+      const redirectUrl = `${window.location.origin}/buyer/payment/callback?type=checkout`;
+      const res = await axios.post(
+        `${API}/api/carts/me/checkout`,
+        { redirectUrl },
+        { withCredentials: true },
+      );
+
+      if (res.data.redirectUrl) {
+        // 3DS Required → Tap
+        window.location.href = res.data.redirectUrl;
+      } else {
+        // Instant success → SHOW SWAL
+        await refreshCart();
+        Swal.fire({
+          icon: 'success',
+          title: t('checkoutSuccess.title'),
+          text: t('checkoutSuccess.message'),
+          confirmButtonText: t('checkoutSuccess.continue'),
+          allowOutsideClick: false,
+        }).then(() => {
+          navigate('/buyer/homepage');
+        });
+      }
+    } catch (err) {
+      const msg = err.response?.data?.error?.message || t('error');
+      Swal.fire({ icon: 'error', text: msg });
+    } finally {
+      setProcessingCheckout(false);
+    }
+  };
 
   if (loading)
     return (
@@ -386,10 +454,18 @@ export default function CartBuyer() {
         </div>
         <button
           className="checkout-btn"
-          disabled={hasOutOfStock}
-          onClick={() => navigate('/checkout')}
+          disabled={hasOutOfStock || processingCheckout || hasCard === null}
+          onClick={startCheckout}
+          style={{ position: 'relative' }}
         >
-          {t('checkout')}
+          {processingCheckout ? (
+            <>
+              <span className="spinner-small"></span>
+              {t('processing')}
+            </>
+          ) : (
+            t('checkout')
+          )}
         </button>
         {hasOutOfStock && (
           <p className="warning-text">{t('removeOutOfStock')}</p>

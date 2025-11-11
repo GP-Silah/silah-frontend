@@ -24,5 +24,16 @@
   "caseOf": "Case of {{n}}",
   "validation": {
     "error": "Invalid quantity"
+  },
+  "noCard": {
+    "title": "Card Required",
+    "message": "You must save a payment card before checking out.",
+    "goToSettings": "Go to Payment Settings"
+  },
+  "processing": "Processing...",
+  "checkoutSuccess": {
+    "title": "Order Placed!",
+    "message": "Your order has been successfully placed with all suppliers.",
+    "continue": "Continue Shopping"
   }
 }

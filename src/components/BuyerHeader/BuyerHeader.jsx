@@ -41,9 +41,12 @@ const BuyerHeader = ({
   markSingleAsRead,
   markAllAsRead,
 }) => {
+  const location = useLocation();
+  const isPaymentCallbackPage = location.pathname.includes('/callback');
+  if (isPaymentCallbackPage) return null;
+
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
-  const location = useLocation();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
   const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -57,9 +60,6 @@ const BuyerHeader = ({
 
   const unreadNotifications = notifications.filter((n) => !n.isRead);
   const { totalItemsCount } = useCart();
-
-  const isPaymentCallbackPage = location.pathname.includes('/callback');
-  if (isPaymentCallbackPage) return null;
 
   // === Toggle Language ===
   const toggleLanguage = () => {
