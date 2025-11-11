@@ -1,115 +1,447 @@
-.invoice-page {
-  max-width: 900px;
+.create-invoice-page {
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Inter', sans-serif;
 }
 
-.invoice-page h1 {
+.create-invoice-page h1 {
   font-size: 2rem;
-  margin-bottom: 1.5rem;
   text-align: center;
+  margin-bottom: 2rem;
   font-weight: 600;
 }
 
-.invoice-form {
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+/* Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.invoice-field {
-  margin-bottom: 1.5rem;
-}
-
-.invoice-field label {
+.field label {
   display: block;
-  font-size: 1rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #333333;
+  color: #333;
 }
 
-.invoice-input {
-  width: 100%;
+.readonly-field {
   padding: 0.75rem;
-  border: 1px solid #dcdcdc;
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-size: 1rem;
+  color: #555;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #6f42c1;
   outline: none;
-  transition: all 0.2s ease;
 }
 
-.invoice-input:focus {
-  border-color: #007bff;
-  box-shadow: 0px 0px 6px rgba(0, 123, 255, 0.2);
+.input.small {
+  width: 100%;
+  font-size: 0.9rem;
 }
 
-.invoice-table-container {
-  margin-top: 2rem;
-  overflow-x: auto;
+/* Party Cards */
+.party-section {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
-.invoice-table {
+.party-card {
+  flex: 1;
+  min-width: 280px;
+  background: #f8f5ff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e6d9ff;
+}
+
+.party-card h3 {
+  margin: 0 0 1rem;
+  color: #6f42c1;
+  font-size: 1.1rem;
+}
+
+.party-card p {
+  margin: 0.4rem 0;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+/* Table */
+.table-container {
+  margin-bottom: 2rem;
+  background: #fff;
+  border: 1px solid #eee8fb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f9f5ff;
+  border-bottom: 1px solid #eee8fb;
+}
+
+.table-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 300px;
+  background: #6f42c1;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 50%;
+  margin-left: -150px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.85rem;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.items-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.invoice-table th,
-.invoice-table td {
+.items-table th,
+.items-table td {
   padding: 0.75rem;
   text-align: left;
-  border-bottom: 1px solid #eaeaea;
-  font-size: 0.95rem;
+  border-bottom: 1px solid #f0e6ff;
+  font-size: 0.9rem;
 }
 
-.invoice-table th {
+.items-table th {
+  background: #f9f5ff;
   font-weight: 600;
-  background-color: #f9f9f9;
 }
 
-.edit-btn {
+.total-cell {
+  font-weight: 600;
+  color: #6f42c1;
+}
+
+.link-btn,
+.delete-btn {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1.1rem;
-  color: #007bff;
-  transition: color 0.2s ease-in-out;
+  color: #6f42c1;
+  padding: 0.4rem;
 }
 
-.edit-btn:hover {
-  color: #0056b3;
+.link-btn:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }
 
-.create-invoice-btn {
-  margin-top: 2rem;
+.delete-btn {
+  color: #b3261e;
+}
+
+.linked-icon {
+  position: relative;
+  color: #1b5e20;
+}
+
+.linked-tooltip {
+  visibility: hidden;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 10;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.linked-icon:hover .linked-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.linked-tooltip img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.total-summary {
+  padding: 1rem 1.5rem;
+  text-align: right;
+  font-size: 1.1rem;
+  background: #f8f5ff;
+}
+
+/* Notes */
+.notes-section {
+  margin-bottom: 2rem;
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.textarea + small {
+  display: block;
+  text-align: right;
+  color: #777;
+  font-size: 0.8rem;
+}
+
+/* Button */
+.create-btn {
   width: 100%;
   padding: 1rem;
-  background-color: #007bff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  background: #6f42c1;
   color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s;
 }
 
-.create-invoice-btn:hover {
-  background-color: #0056b3;
+.create-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
-/* RTL Support */
-html[dir='rtl'] .invoice-form {
+.create-btn:hover:not(:disabled) {
+  background: #5a32a3;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #6f42c1;
+  color: white;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Listings Toolbar */
+.listings-toolbar {
+  padding: 1rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: #f7f4fb;
+  border-bottom: 1px solid #eee8fb;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-box svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7a6c90;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #e6e0ef;
+  border-radius: 12px;
+  background: white;
+  font-size: 0.95rem;
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #e6e0ef;
+  border-radius: 12px;
+  padding: 0.25rem;
+}
+
+.filter {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.filter.active {
+  background: #6f42c1;
+  color: white;
+}
+
+.filter input {
+  display: none;
+}
+
+/* Listings Table */
+.listings-table-container {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.listings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.listings-table th,
+.listings-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f0e6ff;
+}
+
+.listings-table th {
+  background: #f9f5ff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clickable:hover {
+  background: #f7f4fb;
+}
+
+.thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.tag {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: #f7f4fb;
+  border: 1px solid #e6e0ef;
+  border-radius: 999px;
+}
+
+/* RTL */
+html[dir='rtl'] .info-grid {
   direction: rtl;
 }
 
-html[dir='rtl'] .invoice-field label {
+html[dir='rtl'] .items-table th,
+html[dir='rtl'] .items-table td {
   text-align: right;
 }
 
-html[dir='rtl'] .invoice-table th,
-html[dir='rtl'] .invoice-table td {
-  text-align: right;
+html[dir='rtl'] .total-summary {
+  text-align: left;
+}
+
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: #777;
 }

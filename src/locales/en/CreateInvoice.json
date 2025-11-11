@@ -1,17 +1,49 @@
 {
-  "title": "Create Invoice",
+  "pageTitle": "Create an Invoice",
+  "title": "Create an Invoice",
   "invoiceNumber": "Invoice Number",
-  "invoiceNumberPlaceholder": "Enter invoice number",
-  "clientName": "Client Name",
-  "clientNamePlaceholder": "Enter client name",
+  "invoiceNumberNote": "Will be generated upon creation",
+  "issueDate": "Issue Date",
   "deliveryDate": "Delivery Date",
   "termsOfPayment": "Terms of Payment",
   "partiallyPaid": "Partially Paid",
   "fullyPaid": "Fully Paid",
+  "upfrontAmount": "Upfront Payment Amount",
+  "uponDeliveryAmount": "Upon Delivery Amount",
+  "supplier": "Supplier",
+  "buyer": "Buyer",
+  "items": "Items",
   "item": "Item",
+  "description": "Description",
+  "agreedDetails": "Agreed Details",
   "qty": "Qty",
   "unitPrice": "Unit Price",
   "totalPrice": "Total Price",
+  "link": "Link",
   "actions": "Actions",
-  "createInvoice": "Create Invoice"
+  "linkTooltip": "Link to a published product or service to enable reviews.",
+  "selectListing": "Select a Published Listing",
+  "searchPlaceholder": "Search listings...",
+  "filters": {
+    "all": "All",
+    "products": "Products",
+    "services": "Services"
+  },
+  "type": {
+    "product": "Product",
+    "service": "Service"
+  },
+  "total": "Total",
+  "notesAndTerms": "Notes & Terms (Optional)",
+  "notesPlaceholder": "Add any additional terms or notes...",
+  "createInvoice": "Create Invoice",
+  "loading": "Loading...",
+  "success": "Invoice created successfully!",
+  "errors": {
+    "missingBuyerId": "Buyer ID is required.",
+    "buyerNotFound": "Buyer not found.",
+    "supplierLoadFailed": "Failed to load supplier data.",
+    "listingsLoadFailed": "Failed to load listings.",
+    "createFailed": "Failed to create invoice."
+  }
 }

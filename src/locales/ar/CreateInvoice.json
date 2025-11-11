@@ -1,17 +1,49 @@
 {
+  "pageTitle": "إنشاء فاتورة",
   "title": "إنشاء فاتورة",
   "invoiceNumber": "رقم الفاتورة",
-  "invoiceNumberPlaceholder": "أدخل رقم الفاتورة",
-  "clientName": "اسم العميل",
-  "clientNamePlaceholder": "أدخل اسم العميل",
+  "invoiceNumberNote": "سيتم توليده عند الإنشاء",
+  "issueDate": "تاريخ الإصدار",
   "deliveryDate": "تاريخ التسليم",
   "termsOfPayment": "شروط الدفع",
-  "partiallyPaid": "دُفع جزئياً",
-  "fullyPaid": "دُفع كلياً",
-  "item": "العنصر",
+  "partiallyPaid": "دفع جزئي",
+  "fullyPaid": "دفع كامل",
+  "upfrontAmount": "مبلغ الدفعة المقدمة",
+  "uponDeliveryAmount": "مبلغ عند التسليم",
+  "supplier": "المورد",
+  "buyer": "المشتري",
+  "items": "الأصناف",
+  "item": "الصنف",
+  "description": "الوصف",
+  "agreedDetails": "التفاصيل المتفق عليها",
   "qty": "الكمية",
   "unitPrice": "سعر الوحدة",
-  "totalPrice": "السعر الإجمالي",
+  "totalPrice": "الإجمالي",
+  "link": "ربط",
   "actions": "إجراءات",
-  "createInvoice": "إنشاء الفاتورة"
+  "linkTooltip": "ربط بمنتج أو خدمة منشورة لتمكين المراجعات.",
+  "selectListing": "اختر إعلانًا منشورًا",
+  "searchPlaceholder": "ابحث في الإعلانات...",
+  "filters": {
+    "all": "الكل",
+    "products": "المنتجات",
+    "services": "الخدمات"
+  },
+  "type": {
+    "product": "منتج",
+    "service": "خدمة"
+  },
+  "total": "الإجمالي",
+  "notesAndTerms": "ملاحظات وشروط (اختياري)",
+  "notesPlaceholder": "أضف أي شروط أو ملاحظات إضافية...",
+  "createInvoice": "إنشاء الفاتورة",
+  "loading": "جاري التحميل...",
+  "success": "تم إنشاء الفاتورة بنجاح!",
+  "errors": {
+    "missingBuyerId": "معرف المشتري مطلوب.",
+    "buyerNotFound": "المشتري غير موجود.",
+    "supplierLoadFailed": "فشل تحميل بيانات المورد.",
+    "listingsLoadFailed": "فشل تحميل الإعلانات.",
+    "createFailed": "فشل إنشاء الفاتورة."
+  }
 }

@@ -388,7 +388,7 @@ export default function ChatDetail() {
         <button
           className="chat-header-right"
           onClick={() =>
-            navigate(`/supplier/invoices/new?buyer=${partner?.userId}`)
+            navigate(`/supplier/invoices/new?buyerId=${partner?.userId}`)
           }
           style={{
             background: 'none',
