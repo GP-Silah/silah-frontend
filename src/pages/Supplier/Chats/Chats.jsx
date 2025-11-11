@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { FaEnvelope, FaSearch, FaPaperPlane } from 'react-icons/fa';
+import {
+  FaEnvelope,
+  FaSearch,
+  FaPaperPlane,
+  FaFileInvoiceDollar,
+} from 'react-icons/fa';
 import axios from 'axios';
 import { socket } from '../../../utils/socket';
 import './Chats.css';
@@ -28,6 +33,13 @@ export default function ChatsSupplier() {
   const dropdownRef = useRef(null);
   const searchTimeout = useRef(null);
   const socketInitialized = useRef(false);
+
+  // === CHECK FOR INVOICE DRAFT ===
+  const hasInvoiceDraft = (userId) => {
+    if (!userId) return false;
+    const key = `invoice_draft_${userId}`;
+    return !!localStorage.getItem(key);
+  };
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -354,6 +366,22 @@ export default function ChatsSupplier() {
                           : item.lastMessage}
                       </div>
                     </div>
+
+                    {hasInvoiceDraft(item.partnerId) && (
+                      <button
+                        className="chats-invoice-continue-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(
+                            `/supplier/invoices/new?userId=${item.partnerId}`,
+                          );
+                        }}
+                        title={t('continueInvoice')}
+                      >
+                        <FaFileInvoiceDollar />
+                        <span>{t('continueInvoice')}</span>
+                      </button>
+                    )}
 
                     <div className="chats-meta">
                       <div className="chats-date">

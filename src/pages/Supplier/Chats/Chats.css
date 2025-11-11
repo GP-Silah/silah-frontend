@@ -407,6 +407,15 @@
   position: relative;
   left: 50px;
 }
+.chats-page[data-dir='rtl'] .chats-unread-dot {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--silah-purple);
+  border-radius: 50%;
+}
 
 /* Optional: Fine-tune */
 @media (max-width: 1200px) {
@@ -470,4 +479,73 @@
 .chats-message.draft {
   color: #e63946; /* أحمر ناعم */
   font-style: italic;
+}
+
+/* ========== INVOICE CONTINUE BUTTON ========== */
+.chats-invoice-continue-btn {
+  position: absolute;
+  top: 70%;
+  transform: translateY(-50%);
+  right: 165px; /* LTR */
+  background: var(--silah-purple);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(138, 82, 167, 0.25);
+  transition: all 0.2s ease;
+  z-index: 2;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.chats-invoice-continue-btn:hover {
+  background: #7a4796;
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 10px rgba(138, 82, 167, 0.35);
+}
+
+.chats-invoice-continue-btn svg {
+  font-size: 0.9rem;
+}
+
+/* RTL Support */
+.chats-page[data-dir='rtl'] .chats-invoice-continue-btn {
+  right: auto;
+  left: 165px;
+}
+
+/* Make space for the button in the chat item */
+.chats-item {
+  padding-right: 100px; /* LTR: space for button */
+  position: relative;
+}
+
+.chats-page[data-dir='rtl'] .chats-item {
+  padding-right: 20px;
+  padding-left: 100px;
+}
+
+/* Responsive: Smaller screens */
+@media (max-width: 768px) {
+  .chats-invoice-continue-btn {
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+  .chats-invoice-continue-btn svg {
+    font-size: 0.8rem;
+  }
+  .chats-item {
+    padding-right: 90px;
+  }
+  .chats-page[data-dir='rtl'] .chats-item {
+    padding-left: 90px;
+  }
 }
