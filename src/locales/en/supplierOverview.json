@@ -1,0 +1,28 @@
+{
+    "header": {
+        "title": "Welcome back, {{name}}! 👋",
+        "subtitle": "Here's a quick overview of your business."
+    },
+    "cards": {
+        "status": {
+            "title": "Store Status",
+            "text": "Open for Business",
+            "button": "Store Settings"
+        },
+        "pending": {
+            "title": "Pending Orders",
+            "button": "View"
+        },
+        "stock": {
+            "title": "Stock Levels",
+            "text": "Very Low",
+            "button": "Update"
+        }
+    },
+    "plan": {
+        "label": "Your Plan:",
+        "planName": "Basic",
+        "subtitle": "Upgrade to Premium for AI Insights & Unlimited Listings!",
+        "button": "Manage Plan"
+    }
+}
