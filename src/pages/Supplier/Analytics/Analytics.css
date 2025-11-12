@@ -1,0 +1,94 @@
+.analytics-page {
+  padding: 30px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.analytics-content {
+  background-color: #fff;
+  padding: 20px 40px;
+  border-radius: 8px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.page-subtitle {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.analytics-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.total-sales {
+  flex: 1;
+}
+
+.blurred-container {
+  backdrop-filter: blur(8px);
+  background: rgba(240, 230, 250, 0.3);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(180, 150, 220, 0.2);
+}
+
+.blurred-chart {
+  flex: 2;
+  max-width: 60%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 15px;
+  backdrop-filter: blur(6px);
+}
+
+.insights-section {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.top-products,
+.ratings {
+  width: 45%;
+}
+
+.reviews-section {
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
+}
+
+.review-card {
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.review-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.review-text {
+  font-size: 14px;
+  color: #333;
+}
+
+.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: left;
+}
