@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './Invoices.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
@@ -14,6 +15,7 @@ const refNumber = (id) => {
 export default function Invoices() {
   const { t, i18n } = useTranslation('invoices');
   const isRTL = i18n.dir() === 'rtl';
+  const navigate = useNavigate();
 
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,6 @@ export default function Invoices() {
         params,
         withCredentials: true,
       });
-
       setInvoices(data || []);
     } catch (err) {
       const msg =
@@ -129,15 +130,18 @@ export default function Invoices() {
             <th>{t('table.created')}</th>
             <th>{t('table.supplier')}</th>
             <th>{t('table.status')}</th>
-            <th>{t('table.preInvoiceStatus')}</th> {/* ← NEW */}
+            <th>{t('table.preInvoiceStatus')}</th>
             <th>{t('table.total')}</th>
           </tr>
         </thead>
         <tbody>
           {invoices.length === 0 ? (
             <tr>
-              <td colSpan="6" style={{ textAlign: 'center', padding: '40px' }}>
-                {t('noInvoices')}
+              <td colSpan="6" className="empty-state">
+                <div className="empty-content">
+                  <p>{t('empty.message')}</p>
+                  <p className="empty-hint">{t('empty.hint')}</p>
+                </div>
               </td>
             </tr>
           ) : (
@@ -146,24 +150,27 @@ export default function Invoices() {
               const preStatus = inv.preInvoice?.status || inv.status;
               const preBadge = isPreInvoice ? 'pre' : null;
               const canceledBadge = preStatus === 'FAILED' ? 'canceled' : null;
+              const invoiceId = inv.invoiceId || inv.preInvoiceId;
 
               return (
-                <tr key={inv.invoiceId || inv.preInvoiceId}>
-                  {/* Invoice ID + Badges */}
-                  <td>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                      }}
-                    >
-                      <span>
-                        {refNumber(inv.invoiceId || inv.preInvoiceId)}
-                      </span>
-                      {preBadge && <span className="badge-pre">Pre</span>}
+                <tr
+                  key={inv.invoiceId || inv.preInvoiceId}
+                  className="clickable-row"
+                  onClick={() => navigate(`/buyer/invoices/${invoiceId}`)}
+                >
+                  {/* Invoice ID + Badges (Centered & Bold) */}
+                  <td style={{ textAlign: 'center' }}>
+                    <div className="invoice-id-wrapper">
+                      <strong className="invoice-id">
+                        {refNumber(invoiceId)}
+                      </strong>
+                      {preBadge && (
+                        <span className="badge-pre">{t('badge.pre')}</span>
+                      )}
                       {canceledBadge && (
-                        <span className="badge-canceled">Canceled</span>
+                        <span className="badge-canceled">
+                          {t('badge.canceled')}
+                        </span>
                       )}
                     </div>
                   </td>
@@ -179,20 +186,28 @@ export default function Invoices() {
                       t('unknown')}
                   </td>
 
-                  {/* Invoice Status */}
+                  {/* Invoice Status — HIDE for Pre-invoices */}
                   <td>
-                    <span
-                      className={`status-badge ${inv.status.toLowerCase()}`}
-                    >
-                      {t(`status.${inv.status.toLowerCase()}`)}
-                    </span>
+                    {!isPreInvoice ? (
+                      <span
+                        className={`status-badge ${inv.status
+                          .toLowerCase()
+                          .replace('_', '')}`}
+                      >
+                        {t(`status.${inv.status.toLowerCase()}`)}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
                   </td>
 
-                  {/* Pre-invoice Status */}
+                  {/* Pre-invoice Status — Only show for Pre-invoices */}
                   <td>
                     {isPreInvoice && preStatus ? (
                       <span
-                        className={`status-badge ${preStatus.toLowerCase()}`}
+                        className={`status-badge ${preStatus
+                          .toLowerCase()
+                          .replace('_', '')}`}
                       >
                         {t(`preStatus.${preStatus.toLowerCase()}`)}
                       </span>

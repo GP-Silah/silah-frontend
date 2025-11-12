@@ -181,3 +181,20 @@ html[dir='rtl'] .tabs {
     padding: 10px 6px;
   }
 }
+
+/* ---- Row clickable ---- */
+.invoices-table tr.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.invoices-table tr.clickable-row:hover {
+  background-color: #f8f5ff; /* light purple tint */
+}
+
+.invoice-id-wrapper {
+  display: flex; /* ← horizontal */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+}

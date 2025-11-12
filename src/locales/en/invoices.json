@@ -37,9 +37,18 @@
     "successful": "Successful",
     "failed": "Failed"
   },
+  "badge": {
+    "pre": "Pre",
+    "canceled": "Canceled"
+  },
+  "empty": {
+    "message": "No invoices yet.",
+    "hint": "Request a service, join a group purchase, or open a bid to see your invoices here."
+  },
   "noInvoices": "No invoices found.",
   "loading": "Loading...",
   "errors": {
     "unknown": "Something went wrong."
-  }
+  },
+  "unknown": "Unknown Supplier"
 }
