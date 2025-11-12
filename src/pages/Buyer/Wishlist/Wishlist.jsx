@@ -3,9 +3,15 @@ import { useTranslation } from 'react-i18next';
 import ItemCard from '@/components/ItemCard/ItemCard';
 import './Wishlist.css';
 
+const API = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site/';
+
 function WishlistPage() {
   const { t, i18n } = useTranslation('wishlist');
   const [filter, setFilter] = useState('all');
+
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -13,74 +19,47 @@ function WishlistPage() {
   }, [i18n, i18n.language, t]);
 
   const isRTL = i18n.language === 'ar';
-
+  //////
   // Dummy data
-  const items = [
-    {
-      _id: '1',
-      name: 'Flat Beige Plate',
-      price: 80,
-      avgRating: 4.5,
-      ratingsCount: 45,
-      type: 'product',
-    },
-    {
-      _id: '2',
-      name: 'Luxury Perfume',
-      price: 120,
-      avgRating: 4.9,
-      ratingsCount: 30,
-      type: 'product',
-    },
-    {
-      _id: '3',
-      name: 'High Quality Beans',
-      price: 40,
-      avgRating: 4.6,
-      ratingsCount: 89,
-      type: 'product',
-    },
-    {
-      _id: '4',
-      name: 'Eyeliner Shadow',
-      price: 60,
-      avgRating: 4.8,
-      ratingsCount: 70,
-      type: 'product',
-    },
-    {
-      _id: '5',
-      name: 'UIUX Design',
-      price: 150,
-      avgRating: 4.8,
-      ratingsCount: 30,
-      type: 'service',
-    },
-    {
-      _id: '6',
-      name: 'Card Design',
-      price: 50,
-      avgRating: 4.4,
-      ratingsCount: 150,
-      type: 'service',
-    },
-    {
-      _id: '7',
-      name: 'Product Design',
-      price: 200,
-      avgRating: 4.9,
-      ratingsCount: 46,
-      type: 'service',
-    },
-    {
-      _id: '8',
-      name: 'Phone Repair',
-      price: 100,
-      avgRating: 4.5,
-      ratingsCount: 66,
-      type: 'service',
-    },
-  ];
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const response = await fetch(`${API}/api/buyers/me/wishlist`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch wishlist');
+
+        const data = await response.json();
+
+        // 🆕 تم الإضافة: تنسيق البيانات القادمة من الباك-إند لتتناسب مع ItemCard
+        const formatted = data.map((item) => {
+          const isProduct = item.itemType === 'PRODUCT';
+          const base = isProduct ? item.product : item.service;
+
+          return {
+            _id: item.itemId,
+            name: base?.name,
+            price: base?.price,
+            avgRating: base?.avgRating,
+            ratingsCount: base?.ratingsCount,
+            type: isProduct ? 'product' : 'service',
+            imagesFilesUrls: base?.imagesFilesUrls,
+            supplier: base.supplier,
+          };
+        });
+
+        setItems(formatted);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWishlist();
+  }, []);
 
   // Derived counts
   const counts = useMemo(() => {
@@ -99,63 +78,81 @@ function WishlistPage() {
   return (
     <div className={`wishlist-page ${isRTL ? 'rtl' : 'ltr'}`}>
       <h1 className="wishlist-title">{t('title')}</h1>
+      {/* 🆕 تم الإضافة: عرض حالة التحميل أو الخطأ */}
+      {loading && (
+        <p style={{ textAlign: 'center', color: 'gray' }}>
+          {isRTL ? 'جاري التحميل...' : 'Loading...'}
+        </p>
+      )}
+      {error && (
+        <p style={{ textAlign: 'center', color: 'red' }}>
+          {isRTL ? 'حدث خطأ أثناء تحميل البيانات.' : 'Failed to load data.'}
+        </p>
+      )}
 
-      <div className="wishlist-layout">
-        {/* Sidebar */}
-        <aside className="wishlist-sidebar">
-          <button
-            onClick={() => handleFilter('all')}
-            className={`wishlist-stat ${filter === 'all' ? 'active' : ''}`}
-          >
-            <span>
-              {counts.total} {isRTL ? 'عناصر' : 'Listings'}
-            </span>
-          </button>
-
-          <button
-            onClick={() => handleFilter('product')}
-            className={`wishlist-stat ${filter === 'product' ? 'active' : ''}`}
-          >
-            <span>
-              {counts.products} {isRTL ? 'منتجات' : 'Products'}
-            </span>
-          </button>
-
-          <button
-            onClick={() => handleFilter('service')}
-            className={`wishlist-stat ${filter === 'service' ? 'active' : ''}`}
-          >
-            <span>
-              {counts.services} {isRTL ? 'خدمات' : 'Services'}
-            </span>
-          </button>
-        </aside>
-
-        {/* Grid of items */}
-        <div className="wishlist-grid">
-          {filteredItems.length === 0 ? (
-            <p
-              style={{
-                textAlign: 'center',
-                gridColumn: '1 / -1',
-                color: 'var(--text-muted)',
-              }}
+      {!loading && !error && (
+        <div className="wishlist-layout">
+          {/* Sidebar */}
+          <aside className="wishlist-sidebar">
+            <button
+              onClick={() => handleFilter('all')}
+              className={`wishlist-stat ${filter === 'all' ? 'active' : ''}`}
             >
-              {isRTL ? 'لم تحفظ أي عناصر بعد.' : 'Nothing is saved yet.'}
-            </p>
-          ) : (
-            filteredItems.map((item) => (
-              <ItemCard
-                key={item._id}
-                item={item}
-                type={item.type}
-                isAvailable={item.type === 'product' ? item.stock > 0 : true}
-                showAlternatives={true}
-              />
-            ))
-          )}
+              <span>
+                {counts.total} {isRTL ? 'عناصر' : 'Listings'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => handleFilter('product')}
+              className={`wishlist-stat ${
+                filter === 'product' ? 'active' : ''
+              }`}
+            >
+              <span>
+                {counts.products} {isRTL ? 'منتجات' : 'Products'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => handleFilter('service')}
+              className={`wishlist-stat ${
+                filter === 'service' ? 'active' : ''
+              }`}
+            >
+              <span>
+                {counts.services} {isRTL ? 'خدمات' : 'Services'}
+              </span>
+            </button>
+          </aside>
+
+          {/* Grid of items */}
+          <div className="wishlist-grid">
+            {filteredItems.length === 0 ? (
+              <p
+                style={{
+                  textAlign: 'center',
+                  gridColumn: '1 / -1',
+                  color: 'var(--text-muted)',
+                }}
+              >
+                {isRTL ? 'لم تحفظ أي عناصر بعد.' : 'Nothing is saved yet.'}
+              </p>
+            ) : (
+              filteredItems.map((item) => (
+                <ItemCard
+                  key={item._id}
+                  item={item}
+                  type={item.type}
+                  // isAvailable={item.type === 'product' ? item.stock > 0 : true}
+                  isAvailable={item.type === 'product'}
+                  showAlternatives={true}
+                />
+              ))
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
