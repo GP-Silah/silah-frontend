@@ -1,5 +1,6 @@
 {
-  "pageTitle": "Your Orders",
+  "pageTitle": "Your Orders | Silah",
+  "title": "Your Orders",
   "subtitle": "Orders get the status “Completed” once the buyer confirms delivery.",
   "tabs": {
     "all": "All",
@@ -20,5 +21,16 @@
     "processing": "Processing",
     "shipped": "Shipped",
     "completed": "Completed"
+  },
+  "loading": "Loading your orders...",
+  "retry": "Try Again",
+  "unknown": "Unknown",
+  "errors": {
+    "unknown": "Something went wrong. Please try again.",
+    "fetch": "Failed to load orders."
+  },
+  "empty": {
+    "title": "No orders yet",
+    "message": "When you place or receive orders, they'll appear here."
   }
 }
