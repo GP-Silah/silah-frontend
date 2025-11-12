@@ -4,7 +4,6 @@
   padding: 40px;
   font-family: 'Poppins', sans-serif;
 }
-
 .order-title {
   font-size: 24px;
   color: #2f3c73;
@@ -13,7 +12,6 @@
   align-items: center;
   gap: 12px;
 }
-
 .order-status {
   font-size: 14px;
   font-weight: 600;
@@ -21,21 +19,25 @@
   padding: 4px 10px;
   border-radius: 6px;
 }
-
 .order-status.shipped {
   background-color: #c67b00;
 }
-
 .order-status.completed {
   background-color: #1b8a5a;
 }
-
 .order-info {
   color: #444;
   font-size: 15px;
   margin: 4px 0;
 }
-
+.clickable-supplier {
+  color: #5c2d91;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.clickable-supplier:hover {
+  color: #4a237a;
+}
 .section-title {
   margin-top: 30px;
   margin-bottom: 12px;
@@ -43,7 +45,6 @@
   color: #333;
   font-weight: 600;
 }
-
 /* ===== Table ===== */
 .order-table {
   width: 100%;
@@ -51,14 +52,12 @@
   margin-top: 10px;
   table-layout: auto;
 }
-
 .order-table th,
 .order-table td {
   padding: 12px 16px;
   border-bottom: 1px solid #ddd;
   text-align: left;
 }
-
 .order-table th:nth-child(3),
 .order-table th:nth-child(4),
 .order-table th:nth-child(5),
@@ -67,13 +66,11 @@
 .order-table td:nth-child(5) {
   text-align: center;
 }
-
 .order-table th {
   background-color: #f9f9f9;
   font-weight: 600;
   color: #333;
 }
-
 /* ===== Image Placeholder ===== */
 .item-image-placeholder {
   width: 60px;
@@ -84,20 +81,17 @@
   align-items: center;
   justify-content: center;
 }
-
 .item-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 6px;
 }
-
 /* ===== Button & Note ===== */
 .order-action {
   margin-top: 30px;
   text-align: center;
 }
-
 .action-btn {
   background-color: #5c2d91;
   color: #fff;
@@ -109,14 +103,74 @@
   font-size: 16px;
   transition: 0.3s;
 }
-
 .action-btn:hover {
   background-color: #4c2576;
 }
-
+.action-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
 .action-note {
   margin-top: 10px;
   font-size: 14px;
   color: #555;
   text-align: center;
+}
+.confirmed-msg {
+  color: #1b8a5a;
+  font-size: 15px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.loader,
+.error-msg {
+  text-align: center;
+  padding: 60px;
+  color: #5c2d91;
+}
+.error-msg {
+  color: #d1441f;
+}
+
+/* Center image column in both LTR and RTL */
+.order-table td:first-child {
+  text-align: center;
+}
+
+/* ===== Table ===== */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+}
+.order-table th,
+.order-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+.order-table th:nth-child(3),
+.order-table th:nth-child(4),
+.order-table th:nth-child(5),
+.order-table td:nth-child(3),
+.order-table td:nth-child(4),
+.order-table td:nth-child(5) {
+  text-align: center;
+}
+
+/* ADD THIS LINE */
+.order-table td:first-child {
+  text-align: center;
+}
+
+.order-table td:first-child {
+  text-align: center;
+}
+
+/* Or use logical property for future-proofing */
+.order-table td:first-child {
+  text-align: start; /* logical "start" = left in LTR, right in RTL */
+  display: flex;
+  justify-content: center;
 }
