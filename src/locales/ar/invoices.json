@@ -5,7 +5,7 @@
     "products": "المنتجات",
     "services": "الخدمات",
     "bids": "العطاءات",
-    "groupPurchases": "المشتريات الجماعية"
+    "groups": "المشتريات الجماعية"
   },
   "pageTitle": "فواتيرك",
   "tabs": {
@@ -13,19 +13,33 @@
     "accepted": "مقبولة",
     "rejected": "مرفوضة",
     "partiallyPaid": "مدفوعة جزئياً",
-    "fullyPaid": "مدفوعة بالكامل"
+    "fullyPaid": "مدفوعة بالكامل",
+    "pending": "معلقة"
   },
   "table": {
     "invoice": "رقم الفاتورة",
     "created": "تاريخ الإنشاء",
+    "supplier": "المورد",
     "buyer": "المشتري",
     "status": "حالة الفاتورة",
+    "preInvoiceStatus": "حالة الفاتورة المسبقة",
     "total": "الإجمالي"
   },
   "status": {
+    "pending": "معلقة",
     "accepted": "مقبولة",
     "rejected": "مرفوضة",
-    "partiallyPaid": "مدفوعة جزئياً",
-    "fullyPaid": "مدفوعة بالكامل"
+    "partially_paid": "مدفوعة جزئياً",
+    "fully_paid": "مدفوعة بالكامل"
+  },
+  "preStatus": {
+    "pending": "معلقة",
+    "successful": "ناجحة",
+    "failed": "فشلت"
+  },
+  "noInvoices": "لا توجد فواتير.",
+  "loading": "جاري التحميل...",
+  "errors": {
+    "unknown": "حدث خطأ ما."
   }
 }
