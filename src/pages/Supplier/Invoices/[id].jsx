@@ -11,7 +11,7 @@ import {
   FiFileText,
   FiInfo,
 } from 'react-icons/fi';
-import './InvoiceDetails.css';
+import styles from './InvoiceDetails.module.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
@@ -26,7 +26,6 @@ const InvoiceDetails = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('invoiceDetails');
   const isRTL = i18n.dir() === 'rtl';
-
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -65,17 +64,17 @@ const InvoiceDetails = () => {
   }, [id, i18n.language, navigate, t]);
 
   if (loading) {
-    return <div className="loading">{t('loading')}</div>;
+    return <div className={styles.loading}>{t('loading')}</div>;
   }
 
   if (error || !invoice) {
     return (
-      <div className="invoice-details-page" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="error-container">
-          <FiInfo className="error-icon" />
+      <div className={styles.invoiceDetailsPage} dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className={styles.errorContainer}>
+          <FiInfo className={styles.errorIcon} />
           <p>{error || t('errors.notFound')}</p>
           <button
-            className="back-btn"
+            className={styles.backBtn}
             onClick={() => navigate('/supplier/invoices')}
           >
             {t('backToInvoices')}
@@ -103,57 +102,60 @@ const InvoiceDetails = () => {
     : '-';
 
   return (
-    <div className="invoice-details-page" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={styles.invoiceDetailsPage} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Header */}
-      <div className="page-header">
-        <button className="back-btn" onClick={() => navigate(-1)}>
+      <div className={styles.pageHeader}>
+        <button className={styles.backBtn} onClick={() => navigate(-1)}>
           <FiArrowLeft /> {t('back')}
         </button>
         <h1>
           {isPreInvoice ? t('preInvoice') : t('invoice')}{' '}
           {refNumber(invoice.invoiceId || invoice.preInvoiceId)}
         </h1>
-        <div className="status-badge" style={{ backgroundColor: statusColor }}>
+        <div
+          className={styles.statusBadge}
+          style={{ backgroundColor: statusColor }}
+        >
           {t(`status.${status}`)}
         </div>
       </div>
 
       {/* Info Grid */}
-      <div className="info-grid">
-        <div className="field">
+      <div className={styles.infoGrid}>
+        <div className={styles.field}>
           <label>{t('issueDate')}</label>
-          <div className="readonly-field">
+          <div className={styles.readonlyField}>
             <FiCalendar /> {issueDate}
           </div>
         </div>
-        <div className="field">
+        <div className={styles.field}>
           <label>{t('deliveryDate')}</label>
-          <div className="readonly-field">
+          <div className={styles.readonlyField}>
             <FiCalendar /> {deliveryDate}
           </div>
         </div>
         {invoice.termsOfPayment && (
-          <div className="field">
+          <div className={styles.field}>
             <label>{t('termsOfPayment')}</label>
-            <div className="readonly-field">
+            <div className={styles.readonlyField}>
               {invoice.termsOfPayment === 'PARTIAL'
                 ? t('partiallyPaid')
                 : t('fullyPaid')}
             </div>
           </div>
         )}
-        <div className="field">
+        <div className={styles.field}>
           <label>{t('totalAmount')}</label>
-          <div className="readonly-field highlight">
+          <div className={`${styles.readonlyField} ${styles.highlight}`}>
             <FiDollarSign /> {invoice.amount.toFixed(2)}{' '}
-            <img src="/riyal.png" alt="SAR" className="sar" />
+            <img src="/riyal.png" alt="SAR" className={styles.sar} />
           </div>
         </div>
       </div>
 
       {/* Parties */}
-      <div className="party-section">
-        <div className="party-card">
+      <div className={styles.partySection}>
+        <div className={styles.partyCard}>
           <h3>{t('supplier')}</h3>
           <p>
             <strong>{invoice.supplier?.businessName || '-'}</strong>
@@ -162,7 +164,7 @@ const InvoiceDetails = () => {
           <p>{invoice.supplier?.city || '-'}</p>
           <p>{invoice.supplier?.user?.email || '-'}</p>
         </div>
-        <div className="party-card">
+        <div className={styles.partyCard}>
           <h3>{t('buyer')}</h3>
           <p>
             <strong>{invoice.buyer?.user?.businessName || '-'}</strong>
@@ -175,50 +177,90 @@ const InvoiceDetails = () => {
 
       {/* Pre-invoice Specific Info */}
       {isPreInvoice && (
-        <div className="pre-invoice-info">
+        <div className={styles.preInvoiceInfo}>
+          {/* Product */}
           {invoice.product && (
-            <div className="linked-item">
+            <div className={styles.linkedItem}>
               <img
                 src={
                   invoice.product.imagesFilesUrls?.[0] ||
                   '/images/placeholder.png'
                 }
-                alt=""
+                alt={invoice.product.name}
               />
-              <div>
+              <div className={styles.linkedItemInfo}>
                 <strong>{invoice.product.name}</strong>
-                <p>{invoice.product.description}</p>
-                <p>
-                  {invoice.product.price.toFixed(2)}{' '}
-                  <img src="/riyal.png" alt="SAR" className="sar" />
+                <p className={styles.price}>
+                  {invoice.product.price.toFixed(2)}
+                  <img src="/riyal.png" alt="SAR" className={styles.sar} />
                 </p>
               </div>
             </div>
           )}
+
+          {/* Offer + Bid */}
           {invoice.offer && (
-            <div className="offer-info">
+            <div className={styles.offerInfo}>
               <h4>{t('fromOffer')}</h4>
               <p>
-                <strong>{invoice.offer.bid?.bidName}</strong>
+                <strong>{t('bid')}:</strong>{' '}
+                <span
+                  className={styles.refLink}
+                  onClick={() =>
+                    navigate(`/supplier/bids/${invoice.offer.bid.bidId}`)
+                  }
+                >
+                  {refNumber(invoice.offer.bid.bidId)}
+                </span>
               </p>
               <p>
-                {t('proposed')}: {invoice.offer.proposedAmount.toFixed(2)}{' '}
-                <img src="/riyal.png" alt="SAR" className="sar" />
+                <strong>{invoice.offer.bid.bidName}</strong>
               </p>
+              <p>{invoice.offer.bid.mainActivity}</p>
               <p>
                 {t('deadline')}:{' '}
                 {format(
-                  new Date(invoice.offer.bid?.submissionDeadline),
+                  new Date(invoice.offer.bid.submissionDeadline),
                   'dd/MM/yyyy',
                 )}
               </p>
+              <p>
+                {t('proposed')}: {invoice.offer.proposedAmount.toFixed(2)}{' '}
+                <img src="/riyal.png" alt="SAR" className={styles.sar} />
+              </p>
+              {invoice.offer.offerDetails && (
+                <p>
+                  <strong>{t('offerDetails')}:</strong>{' '}
+                  {invoice.offer.offerDetails}
+                </p>
+              )}
+              {invoice.offer.executionDetails && (
+                <p>
+                  <strong>{t('executionPlan')}:</strong>{' '}
+                  {invoice.offer.executionDetails}
+                </p>
+              )}
+              {invoice.offer.notes && (
+                <p>
+                  <em>{invoice.offer.notes}</em>
+                </p>
+              )}
             </div>
           )}
+
+          {/* Group Purchase */}
           {invoice.groupPurchaseBuyer && (
-            <div className="group-info">
+            <div className={styles.groupInfo}>
               <h4>{t('groupPurchase')}</h4>
               <p>
                 {t('quantity')}: {invoice.groupPurchaseBuyer.quantity}
+              </p>
+              <p>
+                {t('joined')}:{' '}
+                {format(
+                  new Date(invoice.groupPurchaseBuyer.joinedAt),
+                  'dd/MM/yyyy',
+                )}
               </p>
             </div>
           )}
@@ -227,11 +269,11 @@ const InvoiceDetails = () => {
 
       {/* Items Table */}
       {!isPreInvoice && invoice.items?.length > 0 && (
-        <div className="table-container">
-          <div className="table-header">
+        <div className={styles.tableContainer}>
+          <div className={styles.tableHeader}>
             <h3>{t('items')}</h3>
           </div>
-          <table className="items-table">
+          <table className={styles.itemsTable}>
             <thead>
               <tr>
                 <th>{t('item')}</th>
@@ -251,14 +293,14 @@ const InvoiceDetails = () => {
                   <td>{item.agreedDetails}</td>
                   <td>{item.quantity}</td>
                   <td>{item.unitPrice.toFixed(2)}</td>
-                  <td className="total-cell">
+                  <td className={styles.totalCell}>
                     {item.priceBasedQuantity.toFixed(2)}
                   </td>
                   <td>
                     {item.relatedProduct ? (
-                      <div className="linked-icon">
+                      <div className={styles.linkedIcon}>
                         <FiFileText style={{ color: '#10b981' }} />
-                        <div className="linked-tooltip">
+                        <div className={styles.linkedTooltip}>
                           <img
                             src={
                               item.relatedProduct.imagesFilesUrls?.[0] ||
@@ -270,9 +312,9 @@ const InvoiceDetails = () => {
                         </div>
                       </div>
                     ) : item.relatedService ? (
-                      <div className="linked-icon">
+                      <div className={styles.linkedIcon}>
                         <FiFileText style={{ color: '#3b82f6' }} />
-                        <div className="linked-tooltip">
+                        <div className={styles.linkedTooltip}>
                           <img
                             src={
                               item.relatedService.imagesFilesUrls?.[0] ||
@@ -291,10 +333,10 @@ const InvoiceDetails = () => {
               ))}
             </tbody>
           </table>
-          <div className="total-summary">
+          <div className={styles.totalSummary}>
             <strong>
               {t('total')}: {invoice.amount.toFixed(2)}{' '}
-              <img src="/riyal.png" alt="SAR" className="sar" />
+              <img src="/riyal.png" alt="SAR" className={styles.sar} />
             </strong>
           </div>
         </div>
@@ -302,33 +344,33 @@ const InvoiceDetails = () => {
 
       {/* Notes */}
       {invoice.notesAndTerms && (
-        <div className="notes-section">
+        <div className={styles.notesSection}>
           <label>{t('notesAndTerms')}</label>
-          <div className="notes-content">{invoice.notesAndTerms}</div>
+          <div className={styles.notesContent}>{invoice.notesAndTerms}</div>
         </div>
       )}
 
       {/* Payment Info */}
       {invoice.termsOfPayment === 'PARTIAL' && (
-        <div className="payment-info">
-          <div className="payment-row">
+        <div className={styles.paymentInfo}>
+          <div className={styles.paymentRow}>
             <span>{t('upfrontAmount')}</span>
             <strong>
               {invoice.upfrontAmount?.toFixed(2) || '0.00'}{' '}
-              <img src="/riyal.png" alt="SAR" className="sar" />
+              <img src="/riyal.png" alt="SAR" className={styles.sar} />
             </strong>
           </div>
           {invoice.tapChargeIdForUpfront && (
-            <div className="payment-row">
+            <div className={styles.paymentRow}>
               <span>{t('upfrontPaid')}</span>
-              <span className="paid">{t('paid')}</span>
+              <span className={styles.paid}>{t('paid')}</span>
             </div>
           )}
-          <div className="payment-row">
+          <div className={styles.paymentRow}>
             <span>{t('uponDeliveryAmount')}</span>
             <strong>
               {(invoice.amount - (invoice.upfrontAmount || 0)).toFixed(2)}{' '}
-              <img src="/riyal.png" alt="SAR" className="sar" />
+              <img src="/riyal.png" alt="SAR" className={styles.sar} />
             </strong>
           </div>
         </div>

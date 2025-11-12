@@ -43,5 +43,9 @@
     "FULLY_PAID": "مدفوع كاملاً",
     "FAILED": "فشل",
     "SUCCESSFUL": "ناجح"
-  }
+  },
+  "bid": "المناقصة",
+  "offerDetails": "تفاصيل العرض",
+  "executionPlan": "خطة التنفيذ",
+  "joined": "انضم في"
 }

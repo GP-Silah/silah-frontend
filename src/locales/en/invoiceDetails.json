@@ -43,5 +43,9 @@
     "FULLY_PAID": "Fully Paid",
     "FAILED": "Failed",
     "SUCCESSFUL": "Successful"
-  }
+  },
+  "bid": "Bid",
+  "offerDetails": "Offer Details",
+  "executionPlan": "Execution Plan",
+  "joined": "Joined On"
 }
