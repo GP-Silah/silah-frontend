@@ -191,7 +191,7 @@ export default function Invoices() {
                 <tr
                   key={inv.invoiceId || inv.preInvoiceId}
                   className="clickable-row"
-                  onClick={() => navigate(`/buyer/invoices/${invoiceId}`)}
+                  onClick={() => navigate(`/supplier/invoices/${invoiceId}`)}
                 >
                   {/* Invoice ID + Badges (Centered & Bold) */}
                   <td style={{ textAlign: 'center' }}>
