@@ -18,8 +18,10 @@
     },
     "orderedOn": "Ordered on:",
     "supplier": "Supplier:",
+    "buyer": "Buyer:",
     "totalPrice": "Total Order Price:",
-    "paid": "(Paid)"
+    "paid": "(Paid)",
+    "statusUpdateFailed": "Failed to update order status."
   },
 
   "items": {

@@ -18,8 +18,10 @@
     },
     "orderedOn": "تاريخ الطلب:",
     "supplier": "المورد:",
+    "buyer": "المشتري:",
     "totalPrice": "إجمالي قيمة الطلب:",
-    "paid": "(مدفوع)"
+    "paid": "(مدفوع)",
+    "statusUpdateFailed": "فشل تحديث حالة الطلب."
   },
 
   "items": {

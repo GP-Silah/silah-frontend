@@ -2,17 +2,18 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import './OrderDetails.css';
+import { MessageCircle } from 'lucide-react';
+import '../../Buyer/Orders/OrderDetails.css'; // same CSS
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
-// Helper: extract first 10 digits from orderId → #1234567890
+// Helper: first 10 digits → #1234567890
 const refNumber = (orderId) => {
   const digits = orderId.match(/\d/g)?.slice(0, 10).join('');
   return digits ? `#${digits}` : '—';
 };
 
-export default function OrderDetailsBuyer() {
+export default function OrderDetailsSupplier() {
   const { t, i18n } = useTranslation('orderDetails');
   const { id: orderId } = useParams();
   const navigate = useNavigate();
@@ -21,10 +22,11 @@ export default function OrderDetailsBuyer() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isConfirming, setIsConfirming] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // -------------------------------------------------
-  // Fetch Order
+  // FETCH ORDER
   // -------------------------------------------------
   const fetchOrder = useCallback(async () => {
     if (!orderId) {
@@ -32,10 +34,8 @@ export default function OrderDetailsBuyer() {
       setLoading(false);
       return;
     }
-
     setLoading(true);
     setError(null);
-
     try {
       const { data } = await axios.get(`${API_BASE}/api/orders/${orderId}`, {
         params: { lang: i18n.language },
@@ -52,38 +52,73 @@ export default function OrderDetailsBuyer() {
     } finally {
       setLoading(false);
     }
-  }, [orderId, t]);
+  }, [orderId, i18n.language, t]);
 
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
 
   // -------------------------------------------------
-  // Confirm Delivery
+  // UPDATE STATUS (PATCH)
   // -------------------------------------------------
-  const handleConfirm = async () => {
-    if (isConfirming) return;
-    setIsConfirming(true);
+  const updateStatus = async (newStatus) => {
+    if (updating) return;
+    setUpdating(true);
     try {
       await axios.patch(
-        `${API_BASE}/api/orders/${orderId}/confirm-delivery`,
-        {},
+        `${API_BASE}/api/orders/${orderId}/status`,
+        { newStatus },
         { withCredentials: true },
       );
-      setOrder((prev) => ({ ...prev, status: 'COMPLETED' }));
+      setOrder((prev) => ({ ...prev, status: newStatus }));
+      setShowDropdown(false);
     } catch (err) {
       const msg =
         err.response?.data?.error?.message ||
         err.response?.data?.message ||
-        t('errors.confirmFailed');
+        t('errors.statusUpdateFailed');
       setError(msg);
     } finally {
-      setIsConfirming(false);
+      setUpdating(false);
     }
   };
 
   // -------------------------------------------------
-  // Page title & RTL
+  // OPEN CHAT (same logic as SupplierStorefront)
+  // -------------------------------------------------
+  const openChat = async () => {
+    if (!order?.buyer?.user.userId) return;
+
+    const partner = {
+      userId: order.buyer.user.userId,
+      name: order.buyer.user.businessName || order.buyer.user.name || 'Buyer',
+      avatar: order.buyer.user.pfpUrl || '/placeholder-pfp.png',
+    };
+
+    try {
+      const { data: chats } = await axios.get(`${API_BASE}/api/chats/me`, {
+        withCredentials: true,
+      });
+      const existing = (chats || []).find(
+        (c) => c.otherUser?.userId === partner.userId,
+      );
+      if (existing) {
+        navigate(`/supplier/chats/${existing.chatId}`);
+      } else {
+        navigate(`/supplier/chats/new?with=${partner.userId}`, {
+          state: { partner },
+        });
+      }
+    } catch {
+      // fallback – go to new chat
+      navigate(`/supplier/chats/new?with=${partner.userId}`, {
+        state: { partner },
+      });
+    }
+  };
+
+  // -------------------------------------------------
+  // PAGE TITLE & RTL
   // -------------------------------------------------
   useEffect(() => {
     document.title = t('pageTitle');
@@ -91,7 +126,7 @@ export default function OrderDetailsBuyer() {
   }, [t, isRTL]);
 
   // -------------------------------------------------
-  // Loading / Error
+  // LOADING / ERROR
   // -------------------------------------------------
   if (loading) {
     return (
@@ -100,7 +135,6 @@ export default function OrderDetailsBuyer() {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="order-details-container">
@@ -108,7 +142,6 @@ export default function OrderDetailsBuyer() {
       </div>
     );
   }
-
   if (!order) {
     return (
       <div className="order-details-container">
@@ -126,29 +159,68 @@ export default function OrderDetailsBuyer() {
     { hour: 'numeric', minute: '2-digit' },
   );
 
-  const isShipped = order.status === 'SHIPPED';
-  const isCompleted = order.status === 'COMPLETED';
+  const currentStatus = order.status.toUpperCase();
+
+  // Supplier can only change PENDING → PROCESSING → SHIPPED
+  const allowedStatuses = ['PENDING', 'PROCESSING', 'SHIPPED'];
+  const canChangeStatus = allowedStatuses.includes(currentStatus);
 
   return (
     <div className="order-details-container">
+      {/* ---------- TITLE + STATUS ---------- */}
       <h2 className="order-title">
         {t('order.title')} {refNumber(order.orderId)}
-        <span className={`order-status ${order.status.toLowerCase()}`}>
-          {t(`order.status.${order.status.toLowerCase()}`)}
-        </span>
+        <div className="status-wrapper" style={{ position: 'relative' }}>
+          {canChangeStatus ? (
+            <button
+              className={`order-status ${currentStatus.toLowerCase()} clickable`}
+              onClick={() => setShowDropdown((v) => !v)}
+              disabled={updating}
+              style={{ cursor: updating ? 'not-allowed' : 'pointer' }}
+            >
+              {t(`order.status.${currentStatus.toLowerCase()}`)}
+            </button>
+          ) : (
+            <span className={`order-status ${currentStatus.toLowerCase()}`}>
+              {t(`order.status.${currentStatus.toLowerCase()}`)}
+            </span>
+          )}
+
+          {/* Dropdown */}
+          {showDropdown && canChangeStatus && (
+            <div className="status-dropdown">
+              {allowedStatuses
+                .filter((s) => s !== currentStatus)
+                .map((s) => (
+                  <button
+                    key={s}
+                    className={`status-option ${s.toLowerCase()}`}
+                    onClick={() => updateStatus(s)}
+                    disabled={updating}
+                  >
+                    {t(`order.status.${s.toLowerCase()}`)}
+                  </button>
+                ))}
+            </div>
+          )}
+        </div>
       </h2>
 
+      {/* ---------- ORDER INFO ---------- */}
       <p className="order-info">
         {t('order.orderedOn')} <b>{formattedDate}</b> - {formattedTime}
       </p>
 
       <p className="order-info">
-        {t('order.supplier')}{' '}
+        {t('order.buyer')}{' '}
         <b
           className="clickable-supplier"
-          onClick={() => navigate(`/storefronts/${order.supplierId}`)}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
         >
-          {order.supplier?.businessName || t('unknown')}
+          {order.buyer?.user.businessName || t('unknown')}
+          <button onClick={openChat} className="chat-btn-inline">
+            <MessageCircle size={16} />
+          </button>
         </b>
       </p>
 
@@ -161,6 +233,7 @@ export default function OrderDetailsBuyer() {
         {t('order.paid')}
       </p>
 
+      {/* ---------- ITEMS TABLE ---------- */}
       <h3 className="section-title">{t('items.title')}</h3>
       <table className="order-table">
         <thead>
@@ -196,35 +269,8 @@ export default function OrderDetailsBuyer() {
         </tbody>
       </table>
 
-      <div className="order-action">
-        {isShipped && (
-          <>
-            <button
-              className="action-btn confirm"
-              onClick={handleConfirm}
-              disabled={isConfirming}
-            >
-              {isConfirming ? t('buttons.confirming') : t('buttons.confirm')}
-            </button>
-            <p className="action-note">{t('notes.confirmNote')}</p>
-          </>
-        )}
-
-        {isCompleted && (
-          <>
-            <div className="confirmed-msg">
-              You Confirmed The Delivery of This Order
-            </div>
-            <button
-              className="action-btn review"
-              onClick={() => navigate(`/buyer/reviews/new?itemId=${orderId}`)}
-            >
-              {t('buttons.review')}
-            </button>
-            <p className="action-note">{t('notes.reviewNote')}</p>
-          </>
-        )}
-      </div>
+      {/* ---------- NO ACTION BUTTONS ---------- */}
+      <div className="order-action" style={{ minHeight: '40px' }} />
     </div>
   );
 }
