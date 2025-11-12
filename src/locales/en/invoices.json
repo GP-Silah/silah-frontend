@@ -10,11 +10,13 @@
   "pageTitle": "Your Invoices",
   "tabs": {
     "all": "All",
+    "pending": "Pending",
     "accepted": "Accepted",
     "rejected": "Rejected",
     "partiallyPaid": "Partially Paid",
     "fullyPaid": "Fully Paid",
-    "pending": "Pending"
+    "successful": "Successful",
+    "failed": "Failed"
   },
   "table": {
     "invoice": "Invoice",

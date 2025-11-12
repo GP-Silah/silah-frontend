@@ -23,6 +23,48 @@ export default function Invoices() {
   const [typeFilter, setTypeFilter] = useState('all'); // showFor
   const [statusFilter, setStatusFilter] = useState('all'); // status
 
+  // ——————————————————————— DYNAMIC STATUS TABS ———————————————————————
+  const getAvailableStatuses = () => {
+    if (typeFilter === 'all') {
+      return ['all', 'pending'];
+    }
+    if (['products', 'services'].includes(typeFilter)) {
+      return [
+        'all',
+        'pending',
+        'accepted',
+        'rejected',
+        'partiallyPaid',
+        'fullyPaid',
+      ];
+    }
+    if (['bids', 'groups'].includes(typeFilter)) {
+      return ['all', 'pending', 'successful', 'failed'];
+    }
+    return ['all', 'pending'];
+  };
+
+  // ——————————————————————— HANDLE TYPE CHANGE → RESET STATUS ———————————————————————
+  const handleTypeChange = (newType) => {
+    setTypeFilter(newType);
+    setStatusFilter('all'); // ← always reset to shared status (all or pending values are fine)
+  };
+
+  // ——————————————————————— MAP UI STATUS → API STATUS ———————————————————————
+  const mapStatusToApi = (status) => {
+    const map = {
+      all: 'all',
+      pending: 'PENDING',
+      accepted: 'ACCEPTED',
+      rejected: 'REJECTED',
+      partiallyPaid: 'PARTIALLY_PAID',
+      fullyPaid: 'FULLY_PAID',
+      successful: 'SUCCESSFUL',
+      failed: 'FAILED',
+    };
+    return map[status] || status.toUpperCase();
+  };
+
   // ——————————————————————— FETCH INVOICES ———————————————————————
   const fetchInvoices = useCallback(async () => {
     setLoading(true);
@@ -30,7 +72,7 @@ export default function Invoices() {
     try {
       const params = {};
       if (typeFilter !== 'all') params.showFor = typeFilter;
-      if (statusFilter !== 'all') params.status = statusFilter;
+      if (statusFilter !== 'all') params.status = mapStatusToApi(statusFilter);
 
       const { data } = await axios.get(`${API_BASE}/api/invoices/me`, {
         params,
@@ -93,7 +135,7 @@ export default function Invoices() {
               type="radio"
               name="invoiceType"
               checked={typeFilter === type}
-              onChange={() => setTypeFilter(type)}
+              onChange={() => handleTypeChange(type)}
             />
             {t(`filter.${type}`)}
           </label>
@@ -102,22 +144,15 @@ export default function Invoices() {
 
       <h2 className="page-title">{t('pageTitle')}</h2>
 
-      {/* ——— Tabs: Status Filter ——— */}
+      {/* ——— DYNAMIC Status Tabs ——— */}
       <div className="tabs">
-        {[
-          'all',
-          'accepted',
-          'rejected',
-          'partiallyPaid',
-          'fullyPaid',
-          'pending',
-        ].map((tab) => (
+        {getAvailableStatuses().map((status) => (
           <button
-            key={tab}
-            className={`tab-btn ${statusFilter === tab ? 'active' : ''}`}
-            onClick={() => setStatusFilter(tab)}
+            key={status}
+            className={`tab-btn ${statusFilter === status ? 'active' : ''}`}
+            onClick={() => setStatusFilter(status)}
           >
-            {t(`tabs.${tab}`)}
+            {t(`tabs.${status}`)}
           </button>
         ))}
       </div>

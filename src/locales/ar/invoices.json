@@ -10,11 +10,13 @@
   "pageTitle": "فواتيرك",
   "tabs": {
     "all": "الكل",
+    "pending": "معلقة",
     "accepted": "مقبولة",
     "rejected": "مرفوضة",
     "partiallyPaid": "مدفوعة جزئياً",
     "fullyPaid": "مدفوعة بالكامل",
-    "pending": "معلقة"
+    "successful": "ناجحة",
+    "failed": "فشلت"
   },
   "table": {
     "invoice": "رقم الفاتورة",
