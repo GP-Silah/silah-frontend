@@ -1,0 +1,28 @@
+{
+  "pageTitle": "Store Analytics & Insights",
+  "title": "Store Analytics & Insights",
+  "subtitle": "Here you can view your store’s performance over the past three months",
+  "chart": {
+    "sales": "Total Sales"
+  },
+  "totalSales": {
+    "title": "Total Sales",
+    "value": "Total Order Value",
+    "orders": "Total Orders"
+  },
+  "topProducts": {
+    "title": "Top Products Insights",
+    "ordered": "Most Ordered Item",
+    "wishlisted": "Most Wish Listed Item"
+  },
+  "ratings": {
+    "title": "Ratings",
+    "overall": "Overall Rating",
+    "reviews": "New Reviews"
+  },
+  "reviews": {
+    "title": "New Reviews",
+    "text1": "Fantastic experience! The product exceeded my expectations in quality and delivery time.",
+    "text2": "Great service and top-notch products! Shipping was quick, and everything arrived as described."
+  }
+}
