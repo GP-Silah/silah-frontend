@@ -1,0 +1,269 @@
+.order-details-container {
+  background: #fff;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: 'Poppins', sans-serif;
+}
+.order-title {
+  font-size: 24px;
+  color: #2f3c73;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.order-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.order-status.shipped {
+  background-color: #c67b00;
+}
+.order-status.completed {
+  background-color: #1b8a5a;
+}
+.order-info {
+  color: #444;
+  font-size: 15px;
+  margin: 4px 0;
+}
+.clickable-supplier {
+  color: #5c2d91;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.clickable-supplier:hover {
+  color: #4a237a;
+}
+.section-title {
+  margin-top: 30px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  color: #333;
+  font-weight: 600;
+}
+/* ===== Table ===== */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+}
+.order-table th,
+.order-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+.order-table th:nth-child(3),
+.order-table th:nth-child(4),
+.order-table th:nth-child(5),
+.order-table td:nth-child(3),
+.order-table td:nth-child(4),
+.order-table td:nth-child(5) {
+  text-align: center;
+}
+.order-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+}
+/* ===== Image Placeholder ===== */
+.item-image-placeholder {
+  width: 60px;
+  height: 60px;
+  background-color: #eee;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+/* ===== Button & Note ===== */
+.order-action {
+  margin-top: 30px;
+  text-align: center;
+}
+.action-btn {
+  background-color: #5c2d91;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 30px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+.action-btn:hover {
+  background-color: #4c2576;
+}
+.action-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+.action-note {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+.confirmed-msg {
+  color: #1b8a5a;
+  font-size: 15px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.loader,
+.error-msg {
+  text-align: center;
+  padding: 60px;
+  color: #5c2d91;
+}
+.error-msg {
+  color: #d1441f;
+}
+
+/* Center image column in both LTR and RTL */
+.order-table td:first-child {
+  text-align: center;
+}
+
+/* ===== Table ===== */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  table-layout: auto;
+}
+.order-table th,
+.order-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+.order-table th:nth-child(3),
+.order-table th:nth-child(4),
+.order-table th:nth-child(5),
+.order-table td:nth-child(3),
+.order-table td:nth-child(4),
+.order-table td:nth-child(5) {
+  text-align: center;
+}
+
+/* ADD THIS LINE */
+.order-table td:first-child {
+  text-align: center;
+}
+
+.order-table td:first-child {
+  text-align: center;
+}
+
+/* Or use logical property for future-proofing */
+.order-table td:first-child {
+  text-align: start; /* logical "start" = left in LTR, right in RTL */
+  display: flex;
+  justify-content: center;
+}
+
+/* ===== Status Badge – SAME AS Orders.jsx ===== */
+.order-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: #fff;
+}
+
+/* Use the same colors as .status-badge in Orders */
+.order-status.pending {
+  background: #fff7d4;
+  color: #9f7700;
+}
+.order-status.processing {
+  background: #ffe0d5;
+  color: #d1441f;
+}
+.order-status.shipped {
+  background: #d9e8ff;
+  color: #1b64c3;
+}
+.order-status.completed {
+  background: #e3f7e3;
+  color: #1c8c4b;
+}
+
+/* ----- Status dropdown (supplier only) ----- */
+.status-wrapper {
+  display: inline-block;
+}
+.order-status.clickable {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.order-status.clickable:hover {
+  opacity: 0.85;
+}
+.status-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  width: fit-content;
+  margin-top: 4px;
+}
+.status-option {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.status-option:hover {
+  background: #f5f5f5;
+}
+.status-option.pending {
+  color: #9f7700;
+}
+.status-option.processing {
+  color: #d1441f;
+}
+.status-option.shipped {
+  color: #1b64c3;
+}
+
+/* Inline chat button next to buyer name */
+.chat-btn-inline {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+.chat-btn-inline svg {
+  stroke: #5c2d91;
+}
+.chat-btn-inline:hover svg {
+  stroke: #4a237a;
+}

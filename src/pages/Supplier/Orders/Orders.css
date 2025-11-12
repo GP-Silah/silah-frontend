@@ -27,6 +27,7 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 8px;
+  justify-content: left;
 }
 
 .tab-btn {
@@ -111,4 +112,80 @@
 .status-badge.completed {
   background-color: #e3f7e3;
   color: #1c8c4b;
+}
+
+html[dir='rtl'] .tabs {
+  justify-content: right;
+}
+
+/* Hoverable rows */
+.orders-table tbody tr.order-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.orders-table tbody tr.order-row:hover {
+  background-color: #f8f5fd;
+}
+
+/* ----- Empty state ----- */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #777;
+}
+.empty-icon {
+  font-size: 64px;
+  color: #bbb;
+  margin-bottom: 16px;
+}
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #444;
+  margin: 0 0 8px;
+}
+.empty-state p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ----- Icon spin animation (for loading) ----- */
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading */
+.loader {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #5c2d91;
+}
+
+/* Error & Retry */
+.error-msg {
+  color: #d1441f;
+  text-align: center;
+  margin: 20px 0;
+}
+.retry-btn {
+  background: #5c2d91;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+.retry-btn:hover {
+  background: #4a237a;
 }

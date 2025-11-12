@@ -1,16 +1,29 @@
 {
   "pageTitle": "Order Details",
+  "loading": "Loading order...",
+  "errors": {
+    "invalidId": "Invalid order ID.",
+    "notFound": "Order not found.",
+    "unknown": "Something went wrong.",
+    "confirmFailed": "Failed to confirm delivery."
+  },
+
   "order": {
     "title": "Order",
     "status": {
+      "pending": "Pending",
+      "processing": "Processing",
       "shipped": "Shipped",
       "completed": "Completed"
     },
     "orderedOn": "Ordered on:",
     "supplier": "Supplier:",
+    "buyer": "Buyer:",
     "totalPrice": "Total Order Price:",
-    "paid": "(Paid)"
+    "paid": "(Paid)",
+    "statusUpdateFailed": "Failed to update order status."
   },
+
   "items": {
     "title": "Order Items",
     "image": "Image",
@@ -19,12 +32,19 @@
     "quantity": "Quantity",
     "total": "Total Price"
   },
+
   "buttons": {
     "confirm": "Confirm Delivery",
+    "confirming": "Confirming…",
     "review": "Write a Review"
   },
+
   "notes": {
-    "confirmNote": "Click this button if the order has been delivered, this will change the order status to \"Completed\".",
-    "reviewNote": "You can write a review after confirming the delivery."
-  }
+    "confirmNote": "Click this button if the order has been delivered. This will change the status to \"Completed\".",
+    "reviewNote": "You can write a review after confirming the delivery.",
+    "confirmedMessage": "You Confirmed The Delivery of This Order"
+  },
+
+  "unknown": "Unknown",
+  "sarAlt": "SAR"
 }

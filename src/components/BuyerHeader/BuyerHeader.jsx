@@ -94,7 +94,6 @@ const BuyerHeader = ({
 
   useEffect(() => {
     const fetchCartCount = async () => {
-      setCartLoading(true);
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/carts/me`,
@@ -110,7 +109,6 @@ const BuyerHeader = ({
           console.error('Failed to fetch cart:', err);
         }
       } finally {
-        setCartLoading(false);
       }
     };
 

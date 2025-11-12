@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Orders.css';
+import '../../Supplier/Orders/Orders.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
@@ -75,7 +75,7 @@ export default function Orders() {
   // Row click → navigate to detail page
   // -------------------------------------------------
   const handleRowClick = (orderId) => {
-    navigate(`/supplier/orders/${orderId}`);
+    navigate(`/buyer/orders/${orderId}`);
   };
 
   // -------------------------------------------------
@@ -105,7 +105,6 @@ export default function Orders() {
   return (
     <div className="orders-page">
       <h2 className="page-title">{t('title')}</h2>
-      <p className="page-subtitle">{t('subtitle')}</p>
 
       {/* FILTER TABS */}
       <div className="tabs">
@@ -127,7 +126,7 @@ export default function Orders() {
             <tr>
               <th>{t('table.order')}</th>
               <th>{t('table.ordered')}</th>
-              <th>{t('table.buyer')}</th>
+              <th>{t('table.supplier')}</th>
               <th>{t('table.status')}</th>
               <th>{t('table.total')}</th>
             </tr>
