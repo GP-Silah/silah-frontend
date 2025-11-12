@@ -13,6 +13,7 @@
     "order": "Order",
     "ordered": "Ordered",
     "buyer": "Buyer",
+    "supplier": "Supplier",
     "status": "Order Status",
     "total": "Total"
   },
