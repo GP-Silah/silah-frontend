@@ -22,6 +22,7 @@
   "notesAndTerms": "Notes & Terms",
   "total": "Total",
   "upfrontAmount": "Upfront Amount",
+  "uponDeliveryAmount": "Upon Delivery Amount",
   "upfrontPaid": "Upfront Paid",
   "fromOffer": "From Offer",
   "proposed": "Proposed Amount",
@@ -33,8 +34,18 @@
   "backToInvoices": "Back to Invoices",
   "errors": {
     "missingId": "Invoice ID is missing",
-    "notFound": "Invoice not found or access denied"
+    "notFound": "Invoice not found or access denied",
+    "statusUpdateFailed": "Failed to update invoice status",
+    "paymentFailed": "Payment failed. Please try again."
   },
+  "statusUpdated": {
+    "ACCEPTED": "Invoice accepted successfully",
+    "REJECTED": "Invoice rejected"
+  },
+  "accept": "Accept Invoice",
+  "reject": "Reject Invoice",
+  "updating": "Updating...",
+  "viewStorefront": "View supplier storefront",
   "status": {
     "PENDING": "Pending",
     "ACCEPTED": "Accepted",
@@ -44,8 +55,15 @@
     "FAILED": "Failed",
     "SUCCESSFUL": "Successful"
   },
+  "success": {
+    "invoicePaid": "Payment successful!"
+  },
   "bid": "Bid",
   "offerDetails": "Offer Details",
   "executionPlan": "Execution Plan",
-  "joined": "Joined On"
+  "joined": "Joined On",
+  "payNow": "Pay Now",
+  "payUpfront": "Pay Upfront Now",
+  "payRemaining": "Pay Remaining on Delivery",
+  "processing": "Processing..."
 }

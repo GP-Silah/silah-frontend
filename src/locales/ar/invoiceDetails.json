@@ -22,6 +22,7 @@
   "notesAndTerms": "ملاحظات وشروط",
   "total": "الإجمالي",
   "upfrontAmount": "المقدم",
+  "uponDeliveryAmount": "المبلغ عند التسليم",
   "upfrontPaid": "تم دفع المقدم",
   "fromOffer": "من عرض",
   "proposed": "المبلغ المقترح",
@@ -33,8 +34,18 @@
   "backToInvoices": "العودة إلى الفواتير",
   "errors": {
     "missingId": "معرف الفاتورة مفقود",
-    "notFound": "الفاتورة غير موجودة أو لا تملك صلاحية الوصول"
+    "notFound": "الفاتورة غير موجودة أو لا تملك صلاحية الوصول",
+    "statusUpdateFailed": "فشل تحديث حالة الفاتورة",
+    "paymentFailed": "فشل الدفع. حاول مرة أخرى."
   },
+  "statusUpdated": {
+    "ACCEPTED": "تم قبول الفاتورة بنجاح",
+    "REJECTED": "تم رفض الفاتورة"
+  },
+  "accept": "قبول الفاتورة",
+  "reject": "رفض الفاتورة",
+  "updating": "جاري التحديث...",
+  "viewStorefront": "عرض متجر المورد",
   "status": {
     "PENDING": "قيد الانتظار",
     "ACCEPTED": "تم القبول",
@@ -44,8 +55,15 @@
     "FAILED": "فشل",
     "SUCCESSFUL": "ناجح"
   },
+  "success": {
+    "invoicePaid": "تم الدفع بنجاح!"
+  },
   "bid": "المناقصة",
   "offerDetails": "تفاصيل العرض",
   "executionPlan": "خطة التنفيذ",
-  "joined": "انضم في"
+  "joined": "انضم في",
+  "payNow": "ادفع الآن",
+  "payUpfront": "ادفع المقدم الأن",
+  "payRemaining": "ادفع المتبقي عند التسليم",
+  "processing": "جاري المعالجة..."
 }

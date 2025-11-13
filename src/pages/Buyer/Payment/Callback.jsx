@@ -27,22 +27,23 @@ export default function PaymentCallback() {
       errorKey: 'errors.saveCardFailed',
     },
     checkout: {
-      confirmEndpoint: `${
-        import.meta.env.VITE_BACKEND_URL
-      }/api/carts/me/checkout`,
+      confirmEndpoint: (params) =>
+        `${import.meta.env.VITE_BACKEND_URL}/api/carts/me/checkout`,
       requestBody: (params) => ({ chargeId: params.get('tap_id') }),
       redirectTo: '/buyer/homepage',
       successKey: 'success.orderCompleted',
       errorKey: 'errors.checkoutFailed',
     },
     invoice: {
-      confirmEndpoint: `${import.meta.env.VITE_BACKEND_URL}/api/invoices/pay`,
+      confirmEndpoint: (params) =>
+        `${import.meta.env.VITE_BACKEND_URL}/api/invoices/me/${params.get(
+          'invoiceId',
+        )}/pay`,
       requestBody: (params) => ({
         chargeId: params.get('tap_id'),
-        invoiceId: params.get('invoiceId') || '',
       }),
       redirectTo: (params) =>
-        `/buyer/invoices/${params.get('invoiceId') || ''}`,
+        `/buyer/invoices/${params.get('invoiceId') || '/buyer/homepage'}`,
       successKey: 'success.invoicePaid',
       errorKey: 'errors.paymentFailed',
     },
@@ -70,7 +71,7 @@ export default function PaymentCallback() {
           );
         } else {
           await axios.post(
-            config.confirmEndpoint,
+            config.confirmEndpoint(searchParams),
             config.requestBody(searchParams),
             { withCredentials: true },
           );
