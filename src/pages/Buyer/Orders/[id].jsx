@@ -212,12 +212,10 @@ export default function OrderDetailsBuyer() {
 
         {isCompleted && (
           <>
-            <div className="confirmed-msg">
-              You Confirmed The Delivery of This Order
-            </div>
+            <div className="confirmed-msg">{t('confirmedMsg')}</div>
             <button
               className="action-btn review"
-              onClick={() => navigate(`/buyer/reviews/new?itemId=${orderId}`)}
+              onClick={() => navigate(`/buyer/reviews/new?id=${orderId}`)}
             >
               {t('buttons.review')}
             </button>

@@ -471,3 +471,12 @@
     transform: rotate(360deg);
   }
 }
+
+.reviewBtn {
+  background: #6d28d9; /* purple */
+  color: white;
+}
+
+.reviewBtn:hover {
+  background: #5b21b6;
+}

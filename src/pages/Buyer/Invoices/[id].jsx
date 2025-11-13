@@ -32,6 +32,7 @@ const InvoiceDetails = () => {
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(null); // null = checking, false = can review
 
   // -------------------------------------------------
   // FETCH INVOICE
@@ -52,6 +53,20 @@ const InvoiceDetails = () => {
           headers: { 'accept-language': i18n.language },
         });
         setInvoice(res.data);
+
+        // === NEW: Check if already reviewed (only if FULLY_PAID)
+        if (res.data.status === 'FULLY_PAID') {
+          try {
+            const reviewRes = await axios.get(
+              `${API_BASE}/api/reviews/me?invoiceId=${id}`,
+              { withCredentials: true },
+            );
+            setHasReviewed(!!reviewRes.data?.length); // true if exists
+          } catch (err) {
+            // 404 or empty → not reviewed
+            setHasReviewed(false);
+          }
+        }
       } catch (err) {
         const msg = err.response?.data?.error?.message || t('errors.notFound');
         setError(msg);
@@ -60,6 +75,7 @@ const InvoiceDetails = () => {
         setLoading(false);
       }
     };
+
     fetchInvoice();
   }, [id, i18n.language, navigate, t]);
 
@@ -542,6 +558,18 @@ const InvoiceDetails = () => {
                 <img src="/riyal.png" alt="SAR" className={styles.sar} />)
               </>
             )}
+          </button>
+        </div>
+      )}
+
+      {/* WRITE A REVIEW BUTTON */}
+      {invoice.status === 'FULLY_PAID' && hasReviewed === false && (
+        <div className={styles.actionButtons}>
+          <button
+            onClick={() => navigate(`/buyer/reviews/new?id=${id}`)}
+            className={`${styles.actionBtn} ${styles.reviewBtn}`}
+          >
+            {t('writeReview')}
           </button>
         </div>
       )}

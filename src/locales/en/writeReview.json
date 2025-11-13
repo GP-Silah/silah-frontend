@@ -1,5 +1,16 @@
 {
+  "pageTitle": "Leave a Review",
   "mainTitle": "Leave a Review for {{company}}",
   "itemsTitle": "Leave a Review for the {{count}} ordered Items",
-  "optional": "(optional)"
+  "optional": "(optional)",
+  "submit": "Submit Review",
+  "common": {
+    "loading": "Loading",
+    "submitting": "Submitting"
+  },
+  "errors": {
+    "noId": "No order or invoice ID provided.",
+    "preInvoiceNotAllowed": "You cannot review a pre-invoice.",
+    "notFound": "Order or invoice not found."
+  }
 }
