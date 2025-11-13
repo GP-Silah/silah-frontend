@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import './AnalyticsInsights.css';
+import './Analytics.css';
 import {
   Chart as ChartJS,
   CategoryScale,
