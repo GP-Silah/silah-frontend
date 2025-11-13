@@ -66,5 +66,7 @@
   "payUpfront": "ادفع المقدم الأن",
   "payRemaining": "ادفع المتبقي عند التسليم",
   "processing": "جاري المعالجة...",
-  "writeReview": "اكتب تقييمًا"
+  "writeReview": "اكتب تقييمًا",
+  "continueWriteReview": "استكمل كتابة التقيمم",
+  "alreadyReviewed": "لقد قيمت هذا بالفعل."
 }

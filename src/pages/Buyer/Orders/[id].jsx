@@ -236,6 +236,11 @@ export default function OrderDetailsBuyer() {
             <p className="action-note">{t('notes.reviewNote')}</p>
           </>
         )}
+
+        {/* Already reviewed */}
+        {isCompleted && hasReviewed === true && (
+          <div className="confirmed-msg reviewed">{t('alreadyReviewed')}</div>
+        )}
       </div>
     </div>
   );

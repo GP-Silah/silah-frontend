@@ -125,7 +125,7 @@ export default function WriteReview() {
       await axios.post(`${API_BASE}/api/reviews/${id}`, payload, {
         withCredentials: true,
       });
-      navigate('/buyer/orders');
+      navigate(-1);
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.message;
       setError(msg);

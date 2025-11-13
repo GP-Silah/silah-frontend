@@ -574,6 +574,11 @@ const InvoiceDetails = () => {
           </button>
         </div>
       )}
+
+      {/* Already reviewed */}
+      {isCompleted && hasReviewed === true && (
+        <div className="confirmed-msg reviewed">{t('alreadyReviewed')}</div>
+      )}
     </div>
   );
 };
