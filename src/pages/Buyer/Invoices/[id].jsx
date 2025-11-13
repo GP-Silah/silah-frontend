@@ -58,12 +58,13 @@ const InvoiceDetails = () => {
         if (res.data.status === 'FULLY_PAID') {
           try {
             const reviewRes = await axios.get(
-              `${API_BASE}/api/reviews/me?invoiceId=${id}`,
+              `${API_BASE}/api/reviews/has-reviewed/${id}`,
               { withCredentials: true },
             );
-            setHasReviewed(!!reviewRes.data?.length); // true if exists
+            setHasReviewed(reviewRes.data.hasReviewed); // true or false
           } catch (err) {
-            // 404 or empty → not reviewed
+            // 404 → not reviewed
+            // 401/403 → ignore, assume false
             setHasReviewed(false);
           }
         }

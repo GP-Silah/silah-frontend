@@ -22,6 +22,7 @@ export default function OrderDetailsBuyer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(null); // null = loading, true/false
 
   // -------------------------------------------------
   // Fetch Order
@@ -42,6 +43,19 @@ export default function OrderDetailsBuyer() {
         withCredentials: true,
       });
       setOrder(data);
+
+      // === CHECK IF ALREADY REVIEWED (only if COMPLETED)
+      if (data.status === 'COMPLETED') {
+        try {
+          const reviewRes = await axios.get(
+            `${API_BASE}/api/reviews/has-reviewed/${orderId}`,
+            { withCredentials: true },
+          );
+          setHasReviewed(reviewRes.data.hasReviewed);
+        } catch (err) {
+          setHasReviewed(false); // 404, 401, 403 → not reviewed
+        }
+      }
     } catch (err) {
       const msg =
         err.response?.data?.error?.message ||
@@ -210,7 +224,7 @@ export default function OrderDetailsBuyer() {
           </>
         )}
 
-        {isCompleted && (
+        {isCompleted && hasReviewed === false && (
           <>
             <div className="confirmed-msg">{t('confirmedMsg')}</div>
             <button
