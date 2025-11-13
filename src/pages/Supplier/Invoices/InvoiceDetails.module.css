@@ -107,6 +107,8 @@
   margin: 0.4rem 0;
   font-size: 0.95rem;
   color: #444;
+  display: flex;
+  gap: 12px;
 }
 
 /* Pre-invoice Info */
@@ -364,4 +366,17 @@
 
 :global(html[dir='rtl']) .backBtn {
   flex-direction: row-reverse;
+}
+
+.chatBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6f42c1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.chatBtn:hover {
+  color: #5a32a3;
 }

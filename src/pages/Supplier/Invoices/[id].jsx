@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import {
   FiFileText,
   FiInfo,
 } from 'react-icons/fi';
+import { MessageCircle } from 'lucide-react';
 import styles from './InvoiceDetails.module.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL;
@@ -62,6 +63,40 @@ const InvoiceDetails = () => {
 
     fetchInvoice();
   }, [id, i18n.language, navigate, t]);
+
+  const openChat = useCallback(async () => {
+    if (!invoice?.buyer?.user?.userId) return;
+
+    const partner = {
+      userId: invoice.buyer.user.userId,
+      name:
+        invoice.buyer.user.businessName || invoice.buyer.user.name || 'Buyer',
+      avatar: invoice.buyer.user.pfpUrl || '/placeholder-pfp.png',
+    };
+
+    try {
+      const { data: chats } = await axios.get(`${API_BASE}/api/chats/me`, {
+        withCredentials: true,
+      });
+
+      const existing = (chats || []).find(
+        (c) => c.otherUser?.userId === partner.userId,
+      );
+
+      if (existing) {
+        navigate(`/supplier/chats/${existing.chatId}`);
+      } else {
+        navigate(`/supplier/chats/new?with=${partner.userId}`, {
+          state: { partner },
+        });
+      }
+    } catch {
+      // fallback – go to new chat
+      navigate(`/supplier/chats/new?with=${partner.userId}`, {
+        state: { partner },
+      });
+    }
+  }, [invoice?.buyer?.user?.userId, navigate]);
 
   if (loading) {
     return <div className={styles.loading}>{t('loading')}</div>;
@@ -168,6 +203,14 @@ const InvoiceDetails = () => {
           <h3>{t('buyer')}</h3>
           <p>
             <strong>{invoice.buyer?.user?.businessName || '-'}</strong>
+            <button
+              onClick={openChat}
+              className={styles.chatBtn}
+              title={t('chatWithBuyer')}
+              aria-label={t('chatWithBuyer')}
+            >
+              <MessageCircle size={16} />
+            </button>
           </p>
           <p>{invoice.buyer?.user?.name || '-'}</p>
           <p>{invoice.buyer?.user?.city || '-'}</p>
@@ -204,14 +247,7 @@ const InvoiceDetails = () => {
               <h4>{t('fromOffer')}</h4>
               <p>
                 <strong>{t('bid')}:</strong>{' '}
-                <span
-                  className={styles.refLink}
-                  onClick={() =>
-                    navigate(`/supplier/bids/${invoice.offer.bid.bidId}`)
-                  }
-                >
-                  {refNumber(invoice.offer.bid.bidId)}
-                </span>
+                <span>{refNumber(invoice.offer.bid.bidId)}</span>
               </p>
               <p>
                 <strong>{invoice.offer.bid.bidName}</strong>
