@@ -48,6 +48,7 @@ const BuyerHeader = ({
   const { t, i18n } = useTranslation('header');
   const navigate = useNavigate();
   const { user, refreshUser, handleLogout, switchRole } = useAuth();
+  const { totalItemsCount, setTotalItemsCount } = useCart();
   const [categories, setCategories] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -59,7 +60,6 @@ const BuyerHeader = ({
   const selectRef = useRef(null);
 
   const unreadNotifications = notifications.filter((n) => !n.isRead);
-  const { totalItemsCount } = useCart();
 
   // === Toggle Language ===
   const toggleLanguage = () => {
@@ -90,29 +90,6 @@ const BuyerHeader = ({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    const fetchCartCount = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/carts/me`,
-          {
-            withCredentials: true,
-          },
-        );
-        setTotalItemsCount(res.data.totalItemsCount || 0);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setTotalItemsCount(0); // No active cart
-        } else {
-          console.error('Failed to fetch cart:', err);
-        }
-      } finally {
-      }
-    };
-
-    fetchCartCount();
   }, []);
 
   // === Mark All as Read ===

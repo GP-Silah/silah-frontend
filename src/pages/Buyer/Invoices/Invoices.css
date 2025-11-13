@@ -49,6 +49,11 @@
   margin-bottom: 20px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 8px;
+  justify-content: left;
+}
+
+html[dir='rtl'] .tabs {
+  justify-content: right;
 }
 
 .tab-btn {
@@ -126,12 +131,70 @@
   color: #a02222;
 }
 
-.status-badge.partiallyPaid {
+.status-badge.partiallypaid {
   background-color: #ffe8c6;
   color: #a46a00;
 }
 
-.status-badge.fullyPaid {
+.status-badge.fullypaid {
   background-color: #d9f2d7;
   color: #1b7a39;
+}
+
+/* Pre & Canceled badges */
+.badge-pre,
+.badge-canceled {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.badge-pre {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.badge-canceled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Pre-invoice status colors */
+.status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-badge.successful {
+  background: #d1fae5;
+  color: #065f46;
+}
+.status-badge.failed {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .invoices-table th,
+  .invoices-table td {
+    font-size: 13px;
+    padding: 10px 6px;
+  }
+}
+
+/* ---- Row clickable ---- */
+.invoices-table tr.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.invoices-table tr.clickable-row:hover {
+  background-color: #f8f5ff; /* light purple tint */
+}
+
+.invoice-id-wrapper {
+  display: flex; /* ← horizontal */
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
 }

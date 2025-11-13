@@ -5,27 +5,52 @@
     "products": "Products",
     "services": "Services",
     "bids": "Bids",
-    "groupPurchases": "Group Purchases"
+    "groups": "Group Purchases"
   },
   "pageTitle": "Your Invoices",
   "tabs": {
     "all": "All",
+    "pending": "Pending",
     "accepted": "Accepted",
     "rejected": "Rejected",
     "partiallyPaid": "Partially Paid",
-    "fullyPaid": "Fully Paid"
+    "fullyPaid": "Fully Paid",
+    "successful": "Successful",
+    "failed": "Failed"
   },
   "table": {
     "invoice": "Invoice",
     "created": "Created",
+    "supplier": "Supplier",
     "buyer": "Buyer",
     "status": "Invoice Status",
+    "preInvoiceStatus": "Pre-invoice Status",
     "total": "Total"
   },
   "status": {
+    "pending": "Pending",
     "accepted": "Accepted",
     "rejected": "Rejected",
-    "partiallyPaid": "Partially Paid",
-    "fullyPaid": "Fully Paid"
-  }
+    "partially_paid": "Partially Paid",
+    "fully_paid": "Fully Paid"
+  },
+  "preStatus": {
+    "pending": "Pending",
+    "successful": "Successful",
+    "failed": "Failed"
+  },
+  "badge": {
+    "pre": "Pre",
+    "canceled": "Canceled"
+  },
+  "empty": {
+    "message": "No invoices yet.",
+    "hint": "Request a service, join a group purchase, or open a bid to see your invoices here."
+  },
+  "noInvoices": "No invoices found.",
+  "loading": "Loading...",
+  "errors": {
+    "unknown": "Something went wrong."
+  },
+  "unknown": "Unknown Supplier"
 }
