@@ -66,7 +66,7 @@ export default function NotificationsSupplier() {
         navigate(`/supplier/orders/${n.relatedEntityId}`);
         break;
       case 'REVIEW':
-        navigate(`/supplier/reviews/${n.relatedEntityId}`);
+        navigate(`/supplier/analytics`); // he only sees them on the analytics page
         break;
       case 'BID':
       case 'OFFER':

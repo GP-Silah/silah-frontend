@@ -199,7 +199,7 @@ function ItemCard({
           </div>
         </div>
 
-        {showAlternatives && !isAvailable && (
+        {showAlternatives && (
           <button
             onClick={(e) => {
               e.stopPropagation();
