@@ -120,6 +120,18 @@ const InvoiceDetails = () => {
   }
 
   const isPreInvoice = invoice.type === 'PRE_INVOICE';
+  const isPendingInvoice = !isPreInvoice && invoice.status === 'PENDING';
+  const isAccepted = invoice.status === 'ACCEPTED';
+  const isPartial = invoice.termsOfPayment === 'PARTIAL';
+  const isFull = invoice.termsOfPayment === 'FULL';
+  const upfrontPaid =
+    invoice.status === 'PARTIALLY_PAID' || !!invoice.tapChargeIdForUpfront;
+  const needsPayment =
+    invoice.status === 'ACCEPTED' ||
+    (invoice.status === 'PARTIALLY_PAID' && isPartial && upfrontPaid);
+  const remainingAmount = invoice.amount - (invoice.upfrontAmount || 0);
+  const hasRemaining = remainingAmount > 0.01;
+
   const status = invoice.status;
   const statusColor = {
     PENDING: '#f59e0b',
@@ -386,8 +398,8 @@ const InvoiceDetails = () => {
         </div>
       )}
 
-      {/* Payment Info */}
-      {invoice.termsOfPayment === 'PARTIAL' && (
+      {/* Payment Info – only for PARTIAL */}
+      {isPartial && (
         <div className={styles.paymentInfo}>
           <div className={styles.paymentRow}>
             <span>{t('upfrontAmount')}</span>
@@ -396,7 +408,7 @@ const InvoiceDetails = () => {
               <img src="/riyal.png" alt="SAR" className={styles.sar} />
             </strong>
           </div>
-          {invoice.tapChargeIdForUpfront && (
+          {upfrontPaid && (
             <div className={styles.paymentRow}>
               <span>{t('upfrontPaid')}</span>
               <span className={styles.paid}>{t('paid')}</span>

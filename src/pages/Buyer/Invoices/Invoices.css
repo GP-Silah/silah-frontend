@@ -131,12 +131,12 @@ html[dir='rtl'] .tabs {
   color: #a02222;
 }
 
-.status-badge.partiallyPaid {
+.status-badge.partiallypaid {
   background-color: #ffe8c6;
   color: #a46a00;
 }
 
-.status-badge.fullyPaid {
+.status-badge.fullypaid {
   background-color: #d9f2d7;
   color: #1b7a39;
 }
