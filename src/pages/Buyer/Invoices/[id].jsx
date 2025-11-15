@@ -33,6 +33,7 @@ const InvoiceDetails = () => {
   const [updating, setUpdating] = useState(false);
   const [paying, setPaying] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(null); // null = checking, false = can review
+  const [hasDraft, setHasDraft] = useState(false);
 
   // -------------------------------------------------
   // FETCH INVOICE
@@ -67,6 +68,13 @@ const InvoiceDetails = () => {
             // 401/403 → ignore, assume false
             setHasReviewed(false);
           }
+        }
+
+        // === CHECK FOR DRAFT ===
+        if (res.data.status === 'FULLY_PAID') {
+          const draftKey = `review_draft_${id}`;
+          const draft = localStorage.getItem(draftKey);
+          setHasDraft(!!draft);
         }
       } catch (err) {
         const msg = err.response?.data?.error?.message || t('errors.notFound');
@@ -564,19 +572,21 @@ const InvoiceDetails = () => {
       )}
 
       {/* WRITE A REVIEW BUTTON */}
-      {invoice.status === 'FULLY_PAID' && hasReviewed === false && (
+      {invoice.status === 'FULLY_PAID' && (
         <div className={styles.actionButtons}>
-          <button
-            onClick={() => navigate(`/buyer/reviews/new?id=${id}`)}
-            className={`${styles.actionBtn} ${styles.reviewBtn}`}
-          >
-            {t('writeReview')}
-          </button>
+          {hasReviewed === false && (
+            <button
+              onClick={() => navigate(`/buyer/reviews/new?id=${id}`)}
+              className={`${styles.actionBtn} ${styles.reviewBtn}`}
+            >
+              {hasDraft ? t('continueWriteReview') : t('writeReview')}
+            </button>
+          )}
         </div>
       )}
 
       {/* Already reviewed */}
-      {isCompleted && hasReviewed === true && (
+      {invoice.status === 'FULLY_PAID' && hasReviewed === true && (
         <div className="confirmed-msg reviewed">{t('alreadyReviewed')}</div>
       )}
     </div>

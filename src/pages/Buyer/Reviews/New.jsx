@@ -14,6 +14,8 @@ export default function WriteReview() {
   const id = searchParams.get('id');
   const isRtl = i18n.language === 'ar';
 
+  const REVIEW_DRAFT_KEY = `review_draft_${id}`;
+
   // State
   const [data, setData] = useState(null);
   const [supplierRating, setSupplierRating] = useState(5); // DEFAULT 5
@@ -81,6 +83,49 @@ export default function WriteReview() {
     fetchData();
   }, [id, t]);
 
+  // === LOAD DRAFT ONCE DATA IS LOADED ===
+  useEffect(() => {
+    if (!data || !id) return;
+
+    const saved = localStorage.getItem(REVIEW_DRAFT_KEY);
+    if (!saved) return;
+
+    let draft;
+    try {
+      draft = JSON.parse(saved);
+    } catch (err) {
+      console.error('Failed to parse review draft', err);
+      return;
+    }
+
+    // Restore supplier review
+    if (draft.supplierRating) setSupplierRating(draft.supplierRating);
+    if (draft.supplierReview) setSupplierReview(draft.supplierReview);
+
+    // Restore item reviews
+    const restoredItems = {};
+    Object.entries(draft.itemRatings || {}).forEach(([itemId, value]) => {
+      restoredItems[itemId] = {
+        rating: value.rating || 5,
+        review: value.review || '',
+      };
+    });
+    setItemRatings((prev) => ({ ...prev, ...restoredItems }));
+  }, [data, id]);
+
+  // === AUTO-SAVE DRAFT ON CHANGE ===
+  useEffect(() => {
+    if (!data || !id || loading) return;
+
+    const draft = {
+      supplierRating,
+      supplierReview,
+      itemRatings,
+    };
+
+    localStorage.setItem(REVIEW_DRAFT_KEY, JSON.stringify(draft));
+  }, [id, data, loading, supplierRating, supplierReview, itemRatings]);
+
   // Star Component
   const StarRating = ({ value, hover, onRate, onHover, onLeave }) => (
     <div className="wrb-stars">
@@ -125,6 +170,8 @@ export default function WriteReview() {
       await axios.post(`${API_BASE}/api/reviews/${id}`, payload, {
         withCredentials: true,
       });
+
+      localStorage.removeItem(REVIEW_DRAFT_KEY);
       navigate(-1);
     } catch (err) {
       const msg = err.response?.data?.error?.message || err.message;

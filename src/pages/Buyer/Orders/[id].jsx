@@ -23,6 +23,7 @@ export default function OrderDetailsBuyer() {
   const [error, setError] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(null); // null = loading, true/false
+  const [hasDraft, setHasDraft] = useState(false);
 
   // -------------------------------------------------
   // Fetch Order
@@ -56,6 +57,13 @@ export default function OrderDetailsBuyer() {
           setHasReviewed(false); // 404, 401, 403 → not reviewed
         }
       }
+
+      // === CHECK FOR DRAFT ===
+      if (data.status === 'COMPLETED') {
+        const draftKey = `review_draft_${orderId}`;
+        const draft = localStorage.getItem(draftKey);
+        setHasDraft(!!draft);
+      }
     } catch (err) {
       const msg =
         err.response?.data?.error?.message ||
@@ -78,13 +86,32 @@ export default function OrderDetailsBuyer() {
   const handleConfirm = async () => {
     if (isConfirming) return;
     setIsConfirming(true);
+
     try {
       await axios.patch(
         `${API_BASE}/api/orders/${orderId}/confirm-delivery`,
         {},
         { withCredentials: true },
       );
+
+      // 1. Update order status locally
       setOrder((prev) => ({ ...prev, status: 'COMPLETED' }));
+
+      // 2. === RE-RUN REVIEW CHECK ===
+      try {
+        const reviewRes = await axios.get(
+          `${API_BASE}/api/reviews/has-reviewed/${orderId}`,
+          { withCredentials: true },
+        );
+        setHasReviewed(reviewRes.data.hasReviewed);
+      } catch (err) {
+        setHasReviewed(false);
+      }
+
+      // 3. === CHECK FOR DRAFT ===
+      const draftKey = `review_draft_${orderId}`;
+      const draft = localStorage.getItem(draftKey);
+      setHasDraft(!!draft);
     } catch (err) {
       const msg =
         err.response?.data?.error?.message ||
@@ -231,7 +258,7 @@ export default function OrderDetailsBuyer() {
               className="action-btn review"
               onClick={() => navigate(`/buyer/reviews/new?id=${orderId}`)}
             >
-              {t('buttons.review')}
+              {hasDraft ? t('continueWriteReview') : t('buttons.review')}
             </button>
             <p className="action-note">{t('notes.reviewNote')}</p>
           </>
