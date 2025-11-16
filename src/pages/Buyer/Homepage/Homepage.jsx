@@ -22,6 +22,10 @@ export default function Homepage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchText, setSearchText] = useState('');
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
+  const [canScrollBackService, setCanScrollBackService] = useState(false);
+  const [canScrollForwardService, setCanScrollForwardService] = useState(false);
 
   // === FETCH PRODUCTS & SERVICES ===
   useEffect(() => {
@@ -68,35 +72,96 @@ export default function Homepage() {
   const getScrollStart = (ref) => {
     if (!ref.current) return 0;
     const { scrollLeft, scrollWidth, clientWidth } = ref.current;
-    return isRTL ? scrollWidth - clientWidth - scrollLeft : scrollLeft;
+
+    // In RTL: scrollLeft = 0 → at end, scrollLeft = +max → at start
+    // We want: 0 = start, max = end
+    return isRTL ? Math.abs(scrollLeft) : scrollLeft;
   };
 
-  const canGoBack = (ref) => getScrollStart(ref) > 50;
+  const canGoBack = (ref) => {
+    if (!ref.current) return false;
+    const start = getScrollStart(ref);
+    return start > 50;
+  };
+
   const canGoForward = (ref) => {
     if (!ref.current) return false;
-    const max = ref.current.scrollWidth - ref.current.clientWidth;
-    return max > 10 && getScrollStart(ref) < max - 10;
+    const { scrollWidth, clientWidth } = ref.current;
+    const max = scrollWidth - clientWidth;
+    const start = getScrollStart(ref);
+    return max > 10 && start < max - 10;
   };
 
   const scrollCarousel = (ref, direction) => {
     if (!ref.current) return;
-    const scrollAmount = 320;
-    const { scrollWidth, clientWidth, scrollLeft } = ref.current;
+
+    // AUTO CALCULATE CARD + GAP
+    const firstCard = ref.current.querySelector('.item-card-wrapper');
+    const cardWidth = firstCard?.offsetWidth || 280;
+    const gap = parseFloat(getComputedStyle(ref.current).gap) || 24;
+    const scrollAmount = cardWidth + gap;
+
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
     const maxScroll = scrollWidth - clientWidth;
 
     let targetScroll;
+
     if (direction === 'right') {
       targetScroll = isRTL
-        ? Math.max(scrollLeft - scrollAmount, 0)
-        : Math.min(scrollLeft + scrollAmount, maxScroll);
+        ? scrollLeft + scrollAmount * -1 // RTL flip
+        : scrollLeft + scrollAmount;
     } else {
       targetScroll = isRTL
-        ? Math.min(scrollLeft + scrollAmount, maxScroll)
-        : Math.max(scrollLeft - scrollAmount, 0);
+        ? scrollLeft - scrollAmount * -1 // RTL flip
+        : scrollLeft - scrollAmount;
     }
 
     ref.current.scrollTo({ left: targetScroll, behavior: 'smooth' });
   };
+  // === UPDATE ARROWS FOR PRODUCTS ===
+  useEffect(() => {
+    const updateArrows = () => {
+      setCanScrollBack(canGoBack(productCarouselRef));
+      setCanScrollForward(canGoForward(productCarouselRef));
+    };
+
+    updateArrows();
+    const carousel = productCarouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('scroll', updateArrows);
+      return () => carousel.removeEventListener('scroll', updateArrows);
+    }
+  }, [products]);
+
+  // ← ADD THIS: Force update on RTL change
+  useEffect(() => {
+    setTimeout(() => {
+      setCanScrollBack(canGoBack(productCarouselRef));
+      setCanScrollForward(canGoForward(productCarouselRef));
+    }, 50);
+  }, [isRTL]);
+
+  // === SAME FOR SERVICES ===
+  useEffect(() => {
+    const updateArrows = () => {
+      setCanScrollBackService(canGoBack(serviceCarouselRef));
+      setCanScrollForwardService(canGoForward(serviceCarouselRef));
+    };
+
+    updateArrows();
+    const carousel = serviceCarouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('scroll', updateArrows);
+      return () => carousel.removeEventListener('scroll', updateArrows);
+    }
+  }, [services]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCanScrollBackService(canGoBack(serviceCarouselRef));
+      setCanScrollForwardService(canGoForward(serviceCarouselRef));
+    }, 50);
+  }, [isRTL]);
 
   // === SMART SEARCH ===
   const handleSmartSearch = (e) => {
@@ -160,12 +225,13 @@ export default function Homepage() {
               <div className="carousel" ref={productCarouselRef}>
                 {products.length > 0 ? (
                   products.map((p) => (
-                    <ItemCard
-                      key={p.productId}
-                      item={mapProduct(p)}
-                      type="product"
-                      isAvailable={mapProduct(p).isAvailable}
-                    />
+                    <div className="item-card-wrapper" key={p.productId}>
+                      <ItemCard
+                        item={mapProduct(p)}
+                        type="product"
+                        isAvailable={mapProduct(p).isAvailable}
+                      />
+                    </div>
                   ))
                 ) : (
                   <p className="text-gray-500 pl-4">
@@ -217,11 +283,9 @@ export default function Homepage() {
               <div className="carousel" ref={serviceCarouselRef}>
                 {services.length > 0 ? (
                   services.map((s) => (
-                    <ItemCard
-                      key={s.serviceId}
-                      item={mapService(s)}
-                      type="service"
-                    />
+                    <div className="item-card-wrapper" key={s.serviceId}>
+                      <ItemCard item={mapService(s)} type="service" />
+                    </div>
                   ))
                 ) : (
                   <p className="text-gray-500 pl-4">

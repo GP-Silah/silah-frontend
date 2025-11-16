@@ -1,8 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { Heart, Star, MapPin, Clock, MessageCircle } from 'lucide-react';
+import {
+  Heart,
+  Star,
+  MapPin,
+  Clock,
+  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import Swal from 'sweetalert2';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 import { useAuth } from '../../context/AuthContext';
@@ -26,6 +34,9 @@ export default function ServiceDetails() {
   const [error, setError] = useState(null);
   const [favorited, setFavorited] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
+  const reviewsCarouselRef = useRef(null);
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
 
   // --------------------------------------------------------------
   // 1. FETCH SERVICE
@@ -176,6 +187,61 @@ export default function ServiceDetails() {
     }
   };
 
+  // === RTL-AWARE SCROLL LOGIC (100% CROSS-BROWSER) ===
+  const scrollCarousel = (ref, direction) => {
+    if (!ref.current) return;
+    const firstCard =
+      ref.current.querySelector('.review-card-wrapper') ||
+      ref.current.children[0];
+    const cardWidth = firstCard?.offsetWidth || 400;
+    const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
+    const scrollAmount = cardWidth + gap;
+    const directionFactor = direction === 'right' ? 1 : -1;
+    const rtlFactor = i18n.language === 'ar' ? -1 : 1;
+    ref.current.scrollBy({
+      left: scrollAmount * directionFactor * rtlFactor,
+      behavior: 'smooth',
+    });
+  };
+
+  // === ARROW VISIBILITY ===
+  const canGoBack = (ref) => {
+    if (!ref.current) return false;
+    const { scrollLeft } = ref.current;
+    return i18n.language === 'ar' ? scrollLeft < -5 : scrollLeft > 5;
+  };
+
+  const canGoForward = (ref) => {
+    if (!ref.current) return false;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    const maxScroll = scrollWidth - clientWidth;
+    return i18n.language === 'ar'
+      ? scrollLeft > -(maxScroll - 5)
+      : scrollLeft < maxScroll - 5;
+  };
+
+  // === UPDATE ARROWS ON SCROLL ===
+  useEffect(() => {
+    const updateArrows = () => {
+      setCanScrollBack(canGoBack(reviewsCarouselRef));
+      setCanScrollForward(canGoForward(reviewsCarouselRef));
+    };
+
+    updateArrows();
+    const carousel = reviewsCarouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('scroll', updateArrows);
+      return () => carousel.removeEventListener('scroll', updateArrows);
+    }
+  }, [reviews, i18n.language]);
+
+  // === RESET SCROLL ON REVIEWS CHANGE ===
+  useEffect(() => {
+    if (reviewsCarouselRef.current) {
+      reviewsCarouselRef.current.scrollLeft = 0;
+    }
+  }, [reviews]);
+
   // --------------------------------------------------------------
   // 6. RENDER
   // --------------------------------------------------------------
@@ -312,15 +378,48 @@ export default function ServiceDetails() {
       </section>
 
       {/* ---------- REVIEWS ---------- */}
+      {/* ---------- REVIEWS ---------- */}
       <section className="sd-reviews">
         <h2>{t('reviewsTitle')}</h2>
         {reviews.length === 0 ? (
           <p className="sd-no-reviews">{t('noReviews')}</p>
         ) : (
-          <div className="sd-reviews-grid">
-            {reviews.map((r) => (
-              <ReviewCard key={r.itemReviewId} review={r} />
-            ))}
+          <div className="carousel-wrapper">
+            <div className="carousel" ref={reviewsCarouselRef}>
+              {reviews.map((r) => (
+                <div className="review-card-wrapper" key={r.itemReviewId}>
+                  <ReviewCard review={r} />
+                </div>
+              ))}
+            </div>
+
+            {/* BACK ARROW */}
+            {canGoBack(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow left"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+              >
+                {i18n.language === 'ar' ? (
+                  <ChevronRight size={20} />
+                ) : (
+                  <ChevronLeft size={20} />
+                )}
+              </button>
+            )}
+
+            {/* FORWARD ARROW */}
+            {canGoForward(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow right"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+              >
+                {i18n.language === 'ar' ? (
+                  <ChevronLeft size={20} />
+                ) : (
+                  <ChevronRight size={20} />
+                )}
+              </button>
+            )}
           </div>
         )}
       </section>

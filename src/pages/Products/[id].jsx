@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
@@ -9,6 +9,8 @@ import {
   MessageCircle,
   Info,
   ShoppingCart,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
@@ -26,7 +28,7 @@ export default function ProductDetails() {
   const { refreshCart } = useCart();
   const isBuyer = role === 'buyer';
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
-  document.documentElement.dir = dir;
+  const isRTL = i18n.language === 'ar';
 
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -40,6 +42,9 @@ export default function ProductDetails() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [groupQuantity, setGroupQuantity] = useState('');
   const [groupQtyError, setGroupQtyError] = useState('');
+  const reviewsCarouselRef = useRef(null);
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
 
   // --------------------------------------------------------------
   // 1. FETCH PRODUCT
@@ -267,6 +272,62 @@ export default function ProductDetails() {
     }
   }, [product, fetchGroupPurchases]); // ← Add this dependency
 
+  // === RESET SCROLL ===
+  useEffect(() => {
+    if (reviewsCarouselRef.current) {
+      reviewsCarouselRef.current.scrollLeft = 0;
+    }
+  }, [reviews]);
+
+  // === RTL-AWARE SCROLL LOGIC (100% CROSS-BROWSER) ===
+  const scrollCarousel = (ref, direction) => {
+    if (!ref.current) return;
+
+    const firstCard =
+      ref.current.querySelector('.review-card-wrapper') ||
+      ref.current.children[0];
+    const cardWidth = firstCard?.offsetWidth || 400;
+    const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
+    const scrollAmount = cardWidth + gap;
+
+    const directionFactor = direction === 'right' ? 1 : -1;
+    const rtlFactor = isRTL ? -1 : 1;
+
+    ref.current.scrollBy({
+      left: scrollAmount * directionFactor * rtlFactor,
+      behavior: 'smooth',
+    });
+  };
+
+  // === ARROW VISIBILITY (SIMPLE & ROBUST) ===
+  const canGoBack = (ref) => {
+    if (!ref.current) return false;
+    const { scrollLeft } = ref.current;
+    return isRTL ? scrollLeft < -5 : scrollLeft > 5;
+  };
+
+  const canGoForward = (ref) => {
+    if (!ref.current) return false;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    const maxScroll = scrollWidth - clientWidth;
+    return isRTL ? scrollLeft > -(maxScroll - 5) : scrollLeft < maxScroll - 5;
+  };
+
+  // === UPDATE ARROWS ON SCROLL ===
+  useEffect(() => {
+    const updateArrows = () => {
+      setCanScrollBack(canGoBack(reviewsCarouselRef));
+      setCanScrollForward(canGoForward(reviewsCarouselRef));
+    };
+
+    updateArrows();
+    const carousel = reviewsCarouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('scroll', updateArrows);
+      return () => carousel.removeEventListener('scroll', updateArrows);
+    }
+  }, [reviews, isRTL]);
+
   // --------------------------------------------------------------
   // 9. RENDER
   // --------------------------------------------------------------
@@ -303,7 +364,7 @@ export default function ProductDetails() {
   const activeGroup = Array.isArray(groupPurchases) ? groupPurchases[0] : null;
 
   return (
-    <div className="product-details" data-dir={dir}>
+    <div className="product-details" dir={dir}>
       {/* SUPPLIER BAR */}
       <div
         className="pd-supplier-bar"
@@ -329,7 +390,6 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
-
       {/* HERO */}
       <section className="pd-hero" style={{ backgroundColor: '#FAF7FC' }}>
         {/* HERO IMAGE WITH BADGE */}
@@ -553,23 +613,46 @@ export default function ProductDetails() {
           )}
         </div>
       </section>
-
       {/* DESCRIPTION */}
       <section className="pd-description">
         <h2>{t('descriptionTitle')}</h2>
         <p>{description}</p>
       </section>
-
       {/* REVIEWS */}
       <section className="pd-reviews">
         <h2>{t('reviewsTitle')}</h2>
+
         {reviews.length === 0 ? (
           <p className="pd-no-reviews">{t('noReviews')}</p>
         ) : (
-          <div className="pd-reviews-grid">
-            {reviews.map((r) => (
-              <ReviewCard key={r.itemReviewId} review={r} />
-            ))}
+          <div className="carousel-wrapper">
+            <div className="carousel" ref={reviewsCarouselRef}>
+              {reviews.map((r) => (
+                <div className="review-card-wrapper" key={r.itemReviewId}>
+                  <ReviewCard review={r} />
+                </div>
+              ))}
+            </div>
+
+            {/* BACK ARROW — LEFT in LTR, RIGHT in RTL */}
+            {canGoBack(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow left"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+              >
+                {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              </button>
+            )}
+
+            {/* FORWARD ARROW — RIGHT in LTR, LEFT in RTL */}
+            {canGoForward(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow right"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+              >
+                {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+              </button>
+            )}
           </div>
         )}
       </section>

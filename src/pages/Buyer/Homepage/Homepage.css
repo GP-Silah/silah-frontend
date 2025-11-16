@@ -197,3 +197,31 @@
     display: none;
   }
 }
+
+/* ————————————————————————
+   ITEM CARD WRAPPER — FORCE WIDTH
+   ———————————————————————— */
+.carousel {
+  display: flex;
+  gap: 3rem; /* 24px */
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.carousel .item-card-wrapper {
+  flex: 0 0 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+}
+
+/* Prevent any override */
+.carousel .item-card-wrapper {
+  flex: 0 0 280px !important;
+  min-width: 280px !important;
+  max-width: 280px !important;
+  box-sizing: border-box;
+}
