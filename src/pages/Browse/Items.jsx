@@ -4,14 +4,13 @@ import axios from 'axios';
 import qs from 'qs';
 import { useTranslation } from 'react-i18next';
 import ItemCard from '@/components/ItemCard/ItemCard';
-import './BrowseByCategory.css';
+import styles from './BrowseByCategory.module.css'; // ← فقط غيرت هذا السطر
 
 export default function BrowseByCategoryItems() {
   const { i18n, t } = useTranslation('browseByCategory');
   const lang = i18n.language || 'en';
   const location = useLocation();
   const navigate = useNavigate();
-
   const [categories, setCategories] = useState([]);
   const [selectedMainCat, setSelectedMainCat] = useState(null);
   const [selectedSubCat, setSelectedSubCat] = useState(null);
@@ -36,7 +35,6 @@ export default function BrowseByCategoryItems() {
     let cancelled = false;
     setLoadingCategories(true);
     setError(null);
-
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}/api/categories`, {
         params: { lang },
@@ -57,7 +55,6 @@ export default function BrowseByCategoryItems() {
       .finally(() => {
         if (!cancelled) setLoadingCategories(false);
       });
-
     return () => {
       cancelled = true;
     };
@@ -67,8 +64,6 @@ export default function BrowseByCategoryItems() {
   useEffect(() => {
     setSelectedMainCat(null);
     setSelectedSubCat(null);
-
-    // no ID or categories not loaded yet
     if (!categoryIdParam || categories.length === 0) return;
 
     let foundMain = categories.find(
@@ -79,7 +74,6 @@ export default function BrowseByCategoryItems() {
       setSelectedSubCat(null);
       return;
     }
-
     for (const main of categories) {
       const foundSub = (main.subcategories || []).find(
         (s) => String(s.id) === String(categoryIdParam),
@@ -90,8 +84,6 @@ export default function BrowseByCategoryItems() {
         return;
       }
     }
-
-    // if not found
     setError(t('invalidCategoryId'));
   }, [categoryIdParam, categories, t]);
 
@@ -102,7 +94,7 @@ export default function BrowseByCategoryItems() {
       setError(t('noCategoryProvided'));
       return;
     }
-    if (!selectedMainCat) return; // wait for valid category
+    if (!selectedMainCat) return;
 
     const usedFor = selectedMainCat.usedFor;
     const isProduct = usedFor === 'PRODUCT';
@@ -110,7 +102,6 @@ export default function BrowseByCategoryItems() {
       ? '/api/search/products'
       : '/api/search/services';
     const params = { lang };
-
     if (selectedSubCat) {
       params.category = selectedMainCat.id;
       params.subcategory = selectedSubCat.id;
@@ -121,7 +112,6 @@ export default function BrowseByCategoryItems() {
     let cancelled = false;
     setLoadingItems(true);
     setError(null);
-
     axios
       .get(`${import.meta.env.VITE_BACKEND_URL}${endpoint}`, { params })
       .then((res) => {
@@ -140,7 +130,6 @@ export default function BrowseByCategoryItems() {
       .finally(() => {
         if (!cancelled) setLoadingItems(false);
       });
-
     return () => {
       cancelled = true;
     };
@@ -158,7 +147,6 @@ export default function BrowseByCategoryItems() {
     navigate(`/browse/items?categoryId=${encodeURIComponent(main.id)}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
   const onSelectSub = (main, sub) => {
     navigate(`/browse/items?categoryId=${encodeURIComponent(sub.id)}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -171,15 +159,19 @@ export default function BrowseByCategoryItems() {
       return (
         <>
           {t('browsing')}{' '}
-          <span className="breadcrumb-main">{selectedMainCat.name}</span>
+          <span className={styles['breadcrumb-main']}>
+            {selectedMainCat.name}
+          </span>
         </>
       );
     return (
       <>
         {t('browsing')}{' '}
-        <span className="breadcrumb-main">{selectedMainCat.name}</span>
-        <span className="breadcrumb-sep"> &nbsp;›&nbsp; </span>
-        <span className="breadcrumb-sub">{selectedSubCat.name}</span>
+        <span className={styles['breadcrumb-main']}>
+          {selectedMainCat.name}
+        </span>
+        <span className={styles['breadcrumb-sep']}> › </span>
+        <span className={styles['breadcrumb-sub']}>{selectedSubCat.name}</span>
       </>
     );
   };
@@ -187,32 +179,35 @@ export default function BrowseByCategoryItems() {
   const EffectiveItemCard = ItemCard;
 
   return (
-    <div className={`browse-by-category ${lang === 'ar' ? 'rtl' : 'ltr'}`}>
-      <div className="container">
-        <aside className="side-menu">
+    <div
+      className={`${styles['browse-by-category']} ${
+        lang === 'ar' ? styles.rtl : styles.ltr
+      }`}
+    >
+      <div className={styles.container}>
+        <aside className={styles['side-menu']}>
           {loadingCategories && (
-            <div className="muted">{t('loadingCategories')}</div>
+            <div className={styles.muted}>{t('loadingCategories')}</div>
           )}
-
           {!loadingCategories && categories.length > 0 && (
-            <nav className="menu-list" aria-label={t('categories')}>
+            <nav className={styles['menu-list']} aria-label={t('categories')}>
               {selectedMainCat && (
-                <div className="menu-main active">
+                <div className={`${styles['menu-main']} ${styles.active}`}>
                   <div
-                    className="menu-main-title"
+                    className={styles['menu-main-title']}
                     onClick={() => onSelectMain(selectedMainCat)}
                   >
                     {selectedMainCat.name}
                   </div>
-                  <div className="menu-divider" />
+                  <div className={styles['menu-divider']} />
                   {selectedMainCat.subcategories &&
                     selectedMainCat.subcategories.length > 0 && (
-                      <div className="menu-sub-list">
+                      <div className={styles['menu-sub-list']}>
                         {selectedMainCat.subcategories.map((sub) => (
                           <div
                             key={sub.id}
-                            className={`menu-sub ${
-                              selectedSubCat?.id === sub.id ? 'active' : ''
+                            className={`${styles['menu-sub']} ${
+                              selectedSubCat?.id === sub.id ? styles.active : ''
                             }`}
                             onClick={() => onSelectSub(selectedMainCat, sub)}
                           >
@@ -227,26 +222,25 @@ export default function BrowseByCategoryItems() {
           )}
         </aside>
 
-        {/* ✅ Main content */}
-        <main className="content">
-          <div className="topbar">
-            <h2 className="heading">{renderHeading()}</h2>
+        <main className={styles.content}>
+          <div className={styles.topbar}>
+            <h2 className={styles.heading}>{renderHeading()}</h2>
           </div>
-
-          {loadingItems && <div className="muted">{t('loadingItems')}</div>}
-
-          {!loadingItems && error && <div className="error">{error}</div>}
-
-          {!loadingItems && !error && items.length === 0 && (
-            <div className="no-items">{t('noItemsFound')}</div>
+          {loadingItems && (
+            <div className={styles.muted}>{t('loadingItems')}</div>
           )}
-
+          {!loadingItems && error && (
+            <div className={styles.error}>{error}</div>
+          )}
+          {!loadingItems && !error && items.length === 0 && (
+            <div className={styles['no-items']}>{t('noItemsFound')}</div>
+          )}
           {!loadingItems && !error && items.length > 0 && (
-            <div className="items-grid">
+            <div className={styles['items-grid']}>
               {items.map((it) => (
                 <div
                   key={it.productId ?? it.serviceId ?? it.id}
-                  className="item-wrapper"
+                  className={styles['item-wrapper']}
                 >
                   <EffectiveItemCard
                     item={it}

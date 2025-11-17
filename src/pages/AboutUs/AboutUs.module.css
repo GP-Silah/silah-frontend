@@ -3,39 +3,33 @@
   color: #000;
   line-height: 1.6;
 }
-
 .about-header {
   background-color: #2f3c73;
   color: #fff;
   padding: 80px 20px;
   text-align: center;
 }
-
 .section-label {
   font-size: 30px;
   margin-bottom: 20px;
   color: #ffffff;
 }
-
 .about-header h1 {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 20px;
 }
-
 .subtitle {
   font-size: 18px;
   font-weight: normal;
   margin-bottom: 20px;
 }
-
 .about-header blockquote {
   font-size: 16px;
   font-style: italic;
   color: #dcdcdc;
   margin-top: 15px;
 }
-
 /* Story/Mission/Vision */
 .story-mission-vision {
   background: #fff;
@@ -64,7 +58,6 @@
   text-align: left;
   padding-right: 40px;
 }
-
 .core-values {
   background: #562c72;
   color: #fff;
@@ -83,7 +76,6 @@
 .core-values li {
   margin: 12px 0;
 }
-
 .cta {
   background: #fff;
   text-align: center;
@@ -112,7 +104,6 @@
 .cta-btn:hover {
   background-color: #45245b;
 }
-
 /* Responsive */
 @media (max-width: 768px) {
   .smv-item {
@@ -122,42 +113,34 @@
     margin-bottom: 10px;
   }
 }
-
 .fade-section {
   opacity: 0;
   transform: translateY(50px);
   transition: all 1s ease-out;
 }
-
 .fade-section.visible {
   opacity: 1;
   transform: translateY(0);
 }
-
 /* يخلي كل السكشنات RTL لما تكون لغة عربية */
 .lang-ar .story-mission-vision {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
-
 .lang-ar .smv-item {
   text-align: right; /* يخلي النصوص يمين */
 }
-
 .lang-ar .smv-item h2 {
   margin-bottom: 0.5rem;
   text-align: right;
-  /*margin-right: 400px;*/
   transform: translateX(-170px);
 }
-
 .lang-ar .smv-item p {
   text-align: right;
   line-height: 1.8;
   transform: translateX(-10px);
 }
-
 .lang-en .smv-item {
   text-align: left;
 }
@@ -167,12 +150,10 @@
 .lang-en .smv-item p {
   text-align: left;
 }
-
 .lang-ar .about-page {
   direction: rtl;
   text-align: right;
 }
-
 .lang-en .about-page {
   direction: ltr;
   text-align: left;

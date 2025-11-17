@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import './ItemCard.css';
+import styles from './ItemCard.module.css'; // Fixed import
 
 function ItemCard({
   type = 'product',
@@ -17,7 +17,6 @@ function ItemCard({
   const navigate = useNavigate();
   const [favorited, setFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const fixedMessage = i18n.language === 'ar' ? 'ثابت' : 'Fixed';
   const outOfStockText = i18n.language === 'ar' ? 'غير متوفر' : 'Out of Stock';
 
@@ -80,7 +79,6 @@ function ItemCard({
       });
       return;
     }
-
     try {
       setLoading(true);
       const res = await axios.patch(
@@ -100,7 +98,6 @@ function ItemCard({
     } catch (err) {
       console.error('Wishlist toggle failed:', err);
       const errorMessage = err.response?.data?.error?.message;
-
       if (errorMessage === 'No token found in cookies') {
         await Swal.fire({
           icon: 'warning',
@@ -112,7 +109,6 @@ function ItemCard({
         });
         return;
       }
-
       Swal.fire({
         icon: 'error',
         title: t('error.genericTitle'),
@@ -145,14 +141,14 @@ function ItemCard({
   return (
     <div
       className={`
-    item-card
-    ${loading ? 'opacity-70 pointer-events-none' : ''}
-    ${!isAvailable ? 'out-of-stock' : ''}
-  `.trim()}
+        ${styles['item-card']}
+        ${loading ? 'opacity-70 pointer-events-none' : ''}
+        ${!isAvailable ? styles['out-of-stock'] : ''}
+      `.trim()}
       onClick={handleCardClick}
     >
       {/* Image */}
-      <div className="image-container">
+      <div className={styles['image-container']}>
         <img
           src={image}
           alt={name}
@@ -160,12 +156,12 @@ function ItemCard({
         />
         {/* Out of Stock Badge */}
         {!isAvailable && (
-          <div className="out-of-stock-badge">{outOfStockText}</div>
+          <div className={styles['out-of-stock-badge']}>{outOfStockText}</div>
         )}
         {/* Heart icon */}
         <button
           onClick={handleFavorite}
-          className="heart-btn"
+          className={styles['heart-btn']}
           disabled={loading}
         >
           <Heart
@@ -179,33 +175,35 @@ function ItemCard({
       </div>
 
       {/* Card content */}
-      <div className="card-content">
+      <div className={styles['card-content']}>
         <h3>{name}</h3>
-        <p className="supplier-name clickable" onClick={handleSupplierClick}>
+        <p
+          className={`${styles['supplier-name']} ${styles.clickable}`}
+          onClick={handleSupplierClick}
+        >
           {supplierName}
         </p>
-        <div className="rating-price">
-          <div className="rating">
+        <div className={styles['rating-price']}>
+          <div className={styles.rating}>
             <Star fill="#facc15" stroke="#facc15" size={16} />
             <span className="text-sm text-gray-700">
               {avgRating.toFixed(1)} ({ratingsCount})
             </span>
           </div>
-          <div className="price">
-            {price} <img src="/riyal.png" alt="SAR" className="sar" />
+          <div className={styles.price}>
+            {price} <img src="/riyal.png" alt="SAR" className={styles.sar} />
             {type === 'service' && !isPriceNegotiable
               ? ' •' + fixedMessage
               : ''}
           </div>
         </div>
-
         {showAlternatives && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/buyer/alternatives?itemId=${_id}`);
             }}
-            className="alternatives-btn"
+            className={styles['alternatives-btn']}
           >
             {t('findAlternatives')}
           </button>

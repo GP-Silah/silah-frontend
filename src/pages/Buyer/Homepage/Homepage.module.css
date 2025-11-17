@@ -225,3 +225,14 @@
   max-width: 280px !important;
   box-sizing: border-box;
 }
+
+/* ————————————————————————
+   FIX: Force SVG icons to have size (after ItemCard became module)
+   ———————————————————————— */
+.carousel-arrow svg,
+.smart-search-icon {
+  min-width: 20px !important;
+  min-height: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
