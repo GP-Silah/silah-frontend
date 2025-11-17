@@ -19,8 +19,7 @@ function WishlistPage() {
   }, [i18n, i18n.language, t]);
 
   const isRTL = i18n.language === 'ar';
-  //////
-  // Dummy data
+
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -46,7 +45,8 @@ function WishlistPage() {
             ratingsCount: base?.ratingsCount,
             type: isProduct ? 'product' : 'service',
             imagesFilesUrls: base?.imagesFilesUrls,
-            supplier: base.supplier,
+            supplier: base?.supplier,
+            isAvailable: isProduct ? base?.stock > 0 : true,
           };
         });
 
@@ -59,7 +59,7 @@ function WishlistPage() {
     };
 
     fetchWishlist();
-  }, []);
+  }, [t]);
 
   // Derived counts
   const counts = useMemo(() => {
@@ -144,9 +144,8 @@ function WishlistPage() {
                   key={item._id}
                   item={item}
                   type={item.type}
-                  // isAvailable={item.type === 'product' ? item.stock > 0 : true}
-                  isAvailable={item.type === 'product'}
                   showAlternatives={true}
+                  isAvailable={item.isAvailable}
                 />
               ))
             )}

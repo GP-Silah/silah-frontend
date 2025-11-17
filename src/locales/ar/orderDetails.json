@@ -46,5 +46,9 @@
   },
 
   "unknown": "غير معروف",
-  "sarAlt": "ر.س"
+  "sarAlt": "ر.س",
+  "confirmedMsg": "لقد أكدت استلام الطلب",
+  "writeReview": "اكتب تقييمًا",
+  "continueWriteReview": "استكمل كتابة التقيمم",
+  "alreadyReviewed": "لقد قيمت هذا بالفعل."
 }

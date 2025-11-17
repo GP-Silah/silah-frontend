@@ -32,6 +32,8 @@ const InvoiceDetails = () => {
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(null); // null = checking, false = can review
+  const [hasDraft, setHasDraft] = useState(false);
 
   // -------------------------------------------------
   // FETCH INVOICE
@@ -52,6 +54,28 @@ const InvoiceDetails = () => {
           headers: { 'accept-language': i18n.language },
         });
         setInvoice(res.data);
+
+        // === NEW: Check if already reviewed (only if FULLY_PAID)
+        if (res.data.status === 'FULLY_PAID') {
+          try {
+            const reviewRes = await axios.get(
+              `${API_BASE}/api/reviews/has-reviewed/${id}`,
+              { withCredentials: true },
+            );
+            setHasReviewed(reviewRes.data.hasReviewed); // true or false
+          } catch (err) {
+            // 404 → not reviewed
+            // 401/403 → ignore, assume false
+            setHasReviewed(false);
+          }
+        }
+
+        // === CHECK FOR DRAFT ===
+        if (res.data.status === 'FULLY_PAID') {
+          const draftKey = `review_draft_${id}`;
+          const draft = localStorage.getItem(draftKey);
+          setHasDraft(!!draft);
+        }
       } catch (err) {
         const msg = err.response?.data?.error?.message || t('errors.notFound');
         setError(msg);
@@ -60,6 +84,7 @@ const InvoiceDetails = () => {
         setLoading(false);
       }
     };
+
     fetchInvoice();
   }, [id, i18n.language, navigate, t]);
 
@@ -544,6 +569,25 @@ const InvoiceDetails = () => {
             )}
           </button>
         </div>
+      )}
+
+      {/* WRITE A REVIEW BUTTON */}
+      {invoice.status === 'FULLY_PAID' && (
+        <div className={styles.actionButtons}>
+          {hasReviewed === false && (
+            <button
+              onClick={() => navigate(`/buyer/reviews/new?id=${id}`)}
+              className={`${styles.actionBtn} ${styles.reviewBtn}`}
+            >
+              {hasDraft ? t('continueWriteReview') : t('writeReview')}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Already reviewed */}
+      {invoice.status === 'FULLY_PAID' && hasReviewed === true && (
+        <div className="confirmed-msg reviewed">{t('alreadyReviewed')}</div>
       )}
     </div>
   );

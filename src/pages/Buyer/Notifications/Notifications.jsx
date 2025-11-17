@@ -9,7 +9,7 @@ import {
   FaUsers,
   FaCheck,
 } from 'react-icons/fa';
-import './Notifications.css';
+import styles from './Notifications.module.css';
 
 const TYPE_ICONS = {
   CHAT: FaEnvelope,
@@ -25,7 +25,7 @@ export default function BuyerNotifications() {
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
-  const { notifications, markAllAsRead, markSingleAsRead } = useOutletContext(); // ← من Layout
+  const { notifications, markAllAsRead, markSingleAsRead } = useOutletContext();
 
   const [loading, setLoading] = useState(true);
   const [typeOpen, setTypeOpen] = useState(false);
@@ -33,17 +33,17 @@ export default function BuyerNotifications() {
   const [selectedType, setSelectedType] = useState(t('allNotifications'));
   const [selectedDate, setSelectedDate] = useState(t('allDays'));
 
-  // === Loading فقط أول مرة ===
+  // Stop loading once we have data
   useEffect(() => {
     if (notifications.length > 0) {
       setLoading(false);
     }
   }, [notifications]);
 
-  // === Close dropdowns ===
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClick = (e) => {
-      if (!e.target.closest('.page-dropdown')) {
+      if (!e.target.closest(`.${styles['page-dropdown']}`)) {
         setTypeOpen(false);
         setDateOpen(false);
       }
@@ -52,9 +52,10 @@ export default function BuyerNotifications() {
     return () => document.removeEventListener('click', handleClick);
   }, []);
 
-  // === Handle Click ===
+  // Handle notification click + navigation
   const handleNotificationClick = (n) => {
     if (!n.isRead) markSingleAsRead(n.notificationId);
+
     switch (n.relatedEntityType) {
       case 'CHAT':
         navigate(`/buyer/chats`);
@@ -63,20 +64,22 @@ export default function BuyerNotifications() {
         navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       case 'OFFER':
+        // Offers might not have direct navigation yet
         break;
       case 'ORDER':
         navigate(`/buyer/orders/${n.relatedEntityId}`);
         break;
       case 'GROUP_PURCHASE':
-        navigate(`/buyer/invoices`);
+        navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       default:
         break;
     }
   };
 
-  // === Filter Logic ===
+  // Filter notifications
   const filtered = notifications.filter((n) => {
+    // Type filter
     if (selectedType !== t('allNotifications')) {
       const typeMap = {
         [t('newMessages')]: 'CHAT',
@@ -87,9 +90,12 @@ export default function BuyerNotifications() {
       };
       if (typeMap[selectedType] !== n.relatedEntityType) return false;
     }
+
+    // Date filter
     if (selectedDate !== t('allDays')) {
       const today = new Date();
       const created = new Date(n.createdAt);
+
       if (selectedDate === t('today') && !isSameDay(created, today))
         return false;
       if (selectedDate === t('thisWeek') && !isThisWeek(created)) return false;
@@ -99,23 +105,25 @@ export default function BuyerNotifications() {
       )
         return false;
     }
+
     return true;
   });
 
   return (
-    <div className="buyer-notif-page" data-dir={dir}>
-      <div className="page-notif-header">
-        <div className="page-filters-center">
-          {/* === Type Filter === */}
-          <div className="page-notif-filter-inline">
-            <span className="page-filter-label">{t('type')}</span>
-            <div className="page-dropdown">
+    <div className={styles['buyer-notif-page']} data-dir={dir}>
+      {/* Header */}
+      <div className={styles['page-notif-header']}>
+        <div className={styles['page-filters-center']}>
+          {/* Type Filter */}
+          <div className={styles['page-notif-filter-inline']}>
+            <span className={styles['page-filter-label']}>{t('type')}</span>
+            <div className={styles['page-dropdown']}>
               <button onClick={() => setTypeOpen((prev) => !prev)}>
                 {selectedType} ▼
               </button>
               {typeOpen && (
                 <div
-                  className="page-dropdown-menu page-type-menu"
+                  className={`${styles['page-dropdown-menu']} ${styles['page-type-menu']}`}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {[
@@ -128,7 +136,7 @@ export default function BuyerNotifications() {
                   ].map((opt) => (
                     <div
                       key={opt}
-                      className="page-dropdown-item"
+                      className={styles['page-dropdown-item']}
                       onClick={() => {
                         setSelectedType(opt);
                         setTypeOpen(false);
@@ -142,16 +150,16 @@ export default function BuyerNotifications() {
             </div>
           </div>
 
-          {/* === Date Filter === */}
-          <div className="page-notif-filter-inline">
-            <span className="page-filter-label">{t('date')}</span>
-            <div className="page-dropdown">
+          {/* Date Filter */}
+          <div className={styles['page-notif-filter-inline']}>
+            <span className={styles['page-filter-label']}>{t('date')}</span>
+            <div className={styles['page-dropdown']}>
               <button onClick={() => setDateOpen((prev) => !prev)}>
                 {selectedDate} ▼
               </button>
               {dateOpen && (
                 <div
-                  className="page-dropdown-menu page-date-menu"
+                  className={`${styles['page-dropdown-menu']} ${styles['page-date-menu']}`}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {[
@@ -162,7 +170,7 @@ export default function BuyerNotifications() {
                   ].map((opt) => (
                     <div
                       key={opt}
-                      className="page-dropdown-item"
+                      className={styles['page-dropdown-item']}
                       onClick={() => {
                         setSelectedDate(opt);
                         setDateOpen(false);
@@ -177,45 +185,48 @@ export default function BuyerNotifications() {
           </div>
         </div>
 
-        {/* === Mark All as Read Button === */}
-        <button className="page-mark-all-btn" onClick={markAllAsRead}>
+        <button className={styles['page-mark-all-btn']} onClick={markAllAsRead}>
           {t('markAllRead')}
         </button>
       </div>
 
-      {/* === Notifications List === */}
-      <div className="page-notif-list">
+      {/* Notifications List */}
+      <div className={styles['page-notif-list']}>
         {loading ? (
-          <div className="page-loading">{t('loading')}</div>
+          <div className={styles['page-loading']}>{t('loading')}</div>
         ) : filtered.length === 0 ? (
-          <div className="page-empty">{t('noNotifications')}</div>
+          <div className={styles['page-empty']}>{t('noNotifications')}</div>
         ) : (
           filtered.map((n) => {
             const Icon = TYPE_ICONS[n.relatedEntityType] || FaEnvelope;
             return (
               <div
                 key={n.notificationId}
-                className={`page-notif-item ${n.isRead ? '' : 'page-unread'}`}
+                className={`${styles['page-notif-item']} ${
+                  !n.isRead ? styles['page-unread'] : ''
+                }`}
                 onClick={() => handleNotificationClick(n)}
               >
-                {!n.isRead && <span className="page-unread-dot" />}
-                <div className="page-notif-icon-circle">
+                {!n.isRead && <span className={styles['page-unread-dot']} />}
+                <div className={styles['page-notif-icon-circle']}>
                   <Icon />
                 </div>
-                <div className="page-notif-content">
-                  <div className="page-notif-title">{n.title}</div>
-                  <div className="page-notif-message">{n.content}</div>
+                <div className={styles['page-notif-content']}>
+                  <div className={styles['page-notif-title']}>{n.title}</div>
+                  <div className={styles['page-notif-message']}>
+                    {n.content}
+                  </div>
                 </div>
-                <div className="page-notif-meta">
-                  <div className="page-notif-date">
+                <div className={styles['page-notif-meta']}>
+                  <div className={styles['page-notif-date']}>
                     {formatDate(n.createdAt, i18n.language)}
                   </div>
-                  <div className="page-notif-time">
+                  <div className={styles['page-notif-time']}>
                     {formatTime(n.createdAt)}
                   </div>
                   {!n.isRead && (
                     <button
-                      className="page-mark-read-btn"
+                      className={styles['page-mark-read-btn']}
                       onClick={(e) => {
                         e.stopPropagation();
                         markSingleAsRead(n.notificationId);
@@ -234,7 +245,7 @@ export default function BuyerNotifications() {
   );
 }
 
-// === Helpers ===
+// Helper functions
 const formatDate = (iso, lang) => {
   const date = new Date(iso);
   return date.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {

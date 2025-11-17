@@ -13,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import './Listings.css';
+import styles from './Listings.module.css';
 
 const API_BASE = `${import.meta.env.VITE_BACKEND_URL}`;
 
@@ -21,7 +21,6 @@ export default function Listings() {
   const { t, i18n } = useTranslation('listings');
   const navigate = useNavigate();
   const { user, role, supplierStatus, supplierId } = useAuth();
-
   const isRTL = i18n.dir() === 'rtl';
   const isSupplier = role === 'supplier';
   const isActive = supplierStatus === 'ACTIVE';
@@ -40,7 +39,7 @@ export default function Listings() {
     document.documentElement.setAttribute('dir', dir);
   }, [t, i18n.language]);
 
-  // Tooltip: show for 3s on mount if not premium
+  // Show tooltip for non-premium users
   useEffect(() => {
     if (!isPremium) {
       setShowTooltip(true);
@@ -49,15 +48,12 @@ export default function Listings() {
     }
   }, [isPremium]);
 
-  // ----------------------------------------------------------------------
-  //  FETCH ALL ITEMS – axios + withCredentials
-  // ----------------------------------------------------------------------
+  // Fetch all items
   const fetchItems = useCallback(async () => {
     if (!supplierId) {
-      setLoading(false); // prevent stuck loading
+      setLoading(false);
       return;
     }
-
     setLoading(true);
     try {
       const [prodRes, servRes] = await Promise.all([
@@ -97,16 +93,10 @@ export default function Listings() {
       });
 
       const mapped = [
-        // Products: newest first
-        ...(products || [])
-          .map(mapProduct)
-          .sort((a, b) => b.createdAt - a.createdAt),
-
-        // Services: newest first
-        ...(services || [])
-          .map(mapService)
-          .sort((a, b) => b.createdAt - a.createdAt),
+        ...(products || []).map(mapProduct),
+        ...(services || []).map(mapService),
       ];
+
       setItems(mapped);
     } catch (err) {
       const message =
@@ -117,14 +107,11 @@ export default function Listings() {
     }
   }, [supplierId, i18n.language, t]);
 
-  // Re-run when supplierId becomes available
   useEffect(() => {
     fetchItems();
-  }, [fetchItems, supplierId]);
+  }, [fetchItems]);
 
-  // ----------------------------------------------------------------------
-  //  SEARCH – axios + withCredentials
-  // ----------------------------------------------------------------------
+  // Search with debounce
   useEffect(() => {
     if (!search.trim()) {
       fetchItems();
@@ -176,9 +163,7 @@ export default function Listings() {
     return () => clearTimeout(timer);
   }, [search, t, i18n.language]);
 
-  // ----------------------------------------------------------------------
-  //  BULK ACTIONS – axios + withCredentials
-  // ----------------------------------------------------------------------
+  // Bulk actions
   const performBulkAction = async (action) => {
     if (!selectedIds.length) return;
 
@@ -224,18 +209,10 @@ export default function Listings() {
     });
   };
 
-  // ----------------------------------------------------------------------
-  //  UI LOGIC (unchanged)
-  // ----------------------------------------------------------------------
+  // Filtering & selection
   const filtered = useMemo(() => {
     if (filter === 'all') return items;
-
-    // map UI label → real item.type
-    const typeMap = {
-      products: 'product',
-      services: 'service',
-    };
-
+    const typeMap = { products: 'product', services: 'service' };
     const target = typeMap[filter];
     return target ? items.filter((i) => i.type === target) : items;
   }, [items, filter]);
@@ -277,15 +254,12 @@ export default function Listings() {
     navigate(`/supplier/demand/${id}`);
   };
 
-  // ----------------------------------------------------------------------
-  //  RENDER
-  // ----------------------------------------------------------------------
   return (
-    <div className="listings-page" dir={i18n.dir()}>
+    <div className={styles['listings-page']} dir={i18n.dir()}>
       {/* Toolbar */}
-      <div className="toolbar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
+      <div className={styles.toolbar}>
+        <div className={styles['search-box']}>
+          <FaSearch className={styles['search-icon']} />
           <input
             type="text"
             placeholder={t('searchPlaceholder')}
@@ -294,11 +268,13 @@ export default function Listings() {
           />
         </div>
 
-        <div className="ls-filters">
+        <div className={styles['ls-filters']}>
           {['all', 'products', 'services'].map((f) => (
             <label
               key={f}
-              className={`filter-radio ${filter === f ? 'active' : ''}`}
+              className={`${styles['filter-radio']} ${
+                filter === f ? styles.active : ''
+              }`}
             >
               <input
                 type="radio"
@@ -311,22 +287,28 @@ export default function Listings() {
           ))}
         </div>
 
-        <div className="add-buttons">
-          <button className="btn-outline" onClick={() => goToCreate('product')}>
+        <div className={styles['add-buttons']}>
+          <button
+            className={styles['btn-outline']}
+            onClick={() => goToCreate('product')}
+          >
             {t('buttons.addProduct')}
           </button>
-          <button className="btn-primary" onClick={() => goToCreate('service')}>
+          <button
+            className={styles['btn-primary']}
+            onClick={() => goToCreate('service')}
+          >
             {t('buttons.addService')}
           </button>
         </div>
       </div>
 
       {/* Action Bar */}
-      <div className="action-bar">
+      <div className={styles['action-bar']}>
         <span>{t('selectHint')}</span>
-        <div className="action-buttons">
+        <div className={styles['action-buttons']}>
           <button
-            className="action-btn"
+            className={styles['action-btn']}
             disabled={!canEdit}
             onClick={() =>
               goToDetails(items.find((i) => i.id === selectedIds[0]))
@@ -335,25 +317,25 @@ export default function Listings() {
             <FaEdit /> {t('actions.edit')}
           </button>
           <button
-            className="action-btn"
+            className={styles['action-btn']}
             onClick={() => performBulkAction('publish')}
           >
             <FaRegEye /> {t('actions.publish')}
           </button>
           <button
-            className="action-btn"
+            className={styles['action-btn']}
             onClick={() => performBulkAction('unpublish')}
           >
             <FaRegEyeSlash /> {t('actions.unpublish')}
           </button>
           <button
-            className="action-btn"
+            className={styles['action-btn']}
             onClick={() => performBulkAction('duplicate')}
           >
             <FaCopy /> {t('actions.duplicate')}
           </button>
           <button
-            className="action-btn danger"
+            className={`${styles['action-btn']} ${styles.danger}`}
             onClick={() => performBulkAction('delete')}
           >
             <FaTrashAlt /> {t('actions.delete')}
@@ -362,8 +344,8 @@ export default function Listings() {
       </div>
 
       {/* Table */}
-      <div className="table-container">
-        <table className="listings-table">
+      <div className={styles['table-container']}>
+        <table className={styles['listings-table']}>
           <thead>
             <tr>
               <th>
@@ -375,10 +357,12 @@ export default function Listings() {
               </th>
               <th>{t('columns.image')}</th>
               <th>{t('columns.name')}</th>
-              <th className="wishlist-header">
-                <FaHeart className="wishlist-header-icon" />
+              <th className={styles['wishlist-header']}>
+                <FaHeart className={styles['wishlist-header-icon']} />
                 {!isPremium && showTooltip && (
-                  <div className="wishlist-tooltip">{t('wishlistBlur')}</div>
+                  <div className={styles['wishlist-tooltip']}>
+                    {t('wishlistBlur')}
+                  </div>
                 )}
               </th>
               <th>{t('columns.price')}</th>
@@ -390,13 +374,13 @@ export default function Listings() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={8} className="empty">
+                <td colSpan={8} className={styles.empty}>
                   {t('loading')}
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="empty">
+                <td colSpan={8} className={styles.empty}>
                   {t('empty')}
                 </td>
               </tr>
@@ -405,7 +389,7 @@ export default function Listings() {
                 <tr
                   key={item.id}
                   onClick={() => goToDetails(item)}
-                  className="clickable-row"
+                  className={styles['clickable-row']}
                 >
                   <td onClick={(e) => e.stopPropagation()}>
                     <input
@@ -415,7 +399,7 @@ export default function Listings() {
                     />
                   </td>
                   <td>
-                    <div className="thumb">
+                    <div className={styles.thumb}>
                       <img
                         src={item.img}
                         alt={item.name}
@@ -426,33 +410,37 @@ export default function Listings() {
                     </div>
                   </td>
                   <td>
-                    <div className="name-cell">
-                      <span className="type-tag">{t(`type.${item.type}`)}</span>
-                      <span className="item-name">{item.name}</span>
+                    <div className={styles['name-cell']}>
+                      <span className={styles['type-tag']}>
+                        {t(`type.${item.type}`)}
+                      </span>
+                      <span className={styles['item-name']}>{item.name}</span>
                     </div>
                   </td>
                   <td>
                     {isPremium ? (
-                      <span className="wishlist-count">{item.wishlist}</span>
+                      <span className={styles['wishlist-count']}>
+                        {item.wishlist}
+                      </span>
                     ) : (
-                      <span className="wishlist-blurred">—</span>
+                      <span className={styles['wishlist-blurred']}>—</span>
                     )}
                   </td>
                   <td>{item.price != null ? item.price : '—'}</td>
                   <td>{item.stock != null ? item.stock : '—'}</td>
                   <td>
                     <span
-                      className={`status-badge ${
-                        item.status === 'published' ? 'pub' : 'unpub'
+                      className={`${styles['status-badge']} ${
+                        item.status === 'published' ? styles.pub : styles.unpub
                       }`}
                     >
                       {t(`status.${item.status}`)}
                     </span>
                   </td>
                   <td onClick={(e) => e.stopPropagation()}>
-                    {item.type === 'product' && ( // ← only products
+                    {item.type === 'product' && (
                       <button
-                        className="predict-btn"
+                        className={styles['predict-btn']}
                         onClick={() => handlePredict(item.id)}
                       >
                         {t('columns.predict')}

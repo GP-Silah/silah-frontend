@@ -1,9 +1,21 @@
-// src/pages/SupplierStorefront.jsx
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import { Star, MapPin, MessageCircle, AlertCircle } from 'lucide-react';
+import {
+  Star,
+  MapPin,
+  MessageCircle,
+  AlertCircle,
+  ChevronRight,
+  ChevronLeft,
+} from 'lucide-react';
 import ItemCard from '../../components/ItemCard/ItemCard';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 import { useAuth } from '../../context/AuthContext';
@@ -28,6 +40,9 @@ export default function SupplierStorefront() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
+  const reviewsCarouselRef = useRef(null);
+  const [canScrollBack, setCanScrollBack] = useState(false);
+  const [canScrollForward, setCanScrollForward] = useState(false);
 
   useEffect(() => {
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
@@ -78,7 +93,7 @@ export default function SupplierStorefront() {
     });
     return res.data.map((r) => ({
       reviewId: r.reviewId,
-      buyerName: r.supplier?.user?.name || 'Unknown',
+      buyerId: r.buyerId,
       supplierRating: r.supplierRating,
       writtenReviewOfSupplier: r.writtenReviewOfSupplier,
       createdAt: r.createdAt,
@@ -88,31 +103,23 @@ export default function SupplierStorefront() {
   // ——————————————————————— OPEN CHAT (SAFE) ———————————————————————
   const openChat = async () => {
     if (!supplier?.user?.userId) return;
-
     const partner = {
       userId: supplier.user.userId,
       name: supplier.businessName || supplier.user.name,
       avatar: supplier.user.pfpUrl || PLACEHOLD_PFP,
       categories: supplier.user.categories || [],
     };
-
     try {
-      // 1. Fetch all chats
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/chats/me`,
         {
           withCredentials: true,
         },
       );
-
       const chats = res.data || [];
-
-      // 2. Find existing chat with this supplier
       const existingChat = chats.find(
         (chat) => chat.otherUser?.userId === partner.userId,
       );
-
-      // 3. Navigate correctly
       if (existingChat) {
         navigate(`/buyer/chats/${existingChat.chatId}`);
       } else {
@@ -122,14 +129,87 @@ export default function SupplierStorefront() {
       }
     } catch (err) {
       console.error('Failed to check chat history:', err);
-      // Fallback: go to new chat (safe)
       navigate(`/buyer/chats/new?with=${partner.userId}`, {
         state: { partner },
       });
     }
   };
 
-  // ——————————————————————— ACTIVE STORE CONTENT (SAFE) ———————————————————————
+  // === ARROW VISIBILITY ===
+  // ——————— FINAL FIX – WORKS PERFECTLY IN LTR & RTL ———————
+  const canGoBack = useCallback((ref) => {
+    if (!ref.current) return false;
+    // If we're scrolled even 1px away from the start → can go back
+    return Math.abs(ref.current.scrollLeft) >= 5;
+  }, []);
+
+  const canGoForward = useCallback((ref) => {
+    if (!ref.current) return false;
+    const el = ref.current;
+    // Compare scrolled amount + visible width vs total width
+    // Using round() + generous tolerance handles sub-pixel nonsense
+    return (
+      Math.round(Math.abs(el.scrollLeft) + el.clientWidth) < el.scrollWidth - 10
+    );
+  }, []);
+
+  // === RTL-AWARE SCROLL LOGIC ===
+  const scrollCarousel = (ref, direction) => {
+    if (!ref.current) return;
+
+    const firstCard =
+      ref.current.querySelector('.review-card-wrapper') ||
+      ref.current.children[0];
+    const cardWidth = firstCard?.offsetWidth || 400;
+    const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
+    const scrollAmount = cardWidth + gap;
+
+    const directionFactor = direction === 'right' ? 1 : -1;
+    const rtlFactor = isRTL ? -1 : 1;
+
+    ref.current.scrollBy({
+      left: scrollAmount * directionFactor * rtlFactor,
+      behavior: 'smooth',
+    });
+  };
+
+  // === RESET SCROLL ===
+  useEffect(() => {
+    if (reviewsCarouselRef.current) {
+      reviewsCarouselRef.current.scrollLeft = 0;
+      // Force arrow update after reset
+      setTimeout(() => {
+        setCanScrollBack(false);
+        setCanScrollForward(
+          reviewsCarouselRef.current.scrollWidth >
+            reviewsCarouselRef.current.clientWidth + 20,
+        );
+      }, 100);
+    }
+  }, [reviews]);
+
+  // === UPDATE ARROWS ON SCROLL ===
+  useEffect(() => {
+    const carousel = reviewsCarouselRef.current;
+    if (!carousel) return;
+
+    const updateArrows = () => {
+      setCanScrollBack(canGoBack(reviewsCarouselRef));
+      setCanScrollForward(canGoForward(reviewsCarouselRef));
+    };
+
+    updateArrows(); // Initial check
+
+    carousel.addEventListener('scroll', updateArrows);
+    window.addEventListener('resize', updateArrows);
+
+    return () => {
+      carousel.removeEventListener('scroll', updateArrows);
+      window.removeEventListener('resize', updateArrows);
+    };
+  }, [canGoBack, canGoForward]); // ← Now stable!
+
+  // ——————————————————————— ACTIVE STORE CONTENT ———————————————————————
   function ActiveStorefrontContent() {
     const user = supplier.user || {};
     const pfpUrl = user.pfpUrl || PLACEHOLD_PFP;
@@ -178,38 +258,35 @@ export default function SupplierStorefront() {
 
         {/* Listings */}
         <section className="ss-listings-section">
-          <div className="ss-filter-layout">
-            <aside className="ss-filter-sidebar">
-              <button
-                onClick={() => handleFilter('all')}
-                className={`ss-filter-btn ${filter === 'all' ? 'active' : ''}`}
-              >
-                <span className="ss-count">
-                  {counts.total} {t('filter.all')}
-                </span>
-              </button>
-              <button
-                onClick={() => handleFilter('product')}
-                className={`ss-filter-btn ${
-                  filter === 'product' ? 'active' : ''
-                }`}
-              >
-                <span className="ss-count">
-                  {counts.products} {t('filter.products')}
-                </span>
-              </button>
-              <button
-                onClick={() => handleFilter('service')}
-                className={`ss-filter-btn ${
-                  filter === 'service' ? 'active' : ''
-                }`}
-              >
-                <span className="ss-count">
-                  {counts.services} {t('filter.services')}
-                </span>
-              </button>
-            </aside>
+          <div className="ss-filter-header">
+            <button
+              onClick={() => handleFilter('all')}
+              className={`ss-filter-btn ${filter === 'all' ? 'active' : ''}`}
+            >
+              <span className="ss-count">{counts.total}</span>
+              <span className="ss-label">{t('filter.all')}</span>
+            </button>
+            <button
+              onClick={() => handleFilter('product')}
+              className={`ss-filter-btn ${
+                filter === 'product' ? 'active' : ''
+              }`}
+            >
+              <span className="ss-count">{counts.products}</span>
+              <span className="ss-label">{t('filter.products')}</span>
+            </button>
+            <button
+              onClick={() => handleFilter('service')}
+              className={`ss-filter-btn ${
+                filter === 'service' ? 'active' : ''
+              }`}
+            >
+              <span className="ss-count">{counts.services}</span>
+              <span className="ss-label">{t('filter.services')}</span>
+            </button>
+          </div>
 
+          <div className="ss-filter-layout">
             <div className="ss-filter-grid">
               {filteredItems.length === 0 ? (
                 <p className="ss-no-items">{t('noItems')}</p>
@@ -235,10 +312,42 @@ export default function SupplierStorefront() {
           {reviews.length === 0 ? (
             <p className="ss-no-reviews">{t('noReviews')}</p>
           ) : (
-            <div className="ss-reviews-grid">
-              {reviews.map((review) => (
-                <ReviewCard key={review.reviewId} review={review} />
-              ))}
+            <div className="carousel-wrapper">
+              <div className="carousel" ref={reviewsCarouselRef}>
+                {reviews.map((review) => (
+                  <div className="review-card-wrapper" key={review.reviewId}>
+                    <ReviewCard review={review} />
+                  </div>
+                ))}
+              </div>
+
+              {/* BACK ARROW */}
+              {canScrollBack && (
+                <button
+                  className="carousel-arrow left"
+                  onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+                >
+                  {isRTL ? (
+                    <ChevronRight size={20} />
+                  ) : (
+                    <ChevronLeft size={20} />
+                  )}
+                </button>
+              )}
+
+              {/* FORWARD ARROW */}
+              {canScrollForward && (
+                <button
+                  className="carousel-arrow right"
+                  onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+                >
+                  {isRTL ? (
+                    <ChevronLeft size={20} />
+                  ) : (
+                    <ChevronRight size={20} />
+                  )}
+                </button>
+              )}
             </div>
           )}
         </section>
@@ -332,8 +441,6 @@ export default function SupplierStorefront() {
             </button>
           </div>
         </div>
-
-        {/* Make the content still visible but blurred */}
         <div className="ss-blurred-content">
           <ActiveStorefrontContent />
         </div>
@@ -341,7 +448,7 @@ export default function SupplierStorefront() {
     );
   }
 
-  // ——————————————————————— INACTIVE SUPPLIER (BLURRED) ———————————————————————
+  // ——————————————————————— INACTIVE SUPPLIER ———————————————————————
   const isInactive =
     supplier.supplierStatus === 'INACTIVE' ||
     supplier.storeStatus === 'INACTIVE';

@@ -55,13 +55,13 @@
 }
 
 /* RTL / LTR ordering */
-[data-dir='rtl'] .sd-supplier-bar {
+.product-details[dir='rtl'].sd-supplier-bar {
   flex-direction: inherit;
 }
-[data-dir='rtl'] .sd-hero-thumbs {
+.product-details[dir='rtl'] .sd-hero-thumbs {
   flex-direction: row-reverse;
 }
-[data-dir='rtl'] .sd-hero {
+.product-details[dir='rtl'] .sd-hero {
   flex-direction: row-reverse;
 }
 
@@ -252,4 +252,113 @@
 
 .pd-hero-images.out-of-stock {
   opacity: 0.6;
+}
+
+.pd-reviews-grid {
+  display: grid;
+}
+
+/* ————————————————————————
+   REVIEWS CAROUSEL
+   ———————————————————————— */
+.pd-reviews {
+  margin-top: 2rem;
+}
+
+.pd-reviews h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  text-align: start;
+}
+
+.carousel-wrapper {
+  position: relative;
+  padding: 0 3rem;
+  width: 100%;
+}
+
+.carousel {
+  display: flex;
+  gap: 3.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.review-card-wrapper {
+  flex: 0 0 400px;
+  min-width: 400px;
+  max-width: 400px;
+}
+
+/* ARROWS */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+  transition: background 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.carousel-arrow:hover {
+  background: #ecf6ff;
+}
+
+.carousel-arrow svg {
+  color: #517fbf;
+  stroke-width: 2.5;
+}
+
+.carousel-arrow.left {
+  left: 0.5rem;
+}
+
+.carousel-arrow.right {
+  right: 0.5rem;
+}
+
+/* RTL: Swap arrow positions */
+.product-details[dir='rtl'] .carousel-arrow.left {
+  left: auto;
+  right: 0.5rem;
+}
+
+.product-details[dir='rtl'] .carousel-arrow.right {
+  right: auto;
+  left: 0.5rem;
+}
+
+/* Hide arrows on mobile */
+@media (max-width: 768px) {
+  .carousel-wrapper {
+    padding: 0 1rem;
+  }
+  .carousel-arrow {
+    display: none;
+  }
+}
+
+.carousel-arrow svg {
+  min-width: 20px !important;
+  min-height: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
 }

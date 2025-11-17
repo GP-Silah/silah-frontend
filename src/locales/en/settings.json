@@ -63,7 +63,7 @@
     "deliveryFees": "Delivery Fees",
     "uploadProfile": "Upload Store Profile Picture",
     "uploadBanner": "Upload Store Banner",
-    "storeBio": "Store Bio"
+    "bio": "Store Bio"
   },
   "payment": {
     "title": "Payment Method",

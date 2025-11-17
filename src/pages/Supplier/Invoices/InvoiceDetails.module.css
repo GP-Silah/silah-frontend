@@ -471,3 +471,27 @@
     transform: rotate(360deg);
   }
 }
+
+.reviewBtn {
+  background: #6d28d9; /* purple */
+  color: white;
+}
+
+.reviewBtn:hover {
+  background: #5b21b6;
+}
+
+.confirmed-msg {
+  color: #1b8a5a;
+  font-size: 15px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+.reviewed {
+  color: #1b8a5a;
+  font-size: 15px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  text-align: center;
+}

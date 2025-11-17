@@ -1,28 +1,43 @@
 {
-    "header": {
-        "title": "Welcome back, {{name}}! 👋",
-        "subtitle": "Here's a quick overview of your business."
+  "pageTitle": "Silah | Overview",
+  "header": {
+    "title": "Welcome back, {{name}}! 👋",
+    "subtitle": "Here's a quick overview of your business."
+  },
+  "cards": {
+    "status": {
+      "title": "Store Status",
+      "open": "Open for Business",
+      "closed": "Closed",
+      "button": "Store Settings"
     },
-    "cards": {
-        "status": {
-            "title": "Store Status",
-            "text": "Open for Business",
-            "button": "Store Settings"
-        },
-        "pending": {
-            "title": "Pending Orders",
-            "button": "View"
-        },
-        "stock": {
-            "title": "Stock Levels",
-            "text": "Very Low",
-            "button": "Update"
-        }
+    "pending": {
+      "title": "Pending Orders",
+      "button": "View"
     },
-    "plan": {
-        "label": "Your Plan:",
-        "planName": "Basic",
-        "subtitle": "Upgrade to Premium for AI Insights & Unlimited Listings!",
-        "button": "Manage Plan"
+    "stock": {
+      "title": "Stock Levels",
+      "button": "Update",
+      "levels": {
+        "veryLow": "Very Low",
+        "low": "Low",
+        "average": "Average",
+        "good": "Good"
+      }
     }
+  },
+  "plan": {
+    "label": "Your Plan:",
+    "names": {
+      "BASIC": "Basic",
+      "PREMIUM": "Premium"
+    },
+    "subtitle": "Upgrade to Premium for AI Insights & Unlimited Listings!",
+    "upgrade": "Upgrade Plan",
+    "manage": "Manage Plan"
+  },
+  "common": {
+    "loading": "Loading",
+    "error": "An error occurred"
+  }
 }

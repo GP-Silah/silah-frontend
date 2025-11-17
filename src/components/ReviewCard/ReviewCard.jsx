@@ -1,32 +1,88 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import './ReviewCard.css';
+
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
 export default function ReviewCard({ review }) {
   const { t, i18n } = useTranslation('serviceDetails');
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const buyerName = review.buyer?.name || t('anonymous');
-  const rating = review.itemRating ?? 5;
-  const comment = review.writtenReviewOfItem ?? '';
+  const rating = review.itemRating ?? review.supplierRating ?? 5;
+  const comment =
+    review.writtenReviewOfItem ?? review.writtenReviewOfSupplier ?? '';
   const date = new Date(review.createdAt).toLocaleDateString(
     i18n.language === 'ar' ? 'ar-EG' : 'en-US',
     { year: 'numeric', month: 'short', day: 'numeric' },
   );
 
+  // === FETCH BUYER ===
+  const [name, setName] = useState(t('anonymous'));
+  const [pfpUrl, setPfpUrl] = useState(null);
+  const [loadingPfp, setLoadingPfp] = useState(true);
+
+  useEffect(() => {
+    const fetchBuyerInfo = async () => {
+      if (!review.buyerId) {
+        setLoadingPfp(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${API_BASE}/api/buyers/${review.buyerId}`,
+          {
+            withCredentials: true,
+          },
+        );
+
+        const url = res.data.user?.pfpUrl;
+        const name = res.data.user?.businessName;
+        setPfpUrl(url || null);
+        setName(name || t('anonymous'));
+      } catch (err) {
+        console.warn('Failed to fetch buyer info:', err);
+        setPfpUrl(null);
+      } finally {
+        setLoadingPfp(false);
+      }
+    };
+
+    fetchBuyerInfo();
+  }, [review.buyerId]);
+
+  // === DEFAULT AVATAR IF NO PFP ===
+  const Avatar = () => {
+    if (loadingPfp) {
+      return (
+        <div className="rc-avatar-loading">
+          <User size={20} />
+        </div>
+      );
+    }
+
+    return pfpUrl ? (
+      <img src={pfpUrl} alt={name} className="rc-avatar-img" />
+    ) : (
+      <div className="rc-avatar-default">
+        <User size={32} />
+      </div>
+    );
+  };
+
   return (
     <div className="rc-card" data-dir={dir}>
       <div className="rc-header">
         <div className="rc-avatar">
-          <User size={32} />
+          <Avatar />
         </div>
         <div className="rc-info">
-          <div className="rc-name">{buyerName}</div>
+          <div className="rc-name">{name}</div>
           <div className="rc-date">{date}</div>
         </div>
       </div>
-
       <div className="rc-rating">
         {Array.from({ length: 5 }, (_, i) => (
           <Star
@@ -37,7 +93,6 @@ export default function ReviewCard({ review }) {
           />
         ))}
       </div>
-
       {comment && <p className="rc-comment">{comment}</p>}
     </div>
   );
