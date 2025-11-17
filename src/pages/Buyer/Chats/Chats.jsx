@@ -213,11 +213,11 @@ export default function ChatsSupplier() {
   }, []);
 
   const openChat = (chatId) => {
-    navigate(`/supplier/chats/${chatId}`);
+    navigate(`/buyer/chats/${chatId}`);
   };
 
   const startNewChat = (userId, partnerData) => {
-    navigate(`/supplier/chats/new?with=${userId}`, {
+    navigate(`/buyer/chats/new?with=${userId}`, {
       state: { partner: partnerData },
     });
   };

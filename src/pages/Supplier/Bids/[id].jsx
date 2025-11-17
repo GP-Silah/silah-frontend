@@ -213,7 +213,7 @@ export default function BidDetails() {
             </button>
             <button
               className="participate-btn"
-              onClick={() => navigate(`supplier/offers/bid/${bidId}`)}
+              onClick={() => navigate(`/supplier/offers/bid/${id}`)}
             >
               {t('participate')}
             </button>

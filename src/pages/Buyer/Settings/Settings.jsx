@@ -101,7 +101,7 @@ const BuyerSettings = () => {
             activity: userData.categories?.map((cat) => cat.id) || [],
           });
           if (userData.preferredLanguage) {
-            const lang = userData.preferredLanguage === 'ARA' ? 'ar' : 'en';
+            const lang = userData.preferredLanguage === 'ARA' ? 'AR' : 'EN';
             if (i18n.language !== lang) i18n.changeLanguage(lang);
           }
         }
@@ -314,7 +314,7 @@ const BuyerSettings = () => {
         updates.categories = biz.activity.map(Number);
       if (email) updates.email = email;
       if (i18n.language)
-        updates.preferredLanguage = i18n.language === 'ar' ? 'ARA' : 'ENG';
+        updates.preferredLanguage = i18n.language === 'ar' ? 'AR' : 'EN';
 
       if (Object.keys(updates).length > 0) {
         await axios.patch(

@@ -6,12 +6,12 @@
     "icon": "📧",
     "title": "Verify Your Email",
     "message": "Check your inbox for a verification email sent to {{email}}.",
-    "button": "Didn’t receive the email?"
+    "button": "Didn't receive the email?"
   },
   "resend": {
     "icon": "🔄",
     "title": "Resend Verification Email",
-    "message": "Didn’t receive the email? Click below to resend verification.",
+    "message": "Didn't receive the email? Click below to resend verification.",
     "button": "Resend Email",
     "success": "Email has been resent successfully ✅",
     "alreadyVerified": "This email is already verified.",
@@ -23,5 +23,11 @@
     "title": "Your Email has been Validated Successfully",
     "message": "You can safely close this tab.",
     "button": "Let's Login"
+  },
+  "error": {
+    "icon": "❌",
+    "title": "Something Went Wrong",
+    "message": "Did you sign up?",
+    "button": "Signup"
   }
 }
