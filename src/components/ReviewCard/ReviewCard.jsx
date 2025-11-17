@@ -10,20 +10,21 @@ export default function ReviewCard({ review }) {
   const { t, i18n } = useTranslation('serviceDetails');
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
 
-  const buyerName = review.buyerBusinessName || t('anonymous');
-  const rating = review.itemRating ?? 5;
-  const comment = review.writtenReviewOfItem ?? '';
+  const rating = review.itemRating ?? review.supplierRating ?? 5;
+  const comment =
+    review.writtenReviewOfItem ?? review.writtenReviewOfSupplier ?? '';
   const date = new Date(review.createdAt).toLocaleDateString(
     i18n.language === 'ar' ? 'ar-EG' : 'en-US',
     { year: 'numeric', month: 'short', day: 'numeric' },
   );
 
-  // === FETCH BUYER PFP ===
+  // === FETCH BUYER ===
+  const [name, setName] = useState(t('anonymous'));
   const [pfpUrl, setPfpUrl] = useState(null);
   const [loadingPfp, setLoadingPfp] = useState(true);
 
   useEffect(() => {
-    const fetchBuyerPfp = async () => {
+    const fetchBuyerInfo = async () => {
       if (!review.buyerId) {
         setLoadingPfp(false);
         return;
@@ -36,17 +37,20 @@ export default function ReviewCard({ review }) {
             withCredentials: true,
           },
         );
+
         const url = res.data.user?.pfpUrl;
+        const name = res.data.user?.businessName;
         setPfpUrl(url || null);
+        setName(name || t('anonymous'));
       } catch (err) {
-        console.warn('Failed to fetch buyer PFP:', err);
+        console.warn('Failed to fetch buyer info:', err);
         setPfpUrl(null);
       } finally {
         setLoadingPfp(false);
       }
     };
 
-    fetchBuyerPfp();
+    fetchBuyerInfo();
   }, [review.buyerId]);
 
   // === DEFAULT AVATAR IF NO PFP ===
@@ -60,7 +64,7 @@ export default function ReviewCard({ review }) {
     }
 
     return pfpUrl ? (
-      <img src={pfpUrl} alt={buyerName} className="rc-avatar-img" />
+      <img src={pfpUrl} alt={name} className="rc-avatar-img" />
     ) : (
       <div className="rc-avatar-default">
         <User size={32} />
@@ -75,7 +79,7 @@ export default function ReviewCard({ review }) {
           <Avatar />
         </div>
         <div className="rc-info">
-          <div className="rc-name">{buyerName}</div>
+          <div className="rc-name">{name}</div>
           <div className="rc-date">{date}</div>
         </div>
       </div>
