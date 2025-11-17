@@ -355,3 +355,10 @@
     display: none;
   }
 }
+
+.carousel-arrow svg {
+  min-width: 20px !important;
+  min-height: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}

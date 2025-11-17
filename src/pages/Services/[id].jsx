@@ -14,17 +14,16 @@ import {
 import Swal from 'sweetalert2';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 import { useAuth } from '../../context/AuthContext';
-import './ServiceDetails.css';
+import styles from './ServiceDetails.module.css';
 
 const API = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
 export default function ServiceDetails() {
   const { t, i18n } = useTranslation('serviceDetails');
-  const { id } = useParams(); // :id
+  const { id } = useParams();
   const navigate = useNavigate();
   const { role } = useAuth();
   const isBuyer = role === 'buyer';
-
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
   document.documentElement.dir = dir;
 
@@ -38,9 +37,7 @@ export default function ServiceDetails() {
   const [canScrollBack, setCanScrollBack] = useState(false);
   const [canScrollForward, setCanScrollForward] = useState(false);
 
-  // --------------------------------------------------------------
-  // 1. FETCH SERVICE
-  // --------------------------------------------------------------
+  // Fetch Service
   const fetchService = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/api/services/${id}`, {
@@ -54,9 +51,7 @@ export default function ServiceDetails() {
     }
   }, [id, i18n.language]);
 
-  // --------------------------------------------------------------
-  // 2. FETCH REVIEWS
-  // --------------------------------------------------------------
+  // Fetch Reviews
   const fetchReviews = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/api/reviews/items/${id}`, {
@@ -69,9 +64,7 @@ export default function ServiceDetails() {
     }
   }, [id, i18n.language]);
 
-  // --------------------------------------------------------------
-  // 3. WISHLIST CHECK + TOGGLE
-  // --------------------------------------------------------------
+  // Wishlist Check + Toggle
   const checkWishlist = async () => {
     if (!service?.serviceId) return;
     try {
@@ -118,9 +111,7 @@ export default function ServiceDetails() {
     }
   };
 
-  // --------------------------------------------------------------
-  // 4. EFFECTS
-  // --------------------------------------------------------------
+  // Page Title
   useEffect(() => {
     if (service?.name) {
       document.title = t('pageTitle', { name: service.name });
@@ -129,6 +120,7 @@ export default function ServiceDetails() {
     }
   }, [service, t]);
 
+  // Initial Data Load
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -141,12 +133,9 @@ export default function ServiceDetails() {
     if (service) checkWishlist();
   }, [service]);
 
-  // --------------------------------------------------------------
-  // 5. OPEN CHAT
-  // --------------------------------------------------------------
+  // Open Chat with Supplier
   const openChat = async () => {
-    if (!supplier?.user?.userId) return;
-
+    if (!service?.supplier?.user?.userId) return;
     const partner = {
       userId: service.supplier.user.userId,
       name: service.supplier.user.businessName || service.supplier.user.name,
@@ -155,22 +144,17 @@ export default function ServiceDetails() {
     };
 
     try {
-      // 1. Fetch all chats
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/chats/me`,
         {
           withCredentials: true,
         },
       );
-
       const chats = res.data || [];
-
-      // 2. Find existing chat with this supplier
       const existingChat = chats.find(
         (chat) => chat.otherUser?.userId === partner.userId,
       );
 
-      // 3. Navigate correctly
       if (existingChat) {
         navigate(`/buyer/chats/${existingChat.chatId}`);
       } else {
@@ -180,31 +164,30 @@ export default function ServiceDetails() {
       }
     } catch (err) {
       console.error('Failed to check chat history:', err);
-      // Fallback: go to new chat (safe)
       navigate(`/buyer/chats/new?with=${partner.userId}`, {
         state: { partner },
       });
     }
   };
 
-  // === RTL-AWARE SCROLL LOGIC (100% CROSS-BROWSER) ===
+  // RTL-Aware Carousel Scroll
   const scrollCarousel = (ref, direction) => {
     if (!ref.current) return;
     const firstCard =
-      ref.current.querySelector('.review-card-wrapper') ||
+      ref.current.querySelector(`.${styles['review-card-wrapper']}`) ||
       ref.current.children[0];
     const cardWidth = firstCard?.offsetWidth || 400;
     const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
     const scrollAmount = cardWidth + gap;
     const directionFactor = direction === 'right' ? 1 : -1;
     const rtlFactor = i18n.language === 'ar' ? -1 : 1;
+
     ref.current.scrollBy({
       left: scrollAmount * directionFactor * rtlFactor,
       behavior: 'smooth',
     });
   };
 
-  // === ARROW VISIBILITY ===
   const canGoBack = (ref) => {
     if (!ref.current) return false;
     const { scrollLeft } = ref.current;
@@ -220,13 +203,12 @@ export default function ServiceDetails() {
       : scrollLeft < maxScroll - 5;
   };
 
-  // === UPDATE ARROWS ON SCROLL ===
+  // Update Arrow Visibility
   useEffect(() => {
     const updateArrows = () => {
       setCanScrollBack(canGoBack(reviewsCarouselRef));
       setCanScrollForward(canGoForward(reviewsCarouselRef));
     };
-
     updateArrows();
     const carousel = reviewsCarouselRef.current;
     if (carousel) {
@@ -235,18 +217,17 @@ export default function ServiceDetails() {
     }
   }, [reviews, i18n.language]);
 
-  // === RESET SCROLL ON REVIEWS CHANGE ===
+  // Reset scroll on reviews change
   useEffect(() => {
     if (reviewsCarouselRef.current) {
       reviewsCarouselRef.current.scrollLeft = 0;
     }
   }, [reviews]);
 
-  // --------------------------------------------------------------
-  // 6. RENDER
-  // --------------------------------------------------------------
-  if (loading) return <div className="sd-loading">{t('loading')}</div>;
-  if (error) return <div className="sd-error">{error}</div>;
+  // Loading / Error States
+  if (loading)
+    return <div className={styles['sd-loading']}>{t('loading')}</div>;
+  if (error) return <div className={styles['sd-error']}>{error}</div>;
   if (!service) return null;
 
   const {
@@ -266,58 +247,64 @@ export default function ServiceDetails() {
   const supplierCity = supplier?.user?.city || '';
   const supplierAvatar = supplier?.user?.pfpUrl || '';
   const supplierId = supplier?.supplierId;
-
   const heroImg = imagesFilesUrls[0] || '/placeholder-service.jpg';
   const thumb1 = imagesFilesUrls[1] || null;
   const thumb2 = imagesFilesUrls[2] || null;
 
   return (
-    <div className="service-details" data-dir={dir}>
-      {/* ---------- SUPPLIER BAR ---------- */}
+    <div className={styles['service-details']} data-dir={dir}>
+      {/* SUPPLIER BAR */}
       <div
-        className="sd-supplier-bar"
+        className={styles['sd-supplier-bar']}
         onClick={() => supplierId && navigate(`/storefronts/${supplierId}`)}
       >
         <img
           src={supplierAvatar || '/avatar-placeholder.png'}
           alt={supplierName}
-          className="sd-sup-avatar"
+          className={styles['sd-sup-avatar']}
         />
-        <div className="sd-sup-info">
-          <h2 className="sd-sup-name">{supplierName}</h2>
-          <div className="sd-sup-rating">
+        <div className={styles['sd-sup-info']}>
+          <h2 className={styles['sd-sup-name']}>{supplierName}</h2>
+          <div className={styles['sd-sup-rating']}>
             <Star fill="#facc15" stroke="#facc15" size={18} />
             <span>
               {supplier?.avgRating?.toFixed(1) ?? '—'} (
               {supplier?.ratingsCount ?? 0})
             </span>
           </div>
-          <div className="sd-sup-city">
+          <div className={styles['sd-sup-city']}>
             <MapPin size={16} />
             {supplierCity}
           </div>
         </div>
       </div>
 
-      {/* ---------- HERO SECTION (pink bg) ---------- */}
-      <section className="sd-hero" style={{ backgroundColor: '#FAF7FC' }}>
-        <div className="sd-hero-images">
-          <img src={heroImg} alt={name} className="sd-hero-main" />
+      {/* HERO SECTION */}
+      <section
+        className={styles['sd-hero']}
+        style={{ backgroundColor: '#FAF7FC' }}
+      >
+        <div className={styles['sd-hero-images']}>
+          <img src={heroImg} alt={name} className={styles['sd-hero-main']} />
           {(thumb1 || thumb2) && (
-            <div className="sd-hero-thumbs">
-              {thumb1 && <img src={thumb1} alt="" className="sd-thumb" />}
-              {thumb2 && <img src={thumb2} alt="" className="sd-thumb" />}
+            <div className={styles['sd-hero-thumbs']}>
+              {thumb1 && (
+                <img src={thumb1} alt="" className={styles['sd-thumb']} />
+              )}
+              {thumb2 && (
+                <img src={thumb2} alt="" className={styles['sd-thumb']} />
+              )}
             </div>
           )}
         </div>
 
-        <div className="sd-hero-content">
-          <div className="sd-title-row">
-            <h1 className="sd-title">{name}</h1>
+        <div className={styles['sd-hero-content']}>
+          <div className={styles['sd-title-row']}>
+            <h1 className={styles['sd-title']}>{name}</h1>
             <button
               onClick={toggleFavorite}
               disabled={favLoading}
-              className="sd-heart-btn"
+              className={styles['sd-heart-btn']}
             >
               <Heart
                 fill={favorited ? '#ef4444' : 'none'}
@@ -327,41 +314,47 @@ export default function ServiceDetails() {
             </button>
           </div>
 
-          <div className="sd-rating">
+          <div className={styles['sd-rating']}>
             <Star fill="#facc15" stroke="#facc15" size={20} />
             <span>
               {avgRating.toFixed(1)} ({ratingsCount})
             </span>
           </div>
 
-          <div className="sd-price-row">
-            <span className="sd-price">
-              {price} <img src="/riyal.png" alt="SAR" className="sd-currency" />
+          <div className={styles['sd-price-row']}>
+            <span className={styles['sd-price']}>
+              {price}{' '}
+              <img
+                src="/riyal.png"
+                alt="SAR"
+                className={styles['sd-currency']}
+              />
             </span>
             {isPriceNegotiable && (
-              <span className="sd-negotiable">{t('negotiable')}</span>
+              <span className={styles['sd-negotiable']}>{t('negotiable')}</span>
             )}
           </div>
 
           {isPriceNegotiable && (
-            <p className="sd-negotiate-hint">{t('contactToNegotiate')}</p>
+            <p className={styles['sd-negotiate-hint']}>
+              {t('contactToNegotiate')}
+            </p>
           )}
 
-          <div className="sd-availability">
+          <div className={styles['sd-availability']}>
             <Clock size={18} />
             {t(`availability.${serviceAvailability}`)}
           </div>
 
-          {/* Request Button – will be hidden/disabled for guests */}
           {isBuyer ? (
-            <button onClick={openChat} className="sd-request-btn">
+            <button onClick={openChat} className={styles['sd-request-btn']}>
               <MessageCircle size={20} />
               {t('requestService', { name: supplierName.split(' ')[0] })}
             </button>
           ) : (
             <button
               disabled
-              className="sd-request-btn"
+              className={styles['sd-request-btn']}
               style={{ opacity: 0.5, cursor: 'not-allowed' }}
             >
               <MessageCircle size={20} />
@@ -371,32 +364,33 @@ export default function ServiceDetails() {
         </div>
       </section>
 
-      {/* ---------- DESCRIPTION ---------- */}
-      <section className="sd-description">
+      {/* DESCRIPTION */}
+      <section className={styles['sd-description']}>
         <h2>{t('descriptionTitle')}</h2>
         <p>{description}</p>
       </section>
 
-      {/* ---------- REVIEWS ---------- */}
-      {/* ---------- REVIEWS ---------- */}
-      <section className="sd-reviews">
+      {/* REVIEWS */}
+      <section className={styles['sd-reviews']}>
         <h2>{t('reviewsTitle')}</h2>
         {reviews.length === 0 ? (
-          <p className="sd-no-reviews">{t('noReviews')}</p>
+          <p className={styles['sd-no-reviews']}>{t('noReviews')}</p>
         ) : (
-          <div className="carousel-wrapper">
-            <div className="carousel" ref={reviewsCarouselRef}>
+          <div className={styles['carousel-wrapper']}>
+            <div className={styles.carousel} ref={reviewsCarouselRef}>
               {reviews.map((r) => (
-                <div className="review-card-wrapper" key={r.itemReviewId}>
+                <div
+                  className={styles['review-card-wrapper']}
+                  key={r.itemReviewId}
+                >
                   <ReviewCard review={r} />
                 </div>
               ))}
             </div>
 
-            {/* BACK ARROW */}
-            {canGoBack(reviewsCarouselRef) && (
+            {canScrollBack && (
               <button
-                className="carousel-arrow left"
+                className={`${styles['carousel-arrow']} ${styles.left}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
               >
                 {i18n.language === 'ar' ? (
@@ -407,10 +401,9 @@ export default function ServiceDetails() {
               </button>
             )}
 
-            {/* FORWARD ARROW */}
-            {canGoForward(reviewsCarouselRef) && (
+            {canScrollForward && (
               <button
-                className="carousel-arrow right"
+                className={`${styles['carousel-arrow']} ${styles.right}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
               >
                 {i18n.language === 'ar' ? (

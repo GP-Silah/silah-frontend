@@ -16,7 +16,7 @@ import Swal from 'sweetalert2';
 import ReviewCard from '../../components/ReviewCard/ReviewCard';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import './ProductDetails.css';
+import styles from './ProductDetails.module.css';
 
 const API = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
@@ -46,9 +46,7 @@ export default function ProductDetails() {
   const [canScrollBack, setCanScrollBack] = useState(false);
   const [canScrollForward, setCanScrollForward] = useState(false);
 
-  // --------------------------------------------------------------
-  // 1. FETCH PRODUCT
-  // --------------------------------------------------------------
+  // 1. Fetch Product
   const fetchProduct = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/api/products/${id}`, {
@@ -62,9 +60,7 @@ export default function ProductDetails() {
     }
   }, [id, i18n.language]);
 
-  // --------------------------------------------------------------
-  // 2. FETCH REVIEWS
-  // --------------------------------------------------------------
+  // 2. Fetch Reviews
   const fetchReviews = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/api/reviews/items/${id}`, {
@@ -77,17 +73,13 @@ export default function ProductDetails() {
     }
   }, [id, i18n.language]);
 
-  // --------------------------------------------------------------
-  // 3. FETCH SUITABLE GROUP PURCHASES
-  // --------------------------------------------------------------
+  // 3. Fetch Group Purchases
   const fetchGroupPurchases = useCallback(async () => {
     if (!product?.allowGroupPurchase) return;
     try {
       const res = await axios.get(
         `${API}/api/group-purchases/products/${id}/suitable-groups`,
-        {
-          withCredentials: true,
-        },
+        { withCredentials: true },
       );
       setGroupPurchases(res.data);
     } catch (err) {
@@ -96,9 +88,7 @@ export default function ProductDetails() {
     }
   }, [id, product]);
 
-  // --------------------------------------------------------------
-  // 4. WISHLIST CHECK + TOGGLE
-  // --------------------------------------------------------------
+  // 4. Wishlist
   const checkWishlist = async () => {
     if (!product?.productId) return;
     try {
@@ -145,9 +135,7 @@ export default function ProductDetails() {
     }
   };
 
-  // --------------------------------------------------------------
-  // 5. VALIDATE QUANTITY
-  // --------------------------------------------------------------
+  // 5. Quantity Validation
   const validateQuantity = (val) => {
     const n = Number(val);
     if (!val || isNaN(n) || n <= 0) return t('validation.positive');
@@ -168,9 +156,7 @@ export default function ProductDetails() {
     if (product) setGroupQtyError(validateQuantity(groupQuantity));
   }, [groupQuantity, product]);
 
-  // --------------------------------------------------------------
-  // 6. ADD TO CART
-  // --------------------------------------------------------------
+  // 6. Add to Cart
   const addToCart = async () => {
     if (!isBuyer) {
       Swal.fire({ icon: 'warning', title: t('loginToAdd') });
@@ -184,10 +170,7 @@ export default function ProductDetails() {
     try {
       await axios.post(
         `${API}/api/carts/me/items`,
-        {
-          productId: product.productId,
-          quantity: Number(quantity),
-        },
+        { productId: product.productId, quantity: Number(quantity) },
         { withCredentials: true },
       );
       Swal.fire({ icon: 'success', title: t('addedToCart') });
@@ -199,9 +182,7 @@ export default function ProductDetails() {
     }
   };
 
-  // --------------------------------------------------------------
-  // 7. START / JOIN GROUP PURCHASE
-  // --------------------------------------------------------------
+  // 7. Group Purchase Actions
   const startGroupPurchase = async () => {
     const err = validateQuantity(groupQuantity);
     if (err) {
@@ -244,9 +225,7 @@ export default function ProductDetails() {
     }
   };
 
-  // --------------------------------------------------------------
-  // 8. EFFECTS
-  // --------------------------------------------------------------
+  // 8. Effects
   useEffect(() => {
     if (product?.name) {
       document.title = t('pageTitle', { name: product.name });
@@ -266,46 +245,34 @@ export default function ProductDetails() {
   useEffect(() => {
     if (product) {
       checkWishlist();
-      if (product.allowGroupPurchase) {
-        fetchGroupPurchases(); // ← will now use fresh version
-      }
+      if (product.allowGroupPurchase) fetchGroupPurchases();
     }
-  }, [product, fetchGroupPurchases]); // ← Add this dependency
+  }, [product, fetchGroupPurchases]);
 
-  // === RESET SCROLL ===
   useEffect(() => {
-    if (reviewsCarouselRef.current) {
-      reviewsCarouselRef.current.scrollLeft = 0;
-    }
+    if (reviewsCarouselRef.current) reviewsCarouselRef.current.scrollLeft = 0;
   }, [reviews]);
 
-  // === RTL-AWARE SCROLL LOGIC (100% CROSS-BROWSER) ===
+  // Carousel Logic
   const scrollCarousel = (ref, direction) => {
     if (!ref.current) return;
-
     const firstCard =
-      ref.current.querySelector('.review-card-wrapper') ||
+      ref.current.querySelector(`.${styles['review-card-wrapper']}`) ||
       ref.current.children[0];
     const cardWidth = firstCard?.offsetWidth || 400;
     const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
     const scrollAmount = cardWidth + gap;
-
     const directionFactor = direction === 'right' ? 1 : -1;
     const rtlFactor = isRTL ? -1 : 1;
-
     ref.current.scrollBy({
       left: scrollAmount * directionFactor * rtlFactor,
       behavior: 'smooth',
     });
   };
 
-  // === ARROW VISIBILITY (SIMPLE & ROBUST) ===
-  const canGoBack = (ref) => {
-    if (!ref.current) return false;
-    const { scrollLeft } = ref.current;
-    return isRTL ? scrollLeft < -5 : scrollLeft > 5;
-  };
-
+  const canGoBack = (ref) =>
+    !ref.current ||
+    (isRTL ? ref.current.scrollLeft < -5 : ref.current.scrollLeft > 5);
   const canGoForward = (ref) => {
     if (!ref.current) return false;
     const { scrollLeft, scrollWidth, clientWidth } = ref.current;
@@ -313,13 +280,11 @@ export default function ProductDetails() {
     return isRTL ? scrollLeft > -(maxScroll - 5) : scrollLeft < maxScroll - 5;
   };
 
-  // === UPDATE ARROWS ON SCROLL ===
   useEffect(() => {
     const updateArrows = () => {
       setCanScrollBack(canGoBack(reviewsCarouselRef));
       setCanScrollForward(canGoForward(reviewsCarouselRef));
     };
-
     updateArrows();
     const carousel = reviewsCarouselRef.current;
     if (carousel) {
@@ -328,11 +293,10 @@ export default function ProductDetails() {
     }
   }, [reviews, isRTL]);
 
-  // --------------------------------------------------------------
-  // 9. RENDER
-  // --------------------------------------------------------------
-  if (loading) return <div className="pd-loading">{t('loading')}</div>;
-  if (error) return <div className="pd-error">{error}</div>;
+  // Render
+  if (loading)
+    return <div className={styles['pd-loading']}>{t('loading')}</div>;
+  if (error) return <div className={styles['pd-error']}>{error}</div>;
   if (!product) return null;
 
   const {
@@ -348,7 +312,7 @@ export default function ProductDetails() {
     maxOrderQuantity,
     allowGroupPurchase,
     groupPurchasePrice,
-    minGroupOrderQuantity,
+    stock,
   } = product;
 
   const supplierName =
@@ -356,73 +320,76 @@ export default function ProductDetails() {
   const supplierCity = supplier?.user?.city || '';
   const supplierAvatar = supplier?.user?.pfpUrl || '';
   const supplierId = supplier?.supplierId;
-
   const heroImg = imagesFilesUrls[0] || '/placeholder-product.jpg';
   const thumb1 = imagesFilesUrls[1] || null;
   const thumb2 = imagesFilesUrls[2] || null;
-
   const activeGroup = Array.isArray(groupPurchases) ? groupPurchases[0] : null;
 
   return (
-    <div className="product-details" dir={dir}>
+    <div className={styles['product-details']} dir={dir}>
       {/* SUPPLIER BAR */}
       <div
-        className="pd-supplier-bar"
+        className={styles['pd-supplier-bar']}
         onClick={() => supplierId && navigate(`/storefronts/${supplierId}`)}
       >
         <img
           src={supplierAvatar || '/avatar-placeholder.png'}
           alt={supplierName}
-          className="pd-sup-avatar"
+          className={styles['pd-sup-avatar']}
         />
-        <div className="pd-sup-info">
-          <h2 className="pd-sup-name">{supplierName}</h2>
-          <div className="pd-sup-rating">
+        <div className={styles['pd-sup-info']}>
+          <h2 className={styles['pd-sup-name']}>{supplierName}</h2>
+          <div className={styles['pd-sup-rating']}>
             <Star fill="#facc15" stroke="#facc15" size={18} />
             <span>
               {supplier?.avgRating?.toFixed(1) ?? '—'} (
               {supplier?.ratingsCount ?? 0})
             </span>
           </div>
-          <div className="pd-sup-city">
+          <div className={styles['pd-sup-city']}>
             <MapPin size={16} />
             {supplierCity}
           </div>
         </div>
       </div>
+
       {/* HERO */}
-      <section className="pd-hero" style={{ backgroundColor: '#FAF7FC' }}>
-        {/* HERO IMAGE WITH BADGE */}
+      <section
+        className={styles['pd-hero']}
+        style={{ backgroundColor: '#FAF7FC' }}
+      >
         <div
-          className={`pd-hero-images ${
-            product.stock <= 0 ? 'out-of-stock' : ''
+          className={`${styles['pd-hero-images']} ${
+            stock <= 0 ? styles['out-of-stock'] : ''
           }`}
         >
-          <div className="relative">
-            <img src={heroImg} alt={name} className="pd-hero-main" />
-
-            {/* OUT OF STOCK BADGE */}
-            {product.stock <= 0 && (
-              <div className="out-of-stock-badge">
+          <div className={styles.relative}>
+            <img src={heroImg} alt={name} className={styles['pd-hero-main']} />
+            {stock <= 0 && (
+              <div className={styles['out-of-stock-badge']}>
                 {i18n.language === 'ar' ? 'غير متوفر' : 'Out of Stock'}
               </div>
             )}
           </div>
-
           {(thumb1 || thumb2) && (
-            <div className="pd-hero-thumbs">
-              {thumb1 && <img src={thumb1} alt="" className="pd-thumb" />}
-              {thumb2 && <img src={thumb2} alt="" className="pd-thumb" />}
+            <div className={styles['pd-hero-thumbs']}>
+              {thumb1 && (
+                <img src={thumb1} alt="" className={styles['pd-thumb']} />
+              )}
+              {thumb2 && (
+                <img src={thumb2} alt="" className={styles['pd-thumb']} />
+              )}
             </div>
           )}
         </div>
-        <div className="pd-hero-content">
-          <div className="pd-title-row">
-            <h1 className="pd-title">{name}</h1>
+
+        <div className={styles['pd-hero-content']}>
+          <div className={styles['pd-title-row']}>
+            <h1 className={styles['pd-title']}>{name}</h1>
             <button
               onClick={toggleFavorite}
               disabled={favLoading}
-              className="pd-heart-btn"
+              className={styles['pd-heart-btn']}
             >
               <Heart
                 fill={favorited ? '#ef4444' : 'none'}
@@ -431,24 +398,28 @@ export default function ProductDetails() {
               />
             </button>
           </div>
-          <div className="pd-rating">
+
+          <div className={styles['pd-rating']}>
             <Star fill="#facc15" stroke="#facc15" size={20} />
             <span>
               {avgRating.toFixed(1)} ({ratingsCount})
             </span>
           </div>
 
-          {/* PRICE */}
-          <div className="pd-price-row">
-            <span className="pd-price">
-              {price} <img src="/riyal.png" alt="SAR" className="pd-currency" />
+          <div className={styles['pd-price-row']}>
+            <span className={styles['pd-price']}>
+              {price}{' '}
+              <img
+                src="/riyal.png"
+                alt="SAR"
+                className={styles['pd-currency']}
+              />
             </span>
           </div>
 
-          {/* QUANTITY INPUT */}
-          {product.stock > 0 && (
-            <div className="pd-quantity-section">
-              <label className="pd-quantity-label">
+          {stock > 0 && (
+            <div className={styles['pd-quantity-section']}>
+              <label className={styles['pd-quantity-label']}>
                 {t('quantityLabel', {
                   min: minOrderQuantity,
                   max: maxOrderQuantity || '∞',
@@ -462,19 +433,20 @@ export default function ProductDetails() {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder={t('enterQuantity')}
-                className="pd-quantity-input"
+                className={styles['pd-quantity-input']}
               />
-              {qtyError && <div className="pd-qty-error">{qtyError}</div>}
+              {qtyError && (
+                <div className={styles['pd-qty-error']}>{qtyError}</div>
+              )}
             </div>
           )}
 
-          {/* ADD TO CART OR ALTERNATIVES */}
           {isBuyer ? (
-            product.stock > 0 ? (
+            stock > 0 ? (
               <button
                 onClick={addToCart}
                 disabled={!quantity || qtyError}
-                className="pd-add-btn"
+                className={styles['pd-add-btn']}
               >
                 <ShoppingCart size={20} />
                 {t('addToCart')}
@@ -482,48 +454,41 @@ export default function ProductDetails() {
             ) : (
               <button
                 onClick={() => navigate(`/buyer/alternatives?itemId=${id}`)}
-                className="pd-add-btn"
-                style={{
-                  background: '#ef4444',
-                  margin: '10px',
-                  marginInlineStart: '10px',
-                  width: 'fit-content',
-                }}
+                className={styles['pd-add-btn']}
+                style={{ background: '#ef4444' }}
               >
                 {t('findAlternatives') || 'Find Alternatives'}
               </button>
             )
           ) : (
-            <button disabled className="pd-add-btn" style={{ opacity: 0.5 }}>
+            <button
+              disabled
+              className={styles['pd-add-btn']}
+              style={{ opacity: 0.5 }}
+            >
               {t('loginToAdd')}
             </button>
           )}
 
-          {/* GROUP PURCHASE */}
-          {allowGroupPurchase && product.stock > 0 && (
-            <div className="pd-group-section">
-              {/* Header */}
-              <div className="pd-group-header">
+          {allowGroupPurchase && stock > 0 && (
+            <div className={styles['pd-group-section']}>
+              <div className={styles['pd-group-header']}>
                 <span>{t('groupPurchase.title')}</span>
                 <div
-                  className="pd-info-icon"
+                  className={styles['pd-info-icon']}
                   onMouseEnter={() => setShowTooltip(true)}
                   onMouseLeave={() => setShowTooltip(false)}
                 >
                   <Info size={16} />
                   {showTooltip && (
-                    <div className="pd-tooltip">
+                    <div className={styles['pd-tooltip']}>
                       {t('groupPurchase.tooltip')}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* ALWAYS SHOW GROUP PRICE */}
-              <div
-                className="pd-group-price-row"
-                style={{ margin: '0.75rem 0' }}
-              >
+              <div className={styles['pd-group-price-row']}>
                 <span style={{ fontWeight: 600, color: '#1e293b' }}>
                   {t('groupPurchase.price')}:{' '}
                   <span style={{ fontSize: '1.25rem', color: '#6d28d9' }}>
@@ -546,12 +511,8 @@ export default function ProductDetails() {
                 </span>
               </div>
 
-              {/* ACTIVE GROUP INFO (only if exists) */}
               {activeGroup && (
-                <div
-                  className="pd-active-group"
-                  style={{ marginBottom: '1rem' }}
-                >
+                <div className={styles['pd-active-group']}>
                   <p>
                     {t('groupPurchase.active', {
                       buyers: activeGroup.joinedBuyers.length,
@@ -565,12 +526,8 @@ export default function ProductDetails() {
                 </div>
               )}
 
-              {/* CUSTOM QUANTITY INPUT */}
-              <div
-                className="pd-quantity-section"
-                style={{ marginTop: '0.5rem' }}
-              >
-                <label className="pd-quantity-label">
+              <div className={styles['pd-quantity-section']}>
+                <label className={styles['pd-quantity-label']}>
                   {t('groupPurchase.customQuantity')} (
                   {t('caseOf', { n: caseQuantity })})
                 </label>
@@ -581,19 +538,18 @@ export default function ProductDetails() {
                   value={groupQuantity}
                   onChange={(e) => setGroupQuantity(e.target.value)}
                   placeholder={t('enterQuantity')}
-                  className="pd-quantity-input"
+                  className={styles['pd-quantity-input']}
                 />
                 {groupQtyError && (
-                  <div className="pd-qty-error">{groupQtyError}</div>
+                  <div className={styles['pd-qty-error']}>{groupQtyError}</div>
                 )}
               </div>
 
-              {/* ACTION BUTTON */}
               {activeGroup ? (
                 <button
                   onClick={() => joinGroupPurchase(activeGroup.groupPurchaseId)}
                   disabled={!groupQuantity || groupQtyError}
-                  className="pd-join-btn"
+                  className={styles['pd-join-btn']}
                 >
                   {t('groupPurchase.join', {
                     others: activeGroup.joinedBuyers.length,
@@ -604,7 +560,7 @@ export default function ProductDetails() {
                 <button
                   onClick={startGroupPurchase}
                   disabled={!groupQuantity || groupQtyError}
-                  className="pd-start-btn"
+                  className={styles['pd-start-btn']}
                 >
                   {t('groupPurchase.start')}
                 </button>
@@ -613,41 +569,43 @@ export default function ProductDetails() {
           )}
         </div>
       </section>
+
       {/* DESCRIPTION */}
-      <section className="pd-description">
+      <section className={styles['pd-description']}>
         <h2>{t('descriptionTitle')}</h2>
         <p>{description}</p>
       </section>
-      {/* REVIEWS */}
-      <section className="pd-reviews">
-        <h2>{t('reviewsTitle')}</h2>
 
+      {/* REVIEWS */}
+      <section className={styles['pd-reviews']}>
+        <h2>{t('reviewsTitle')}</h2>
         {reviews.length === 0 ? (
-          <p className="pd-no-reviews">{t('noReviews')}</p>
+          <p className={styles['pd-no-reviews']}>{t('noReviews')}</p>
         ) : (
-          <div className="carousel-wrapper">
-            <div className="carousel" ref={reviewsCarouselRef}>
+          <div className={styles['carousel-wrapper']}>
+            <div className={styles.carousel} ref={reviewsCarouselRef}>
               {reviews.map((r) => (
-                <div className="review-card-wrapper" key={r.itemReviewId}>
+                <div
+                  className={styles['review-card-wrapper']}
+                  key={r.itemReviewId}
+                >
                   <ReviewCard review={r} />
                 </div>
               ))}
             </div>
 
-            {/* BACK ARROW — LEFT in LTR, RIGHT in RTL */}
-            {canGoBack(reviewsCarouselRef) && (
+            {canScrollBack && (
               <button
-                className="carousel-arrow left"
+                className={`${styles['carousel-arrow']} ${styles.left}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
               >
                 {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </button>
             )}
 
-            {/* FORWARD ARROW — RIGHT in LTR, LEFT in RTL */}
-            {canGoForward(reviewsCarouselRef) && (
+            {canScrollForward && (
               <button
-                className="carousel-arrow right"
+                className={`${styles['carousel-arrow']} ${styles.right}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
               >
                 {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
