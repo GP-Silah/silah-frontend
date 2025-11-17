@@ -198,3 +198,11 @@ html[dir='rtl'] .tabs {
   gap: 6px;
   font-size: 14px;
 }
+
+.sar {
+  position: relative;
+  bottom: -1.5px;
+  width: 16px;
+  height: 18px;
+  object-fit: contain; /* scale image without stretching */
+}

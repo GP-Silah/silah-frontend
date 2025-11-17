@@ -1,17 +1,114 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
+import { faShoppingBasket, faCubes } from '@fortawesome/free-solid-svg-icons';
 import './Overview.css';
 
+const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
+
 function SupplierOverview() {
-  // نربط الصفحة بملف الترجمة supplierOverview.json
-  const { t } = useTranslation('supplierOverview');
+  const { t, i18n } = useTranslation('supplierOverview');
+  const navigate = useNavigate();
+  const isRtl = i18n.dir() === 'rtl';
 
-  // اسم المورد مؤقت
-  const supplierName = 'Saad';
+  // ────── STATE ──────
+  const [supplier, setSupplier] = useState(null);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [stockLevel, setStockLevel] = useState({ text: '', level: '' });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // ────── PAGE TITLE ──────
+  useEffect(() => {
+    document.title = t('pageTitle');
+  }, [t]);
+
+  // ────── FETCH ──────
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const [profileRes, pendingRes, stockRes] = await Promise.all([
+          axios.get(`${API_BASE}/api/suppliers/me`, { withCredentials: true }),
+          axios.get(`${API_BASE}/api/suppliers/me/pending-orders-count`, {
+            withCredentials: true,
+          }),
+          axios.get(`${API_BASE}/api/suppliers/me/stock-levels`, {
+            withCredentials: true,
+          }),
+        ]);
+
+        const profile = profileRes.data;
+        const pending = pendingRes.data;
+        const stock = stockRes.data;
+
+        setSupplier(profile);
+        setPendingCount(pending.count ?? 0);
+
+        // ── stock level logic ──
+        const veryLow = stock.overview.VERY_LOW?.count ?? 0;
+        const low = stock.overview.LOW?.count ?? 0;
+        let txt = t('cards.stock.levels.good');
+        let key = 'GOOD';
+        if (veryLow > 0) {
+          txt = t('cards.stock.levels.veryLow');
+          key = 'VERY_LOW';
+        } else if (low > 0) {
+          txt = t('cards.stock.levels.low');
+          key = 'LOW';
+        } else if (stock.overview.AVERAGE?.count > 0) {
+          txt = t('cards.stock.levels.average');
+          key = 'AVERAGE';
+        }
+        setStockLevel({ text: txt, level: key });
+      } catch (err) {
+        const msg = err.response?.data?.error?.message ?? err.message;
+        setError(msg);
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [t]);
+
+  // ────── NAVIGATION ──────
+  const goToStoreSettings = () => navigate('/supplier/settings?tab=store');
+  const goToOrders = () => navigate('/supplier/orders');
+  const goToListings = () => navigate('/supplier/listings');
+  const goToChoosePlan = () => navigate('/supplier/choose-plan');
+
+  // ────── LOADING / ERROR ──────
+  if (loading) {
+    return (
+      <div className="supplier-overview" dir={isRtl ? 'rtl' : 'ltr'}>
+        <p>{t('common.loading')}…</p>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="supplier-overview" dir={isRtl ? 'rtl' : 'ltr'}>
+        <p style={{ color: 'red' }}>
+          {t('common.error')}: {error}
+        </p>
+      </div>
+    );
+  }
+
+  const supplierName =
+    supplier?.supplierName ?? supplier?.user?.name ?? 'Supplier';
+  const isStoreOpen = supplier?.storeStatus === 'OPEN';
+  const isPremium = supplier?.plan === 'PREMIUM';
+
+  // ────── RENDER ──────
   return (
-    <div className="supplier-overview">
-      {/* العنوان */}
+    <div className="supplier-overview" dir={isRtl ? 'rtl' : 'ltr'}>
+      {/* ── Header ── */}
       <div className="overview-header">
         <h1 className="overview-title">
           {t('header.title', { name: supplierName })}
@@ -19,59 +116,68 @@ function SupplierOverview() {
         <p className="overview-subtitle">{t('header.subtitle')}</p>
       </div>
 
-      {/* الكروت */}
+      {/* ── Cards ── */}
       <section className="overview-cards">
-        {/* الكرت الأول */}
+        {/* Store Status */}
         <article className="overview-card">
-          <div className="card-icon-wrapper">
-            <img
-              src="/status-icon.png"
-              alt={t('cards.status.title')}
-              className="card-icon"
-            />
+          <div className="card-header-row">
+            <FontAwesomeIcon icon={faShoppingBasket} className="card-icon" />
+            <h2 className="card-title">{t('cards.status.title')}</h2>
           </div>
-          <h2 className="card-title">{t('cards.status.title')}</h2>
-          <p className="card-main-text">{t('cards.status.text')}</p>
-          <button className="card-button">{t('cards.status.button')}</button>
+
+          <div className="card-body-center">
+            <p className="card-main-text">
+              {isStoreOpen ? t('cards.status.open') : t('cards.status.closed')}
+            </p>
+            <button className="card-button" onClick={goToStoreSettings}>
+              {t('cards.status.button')}
+            </button>
+          </div>
         </article>
 
-        {/* الكرت الثاني */}
+        {/* Pending Orders */}
         <article className="overview-card">
-          <div className="card-icon-wrapper">
-            <img
-              src="/pending-icon.png"
-              alt={t('cards.pending.title')}
-              className="card-icon"
-            />
+          <div className="card-header-row">
+            <FontAwesomeIcon icon={faClock} className="card-icon" />
+            <h2 className="card-title">{t('cards.pending.title')}</h2>
           </div>
-          <h2 className="card-title">{t('cards.pending.title')}</h2>
-          <p className="card-main-text card-number">5</p>
-          <button className="card-button">{t('cards.pending.button')}</button>
+
+          <div className="card-body-center">
+            <p className="card-main-text card-number">{pendingCount}</p>
+            <button className="card-button" onClick={goToOrders}>
+              {t('cards.pending.button')}
+            </button>
+          </div>
         </article>
 
-        {/* الكرت الثالث */}
+        {/* Stock Levels */}
         <article className="overview-card">
-          <div className="card-icon-wrapper">
-            <img
-              src="/stock-icon.png"
-              alt={t('cards.stock.title')}
-              className="card-icon"
-            />
+          <div className="card-header-row">
+            <FontAwesomeIcon icon={faCubes} className="card-icon" />
+            <h2 className="card-title">{t('cards.stock.title')}</h2>
           </div>
-          <h2 className="card-title">{t('cards.stock.title')}</h2>
-          <p className="card-main-text">{t('cards.stock.text')}</p>
-          <button className="card-button">{t('cards.stock.button')}</button>
+
+          <div className="card-body-center">
+            <p className="card-main-text">{stockLevel.text}</p>
+            <button className="card-button" onClick={goToListings}>
+              {t('cards.stock.button')}
+            </button>
+          </div>
         </article>
       </section>
 
-      {/* الخطة */}
+      {/* ── Plan ── */}
       <section className="overview-plan">
         <p className="plan-text">
           {t('plan.label')}{' '}
-          <span className="plan-name">{t('plan.planName')}</span>
+          <span className="plan-name">
+            {t(`plan.names.${supplier?.plan ?? 'BASIC'}`)}
+          </span>
         </p>
-        <p className="plan-subtext">{t('plan.subtitle')}</p>
-        <button className="plan-button">{t('plan.button')}</button>
+        {!isPremium && <p className="plan-subtext">{t('plan.subtitle')}</p>}
+        <button className="plan-button" onClick={goToChoosePlan}>
+          {isPremium ? t('plan.manage') : t('plan.upgrade')}
+        </button>
       </section>
     </div>
   );

@@ -65,5 +65,8 @@
   "payNow": "Pay Now",
   "payUpfront": "Pay Upfront Now",
   "payRemaining": "Pay Remaining on Delivery",
-  "processing": "Processing..."
+  "processing": "Processing...",
+  "writeReview": "Write a Review",
+  "continueWriteReview": "Continue Writting a Review",
+  "alreadyReviewed": "You have reviewed this."
 }

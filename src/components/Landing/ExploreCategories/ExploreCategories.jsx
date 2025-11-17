@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Button from '../../Button/Button';
 import ItemCard from '../../ItemCard/ItemCard';
-import './ExploreCategories.css';
+import styles from './ExploreCategories.module.css';
 
 function ExploreCategories() {
   const { t, i18n } = useTranslation('landing');
@@ -13,7 +13,7 @@ function ExploreCategories() {
   const [loading, setLoading] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
 
-  // Fetch categories on mount
+  // Fetch categories on mount + language change
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -23,16 +23,15 @@ function ExploreCategories() {
           }/api/categories/main?lang=${i18n.language.toLowerCase()}`,
         );
         const data = await response.json();
-        setCategories(data);
+        setCategories(data || []);
       } catch (err) {
         console.error('Error fetching categories:', err);
       }
     };
-
     fetchCategories();
-  }, []);
+  }, [i18n.language]);
 
-  // Filter categories by tab type
+  // Filter categories based on active tab
   const productCategories = categories.filter(
     (cat) => cat.usedFor === 'PRODUCT',
   );
@@ -42,10 +41,11 @@ function ExploreCategories() {
   const filtersToShow =
     activeTab === 'products' ? productCategories : serviceCategories;
 
-  // Fetch items when a category is selected
+  // Handle category click → fetch items
   const handleCategoryClick = async (categoryId) => {
     setActiveCategory(categoryId);
     setLoading(true);
+    setItems([]);
 
     try {
       const endpoint =
@@ -59,7 +59,7 @@ function ExploreCategories() {
 
       const response = await fetch(endpoint);
       const data = await response.json();
-      setItems(data || []);
+      setItems(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Error fetching items:', err);
       setItems([]);
@@ -69,40 +69,40 @@ function ExploreCategories() {
   };
 
   return (
-    <section className="explore-section">
+    <section className={styles['explore-section']}>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
-        <h2>{t('exploreTitle')}</h2>
-        <p className="subtitle">{t('exploreSubtitle')}</p>
+        <h2 className={styles.title}>{t('exploreTitle')}</h2>
+        <p className={styles.subtitle}>{t('exploreSubtitle')}</p>
 
         {/* Tabs */}
-        <div className="tabs">
+        <div className={styles.tabs}>
           {['products', 'services'].map((tab) => (
             <Button
               key={tab}
               label={t(`tabs.${tab}`)}
               onClick={() => {
                 setActiveTab(tab);
-                setItems([]); // clear previous items
+                setItems([]);
                 setActiveCategory(null);
               }}
-              className={activeTab === tab ? 'active-tab' : ''}
+              className={activeTab === tab ? styles['active-tab'] : ''}
             />
           ))}
         </div>
 
         {/* Category Filters */}
-        <div className="filters">
+        <div className={styles.filters}>
           {filtersToShow.map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleCategoryClick(cat.id)}
-              className={`filter-btn ${
-                activeCategory === cat.id ? 'active-filter' : ''
+              className={`${styles['filter-btn']} ${
+                activeCategory === cat.id ? styles['active-filter'] : ''
               }`}
             >
               {cat.name}
@@ -110,18 +110,22 @@ function ExploreCategories() {
           ))}
         </div>
 
-        {/* Results */}
-        <div className="results mt-6">
+        {/* Results Grid */}
+        <div className={styles['results']}>
           {loading && (
-            <div className="spinner-container">
-              <div className="spinner"></div>
+            <div className={styles['spinner-container']}>
+              <div className={styles.spinner}></div>
             </div>
           )}
+
           {!loading && items.length === 0 && activeCategory && (
-            <p>{t('noResult', { activeTab: activeTab })}</p>
+            <p className={styles['no-results']}>
+              {t('noResult', { activeTab: t(`tabs.${activeTab}`) })}
+            </p>
           )}
+
           {!loading && items.length > 0 && (
-            <div className="cards-grid">
+            <div className={styles['cards-grid']}>
               {items.map((item) => (
                 <ItemCard
                   key={item.productId || item.serviceId}

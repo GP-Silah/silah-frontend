@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import SupplierProtectedRoute from '@/pages/ProtectedSupplierRoute';
 import { ToastProvider } from '@/context/NotificationPopupToast/NotificationContext';
 import NotificationListener from '@/components/NotificationListener';
 import { CartProvider } from './context/CartContext';
@@ -147,11 +148,7 @@ export default function App() {
               </Route>
 
               {/* 4. SUPPLIER PRIVATE PAGES */}
-              <Route
-                element={
-                  <ProtectedRoute allowedRoles={['supplier']} redirectTo="/" />
-                }
-              >
+              <Route element={<SupplierProtectedRoute />}>
                 <Route path="/supplier/*" element={<SupplierLayout />}>
                   {layoutRoutes.supplier.map(({ path, Component }) => (
                     <Route

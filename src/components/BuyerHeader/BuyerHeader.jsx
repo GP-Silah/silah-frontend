@@ -136,7 +136,7 @@ const BuyerHeader = ({
         navigate(`/buyer/orders/${n.relatedEntityId}`);
         break;
       case 'GROUP_PURCHASE':
-        navigate(`/buyer/invoices`);
+        navigate(`/buyer/invoices/${n.relatedEntityId}`);
         break;
       default:
         break;

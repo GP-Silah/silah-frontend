@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
-import '../../Supplier/Settings/Settings.css';
+import styles from '../../Supplier/Settings/Settings.module.css';
 import SignupBusinessActivity from '@/components/SingupBusinessActivity/SignupBusinessActivity';
 import TapCardForm from '@/components/Tap/TapCardForm';
 
@@ -11,7 +11,6 @@ const BuyerSettings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
   const [user, setUser] = useState({
     name: '',
     nid: '',
@@ -48,7 +47,6 @@ const BuyerSettings = () => {
     number: '',
     expiry: '',
   });
-
   const profileRef = useRef(null);
 
   const isPasswordFormInvalid =
@@ -62,7 +60,6 @@ const BuyerSettings = () => {
     document.documentElement.setAttribute('dir', i18n.dir());
   }, [i18n, i18n.language, t]);
 
-  // Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
       const controller = new AbortController();
@@ -70,26 +67,17 @@ const BuyerSettings = () => {
       try {
         const userRequest = axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
-          {
-            withCredentials: true,
-            signal: controller.signal,
-          },
+          { withCredentials: true, signal: controller.signal },
         );
         const cardRequest = axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
-          {
-            withCredentials: true,
-            signal: controller.signal,
-          },
+          { withCredentials: true, signal: controller.signal },
         );
         const notifRequest = axios.get(
           `${
             import.meta.env.VITE_BACKEND_URL
           }/api/notifications/me/preferences`,
-          {
-            withCredentials: true,
-            signal: controller.signal,
-          },
+          { withCredentials: true, signal: controller.signal },
         );
 
         const [userResponse, cardResponse, notifResponse] =
@@ -112,43 +100,25 @@ const BuyerSettings = () => {
             crn: userData.crn || '',
             activity: userData.categories?.map((cat) => cat.id) || [],
           });
-
-          if (
-            userData.preferredLanguage &&
-            ((userData.preferredLanguage === 'ARA' && i18n.language !== 'ar') ||
-              (userData.preferredLanguage === 'ENG' && i18n.language !== 'en'))
-          ) {
-            i18n.changeLanguage(
-              userData.preferredLanguage === 'ARA' ? 'ar' : 'en',
-            );
+          if (userData.preferredLanguage) {
+            const lang = userData.preferredLanguage === 'ARA' ? 'ar' : 'en';
+            if (i18n.language !== lang) i18n.changeLanguage(lang);
           }
-        } else {
-          console.error('User data fetch failed:', userResponse.reason);
-          setError(
-            userResponse.reason.response?.data?.error?.message ||
-              t('errors.fetchFailed'),
-          );
         }
 
         if (
           cardResponse.status === 'fulfilled' &&
-          cardResponse.value.data.message != 'No card found'
+          cardResponse.value.data.message !== 'No card found'
         ) {
+          const c = cardResponse.value.data;
           setHasSavedCard(true);
           setCard({
-            name: cardResponse.value.data.cardHolderName || '',
-            number: `**** ${cardResponse.value.data.last4 || ''}`,
-            expiry:
-              `${cardResponse.value.data.expMonth}/${cardResponse.value.data.expYear}` ||
-              '',
+            name: c.cardHolderName || '',
+            number: `**** ${c.last4 || ''}`,
+            expiry: `${c.expMonth}/${c.expYear}`,
           });
-        } else if (
-          cardResponse.status === 'fulfilled' &&
-          cardResponse.value.data.message === 'No card found'
-        ) {
+        } else {
           setHasSavedCard(false);
-        } else if (cardResponse.status === 'rejected') {
-          console.warn('Card fetch failed:', cardResponse.reason);
         }
 
         if (notifResponse.status === 'fulfilled') {
@@ -161,18 +131,18 @@ const BuyerSettings = () => {
             orderStatusNotify: prefs.orderStatusNotify ?? true,
             groupPurchaseStatusNotify: prefs.groupPurchaseStatusNotify ?? true,
           });
-        } else {
-          console.warn('Notifications fetch failed:', notifResponse.reason);
         }
       } catch (err) {
-        if (axios.isCancel(err)) return;
-        setError(err.response?.data?.error?.message || t('errors.fetchFailed'));
+        if (!axios.isCancel(err)) {
+          setError(
+            err.response?.data?.error?.message || t('errors.fetchFailed'),
+          );
+        }
       } finally {
         setLoading(false);
       }
       return () => controller.abort();
     };
-
     fetchData();
   }, [i18n.language, t]);
 
@@ -188,9 +158,8 @@ const BuyerSettings = () => {
         }
         break;
       case 'confirmPassword':
-        if (value !== passwordForm.newPassword) {
+        if (value !== passwordForm.newPassword)
           error = t('errors.passwordMismatch');
-        }
         break;
       default:
         break;
@@ -198,10 +167,8 @@ const BuyerSettings = () => {
     return error;
   };
 
-  const handleTokenGenerated = async (tokenId, cardId) => {
+  const handleTokenGenerated = async (tokenId) => {
     setLoading(true);
-    setError('');
-
     try {
       const { data } = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
@@ -212,8 +179,6 @@ const BuyerSettings = () => {
         },
         { withCredentials: true },
       );
-
-      console.log('➡️ Redirecting user to Tap OTP page:', data.transactionUrl);
       window.location.href = data.transactionUrl;
     } catch (err) {
       setError(
@@ -224,17 +189,11 @@ const BuyerSettings = () => {
     }
   };
 
-  const handleFormError = (errorMessage) => {
-    setError(errorMessage);
-  };
-
   const handleCardDelete = async () => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/buyers/me/card`,
-        {
-          withCredentials: true,
-        },
+        { withCredentials: true },
       );
       setHasSavedCard(false);
       setCard({ name: '', number: '', expiry: '' });
@@ -247,7 +206,6 @@ const BuyerSettings = () => {
   };
 
   const handlePasswordSubmit = async () => {
-    setError('');
     const errors = {
       currentPassword: passwordForm.currentPassword ? '' : t('errors.required'),
       newPassword: validatePassword('newPassword', passwordForm.newPassword),
@@ -257,8 +215,7 @@ const BuyerSettings = () => {
       ),
     };
     setPasswordErrors(errors);
-
-    if (!Object.values(errors).some((error) => error)) {
+    if (Object.values(errors).every((e) => !e)) {
       try {
         await axios.patch(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/me/change-password`,
@@ -275,11 +232,6 @@ const BuyerSettings = () => {
           newPassword: '',
           confirmPassword: '',
         });
-        setPasswordErrors({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: '',
-        });
       } catch (err) {
         setError(
           err.response?.data?.error?.message ||
@@ -291,67 +243,62 @@ const BuyerSettings = () => {
 
   const handleImageUpload = async (file, type) => {
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError(t('errors.fileTooLarge'));
+    if (
+      file.size > 5 * 1024 * 1024 ||
+      !['image/png', 'image/jpeg', 'image/webp'].includes(file.type)
+    ) {
+      setError(t('errors.fileTooLarge') || t('errors.invalidFileType'));
       return;
     }
-    if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-      setError(t('errors.invalidFileType'));
-      return;
-    }
-
+    const formData = new FormData();
+    formData.append('file', file);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
-      await axios.post(`${baseUrl}/api/users/me/profile-picture`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true,
-      });
-
-      const { data } = await axios.get(`${baseUrl}/api/users/me`, {
-        withCredentials: true,
-      });
-
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/me/profile-picture`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        },
+      );
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+        { withCredentials: true },
+      );
       setUser((prev) => ({
         ...prev,
         pfpFileName: data.pfpFileName,
         pfpUrl: data.pfpUrl,
         isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
-        tapCustomerId: data.tapCustomerId || prev.tapCustomerId,
       }));
-      setSuccess(t(`success.${type}Uploaded`));
+      setSuccess(t('success.profileUploaded'));
     } catch (err) {
       setError(
-        err.response?.data?.error?.message || t(`errors.${type}UploadFailed`),
+        err.response?.data?.error?.message || t('errors.profileUploadFailed'),
       );
     }
   };
 
-  const handleImageDelete = async (type) => {
+  const handleImageDelete = async () => {
     try {
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
-      if (type === 'profile' && user.pfpFileName && !user.isDefaultPfp) {
-        await axios.delete(`${baseUrl}/api/users/me/profile-picture`, {
-          withCredentials: true,
-        });
-
-        const { data } = await axios.get(`${baseUrl}/api/users/me`, {
-          withCredentials: true,
-        });
-
-        setUser((prev) => ({
-          ...prev,
-          pfpFileName: data.pfpFileName,
-          pfpUrl: data.pfpUrl,
-          isDefaultPfp: data.pfpFileName?.includes('defaultavatars'),
-          tapCustomerId: data.tapCustomerId || prev.tapCustomerId,
-        }));
-        setSuccess(t(`success.${type}Deleted`));
-      }
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/me/profile-picture`,
+        { withCredentials: true },
+      );
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+        { withCredentials: true },
+      );
+      setUser((prev) => ({
+        ...prev,
+        pfpFileName: data.pfpFileName,
+        pfpUrl: data.pfpUrl,
+        isDefaultPfp: true,
+      }));
+      setSuccess(t('success.profileDeleted'));
     } catch (err) {
       setError(
-        err.response?.data?.error?.message || t(`errors.${type}DeleteFailed`),
+        err.response?.data?.error?.message || t('errors.profileDeleteFailed'),
       );
     }
   };
@@ -360,39 +307,27 @@ const BuyerSettings = () => {
     try {
       setError('');
       setSuccess('');
+      const updates = {};
+      if (user.name) updates.name = user.name;
+      if (biz.name) updates.businessName = biz.name;
+      if (biz.activity.length > 0)
+        updates.categories = biz.activity.map(Number);
+      if (email) updates.email = email;
+      if (i18n.language)
+        updates.preferredLanguage = i18n.language === 'ar' ? 'ARA' : 'ENG';
 
-      const baseUrl = import.meta.env.VITE_BACKEND_URL || '';
-      const userUpdates = {};
-      if (user.name) userUpdates.name = user.name;
-      if (biz.name) userUpdates.businessName = biz.name;
-      if (biz.activity.length > 0) {
-        userUpdates.categories = biz.activity
-          .map((id) => Number(id))
-          .filter((num) => !isNaN(num));
-      } else {
-        setError(t('errors.minOneCategory'));
-        return;
+      if (Object.keys(updates).length > 0) {
+        await axios.patch(
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/me`,
+          updates,
+          { withCredentials: true },
+        );
       }
-      if (email) userUpdates.email = email;
-      if (i18n.language) {
-        userUpdates.preferredLanguage = i18n.language === 'ar' ? 'ARA' : 'ENG';
-      }
-
-      if (Object.keys(userUpdates).length > 0) {
-        await axios.patch(`${baseUrl}/api/users/me`, userUpdates, {
-          withCredentials: true,
-        });
-      }
-
       await axios.patch(
-        `${baseUrl}/api/notifications/me/preferences`,
-        {
-          allowNotifications: notifications,
-          ...notifTypes,
-        },
+        `${import.meta.env.VITE_BACKEND_URL}/api/notifications/me/preferences`,
+        { allowNotifications: notifications, ...notifTypes },
         { withCredentials: true },
       );
-
       setSuccess(t('success.settingsUpdated'));
     } catch (err) {
       setError(err.response?.data?.error?.message || t('errors.saveFailed'));
@@ -401,28 +336,30 @@ const BuyerSettings = () => {
 
   useEffect(() => {
     if (success) {
-      const timer = setTimeout(() => setSuccess(''), 2000);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setSuccess(''), 2000);
+      return () => clearTimeout(t);
     }
   }, [success]);
 
   return (
-    <div className="dashboard-container">
-      <div className="page-content" dir={i18n.dir()}>
-        <div className="settings-container">
+    <div className={styles['dashboard-container']}>
+      <div className={styles['page-content']} dir={i18n.dir()}>
+        <div className={styles['settings-container']}>
           {loading && <p>{t('loading')}</p>}
-          {error && <p className="error-text">{error}</p>}
-          {success && <p className="success-text">{success}</p>}
-          <h2 className="settings-title">
+          {error && <p className={styles['error-text']}>{error}</p>}
+          {success && <p className={styles['success-text']}>{success}</p>}
+
+          <h2 className={styles['settings-title']}>
             {t('pageTitle.settings', { ns: 'common' })}
           </h2>
-          <div className="settings-tabs">
+
+          <div className={styles['settings-tabs']}>
             {['general', 'account', 'notifications', 'payment', 'support'].map(
               (tab) => (
                 <button
                   key={tab}
-                  className={`settings-tab ${
-                    activeTab === tab ? 'active' : ''
+                  className={`${styles['settings-tab']} ${
+                    activeTab === tab ? styles.active : ''
                   }`}
                   onClick={() => setActiveTab(tab)}
                 >
@@ -434,9 +371,9 @@ const BuyerSettings = () => {
 
           {activeTab === 'general' && (
             <>
-              <section className="settings-box">
+              <section className={styles['settings-box']}>
                 <h3>{t('userInfo.title')}</h3>
-                <div className="grid-2">
+                <div className={styles['grid-2']}>
                   <label>
                     <span>{t('userInfo.name')}</span>
                     <input
@@ -453,9 +390,10 @@ const BuyerSettings = () => {
                   </label>
                 </div>
               </section>
-              <section className="settings-box">
+
+              <section className={styles['settings-box']}>
                 <h3>{t('businessInfo.title')}</h3>
-                <div className="grid-3">
+                <div className={styles['grid-3']}>
                   <label>
                     <span>{t('businessInfo.businessName')}</span>
                     <input
@@ -468,20 +406,17 @@ const BuyerSettings = () => {
                     <span>{t('businessInfo.crn')}</span>
                     <input value={biz.crn} readOnly />
                   </label>
-                  <label className="full-width">
+                  <label className={styles['full-width']}>
                     <span>{t('businessInfo.activity')}</span>
                     <SignupBusinessActivity
                       value={biz.activity}
-                      onChange={(selectedValues) => {
-                        if (
-                          selectedValues.length === 0 &&
-                          biz.activity.length > 0
-                        ) {
+                      onChange={(selected) => {
+                        if (selected.length === 0 && biz.activity.length > 0) {
                           setError(t('errors.minOneCategory'));
                           return;
                         }
                         setError('');
-                        setBiz({ ...biz, activity: selectedValues });
+                        setBiz({ ...biz, activity: selected });
                       }}
                     />
                   </label>
@@ -491,16 +426,15 @@ const BuyerSettings = () => {
           )}
 
           {activeTab === 'account' && (
-            <section className="settings-box">
+            <section className={styles['settings-box']}>
               <h3>{t('account.title')}</h3>
-              <div className="grid-2">
+              <div className={styles['grid-2']}>
                 <label>
                   <span>{t('account.email')}</span>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t('placeholders.email')}
                   />
                 </label>
                 <label>
@@ -508,49 +442,47 @@ const BuyerSettings = () => {
                   <input type="password" value={password} readOnly />
                 </label>
               </div>
+
               {showPasswordFields ? (
                 <>
-                  <div className="grid-2 mt-16">
-                    <label className="full-width">
+                  <div className={`${styles['grid-2']} ${styles['mt-16']}`}>
+                    <label className={styles['full-width']}>
                       <span>{t('account.currentPassword')}</span>
                       <input
                         type="password"
                         value={passwordForm.currentPassword}
                         onChange={(e) => {
-                          const value = e.target.value;
+                          const v = e.target.value;
                           setPasswordForm({
                             ...passwordForm,
-                            currentPassword: value,
+                            currentPassword: v,
                           });
                           setPasswordErrors({
                             ...passwordErrors,
-                            currentPassword: value ? '' : t('errors.required'),
+                            currentPassword: v ? '' : t('errors.required'),
                           });
                         }}
-                        placeholder={t('placeholders.currentPassword')}
                       />
                       {passwordErrors.currentPassword && (
-                        <p className="error-text">
+                        <p className={styles['error-text']}>
                           {passwordErrors.currentPassword}
                         </p>
                       )}
                     </label>
                   </div>
-                  <div className="grid-2 mt-16">
+
+                  <div className={`${styles['grid-2']} ${styles['mt-16']}`}>
                     <label>
                       <span>{t('account.newPassword')}</span>
                       <input
                         type="password"
                         value={passwordForm.newPassword}
                         onChange={(e) => {
-                          const value = e.target.value;
-                          setPasswordForm({
-                            ...passwordForm,
-                            newPassword: value,
-                          });
+                          const v = e.target.value;
+                          setPasswordForm({ ...passwordForm, newPassword: v });
                           setPasswordErrors({
                             ...passwordErrors,
-                            newPassword: validatePassword('newPassword', value),
+                            newPassword: validatePassword('newPassword', v),
                             confirmPassword:
                               passwordForm.confirmPassword &&
                               validatePassword(
@@ -559,10 +491,9 @@ const BuyerSettings = () => {
                               ),
                           });
                         }}
-                        placeholder={t('placeholders.newPassword')}
                       />
                       {passwordErrors.newPassword && (
-                        <p className="error-text">
+                        <p className={styles['error-text']}>
                           {passwordErrors.newPassword}
                         </p>
                       )}
@@ -573,32 +504,31 @@ const BuyerSettings = () => {
                         type="password"
                         value={passwordForm.confirmPassword}
                         onChange={(e) => {
-                          const value = e.target.value;
+                          const v = e.target.value;
                           setPasswordForm({
                             ...passwordForm,
-                            confirmPassword: value,
+                            confirmPassword: v,
                           });
                           setPasswordErrors({
                             ...passwordErrors,
                             confirmPassword: validatePassword(
                               'confirmPassword',
-                              value,
+                              v,
                             ),
                           });
                         }}
-                        placeholder={t('placeholders.confirmPassword')}
                       />
                       {passwordErrors.confirmPassword && (
-                        <p className="error-text">
+                        <p className={styles['error-text']}>
                           {passwordErrors.confirmPassword}
                         </p>
                       )}
                     </label>
                   </div>
+
                   <button
-                    type="button"
-                    className={`btn-primary mt-24 ${
-                      isPasswordFormInvalid ? 'btn-disabled' : ''
+                    className={`${styles['btn-primary']} ${styles['mt-24']} ${
+                      isPasswordFormInvalid ? styles['btn-disabled'] : ''
                     }`}
                     onClick={handlePasswordSubmit}
                     disabled={isPasswordFormInvalid}
@@ -608,34 +538,33 @@ const BuyerSettings = () => {
                 </>
               ) : (
                 <button
-                  type="button"
-                  className="btn-primary mt-12"
+                  className={`${styles['btn-primary']} ${styles['mt-12']}`}
                   onClick={() => setShowPasswordFields(true)}
                 >
                   {t('account.changePassword')}
                 </button>
               )}
-              <div className="upload-section mt-24">
+
+              <div className={`${styles['upload-section']} ${styles['mt-24']}`}>
                 <div
-                  className="upload-card"
-                  onClick={() => profileRef.current.click()}
+                  className={styles['upload-card']}
+                  onClick={() => profileRef.current?.click()}
                 >
                   {user.pfpFileName ? (
-                    <div className="image-wrapper">
+                    <div className={styles['image-wrapper']}>
                       <img
                         src={user.pfpUrl}
                         alt="profile"
                         onError={(e) => (e.target.style.display = 'none')}
                       />
                       {!user.isDefaultPfp && (
-                        <div className="delete-image-icon-bg">
+                        <div className={styles['delete-image-icon-bg']}>
                           <button
                             type="button"
-                            className="pd-btn-image-delete"
-                            aria-label={t('images.remove')}
+                            className={styles['pd-btn-image-delete']}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleImageDelete('profile');
+                              handleImageDelete();
                             }}
                           >
                             ×
@@ -643,15 +572,15 @@ const BuyerSettings = () => {
                         </div>
                       )}
                       {user.isDefaultPfp && (
-                        <div className="overlay-upload-hint">
-                          <span className="upload-icon">⬆️</span>
+                        <div className={styles['overlay-upload-hint']}>
+                          <span className={styles['upload-icon']}>⬆️</span>
                           <p>{t('account.upload')}</p>
                         </div>
                       )}
                     </div>
                   ) : (
                     <>
-                      <span className="upload-icon">⬆️</span>
+                      <span className={styles['upload-icon']}>⬆️</span>
                       <p>{t('account.upload')}</p>
                     </>
                   )}
@@ -670,24 +599,28 @@ const BuyerSettings = () => {
           )}
 
           {activeTab === 'notifications' && (
-            <section className="settings-box">
+            <section className={styles['settings-box']}>
               <h3>{t('notifications.title')}</h3>
-              <div className="row-start gap-12 mt-12">
+              <div
+                className={`${styles['row-start']} ${styles['gap-12']} ${styles['mt-12']}`}
+              >
                 <span>{t('notifications.allow')}</span>
-                <label className="switch">
+                <label className={styles.switch}>
                   <input
                     type="checkbox"
                     checked={notifications}
                     onChange={(e) => setNotifications(e.target.checked)}
                   />
-                  <span className="slider"></span>
+                  <span className={styles.slider}></span>
                 </label>
               </div>
-              <div className="checkboxes mt-16">
-                <p className="notif-description">{t('notifications.select')}</p>
-                <div className="grid-2">
+              <div className={`${styles.checkboxes} ${styles['mt-16']}`}>
+                <p className={styles['notif-description']}>
+                  {t('notifications.select')}
+                </p>
+                <div className={styles['grid-2']}>
                   {Object.keys(notifTypes).map((key) => (
-                    <label key={key} className="check">
+                    <label key={key} className={styles.check}>
                       <input
                         type="checkbox"
                         checked={notifTypes[key]}
@@ -708,32 +641,37 @@ const BuyerSettings = () => {
           )}
 
           {activeTab === 'payment' && (
-            <section className="settings-box">
-              <div className="payment-section">
-                <h3 className="payment-title">{t('payment.title')}</h3>
+            <section className={styles['settings-box']}>
+              <div className={styles['payment-section']}>
+                <h3 className={styles['payment-title']}>
+                  {t('payment.title')}
+                </h3>
                 {hasSavedCard ? (
-                  <div className="saved-card">
-                    <div className="saved-card-info">
+                  <div className={styles['saved-card']}>
+                    <div className={styles['saved-card-info']}>
                       <img
                         src="/mada-logo.svg"
-                        alt="Mada logo"
-                        className="mada-logo"
+                        alt="Mada"
+                        className={styles['mada-logo']}
                       />
-                      <div className="saved-card-details">
-                        <span className="saved-card-number">{card.number}</span>
-                        <div className="saved-card-row">
-                          <span className="saved-card-name">{card.name}</span>
-                          <span className="saved-card-expiry">
+                      <div className={styles['saved-card-details']}>
+                        <span className={styles['saved-card-number']}>
+                          {card.number}
+                        </span>
+                        <div className={styles['saved-card-row']}>
+                          <span className={styles['saved-card-name']}>
+                            {card.name}
+                          </span>
+                          <span className={styles['saved-card-expiry']}>
                             {card.expiry}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="delete-image-icon-bg">
+                    <div className={styles['delete-image-icon-bg']}>
                       <button
                         type="button"
-                        className="pd-btn-image-delete"
-                        aria-label={t('payment.removeCard')}
+                        className={styles['pd-btn-image-delete']}
                         onClick={handleCardDelete}
                       >
                         ×
@@ -742,16 +680,17 @@ const BuyerSettings = () => {
                   </div>
                 ) : (
                   <>
-                    <p className="payment-hint">{t('payment.hint')}</p>
-                    <div className="tap-card-wrapper">
+                    <p className={styles['payment-hint']}>
+                      {t('payment.hint')}
+                    </p>
+                    <div className={styles['tap-card-wrapper']}>
                       <TapCardForm
                         isActive={activeTab === 'payment'}
                         onTokenGenerated={handleTokenGenerated}
-                        onError={handleFormError}
+                        onError={(msg) => setError(msg)}
                         customerId={user.tapCustomerId}
                         t={t}
                       />
-                      {error && <p className="error-text">{error}</p>}
                     </div>
                   </>
                 )}
@@ -760,24 +699,32 @@ const BuyerSettings = () => {
           )}
 
           {activeTab === 'support' && (
-            <section className="settings-box support-section">
-              <h3 className="support-title">{t('support.helpTitle')}</h3>
-              <p className="support-text">
+            <section
+              className={`${styles['settings-box']} ${styles['support-section']}`}
+            >
+              <h3 className={styles['support-title']}>
+                {t('support.helpTitle')}
+              </h3>
+              <p className={styles['support-text']}>
                 {t('support.paragraph1')}
                 <br />
                 {t('support.paragraph2')}
               </p>
-              <p className="support-email">
+              <p className={styles['support-email']}>
                 <strong>{t('support.emailLabel')}</strong>{' '}
                 <a href="mailto:support@silah.site">{t('support.email')}</a>
               </p>
-              <p className="support-text">{t('support.paragraph3')}</p>
+              <p className={styles['support-text']}>
+                {t('support.paragraph3')}
+              </p>
             </section>
           )}
 
           <button
             type="button"
-            className={`btn-primary mt-24 ${error ? 'btn-disabled' : ''}`}
+            className={`${styles['btn-primary']} ${styles['mt-24']} ${
+              error ? styles['btn-disabled'] : ''
+            }`}
             onClick={handleSave}
             disabled={loading || !!error}
           >

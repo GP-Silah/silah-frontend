@@ -172,6 +172,7 @@ export default function CartBuyer() {
       if (res.data.suppliers && res.data.suppliers.length > 0) {
         setCart(res.data);
       } else {
+        refreshCart();
         setCart(null); // Cart deleted
       }
     } catch (err) {
@@ -181,6 +182,7 @@ export default function CartBuyer() {
         err.response?.data?.error?.message ===
           'Cart is now empty and has been deleted'
       ) {
+        refreshCart();
         setCart(null); // Go to empty state
         return; // Don't show error
       }

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { toast } from 'react-hot-toast';
 
 const AuthContext = createContext();
 
@@ -20,26 +21,38 @@ export function AuthProvider({ children }) {
     const isClosed = sessionStorage.getItem(INACTIVE_NOTICE_KEY) === '1';
     if (isClosed) return;
 
-    const isArabic = i18n.language === 'ar';
-
     Swal.fire({
       icon: 'warning',
-      title: isArabic
-        ? 'لقد تجاوزت حدود الخطة الأساسية'
-        : 'You exceeded basic plan limits',
-      text: isArabic
-        ? 'سيتم إخفاء واجهة متجرك ومنتجاتك مؤقتًا من المشترين حتى يتم الدفع.'
-        : 'Your storefront and products shall be temporarily hidden from buyers until payment is made.',
-      confirmButtonText: isArabic ? 'فهمت' : 'Got it',
+      title: t('inactiveSupplierNoticeTitle'),
+      text: t('inactiveSupplierNoticeText'),
+      confirmButtonText: t('gotIt'),
       confirmButtonColor: '#8a52a7',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      customClass: {
-        popup: 'swal-rtl',
-      },
+      customClass: { popup: 'swal-rtl' },
     }).then(() => {
       sessionStorage.setItem(INACTIVE_NOTICE_KEY, '1');
     });
+  };
+
+  // ---- NEW: list of allowed paths for INACTIVE suppliers ----
+  const ALLOWED_INACTIVE_PATHS = [
+    '/supplier/listings',
+    '/supplier/overview',
+    '/supplier/orders',
+    '/supplier/invoices',
+    '/supplier/settings',
+    '/supplier/choose-plan',
+  ];
+
+  // Helper that returns true only for the 8 routes (including dynamic segments)
+  const isPathAllowedForInactive = (pathname) => {
+    // exact matches
+    if (ALLOWED_INACTIVE_PATHS.includes(pathname)) return true;
+
+    // dynamic routes: /supplier/orders/:id  and  /supplier/invoices/:id
+    const base = pathname.split('/').slice(0, 3).join('/');
+    return ['/supplier/orders', '/supplier/invoices'].includes(base);
   };
 
   const handleLogout = async () => {
@@ -82,7 +95,7 @@ export function AuthProvider({ children }) {
           setSupplierId(supplierData.supplierId);
 
           // === إظهار التنبيه إذا INACTIVE ولم يُغلق ===
-          if (status === 'INACTIVE') {
+          if (supplierData.supplierStatus === 'INACTIVE') {
             showInactiveSupplierNotice();
           }
         } catch (supplierErr) {
@@ -164,6 +177,7 @@ export function AuthProvider({ children }) {
         handleLogout,
         fetchUser,
         switchRole,
+        isPathAllowedForInactive,
       }}
     >
       {children}

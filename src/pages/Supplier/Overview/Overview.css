@@ -2,188 +2,335 @@
 
 /* ألوان مأخوذة من Figma */
 :root {
-    --overview-bg: #f7f4ff;
-    /* كان لون الخلفية العامة، بس الحين شلناه من الصفحة نفسها */
-    --overview-card-bg: #d8c0e7;
-    /* خلفية الكروت */
-    --overview-primary: #543361;
-    /* البنفسجي للأزرار */
-    --overview-primary-dark: #42284d;
-    --overview-badge: #517fbf;
-    /* الأزرق لكلمة Basic */
-    --overview-text-main: #000000;
-    --overview-text-muted: #6b6b88;
+  --overview-bg: #f7f4ff;
+  /* كان لون الخلفية العامة، بس الحين شلناه من الصفحة نفسها */
+  --overview-card-bg: #d8c0e7;
+  /* خلفية الكروت */
+  --overview-primary: #543361;
+  /* البنفسجي للأزرار */
+  --overview-primary-dark: #42284d;
+  --overview-badge: #517fbf;
+  /* الأزرق لكلمة Basic */
+  --overview-text-main: #000000;
+  --overview-text-muted: #6b6b88;
 }
 
 .supplier-overview {
-    width: 100%;
-    min-height: 100%;
-    background: transparent;
-    padding: 24px 24px 40px;
-    /* padding طبيعي للداخل */
-    margin-top: 40px;
-    /* 🔥 يعطيك فراغ أبيض واضح فوق Welcome */
-    box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
+  padding: 24px 24px 40px;
+  /* padding طبيعي للداخل */
+  margin-top: 40px;
+  /* 🔥 يعطيك فراغ أبيض واضح فوق Welcome */
+  box-sizing: border-box;
 }
 
 /* الهيدر */
 .overview-header {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 48px;
-    /* ⬅️ زودنا المسافة بين الهيدر والكروت */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 48px;
+  /* ⬅️ زودنا المسافة بين الهيدر والكروت */
 }
 
 .overview-title {
-    margin: 0;
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--overview-text-main);
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--overview-text-main);
 }
 
 .overview-subtitle {
-    margin: 0;
-    font-size: 14px;
-    color: var(--overview-text-main);
+  margin: 0;
+  font-size: 20px;
+  color: var(--overview-text-main);
 }
 
 /* كروت الـ overview */
 .overview-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 /* الكرت */
 .overview-card {
-    background: var(--overview-card-bg);
-    border-radius: 16px;
-    padding: 16px 18px 18px;
-    box-shadow: 0 4px 16px rgba(23, 15, 58, 0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  background: var(--overview-card-bg);
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 4px 16px rgba(23, 15, 58, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* الأيقونة */
 .card-icon-wrapper {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
 
-    background: transparent;
-    box-shadow: none;
+  background: transparent;
+  box-shadow: none;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-icon-wrapper img {
-    width: 25px;
-    height: 25px;
-    object-fit: contain;
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
 }
 
 /* نصوص الكرت */
 .card-title {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--overview-text-main);
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--overview-text-main);
 }
 
 .card-main-text {
-    margin: 0;
-    font-size: 14px;
-    color: var(--overview-text-main);
+  margin: 0;
+  font-size: 14px;
+  color: var(--overview-text-main);
 }
 
 .card-number {
-    font-size: 24px;
-    font-weight: 700;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 /* زر داخل الكرت */
 .card-button {
-    align-self: flex-start;
-    border: none;
-    outline: none;
-    padding: 8px 14px;
-    border-radius: 12px;
-    /* مستطيل بزوايا ناعمة */
-    background: var(--overview-primary);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.25s ease, transform 0.1s ease;
+  align-self: flex-start;
+  border: none;
+  outline: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  /* مستطيل بزوايا ناعمة */
+  background: var(--overview-primary);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
 }
 
 .card-button:hover {
-    background: var(--overview-primary-dark);
-    transform: translateY(-1px);
+  background: var(--overview-primary-dark);
+  transform: translateY(-1px);
 }
 
 /* بلوك الخطة */
 .overview-plan {
-    margin-top: 8px;
+  margin-top: 8px;
 }
 
 .plan-text {
-    margin: 0;
-    font-size: 16px;
-    color: var(--overview-text-main);
+  margin: 0;
+  font-size: 16px;
+  color: var(--overview-text-main);
 }
 
 .plan-name {
-    font-weight: 600;
-    color: var(--overview-badge);
-    font-size: 17px;
+  font-weight: 600;
+  color: var(--overview-badge);
+  font-size: 17px;
 }
 
 .plan-subtext {
-    margin: 4px 0 12px;
-    font-size: 13px;
-    color: var(--overview-text-main);
+  margin: 4px 0 12px;
+  font-size: 13px;
+  color: var(--overview-text-main);
 }
 
 .plan-button {
-    border: none;
-    outline: none;
-    padding: 10px 20px;
-    /* زر أكبر */
-    border-radius: 12px;
-    /* مستطيل بزوايا ناعمة */
-    background: #ffffff;
-    color: var(--overview-primary);
-    font-size: 14px;
-    font-weight: 600;
-    border: 1px solid var(--overview-primary);
-    cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease;
+  border: none;
+  outline: none;
+  padding: 10px 20px;
+  /* زر أكبر */
+  border-radius: 12px;
+  /* مستطيل بزوايا ناعمة */
+  background: #ffffff;
+  color: var(--overview-primary);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--overview-primary);
+  cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .plan-button:hover {
-    background: var(--overview-primary);
-    color: #fff;
+  background: var(--overview-primary);
+  color: #fff;
 }
 
 /* ريسبونسيف */
 @media (max-width: 1024px) {
-    .overview-cards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .overview-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
-    .supplier-overview {
-        padding: 24px 12px 24px;
-    }
+  .supplier-overview {
+    padding: 24px 12px 24px;
+  }
 
-    .overview-cards {
-        grid-template-columns: minmax(0, 1fr);
-    }
+  .overview-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+*
+  -------------------------------------------------
+  NEW
+  LAYOUT
+  CLASSES
+  -------------------------------------------------
+  */
+  .card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* space between icon & title */
+  margin-bottom: 12px;
+}
+.card-body-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* horizontal centering */
+  justify-content: center; /* vertical centering */
+  flex: 1; /* take remaining height */
+  gap: 8px;
+}
+
+/* Icon wrapper – now a perfect circle with background */
+.card-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* SVG icons (Heroicons) */
+.card-icon-svg {
+  width: 24px;
+  height: 24px;
+  color: var(--overview-primary);
+}
+
+.overview-card {
+  background: var(--overview-card-bg);
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 4px 16px rgba(23, 15, 58, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* title stays the same */
+.card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--overview-text-main);
+}
+
+/* main text & number */
+.card-main-text {
+  margin: 0;
+  font-size: 14px;
+  color: var(--overview-text-main);
+}
+.card-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* -------------------------------------------------
+   ICON STYLING (FA)
+   ------------------------------------------------- */
+.card-icon-svg {
+  width: 24px;
+  height: 24px;
+  color: #000;
+}
+
+/* ────────────────────── NEW LAYOUT ────────────────────── */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* space between icon & title */
+  margin-bottom: 12px;
+}
+.card-body-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* horizontal */
+  justify-content: center; /* vertical */
+  flex: 1; /* fill remaining height */
+  gap: 8px;
+}
+
+/* Icon – 40×40 circle with a subtle background */
+.card-icon {
+  width: 40px;
+  height: 40px;
+  padding: 8px; /* makes the icon a little smaller inside the circle */
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  color: var(--overview-primary);
+  flex-shrink: 0;
+}
+
+/* ────────────────────── KEEP YOUR ORIGINAL STYLES ────────────────────── */
+.overview-card {
+  background: var(--overview-card-bg);
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 4px 16px rgba(23, 15, 58, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+.card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--overview-text-main);
+}
+.card-main-text {
+  margin: 0;
+  font-size: 20px;
+  color: var(--overview-text-main);
+}
+.card-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+.card-button {
+  align-self: center; /* centre the button inside .card-body-center */
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--overview-primary);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.1s ease;
+}
+.card-button:hover {
+  background: var(--overview-primary-dark);
+  transform: translateY(-1px);
 }

@@ -8,12 +8,12 @@ html,
 
 .legal-container {
   max-width: 900px;
-  margin: 50px auto; /* centers container */
+  margin: 50px auto;
   padding: 40px;
   line-height: 1.8;
   font-family: Arial, sans-serif;
   color: #000;
-  background: none; /* no floating box */
+  background: none;
   border-radius: 0;
   box-shadow: none;
 }

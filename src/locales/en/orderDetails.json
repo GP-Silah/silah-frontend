@@ -46,5 +46,9 @@
   },
 
   "unknown": "Unknown",
-  "sarAlt": "SAR"
+  "sarAlt": "SAR",
+  "confirmedMsg": "You Confirmed The Delivery of This Order",
+  "writeReview": "Write a Review",
+  "continueWriteReview": "Continue Writting a Review",
+  "alreadyReviewed": "You have reviewed this."
 }

@@ -636,3 +636,11 @@ html[dir='rtl'] .create-btn-tooltip {
 .required-hint {
   font-weight: 600;
 }
+
+.sar {
+  position: relative;
+  bottom: -1.5px;
+  width: 16px;
+  height: 18px;
+  object-fit: contain; /* scale image without stretching */
+}

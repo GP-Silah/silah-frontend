@@ -1,0 +1,243 @@
+:root {
+  --silah-purple: #5a2a6e;
+  --gold: #f5b301;
+  --card-border: #e5e5ea;
+  --bg: #f7f7fb;
+  --text: #1c1c1e;
+  --muted: #6b7280;
+  --white: #ffffff;
+}
+
+.wrb-page {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Tajawal', sans-serif;
+  color: var(--text);
+  padding-bottom: 80px;
+}
+
+/* FULL WIDTH BANNER */
+.wrb-banner {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+.wrb-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85);
+}
+
+/* HEADER WITH LOGO OVERLAP */
+.wrb-header {
+  text-align: center;
+  margin: -50px auto 24px;
+  position: relative;
+  z-index: 2;
+}
+.wrb-company-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  padding: 8px 16px;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.wrb-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+}
+.wrb-company {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+/* MAIN CARD */
+.wrb-card {
+  background: var(--white);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 32px;
+  width: min(800px, 90%);
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.wrb-title {
+  text-align: center;
+  font-size: 18px;
+  color: var(--silah-purple);
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.wrb-review-box {
+  background: #f0e6ff;
+  border-radius: 12px;
+  border: 1px solid #d9c9f0;
+  padding: 20px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.wrb-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.wrb-star {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.wrb-star.active {
+  fill: var(--gold) !important;
+  stroke: var(--gold) !important;
+}
+
+.wrb-subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 16px;
+  color: var(--text);
+}
+
+.wrb-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.wrb-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: #fff;
+  align-items: flex-start;
+}
+
+.wrb-item-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.wrb-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wrb-item-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+}
+
+.wrb-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  font-size: 14px;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.wrb-textarea::placeholder {
+  color: var(--muted);
+}
+
+.wrb-submit-btn {
+  margin-top: 28px;
+  width: 100%;
+  padding: 14px;
+  background: var(--silah-purple);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.wrb-submit-btn:hover {
+  background: #4a235a;
+}
+.wrb-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* RTL */
+[data-dir='rtl'] .wrb-item {
+  flex-direction: row-reverse;
+}
+[data-dir='rtl'] .wrb-company-wrapper {
+  flex-direction: row-reverse;
+}
+
+/* ITEM CARD - VERTICAL STACK */
+.wrb-item-card {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ROW 1: Image + Name */
+.wrb-item-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wrb-item-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.wrb-item-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text);
+  flex: 1;
+}
+
+/* ROW 2: Stars */
+.wrb-item-stars {
+  display: flex;
+  justify-content: center;
+}
+
+/* ROW 3: Textarea */
+.wrb-item-textarea {
+  margin-top: 4px;
+}
+
+[data-dir='rtl'] .wrb-item-header {
+  flex-direction: row-reverse;
+}

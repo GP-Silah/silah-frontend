@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaSearch, FaPaperPlane } from 'react-icons/fa';
 import axios from 'axios';
 import { socket } from '../../../utils/socket';
-import './Chats.css';
+import styles from './Chats.module.css';
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'https://api.silah.site';
 
@@ -33,6 +33,7 @@ export default function ChatsSupplier() {
     document.title = t('pageTitle');
   }, [t]);
 
+  // Socket: new message real-time update
   useEffect(() => {
     if (socketInitialized.current) return;
 
@@ -58,6 +59,7 @@ export default function ChatsSupplier() {
           isRead: false,
         };
 
+        // Move to top
         updated.splice(chatIndex, 1);
         updated.unshift(updated[chatIndex]);
         return updated;
@@ -72,6 +74,7 @@ export default function ChatsSupplier() {
     setError(null);
     try {
       const params = new URLSearchParams();
+
       if (selectedDate !== t('allDays')) {
         const map = {
           [t('today')]: 'today',
@@ -80,6 +83,7 @@ export default function ChatsSupplier() {
         };
         params.append('date', map[selectedDate]);
       }
+
       if (selectedType !== t('allMessages')) {
         const map = {
           [t('unreadMessages')]: 'unread',
@@ -103,7 +107,7 @@ export default function ChatsSupplier() {
           partnerName: chat.otherUser.businessName || chat.otherUser.name,
           partnerAvatar: chat.otherUser.pfpUrl || '',
           lastMessage: draft
-            ? `${t('draft')}: ${draft}` // ← "Draft: ..."
+            ? `${t('draft')}: ${draft}`
             : chat.lastMessageIsImage
             ? t('imageMessage')
             : chat.lastMessageText || '',
@@ -111,7 +115,7 @@ export default function ChatsSupplier() {
           unreadCount: chat.unreadCount || 0,
           categories: chat.otherUser.categories || [],
           isRead: (chat.unreadCount || 0) === 0,
-          hasDraft: !!draft, // اختياري: للـ styling
+          hasDraft: !!draft,
         };
       });
 
@@ -128,6 +132,7 @@ export default function ChatsSupplier() {
     fetchChats();
   }, [fetchChats]);
 
+  // Search (debounced)
   useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
@@ -139,15 +144,20 @@ export default function ChatsSupplier() {
 
     searchTimeout.current = setTimeout(async () => {
       try {
-        const chatRes = await axios.get(`${API_BASE}/api/search/chats`, {
-          params: { text: searchQuery },
-          withCredentials: true,
-        });
+        const [chatRes, userRes] = await Promise.all([
+          axios.get(`${API_BASE}/api/search/chats`, {
+            params: { text: searchQuery },
+            withCredentials: true,
+          }),
+          axios.get(`${API_BASE}/api/search/users`, {
+            params: { name: searchQuery },
+            withCredentials: true,
+          }),
+        ]);
 
         const chatResults = chatRes.data.map((chat) => {
           const draftKey = `chat_draft_${chat.chatId}`;
           const draft = localStorage.getItem(draftKey) || '';
-
           return {
             chatId: chat.chatId,
             partnerId: chat.otherUser.userId,
@@ -167,15 +177,9 @@ export default function ChatsSupplier() {
           };
         });
 
-        const userRes = await axios.get(`${API_BASE}/api/search/users`, {
-          params: { name: searchQuery },
-          withCredentials: true,
-        });
-
         const userResults = userRes.data
           .filter(
-            (user) =>
-              !chatResults.some((chat) => chat.partnerId === user.userId),
+            (user) => !chatResults.some((c) => c.partnerId === user.userId),
           )
           .map((user) => ({
             userId: user.userId,
@@ -196,6 +200,7 @@ export default function ChatsSupplier() {
     return () => clearTimeout(searchTimeout.current);
   }, [searchQuery, t]);
 
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -208,11 +213,11 @@ export default function ChatsSupplier() {
   }, []);
 
   const openChat = (chatId) => {
-    navigate(`/buyer/chats/${chatId}`);
+    navigate(`/supplier/chats/${chatId}`);
   };
 
   const startNewChat = (userId, partnerData) => {
-    navigate(`/buyer/chats/new?with=${userId}&text=`, {
+    navigate(`/supplier/chats/new?with=${userId}`, {
       state: { partner: partnerData },
     });
   };
@@ -237,10 +242,11 @@ export default function ChatsSupplier() {
   const displayList = isSearching ? searchResults : filtered;
 
   return (
-    <div className="chats-page" data-dir={dir}>
-      <div className="chats-header">
-        <div className="chats-search-bar">
-          <FaSearch className="search-icon" />
+    <div className={styles['chats-page']} data-dir={dir}>
+      {/* Header */}
+      <div className={styles['chats-header']}>
+        <div className={styles['chats-search-bar']}>
+          <FaSearch className={styles['search-icon']} />
           <input
             type="text"
             placeholder={t('searchPlaceholder')}
@@ -249,15 +255,18 @@ export default function ChatsSupplier() {
           />
         </div>
 
-        <div className="chats-filters-right" ref={dropdownRef}>
-          <div className="chats-filter-inline">
-            <span className="chats-filter-label">{t('type')}</span>
-            <div className="page-dropdown">
+        <div className={styles['chats-filters-right']} ref={dropdownRef}>
+          {/* Type Filter */}
+          <div className={styles['chats-filter-inline']}>
+            <span className={styles['chats-filter-label']}>{t('type')}</span>
+            <div className={styles['page-dropdown']}>
               <button onClick={() => setTypeOpen((p) => !p)}>
                 {selectedType} ▼
               </button>
               {typeOpen && (
-                <div className="page-dropdown-menu page-type-menu">
+                <div
+                  className={`${styles['page-dropdown-menu']} ${styles['page-type-menu']}`}
+                >
                   {[
                     t('allMessages'),
                     t('unreadMessages'),
@@ -265,7 +274,7 @@ export default function ChatsSupplier() {
                   ].map((opt) => (
                     <div
                       key={opt}
-                      className="page-dropdown-item"
+                      className={styles['page-dropdown-item']}
                       onClick={() => {
                         setSelectedType(opt);
                         setTypeOpen(false);
@@ -279,14 +288,17 @@ export default function ChatsSupplier() {
             </div>
           </div>
 
-          <div className="chats-filter-inline">
-            <span className="chats-filter-label">{t('date')}</span>
-            <div className="page-dropdown">
+          {/* Date Filter */}
+          <div className={styles['chats-filter-inline']}>
+            <span className={styles['chats-filter-label']}>{t('date')}</span>
+            <div className={styles['page-dropdown']}>
               <button onClick={() => setDateOpen((p) => !p)}>
                 {selectedDate} ▼
               </button>
               {dateOpen && (
-                <div className="page-dropdown-menu page-date-menu">
+                <div
+                  className={`${styles['page-dropdown-menu']} ${styles['page-date-menu']}`}
+                >
                   {[
                     t('allDays'),
                     t('today'),
@@ -295,7 +307,7 @@ export default function ChatsSupplier() {
                   ].map((opt) => (
                     <div
                       key={opt}
-                      className="page-dropdown-item"
+                      className={styles['page-dropdown-item']}
                       onClick={() => {
                         setSelectedDate(opt);
                         setDateOpen(false);
@@ -311,13 +323,14 @@ export default function ChatsSupplier() {
         </div>
       </div>
 
-      <div className="chats-list">
+      {/* Chats List */}
+      <div className={styles['chats-list']}>
         {loading ? (
-          <div className="chats-loading">{t('loading')}</div>
+          <div className={styles['chats-loading']}>{t('loading')}</div>
         ) : error ? (
-          <div className="chats-error">{error}</div>
+          <div className={styles['chats-error']}>{error}</div>
         ) : displayList.length === 0 ? (
-          <div className="chats-empty">
+          <div className={styles['chats-empty']}>
             {isSearching ? t('noSearchResults') : t('noChats')}
           </div>
         ) : (
@@ -327,26 +340,28 @@ export default function ChatsSupplier() {
               .map((item, index, arr) => (
                 <React.Fragment key={item.chatId}>
                   <div
-                    className={`chats-item ${
-                      item.isRead === false ? 'chats-unread' : ''
+                    className={`${styles['chats-item']} ${
+                      !item.isRead ? styles['chats-unread'] : ''
                     }`}
                     onClick={() => openChat(item.chatId)}
                   >
-                    {!item.isRead && <span className="chats-unread-dot" />}
-
-                    <div className="chats-avatar-circle">
+                    {!item.isRead && (
+                      <span className={styles['chats-unread-dot']} />
+                    )}
+                    <div className={styles['chats-avatar-circle']}>
                       {item.partnerAvatar ? (
                         <img src={item.partnerAvatar} alt={item.partnerName} />
                       ) : (
                         <FaEnvelope />
                       )}
                     </div>
-
-                    <div className="chats-content">
-                      <div className="chats-title">{item.partnerName}</div>
+                    <div className={styles['chats-content']}>
+                      <div className={styles['chats-title']}>
+                        {item.partnerName}
+                      </div>
                       <div
-                        className={`chats-message ${
-                          item.hasDraft ? 'draft' : ''
+                        className={`${styles['chats-message']} ${
+                          item.hasDraft ? styles.draft : ''
                         }`}
                       >
                         {item.lastMessage.length > 60
@@ -354,16 +369,15 @@ export default function ChatsSupplier() {
                           : item.lastMessage}
                       </div>
                     </div>
-
-                    <div className="chats-meta">
-                      <div className="chats-date">
+                    <div className={styles['chats-meta']}>
+                      <div className={styles['chats-date']}>
                         {formatDate(item.lastMessageTime, i18n.language)}
                       </div>
-                      <div className="chats-time">
+                      <div className={styles['chats-time']}>
                         {formatTime(item.lastMessageTime)}
                       </div>
                       {item.unreadCount > 0 && (
-                        <div className="chats-unread-badge">
+                        <div className={styles['chats-unread-badge']}>
                           {item.unreadCount}
                         </div>
                       )}
@@ -373,18 +387,19 @@ export default function ChatsSupplier() {
                   {isSearching &&
                     index === arr.length - 1 &&
                     searchResults.some((r) => r.isNewUser) && (
-                      <hr className="chats-search-divider-full" />
+                      <hr className={styles['chats-search-divider-full']} />
                     )}
                 </React.Fragment>
               ))}
 
+            {/* New User Results */}
             {isSearching &&
               searchResults
                 .filter((item) => item.isNewUser)
                 .map((item) => (
                   <div
                     key={item.userId}
-                    className="chats-item"
+                    className={styles['chats-item']}
                     onClick={() =>
                       startNewChat(item.userId, {
                         userId: item.userId,
@@ -394,20 +409,22 @@ export default function ChatsSupplier() {
                       })
                     }
                   >
-                    <div className="chats-avatar-circle">
+                    <div className={styles['chats-avatar-circle']}>
                       {item.partnerAvatar ? (
                         <img src={item.partnerAvatar} alt={item.partnerName} />
                       ) : (
                         <FaEnvelope />
                       )}
                     </div>
-
-                    <div className="chats-content">
-                      <div className="chats-title">{item.partnerName}</div>
-                      <div className="chats-message">{t('startNewChat')}</div>
+                    <div className={styles['chats-content']}>
+                      <div className={styles['chats-title']}>
+                        {item.partnerName}
+                      </div>
+                      <div className={styles['chats-message']}>
+                        {t('startNewChat')}
+                      </div>
                     </div>
-
-                    <button className="chats-start-btn">
+                    <button className={styles['chats-start-btn']}>
                       <FaPaperPlane />
                     </button>
                   </div>
@@ -419,6 +436,7 @@ export default function ChatsSupplier() {
   );
 }
 
+// Helpers
 const formatDate = (iso, lang) => {
   const d = new Date(iso);
   return d.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
