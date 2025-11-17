@@ -155,6 +155,7 @@ const SupplierSettings = () => {
         setLoading(false);
       } catch (err) {
         if (axios.isCancel(err)) return; // ignore cancellations
+        console.log(err);
         setError(t('errors.fetchFailed'));
         setLoading(false);
       }

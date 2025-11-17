@@ -63,7 +63,7 @@
     "deliveryFees": "رسوم التوصيل",
     "uploadProfile": "ارفع صورة المتجر",
     "uploadBanner": "ارفع بانر المتجر",
-    "storeBio": "نبذة عن المتجر"
+    "bio": "نبذة عن المتجر"
   },
   "payment": {
     "title": "طرق الدفع",

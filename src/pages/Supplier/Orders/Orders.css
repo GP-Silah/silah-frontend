@@ -189,3 +189,11 @@ html[dir='rtl'] .tabs {
 .retry-btn:hover {
   background: #4a237a;
 }
+
+.sar {
+  position: relative;
+  bottom: -1.5px;
+  width: 16px;
+  height: 18px;
+  object-fit: contain; /* scale image without stretching */
+}
