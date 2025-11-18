@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { useAuth } from './context/AuthContext';
 
 export default function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
-  const { role, user, loading, switching } = useAuth();
+  const { role, user, loading, switching, handleLogout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
@@ -50,17 +50,44 @@ export default function ProtectedRoute({ allowedRoles, redirectTo = '/' }) {
         Swal.fire({
           icon: 'warning',
           title: t('emailNotVerifiedTitle') || 'Email Verification Required',
-          text:
-            t('emailNotVerifiedText') ||
-            'Please verify your email to access most features of this platform.',
-          confirmButtonColor: '#476DAE',
-          confirmButtonText: 'OK',
+          html: `
+    <p>
+      ${
+        t('emailNotVerifiedText') ||
+        'Please verify your email to access most features of this platform.'
+      }
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px;">
+      <button id="resend-btn" class="swal2-confirm swal2-styled" style="background-color:#476DAE;">
+        ${t('resendVerification') || 'Resend Verification Email'}
+      </button>
+
+      <button id="logout-btn" class="swal2-cancel swal2-styled" style="background-color:#d33;">
+        ${t('logout') || 'Log Out'}
+      </button>
+    </div>
+  `,
+          showConfirmButton: false,
           allowOutsideClick: false,
-        }).then(() => {
-          navigate('/verify-email', {
-            replace: true,
-            state: { email: user.email },
-          });
+          didRender: () => {
+            const resendBtn = document.getElementById('resend-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            resendBtn.onclick = () => {
+              navigate('/verify-email', {
+                replace: true,
+                state: { email: user.email },
+              });
+              Swal.close();
+            };
+
+            logoutBtn.onclick = async () => {
+              await handleLogout();
+              navigate('/login', { replace: true });
+              Swal.close();
+            };
+          },
         });
       }
     }

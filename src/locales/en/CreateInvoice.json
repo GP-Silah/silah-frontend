@@ -51,7 +51,7 @@
     "itemAllFieldsRequired": "Item name, description, agreed details, quantity, and price are required.",
     "upfrontPositive": "Upfront payment must be greater than 0.",
     "uponDeliveryPositive": "Upon delivery amount must be greater than 0.",
-    "paymentMustMatchTotal": "Payment amounts must equal total invoice amount.",
+    "paymentMustMatchTotal": "The total invoice payment amount (upfront + upon delivery, or full payment) must match the total amount of all items. Please make sure the payment amount equals the sum of item quantities × item unit prices.",
     "notesTooLong": "Notes cannot exceed 500 characters.",
     "cannotDeleteLastItem": "Cannot delete the last item.",
     "itemMustBeLinked": "Each item must be linked to a published product or service"
