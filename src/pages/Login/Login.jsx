@@ -35,7 +35,7 @@ function Login() {
 
     const payload = {
       password,
-      ...(isEmail ? { email: identifier } : { crn: identifier }),
+      ...(isEmail ? { email: identifier.toLowerCase() } : { crn: identifier }),
     };
 
     try {
