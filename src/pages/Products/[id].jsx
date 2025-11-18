@@ -273,6 +273,7 @@ export default function ProductDetails() {
   const canGoBack = (ref) =>
     !ref.current ||
     (isRTL ? ref.current.scrollLeft < -5 : ref.current.scrollLeft > 5);
+
   const canGoForward = (ref) => {
     if (!ref.current) return false;
     const { scrollLeft, scrollWidth, clientWidth } = ref.current;
