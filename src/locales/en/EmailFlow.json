@@ -16,7 +16,13 @@
     "success": "Email has been resent successfully ✅",
     "alreadyVerified": "This email is already verified.",
     "userNotFound": "No account found with this email.",
-    "error": "An error occured"
+    "error": "An error occurred"
+  },
+  "resendSuccess": {
+    "icon": "✅",
+    "title": "Verification Email Sent",
+    "message": "We sent you another verification email. Please check your inbox.",
+    "button": "Resend Again"
   },
   "success": {
     "icon": "✔️",

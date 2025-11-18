@@ -64,7 +64,7 @@ const EmailFlow = () => {
       setStatus(t('resend.success'));
       setTimeout(() => {
         setStatus('');
-        setStep('success');
+        setStep('resendSuccess');
       }, 1500);
     } catch (err) {
       console.error(err);
@@ -87,6 +87,27 @@ const EmailFlow = () => {
       setLoading(false);
     }
   };
+
+  // ------------- RESEND EMAIL SUCCESSEDED -----------------
+  if (step === 'resendSuccess') {
+    return (
+      <EmailDialog
+        icon="✅"
+        title={t('resendSuccess.title')}
+        message={t('resendSuccess.message')}
+        lang={i18n.language}
+        onToggleLang={handleLangToggle}
+      >
+        <button
+          className="resend-btn"
+          onClick={() => setStep('resend')}
+          disabled={loading}
+        >
+          {t('resendSuccess.button')} {/* "Resend again" */}
+        </button>
+      </EmailDialog>
+    );
+  }
 
   // ------------- ⚠️ no email in state -----------------
   if (!email && !token) {
