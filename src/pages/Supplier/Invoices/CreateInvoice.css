@@ -522,7 +522,7 @@ html[dir='rtl'] .total-summary {
   padding: 0.75rem;
   border-radius: 8px;
   font-size: 0.85rem;
-  white-space: nowrap;
+  width: 1000px;
   z-index: 10;
   margin-bottom: 0.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

@@ -133,8 +133,8 @@ export default function BidOffer() {
       localStorage.removeItem(STORAGE_KEY);
       setSubmitSuccess(true);
 
-      // Navigate to offer details
-      navigate(`/supplier/offers/${data.offerId}`);
+      // Navigate to biddings page because we don't have offer details page for supplier
+      navigate(`/supplier/bids`);
     } catch (err) {
       setErrors({
         general: err.response?.data?.error?.message || t('errors.submitFailed'),

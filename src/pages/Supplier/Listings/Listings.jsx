@@ -24,7 +24,6 @@ export default function Listings() {
   const isRTL = i18n.dir() === 'rtl';
   const isSupplier = role === 'supplier';
   const isActive = supplierStatus === 'ACTIVE';
-  const isPremium = user?.plan === 'PREMIUM';
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +31,9 @@ export default function Listings() {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState({});
   const [showTooltip, setShowTooltip] = useState(false);
+  const [supplierPlan, setSupplierPlan] = useState('BASIC'); // default to BASIC
+  const [planLoading, setPlanLoading] = useState(true);
+  const isPremium = supplierPlan === 'PREMIUM';
 
   useEffect(() => {
     document.title = t('pageTitle');
@@ -41,7 +43,7 @@ export default function Listings() {
 
   // Show tooltip for non-premium users
   useEffect(() => {
-    if (!isPremium) {
+    if (!planLoading && !isPremium) {
       setShowTooltip(true);
       const timer = setTimeout(() => setShowTooltip(false), 3000);
       return () => clearTimeout(timer);
@@ -162,6 +164,32 @@ export default function Listings() {
 
     return () => clearTimeout(timer);
   }, [search, t, i18n.language]);
+
+  // Fetch supplier plan
+  useEffect(() => {
+    if (!isSupplier || !supplierId) {
+      setPlanLoading(false);
+      return;
+    }
+
+    const fetchSupplierPlan = async () => {
+      try {
+        setPlanLoading(true);
+        const res = await axios.get(`${API_BASE}/api/suppliers/me/plan`, {
+          withCredentials: true,
+          headers: { 'accept-language': i18n.language },
+        });
+        setSupplierPlan(res.data.plan || 'BASIC');
+      } catch (err) {
+        console.warn('Failed to fetch supplier plan, defaulting to BASIC');
+        setSupplierPlan('BASIC');
+      } finally {
+        setPlanLoading(false);
+      }
+    };
+
+    fetchSupplierPlan();
+  }, [isSupplier, supplierId, i18n.language]);
 
   // Bulk actions
   const performBulkAction = async (action) => {
@@ -418,7 +446,9 @@ export default function Listings() {
                     </div>
                   </td>
                   <td>
-                    {isPremium ? (
+                    {planLoading ? (
+                      <span className={styles['wishlist-count']}>—</span>
+                    ) : isPremium ? (
                       <span className={styles['wishlist-count']}>
                         {item.wishlist}
                       </span>

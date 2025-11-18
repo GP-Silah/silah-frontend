@@ -70,8 +70,8 @@ export default function BiddingOffersBuyer() {
         null,
         {
           params: { status },
+          withCredentials: true,
         },
-        { withCredentials: true },
       );
 
       // Optimistically update UI
