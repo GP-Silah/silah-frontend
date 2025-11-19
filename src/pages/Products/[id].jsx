@@ -313,6 +313,7 @@ export default function ProductDetails() {
     maxOrderQuantity,
     allowGroupPurchase,
     groupPurchasePrice,
+    minGroupOrderQuantity,
     stock,
   } = product;
 
@@ -595,7 +596,7 @@ export default function ProductDetails() {
               ))}
             </div>
 
-            {canScrollBack && (
+            {canGoBack(reviewsCarouselRef) && (
               <button
                 className={`${styles['carousel-arrow']} ${styles.left}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
@@ -604,7 +605,7 @@ export default function ProductDetails() {
               </button>
             )}
 
-            {canScrollForward && (
+            {canGoForward(reviewsCarouselRef) && (
               <button
                 className={`${styles['carousel-arrow']} ${styles.right}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
