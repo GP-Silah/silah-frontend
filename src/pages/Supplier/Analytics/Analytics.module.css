@@ -1,37 +1,37 @@
-.analytics-page {
+.analyticsPage {
   padding: 30px;
   font-family: 'Poppins', sans-serif;
 }
 
-.analytics-content {
+.analyticsContent {
   background-color: #fff;
   padding: 20px 40px;
   border-radius: 8px;
 }
 
-.page-title {
+.pageTitle {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.page-subtitle {
+.pageSubtitle {
   color: #555;
   margin-bottom: 20px;
 }
 
-.analytics-section {
+.analyticsSection {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 40px;
 }
 
-.total-sales {
+.totalSales {
   flex: 1;
 }
 
-.blurred-container {
+.blurredContainer {
   backdrop-filter: blur(8px);
   background: rgba(240, 230, 250, 0.3);
   border-radius: 12px;
@@ -39,7 +39,7 @@
   box-shadow: 0 4px 10px rgba(180, 150, 220, 0.2);
 }
 
-.blurred-chart {
+.blurredChart {
   flex: 2;
   max-width: 60%;
   background: rgba(255, 255, 255, 0.7);
@@ -48,7 +48,7 @@
   backdrop-filter: blur(6px);
 }
 
-.insights-section {
+.insightsSection {
   display: flex;
   justify-content: space-between;
   margin-bottom: 40px;
@@ -56,29 +56,29 @@
   padding-top: 20px;
 }
 
-.top-products,
+.topProducts,
 .ratings {
   width: 45%;
 }
 
-.reviews-section {
+.reviewsSection {
   border-top: 1px solid #ddd;
   padding-top: 20px;
 }
 
-.review-card {
+.reviewCard {
   background-color: #f7f7f7;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 15px;
 }
 
-.review-name {
+.reviewName {
   font-weight: bold;
   margin-bottom: 5px;
 }
 
-.review-text {
+.reviewText {
   font-size: 14px;
   color: #333;
 }
