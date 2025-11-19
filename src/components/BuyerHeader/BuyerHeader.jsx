@@ -12,6 +12,7 @@ import {
   FaSignOutAlt,
   FaUser,
   FaGlobe,
+  FaHome,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -332,6 +333,15 @@ const BuyerHeader = ({
               </div>
               <div className="divider" />
               <div className="profile-actions">
+                <button
+                  className="profile-item"
+                  onClick={() => {
+                    navigate('/buyer/homepage');
+                    setProfileOpen(false);
+                  }}
+                >
+                  <FaHome /> {t('profileChoices.homepage')}
+                </button>
                 <button
                   className="profile-item"
                   onClick={() => {

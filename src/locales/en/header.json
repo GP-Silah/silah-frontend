@@ -24,6 +24,7 @@
     "settings": "Settings",
     "changeRoleToSupplier": "Change Role to Supplier",
     "switching": "We are changing your role...",
-    "logout": "Log out"
+    "logout": "Log out",
+    "homepage": "Homepage"
   }
 }
