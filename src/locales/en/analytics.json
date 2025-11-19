@@ -30,5 +30,6 @@
   "upgradeToUnlock": "Upgrade to Premium to see the most wishlisted products!",
   "goPremium": "Go Premium",
   "newThisPeriod": "new reviews",
-  "totalReviewsLabel": "reviews"
+  "totalReviewsLabel": "reviews",
+  "locked": "Locked"
 }

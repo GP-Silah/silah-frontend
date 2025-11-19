@@ -139,3 +139,107 @@
   height: 18px;
   object-fit: contain; /* scale image without stretching */
 }
+
+.itemsGrid > div {
+  margin: 16px 0;
+}
+
+.itemLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.itemCard {
+  position: relative;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  background: white;
+}
+
+.itemCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.itemImage {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.itemName {
+  padding: 12px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 15px;
+}
+
+.lockOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.premiumBadge {
+  background: linear-gradient(135deg, #785ac8, #4a9eff);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.reviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stars {
+  display: flex;
+  gap: 4px;
+}
+
+.ratingBig {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.ratingNumber {
+  font-size: 32px;
+  color: #333;
+}
+
+.salesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .salesSection {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .totalSales {
+    text-align: center;
+    flex: 1;
+  }
+  .chartContainer {
+    flex: 2;
+  }
+}
