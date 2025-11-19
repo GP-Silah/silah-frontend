@@ -261,3 +261,120 @@
   display: flex;
   flex-direction: column;
 }
+
+/* ===================== NOT ENOUGH DATA – BEAUTIFUL CARD ===================== */
+.not-enough-data-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.not-enough-card {
+  background: white;
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+  animation: floatIn 0.6s ease-out;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sad-icon {
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.not-enough-card h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 1rem;
+}
+
+.encouragement {
+  font-size: 1.15rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 1rem 0 1.5rem;
+}
+
+.progress-hint {
+  background: linear-gradient(90deg, #5c2d91, #7c4dff);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  margin: 1.5rem 0;
+  display: inline-block;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 2rem 0 1.5rem;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 0.75rem 1.75rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 160px;
+}
+
+.primary-btn {
+  background: #5c2d91;
+  color: white;
+  border: none;
+}
+
+.primary-btn:hover {
+  background: #4a1f7a;
+  transform: translateY(-2px);
+}
+
+.secondary-btn {
+  background: transparent;
+  color: #5c2d91;
+  border: 2px solid #5c2d91;
+}
+
+.secondary-btn:hover {
+  background: #5c2d91;
+  color: white;
+}
+
+.pro-tip {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f8f5ff;
+  border-radius: 1rem;
+  color: #5c2d91;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* RTL Support */
+.predict-demand-page[dir='rtl'] .not-enough-data-section {
+  text-align: center;
+}
