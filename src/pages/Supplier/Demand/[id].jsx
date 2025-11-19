@@ -50,6 +50,7 @@ export default function DemandPrediction() {
   const [recommendedStock, setRecommendedStock] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentStock, setCurrentStock] = useState(0);
 
   // -----------------------------------------------------------------
   // 2. USER ACCESS (re-computed on every render)
@@ -124,7 +125,6 @@ export default function DemandPrediction() {
         const d = res.data;
         setProduct({
           name: d.productName,
-          image: d.productFirstImageFileUrl,
         });
         setForecast(d.forecast);
         setRecommendedStock(d.recommendedStock);
@@ -179,10 +179,10 @@ export default function DemandPrediction() {
         const d = res.data;
         setProduct({
           name: d.productName,
-          image: d.productFirstImageFileUrl,
         });
         setForecast(d.forecast);
         setRecommendedStock(d.recommendedStock);
+        fetchCurrentStock();
       } catch (err) {
         const status = err.response?.status;
         const msg =
@@ -203,6 +203,25 @@ export default function DemandPrediction() {
       }
     };
 
+    const fetchCurrentStock = async () => {
+      if (!id) return;
+      try {
+        const base = import.meta.env.VITE_BACKEND_URL;
+        const res = await axios.get(`${base}/api/products/${id}`, {
+          withCredentials: true,
+          headers: { 'accept-language': i18n.language === 'ar' ? 'ar' : 'en' },
+        });
+        setCurrentStock(res.data.stock || 0);
+        setProduct({
+          name: res.data.name,
+          image: res.data.imagesFilesUrls[0],
+        });
+      } catch (err) {
+        console.error('Failed to fetch current stock', err);
+        setCurrentStock(0);
+      }
+    };
+
     fetchForecast();
   }, [canAccess, id, t]);
 
@@ -210,7 +229,14 @@ export default function DemandPrediction() {
   // 5. CHART CONFIG
   // -----------------------------------------------------------------
   const chartData = {
-    labels: forecast.map((f) => f.month),
+    labels: forecast.map((f) => {
+      const [year, month] = f.month.split('-');
+      const date = new Date(year, month - 1); // month is 1-indexed in Date
+      return date.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
+        month: 'short',
+        year: 'numeric',
+      });
+    }),
     datasets: [
       {
         label: t('demandLabel'),
@@ -224,7 +250,7 @@ export default function DemandPrediction() {
       },
       {
         label: t('currentStockLabel'),
-        data: forecast.map(() => 40),
+        data: forecast.map(() => currentStock),
         borderColor: '#a78bfa',
         backgroundColor: 'rgba(167, 139, 250, 0.1)',
         fill: false,
@@ -247,7 +273,7 @@ export default function DemandPrediction() {
         ticks: { stepSize: 10 },
         grid: { color: 'rgba(0,0,0,0.05)' },
       },
-      x: { grid: { display: false } },
+      x: { reverse: isRTL, grid: { display: false } },
     },
   };
 
@@ -374,7 +400,13 @@ export default function DemandPrediction() {
             </div>
 
             <p className="restock-advice">
-              {t('restockAdvice', { count: recommendedStock })}
+              {recommendedStock > 0 ? (
+                t('restockAdvice', { count: recommendedStock })
+              ) : (
+                <span style={{ color: '#16a34a' }}>
+                  {t('restockAdviceOverstocked')}
+                </span>
+              )}
             </p>
           </section>
         ) : showTeaser ? (

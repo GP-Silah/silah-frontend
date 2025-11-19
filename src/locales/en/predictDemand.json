@@ -6,6 +6,7 @@
   "demandLabel": "Demand",
   "currentStockLabel": "Current Stock",
   "restockAdvice": "To avoid shortages, consider restocking {{count}} units as per AI demand predictions.",
+  "restockAdviceOverstocked": "Great job! Your stock is sufficient, no need to restock right now ",
   "teaserTitle": "Want to see future stock demand?",
   "teaserText": "Upgrade to Premium for AI predictions!",
   "upgradeNow": "Upgrade Now",
