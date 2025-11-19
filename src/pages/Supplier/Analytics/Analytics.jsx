@@ -344,7 +344,7 @@ const AnalyticsInsights = () => {
               <span className={styles.ratingNumber}>
                 {analytics.reviews.overallRating.averageStars.toFixed(1)}
               </span>
-              <small>
+              <small className={styles.smallRatingNumber}>
                 ({analytics.reviews.overallRating.totalReviews}{' '}
                 {t('totalReviewsLabel')})
               </small>
