@@ -108,10 +108,6 @@
 }
 
 .upgradePrompt {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background: linear-gradient(135deg, #785ac8, #4a9eff);
   color: white;
   padding: 16px 24px;
@@ -119,6 +115,8 @@
   text-align: center;
   font-weight: bold;
   z-index: 10;
+  width: fit-content;
+  white-space: nowrap;
 }
 
 .upgradeBtn {
@@ -169,7 +167,7 @@
   color: #333;
 }
 
-.ratingNumber small {
+.smallRatingNumber {
   font-size: 16px;
   line-height: 1.5;
   font-weight: 400;
