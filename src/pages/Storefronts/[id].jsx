@@ -135,79 +135,51 @@ export default function SupplierStorefront() {
     }
   };
 
-  // === ARROW VISIBILITY ===
-  // ——————— FINAL FIX – WORKS PERFECTLY IN LTR & RTL ———————
-  const canGoBack = useCallback((ref) => {
-    if (!ref.current) return false;
-    // If we're scrolled even 1px away from the start → can go back
-    return Math.abs(ref.current.scrollLeft) >= 5;
-  }, []);
+  useEffect(() => {
+    if (reviewsCarouselRef.current) reviewsCarouselRef.current.scrollLeft = 0;
+  }, [reviews]);
 
-  const canGoForward = useCallback((ref) => {
-    if (!ref.current) return false;
-    const el = ref.current;
-    // Compare scrolled amount + visible width vs total width
-    // Using round() + generous tolerance handles sub-pixel nonsense
-    return (
-      Math.round(Math.abs(el.scrollLeft) + el.clientWidth) < el.scrollWidth - 10
-    );
-  }, []);
-
-  // === RTL-AWARE SCROLL LOGIC ===
+  // Carousel Logic
   const scrollCarousel = (ref, direction) => {
     if (!ref.current) return;
-
     const firstCard =
       ref.current.querySelector('.review-card-wrapper') ||
       ref.current.children[0];
     const cardWidth = firstCard?.offsetWidth || 400;
     const gap = parseFloat(getComputedStyle(ref.current).gap) || 56;
     const scrollAmount = cardWidth + gap;
-
     const directionFactor = direction === 'right' ? 1 : -1;
     const rtlFactor = isRTL ? -1 : 1;
-
     ref.current.scrollBy({
       left: scrollAmount * directionFactor * rtlFactor,
       behavior: 'smooth',
     });
   };
 
-  // === RESET SCROLL ===
-  useEffect(() => {
-    if (reviewsCarouselRef.current) {
-      reviewsCarouselRef.current.scrollLeft = 0;
-      // Force arrow update after reset
-      setTimeout(() => {
-        setCanScrollBack(false);
-        setCanScrollForward(
-          reviewsCarouselRef.current.scrollWidth >
-            reviewsCarouselRef.current.clientWidth + 20,
-        );
-      }, 100);
-    }
-  }, [reviews]);
+  // === ARROW VISIBILITY ===
+  const canGoBack = (ref) =>
+    !ref.current ||
+    (isRTL ? ref.current.scrollLeft < -5 : ref.current.scrollLeft > 5);
 
-  // === UPDATE ARROWS ON SCROLL ===
-  useEffect(() => {
-    const carousel = reviewsCarouselRef.current;
-    if (!carousel) return;
+  const canGoForward = (ref) => {
+    if (!ref.current) return false;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    const maxScroll = scrollWidth - clientWidth;
+    return isRTL ? scrollLeft > -(maxScroll - 5) : scrollLeft < maxScroll - 5;
+  };
 
+  useEffect(() => {
     const updateArrows = () => {
       setCanScrollBack(canGoBack(reviewsCarouselRef));
       setCanScrollForward(canGoForward(reviewsCarouselRef));
     };
-
-    updateArrows(); // Initial check
-
-    carousel.addEventListener('scroll', updateArrows);
-    window.addEventListener('resize', updateArrows);
-
-    return () => {
-      carousel.removeEventListener('scroll', updateArrows);
-      window.removeEventListener('resize', updateArrows);
-    };
-  }, [canGoBack, canGoForward]); // ← Now stable!
+    updateArrows();
+    const carousel = reviewsCarouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('scroll', updateArrows);
+      return () => carousel.removeEventListener('scroll', updateArrows);
+    }
+  }, [reviews, isRTL]);
 
   // ——————————————————————— ACTIVE STORE CONTENT ———————————————————————
   function ActiveStorefrontContent() {
@@ -307,50 +279,7 @@ export default function SupplierStorefront() {
         </section>
 
         {/* Reviews */}
-        <section className="ss-reviews-section">
-          <h2>{t('reviewsTitle')}</h2>
-          {reviews.length === 0 ? (
-            <p className="ss-no-reviews">{t('noReviews')}</p>
-          ) : (
-            <div className="carousel-wrapper">
-              <div className="carousel" ref={reviewsCarouselRef}>
-                {reviews.map((review) => (
-                  <div className="review-card-wrapper" key={review.reviewId}>
-                    <ReviewCard review={review} />
-                  </div>
-                ))}
-              </div>
-
-              {/* BACK ARROW */}
-              {canScrollBack && (
-                <button
-                  className="carousel-arrow left"
-                  onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
-                >
-                  {isRTL ? (
-                    <ChevronRight size={20} />
-                  ) : (
-                    <ChevronLeft size={20} />
-                  )}
-                </button>
-              )}
-
-              {/* FORWARD ARROW */}
-              {canScrollForward && (
-                <button
-                  className="carousel-arrow right"
-                  onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
-                >
-                  {isRTL ? (
-                    <ChevronLeft size={20} />
-                  ) : (
-                    <ChevronRight size={20} />
-                  )}
-                </button>
-              )}
-            </div>
-          )}
-        </section>
+        {/* MOVED OUT BECAUSE CARSOUL LOGIC BREAKES INSIDE FUNCTIONS, SEE THE MAIN RETURN AT THE BOTTOM BELOW */}
       </>
     );
   }
@@ -477,6 +406,43 @@ export default function SupplierStorefront() {
   return (
     <div className="ss-storefront" data-dir={isRTL ? 'rtl' : 'ltr'}>
       <ActiveStorefrontContent />
+      {/* REVIEWS — NOW IN MAIN RENDER (THIS FIXES EVERYTHING) */}
+      <section className="ss-reviews-section">
+        <h2>{t('reviewsTitle')}</h2>
+
+        {reviews.length === 0 ? (
+          <p className="ss-no-reviews">{t('noReviews')}</p>
+        ) : (
+          <div className="carousel-wrapper">
+            <div className="carousel" ref={reviewsCarouselRef}>
+              {reviews.map((review) => (
+                <div className="review-card-wrapper" key={review.reviewId}>
+                  <ReviewCard review={review} />
+                </div>
+              ))}
+            </div>
+
+            {/* ARROWS — using function calls directly (exactly like ProductDetails) */}
+            {canGoBack(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow left"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
+              >
+                {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              </button>
+            )}
+
+            {canGoForward(reviewsCarouselRef) && (
+              <button
+                className="carousel-arrow right"
+                onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
+              >
+                {isRTL ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+              </button>
+            )}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
