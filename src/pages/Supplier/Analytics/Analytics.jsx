@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { Bar } from 'react-chartjs-2';
+import { Link } from 'react-router-dom';
+import ReviewCard from '@/components/ReviewCard/ReviewCard';
+import styles from './Analytics.module.css';
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +15,6 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import ReviewCard from '@/components/ReviewCard/ReviewCard';
-import styles from './Analytics.module.css';
 
 ChartJS.register(
   CategoryScale,
@@ -25,6 +27,22 @@ ChartJS.register(
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
+// Arabic month names
+const AR_MONTHS = {
+  January: 'يناير',
+  February: 'فبراير',
+  March: 'مارس',
+  April: 'أبريل',
+  May: 'مايو',
+  June: 'يونيو',
+  July: 'يوليو',
+  August: 'أغسطس',
+  September: 'سبتمبر',
+  October: 'أكتوبر',
+  November: 'نوفمبر',
+  December: 'ديسمبر',
+};
+
 const AnalyticsInsights = () => {
   const { t, i18n } = useTranslation('analytics');
   const isRtl = i18n.language === 'ar';
@@ -32,6 +50,8 @@ const AnalyticsInsights = () => {
   const [analytics, setAnalytics] = useState(null);
   const [profile, setProfile] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [topOrderedItem, setTopOrderedItem] = useState(null);
+  const [topWishlistedItem, setTopWishlistedItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,19 +60,35 @@ const AnalyticsInsights = () => {
     document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
   }, [isRtl, t]);
 
+  // Fetch item details (product or service)
+  const fetchItemDetails = async (item) => {
+    if (!item || !item.itemId) return null;
+    try {
+      const endpoint =
+        item.type === 'PRODUCT'
+          ? `/api/products/${item.itemId}`
+          : `/api/services/${item.itemId}`;
+      const res = await axios.get(`${API_BASE}${endpoint}`, {
+        withCredentials: true,
+        params: { lang: i18n.language },
+      });
+      return res.data;
+    } catch (err) {
+      console.warn('Failed to fetch item:', err);
+      return { name: item.name, imagesFilesUrls: [] };
+    }
+  };
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // 1. Get profile (includes supplierId + plan)
         const profileRes = await axios.get(`${API_BASE}/api/suppliers/me`, {
           withCredentials: true,
         });
         const supplierId = profileRes.data.supplierId;
         const plan = profileRes.data.plan;
-
         setProfile({ ...profileRes.data, plan });
 
-        // 2. Get analytics + reviews in parallel
         const [analyticsRes, reviewsRes] = await Promise.all([
           axios.get(`${API_BASE}/api/analytics/me`, { withCredentials: true }),
           axios.get(`${API_BASE}/api/reviews/suppliers/${supplierId}`, {
@@ -62,10 +98,23 @@ const AnalyticsInsights = () => {
         ]);
 
         setAnalytics(analyticsRes.data);
-        setReviews(reviewsRes.data.slice(0, 6)); // Show latest 6 reviews
+        setReviews(reviewsRes.data.slice(0, 6));
+
+        // Fetch top items with images
+        const ordered = analyticsRes.data.topItems.mostOrdered[0];
+        const wishlisted = analyticsRes.data.topItems.mostWishlisted?.[0];
+
+        if (ordered) {
+          const item = await fetchItemDetails(ordered);
+          setTopOrderedItem({ ...ordered, details: item });
+        }
+        if (wishlisted) {
+          const item = await fetchItemDetails(wishlisted);
+          setTopWishlistedItem({ ...wishlisted, details: item });
+        }
       } catch (err) {
-        console.error('Failed to load analytics:', err);
-        setError(t('errorLoading') || 'Failed to load data');
+        console.error(err);
+        setError(t('errorLoading'));
       } finally {
         setLoading(false);
       }
@@ -74,23 +123,12 @@ const AnalyticsInsights = () => {
     fetchAllData();
   }, [i18n.language]);
 
-  if (loading)
-    return (
-      <div className={styles.analyticsPage}>
-        <div className={styles.loading}>
-          {t('loading') || 'جاري التحميل...'}
-        </div>
-      </div>
-    );
+  if (loading) return <div className={styles.loading}>{t('loading')}</div>;
+  if (error) return <div className={styles.error}>{error}</div>;
 
-  if (error)
-    return (
-      <div className={styles.analyticsPage}>
-        <div className={styles.error}>{error}</div>
-      </div>
-    );
-
-  const months = analytics.totalRevenue.map((m) => m.month);
+  const months = analytics.totalRevenue.map((m) =>
+    isRtl ? AR_MONTHS[m.month] || m.month : m.month,
+  );
   const orderRevenues = analytics.totalRevenue.map((m) => m.orderRevenue || 0);
   const totalRevenues = analytics.totalRevenue.map((m) => m.totalRevenue || 0);
 
@@ -117,37 +155,76 @@ const AnalyticsInsights = () => {
   };
 
   const chartOptions = {
+    indexAxis: 'x',
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-        rtl: isRtl,
-        labels: { color: '#333', font: { size: 13 } },
-      },
-    },
+    plugins: { legend: { position: 'top', rtl: isRtl } },
     scales: {
+      x: { reverse: isRtl, ticks: { color: '#555' }, grid: { color: '#eee' } },
       y: {
         beginAtZero: true,
         ticks: { color: '#555' },
         grid: { color: '#eee' },
       },
-      x: { ticks: { color: '#555' }, grid: { color: '#eee' } },
     },
   };
 
-  const mostOrdered = analytics.topItems.mostOrdered[0];
-  const mostWishlisted = analytics.topItems.mostWishlisted?.[0];
-  const isPremium = profile?.plan === 'PREMIUM';
-
   const totalRevenue = analytics.totalRevenue.reduce(
-    (sum, m) => sum + m.totalRevenue,
+    (s, m) => s + m.totalRevenue,
     0,
   );
   const totalOrders = analytics.totalRevenue.reduce(
-    (sum, m) => sum + m.totalOrders,
+    (s, m) => s + m.totalOrders,
     0,
   );
+  const isPremium = profile?.plan === 'PREMIUM';
+
+  const StarRating = ({ rating }) => (
+    <div className={styles.stars}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <svg
+          key={i}
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill={i <= rating ? '#facc15' : 'none'}
+          stroke="#facc15"
+          strokeWidth="2"
+        >
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+        </svg>
+      ))}
+    </div>
+  );
+
+  const ItemCard = ({ item, isWishlisted }) => {
+    if (!item) return <p>{t('noData')}</p>;
+    const img = item.details?.imagesFilesUrls?.[0] || '/placeholder.png';
+    const name = item.details?.name || item.name;
+    const route =
+      item.type === 'PRODUCT'
+        ? `/supplier/products/${item.itemId}`
+        : `/supplier/services/${item.itemId}`;
+
+    return (
+      <Link to={route} className={styles.itemLink}>
+        <div
+          className={`${styles.itemCard} ${
+            !isPremium && isWishlisted ? styles.premiumLocked : ''
+          }`}
+        >
+          <img src={img} alt={name} className={styles.itemImage} />
+          <p className={styles.itemName}>{name}</p>
+          {isWishlisted && !isPremium && (
+            <div className={styles.lockOverlay}>
+              <span>{t('locked')}</span>
+              <span className={styles.premiumBadge}>{t('premiumFeature')}</span>
+            </div>
+          )}
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <div
@@ -157,61 +234,41 @@ const AnalyticsInsights = () => {
         <h1 className={styles.pageTitle}>{t('title')}</h1>
         <p className={styles.pageSubtitle}>{t('subtitle')}</p>
 
-        {/* Revenue + Chart */}
         <section className={styles.salesSection}>
           <div className={styles.totalSales}>
             <h2>{t('totalSales.title')}</h2>
             <div className={styles.bigNumber}>
               {totalRevenue.toLocaleString()}{' '}
-              <img src="/riyal.png" alt={t('currency')} className="sar" />
+              <img src="/riyal.png" alt="SAR" className={styles.sar} />
             </div>
             <p className={styles.ordersCount}>
               {totalOrders} {t('totalSales.orders')}
             </p>
           </div>
-
           <div className={styles.chartContainer}>
-            <Bar data={chartData} options={chartOptions} height={300} />
+            <Bar data={chartData} options={chartOptions} height={320} />
           </div>
         </section>
 
-        {/* Top Products + Ratings */}
         <section className={styles.insightsSection}>
           <div className={styles.topProducts}>
             <h3>{t('topProducts.title')}</h3>
-
-            <div className={styles.itemCard}>
-              <strong>{t('topProducts.ordered')}:</strong>
-              <p>{mostOrdered?.name || t('noData')}</p>
+            <div className={styles.itemsGrid}>
+              <div>
+                <strong>{t('topProducts.ordered')}:</strong>
+                <ItemCard item={topOrderedItem} />
+              </div>
+              <div>
+                <strong>{t('topProducts.wishlisted')}:</strong>
+                <ItemCard item={topWishlistedItem} isWishlisted />
+              </div>
             </div>
-
-            <div
-              className={`${styles.itemCard} ${
-                !isPremium ? styles.premiumLocked : ''
-              }`}
-            >
-              <strong>{t('topProducts.wishlisted')}:</strong>
-              {isPremium ? (
-                <p>{mostWishlisted?.name || t('noData')}</p>
-              ) : (
-                <div className={styles.lockedContent}>
-                  <span>????</span>
-                  <div className={styles.upgradeBadge}>
-                    <span role="img" aria-label="lock">
-                      Locked
-                    </span>{' '}
-                    {t('premiumFeature')}
-                  </div>
-                </div>
-              )}
-            </div>
-
             {!isPremium && (
               <div className={styles.upgradePrompt}>
                 <p>{t('upgradeToUnlock')}</p>
-                <a href="/pricing" className={styles.upgradeBtn}>
+                <Link to="/supplier/choose-plan" className={styles.upgradeBtn}>
                   {t('goPremium')}
-                </a>
+                </Link>
               </div>
             )}
           </div>
@@ -219,21 +276,25 @@ const AnalyticsInsights = () => {
           <div className={styles.ratings}>
             <h3>{t('ratings.title')}</h3>
             <div className={styles.ratingBig}>
-              <span>
-                ⭐ {analytics.reviews.overallRating.averageStars.toFixed(1)}
+              <StarRating
+                rating={Math.round(
+                  analytics.reviews.overallRating.averageStars,
+                )}
+              />
+              <span className={styles.ratingNumber}>
+                {analytics.reviews.overallRating.averageStars.toFixed(1)}
               </span>
-              <small>
-                ({analytics.reviews.overallRating.totalReviews}{' '}
-                {t('totalReviewsLabel')})
-              </small>
             </div>
+            <small>
+              ({analytics.reviews.overallRating.totalReviews}{' '}
+              {t('totalReviewsLabel')})
+            </small>
             <p className={styles.newReviewsCount}>
               +{reviews.length} {t('newThisPeriod')}
             </p>
           </div>
         </section>
 
-        {/* Recent Reviews */}
         <section className={styles.reviewsSection}>
           <h3>{t('reviews.title')}</h3>
           {reviews.length > 0 ? (
