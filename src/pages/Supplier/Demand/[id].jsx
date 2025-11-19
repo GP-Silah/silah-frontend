@@ -50,6 +50,7 @@ export default function DemandPrediction() {
   const [recommendedStock, setRecommendedStock] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentStock, setCurrentStock] = useState(0);
 
   // -----------------------------------------------------------------
   // 2. USER ACCESS (re-computed on every render)
@@ -124,7 +125,6 @@ export default function DemandPrediction() {
         const d = res.data;
         setProduct({
           name: d.productName,
-          image: d.productFirstImageFileUrl,
         });
         setForecast(d.forecast);
         setRecommendedStock(d.recommendedStock);
@@ -179,10 +179,10 @@ export default function DemandPrediction() {
         const d = res.data;
         setProduct({
           name: d.productName,
-          image: d.productFirstImageFileUrl,
         });
         setForecast(d.forecast);
         setRecommendedStock(d.recommendedStock);
+        fetchCurrentStock();
       } catch (err) {
         const status = err.response?.status;
         const msg =
@@ -203,6 +203,25 @@ export default function DemandPrediction() {
       }
     };
 
+    const fetchCurrentStock = async () => {
+      if (!id) return;
+      try {
+        const base = import.meta.env.VITE_BACKEND_URL;
+        const res = await axios.get(`${base}/api/products/${id}`, {
+          withCredentials: true,
+          headers: { 'accept-language': i18n.language === 'ar' ? 'ar' : 'en' },
+        });
+        setCurrentStock(res.data.stock || 0);
+        setProduct({
+          name: res.data.name,
+          image: res.data.imagesFilesUrls[0],
+        });
+      } catch (err) {
+        console.error('Failed to fetch current stock', err);
+        setCurrentStock(0);
+      }
+    };
+
     fetchForecast();
   }, [canAccess, id, t]);
 
@@ -210,7 +229,14 @@ export default function DemandPrediction() {
   // 5. CHART CONFIG
   // -----------------------------------------------------------------
   const chartData = {
-    labels: forecast.map((f) => f.month),
+    labels: forecast.map((f) => {
+      const [year, month] = f.month.split('-');
+      const date = new Date(year, month - 1); // month is 1-indexed in Date
+      return date.toLocaleString(i18n.language === 'ar' ? 'ar-SA' : 'en-US', {
+        month: 'short',
+        year: 'numeric',
+      });
+    }),
     datasets: [
       {
         label: t('demandLabel'),
@@ -224,7 +250,7 @@ export default function DemandPrediction() {
       },
       {
         label: t('currentStockLabel'),
-        data: forecast.map(() => 40),
+        data: forecast.map(() => currentStock),
         borderColor: '#a78bfa',
         backgroundColor: 'rgba(167, 139, 250, 0.1)',
         fill: false,
@@ -247,7 +273,7 @@ export default function DemandPrediction() {
         ticks: { stepSize: 10 },
         grid: { color: 'rgba(0,0,0,0.05)' },
       },
-      x: { grid: { display: false } },
+      x: { reverse: isRTL, grid: { display: false } },
     },
   };
 
@@ -269,7 +295,93 @@ export default function DemandPrediction() {
         {loading ? (
           <p className="status">{t('loading')}</p>
         ) : error ? (
-          <p className="status error">{error}</p>
+          <section className="not-enough-data-section">
+            <div className="not-enough-card">
+              {/* Dynamic message based on how many days they actually have */}
+              {error.includes('found 0') || error.includes('found 0.') ? (
+                <>
+                  {/* Sad face icon */}
+                  <div className="sad-icon">
+                    <svg
+                      width="80"
+                      height="80"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#94a3b8"
+                      strokeWidth="1.5"
+                    >
+                      <circle cx="12" cy="12" r="10" strokeDasharray="4 4" />
+                      <path
+                        d="M9 17 c .5 -1 1.5 -1.5 3 -1.5 s2.5 .5 3 1.5"
+                        strokeLinecap="round"
+                      />
+                      <circle cx="9" cy="10" r="1" fill="#94a3b8" />
+                      <circle cx="15" cy="10" r="1" fill="#94a3b8" />
+                    </svg>
+                  </div>
+                  <h2>{t('notEnough.zeroTitle')}</h2>
+                  <p className="encouragement">{t('notEnough.zeroText')}</p>
+                </>
+              ) : error.includes('found') ? (
+                <>
+                  {/* Sad but hopeful icon */}
+                  <div className="sad-icon">
+                    <svg
+                      width="80"
+                      height="80"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#94a3b8"
+                      strokeWidth="1.5"
+                    >
+                      <circle cx="12" cy="12" r="10" strokeDasharray="4 4" />
+                      <path
+                        d="M9 15c.5 1 1.5 1.5 3 1.5s2.5-.5 3-1.5"
+                        strokeLinecap="round"
+                      />
+                      <circle cx="9" cy="10" r="1" fill="#94a3b8" />
+                      <circle cx="15" cy="10" r="1" fill="#94a3b8" />
+                    </svg>
+                  </div>
+                  <h2>{t('notEnough.almostTitle')}</h2>
+                  <p className="encouragement">
+                    {t('notEnough.almostText', {
+                      count: error.match(/\d/)?.[0] || 'few',
+                    })}
+                  </p>
+                  <div className="progress-hint">
+                    {t('notEnough.progress', {
+                      needed: 10,
+                      current: error.match(/\d/)?.[0] || 0,
+                    })}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h2>{t('notEnough.genericTitle')}</h2>
+                  <p className="encouragement">{error}</p>
+                </>
+              )}
+
+              {/* Action buttons */}
+              <div className="action-buttons">
+                <button
+                  onClick={() => navigate('/supplier/listings')}
+                  className="primary-btn"
+                >
+                  {t('notEnough.goToProducts')}
+                </button>
+                <button onClick={() => navigate(-1)} className="secondary-btn">
+                  {t('notEnough.goBack')}
+                </button>
+              </div>
+
+              {/* Pro tip */}
+              <div className="pro-tip">
+                <strong>{t('notEnough.tipTitle')}</strong> {t('notEnough.tip')}
+              </div>
+            </div>
+          </section>
         ) : showPremium ? (
           <section className="forecast-section">
             <div className="product-card">
@@ -288,7 +400,13 @@ export default function DemandPrediction() {
             </div>
 
             <p className="restock-advice">
-              {t('restockAdvice', { count: recommendedStock })}
+              {recommendedStock > 0 ? (
+                t('restockAdvice', { count: recommendedStock })
+              ) : (
+                <span style={{ color: '#16a34a' }}>
+                  {t('restockAdviceOverstocked')}
+                </span>
+              )}
             </p>
           </section>
         ) : showTeaser ? (

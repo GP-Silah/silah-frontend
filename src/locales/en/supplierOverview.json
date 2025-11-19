@@ -9,6 +9,9 @@
       "title": "Store Status",
       "open": "Open for Business",
       "closed": "Closed",
+      "visible": "Visible to buyers now",
+      "closedWarning": "Your store is currently closed and hidden from buyers",
+      "closedSubtext": "Open your store to show your items and receive new orders",
       "button": "Store Settings"
     },
     "pending": {

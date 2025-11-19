@@ -6,6 +6,7 @@
   "demandLabel": "Demand",
   "currentStockLabel": "Current Stock",
   "restockAdvice": "To avoid shortages, consider restocking {{count}} units as per AI demand predictions.",
+  "restockAdviceOverstocked": "Great job! Your stock is sufficient, no need to restock right now ",
   "teaserTitle": "Want to see future stock demand?",
   "teaserText": "Upgrade to Premium for AI predictions!",
   "upgradeNow": "Upgrade Now",
@@ -16,5 +17,17 @@
   "forbidden": "You do not have permission to view this forecast.",
   "productNotFoundOrNotYours": "Product not found or you don't own it.",
   "aiUnavailable": "AI service is temporarily unavailable.",
-  "genericError": "Something went wrong. Please try again."
+  "genericError": "Something went wrong. Please try again.",
+  "notEnough": {
+    "zeroTitle": "Uh-oh! No sales yet",
+    "zeroText": "To make accurate AI predictions, we need at least 10 days with sales. You currently have 0.",
+    "almostTitle": "Great progress!",
+    "almostText": "To make accurate AI predictions, we need at least 10 days with sales. You have sales on {{count}} days. Just a few more and the forecast appears!",
+    "progress": "Need {{needed}} days. You have {{current}}.",
+    "genericTitle": "Not enough data yet",
+    "goToProducts": "View My Products",
+    "goBack": "Go Back",
+    "tipTitle": "Pro tip:",
+    "tip": "Make sure your store is open and the product is published to be visible!"
+  }
 }

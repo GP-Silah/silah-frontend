@@ -126,9 +126,30 @@ function SupplierOverview() {
           </div>
 
           <div className="card-body-center">
-            <p className="card-main-text">
-              {isStoreOpen ? t('cards.status.open') : t('cards.status.closed')}
-            </p>
+            {isStoreOpen ? (
+              <>
+                <p className="card-main-text card-open">
+                  {t('cards.status.open')}
+                </p>
+                <span className="status-hint open">
+                  {t('cards.status.visible')}
+                </span>
+              </>
+            ) : (
+              <>
+                <p className="card-main-text card-closed">
+                  {t('cards.status.closed')}
+                </p>
+                <div className="closed-warning">
+                  <p className="warning-text">
+                    {t('cards.status.closedWarning')}
+                  </p>
+                  <p className="warning-subtext">
+                    {t('cards.status.closedSubtext')}
+                  </p>
+                </div>
+              </>
+            )}
             <button className="card-button" onClick={goToStoreSettings}>
               {t('cards.status.button')}
             </button>
