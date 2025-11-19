@@ -334,3 +334,48 @@
   background: var(--overview-primary-dark);
   transform: translateY(-1px);
 }
+
+/* Store Status Card – Open State */
+.card-open {
+  color: #16a34a;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.status-hint.open {
+  font-size: 13px;
+  color: #16a34a;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+/* Store Status Card – Closed State */
+.card-closed {
+  color: #dc2626;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.closed-warning {
+  text-align: center;
+  margin: 8px 0;
+  padding: 10px;
+  background: rgba(239, 68, 68, 0.15);
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.warning-text {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.warning-subtext {
+  margin: 0;
+  font-size: 12.5px;
+  color: #991b1b;
+  opacity: 0.9;
+  line-height: 1.4;
+}
