@@ -92,3 +92,50 @@
   direction: ltr;
   text-align: left;
 }
+
+.wishlistSection.blurred {
+  filter: blur(5px);
+  pointer-events: none;
+  position: relative;
+}
+
+.wishlistSection.blurred::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+}
+
+.upgradePrompt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #785ac8, #4a9eff);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.upgradeBtn {
+  margin-top: 10px;
+  background: white;
+  color: #785ac8;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+}
+
+.sar {
+  position: relative;
+  bottom: -1.5px;
+  width: 16px;
+  height: 18px;
+  object-fit: contain; /* scale image without stretching */
+}
