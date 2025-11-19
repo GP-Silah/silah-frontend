@@ -253,16 +253,76 @@ const AnalyticsInsights = () => {
         <section className={styles.insightsSection}>
           <div className={styles.topProducts}>
             <h3>{t('topProducts.title')}</h3>
-            <div className={styles.itemsGrid}>
-              <div>
-                <strong>{t('topProducts.ordered')}:</strong>
-                <ItemCard item={topOrderedItem} />
-              </div>
-              <div>
-                <strong>{t('topProducts.wishlisted')}:</strong>
-                <ItemCard item={topWishlistedItem} isWishlisted />
-              </div>
+
+            <div className={styles.listingItem}>
+              <strong>{t('topProducts.ordered')}:</strong>
+              {topOrderedItem ? (
+                <Link
+                  to={`/supplier/${
+                    topOrderedItem.type === 'PRODUCT' ? 'products' : 'services'
+                  }/${topOrderedItem.itemId}`}
+                  className={styles.listingLink}
+                >
+                  <div className={styles.listingImageWrapper}>
+                    <img
+                      src={
+                        topOrderedItem.details?.imagesFilesUrls?.[0] ||
+                        '/placeholder.png'
+                      }
+                      alt={topOrderedItem.details?.name || topOrderedItem.name}
+                      className={styles.listingImage}
+                    />
+                  </div>
+                  <span className={styles.listingName}>
+                    {topOrderedItem.details?.name || topOrderedItem.name}
+                  </span>
+                </Link>
+              ) : (
+                <span className={styles.noDataText}>{t('noData')}</span>
+              )}
             </div>
+
+            <div
+              className={`${styles.listingItem} ${
+                !isPremium ? styles.blurredListing : ''
+              }`}
+            >
+              <strong>{t('topProducts.wishlisted')}:</strong>
+              {isPremium && topWishlistedItem ? (
+                <Link
+                  to={`/supplier/${
+                    topWishlistedItem.type === 'PRODUCT'
+                      ? 'products'
+                      : 'services'
+                  }/${topWishlistedItem.itemId}`}
+                  className={styles.listingLink}
+                >
+                  <div className={styles.listingImageWrapper}>
+                    <img
+                      src={
+                        topWishlistedItem.details?.imagesFilesUrls?.[0] ||
+                        '/placeholder.png'
+                      }
+                      alt={
+                        topWishlistedItem.details?.name ||
+                        topWishlistedItem.name
+                      }
+                      className={styles.listingImage}
+                    />
+                  </div>
+                  <span className={styles.listingName}>
+                    {topWishlistedItem.details?.name || topWishlistedItem.name}
+                  </span>
+                </Link>
+              ) : isPremium ? (
+                <span className={styles.noDataText}>{t('noData')}</span>
+              ) : (
+                <span className={styles.lockedText}>
+                  {t('locked')} {t('premiumFeature')}
+                </span>
+              )}
+            </div>
+
             {!isPremium && (
               <div className={styles.upgradePrompt}>
                 <p>{t('upgradeToUnlock')}</p>
@@ -284,11 +344,11 @@ const AnalyticsInsights = () => {
               <span className={styles.ratingNumber}>
                 {analytics.reviews.overallRating.averageStars.toFixed(1)}
               </span>
+              <small>
+                ({analytics.reviews.overallRating.totalReviews}{' '}
+                {t('totalReviewsLabel')})
+              </small>
             </div>
-            <small>
-              ({analytics.reviews.overallRating.totalReviews}{' '}
-              {t('totalReviewsLabel')})
-            </small>
             <p className={styles.newReviewsCount}>
               +{reviews.length} {t('newThisPeriod')}
             </p>

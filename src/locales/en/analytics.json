@@ -11,7 +11,7 @@
     "totalRevenue": "Total Revenue (Orders + Invoices)"
   },
   "topProducts": {
-    "title": "Top Performing Products",
+    "title": "Top Performing Listings",
     "ordered": "Most Ordered",
     "wishlisted": "Most Wishlisted"
   },
