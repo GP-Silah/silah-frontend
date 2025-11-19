@@ -388,7 +388,7 @@ export default function ServiceDetails() {
               ))}
             </div>
 
-            {canScrollBack && (
+            {canGoBack(reviewsCarouselRef) && (
               <button
                 className={`${styles['carousel-arrow']} ${styles.left}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'left')}
@@ -401,7 +401,7 @@ export default function ServiceDetails() {
               </button>
             )}
 
-            {canScrollForward && (
+            {canGoForward(reviewsCarouselRef) && (
               <button
                 className={`${styles['carousel-arrow']} ${styles.right}`}
                 onClick={() => scrollCarousel(reviewsCarouselRef, 'right')}
