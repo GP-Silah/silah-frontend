@@ -13,6 +13,7 @@ import {
   FaUser,
   FaGlobe,
   FaHome,
+  FaCube,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -367,7 +368,7 @@ const BuyerHeader = ({
                     setProfileOpen(false);
                   }}
                 >
-                  <FaShoppingCart /> {t('profileChoices.orders')}
+                  <FaCube /> {t('profileChoices.orders')}
                 </button>
                 <button
                   className="profile-item"
