@@ -3,4 +3,4 @@
 User-agent: *
 Allow: /
 
-#Sitemap: https://silah.site/sitemap.xml
+Sitemap: https://silah.site/sitemap.xml
