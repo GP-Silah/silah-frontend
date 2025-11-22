@@ -13,12 +13,12 @@
   "userInfo": {
     "title": "User Info",
     "name": "Name",
-    "nid": "NID"
+    "nid": "National ID"
   },
   "businessInfo": {
     "title": "Business Info",
     "businessName": "Business Name",
-    "crn": "CRN",
+    "crn": "Commercial Registration Number",
     "activity": "Business Activity"
   },
   "account": {
