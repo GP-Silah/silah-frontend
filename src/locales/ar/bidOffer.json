@@ -27,5 +27,6 @@
   "errors": {
     "missingBidId": "معرف المناقصة مفقود.",
     "submitFailed": "فشل إرسال العرض. حاول مرة أخرى."
-  }
+  },
+  "amountPlaceholder": "أكتب المبلغ المقترح هنا"
 }

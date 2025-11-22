@@ -27,5 +27,6 @@
   "errors": {
     "missingBidId": "Bid ID is missing.",
     "submitFailed": "Failed to submit offer. Please try again."
-  }
+  },
+  "amountPlaceholder": "Write your proposed amount here"
 }
