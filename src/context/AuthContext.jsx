@@ -62,13 +62,21 @@ export function AuthProvider({ children }) {
         {},
         { withCredentials: true },
       );
-    } catch (err) {
-      console.warn('Logout failed:', err.response?.data || err.message);
-    } finally {
+
+      // Only clear frontend state if backend confirmed logout
       setUser(null);
       setRole('guest');
       setSupplierStatus(null);
+      setSupplierId(null);
       sessionStorage.removeItem(INACTIVE_NOTICE_KEY);
+      toast.success('Logged out successfully');
+    } catch (err) {
+      console.error('Logout failed:', err);
+      toast.error('Logout failed. Please try again.');
+
+      // Do NOT clear user state if backend didn't log out!
+      // Or at least refetch user to sync state
+      await fetchUser(); // This will correct the state if cookie still exists
     }
   };
 
