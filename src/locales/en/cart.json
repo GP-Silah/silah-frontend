@@ -27,7 +27,7 @@
   },
   "noCard": {
     "title": "Card Required",
-    "message": "You must save a payment card before checking out.",
+    "message": "You must add a payment card before checking out.",
     "goToSettings": "Go to Payment Settings"
   },
   "processing": "Processing...",

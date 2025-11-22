@@ -170,7 +170,7 @@ export default function BidOffer() {
                   name="amount"
                   value={formData.amount}
                   onChange={handleChange}
-                  placeholder="25000"
+                  placeholder={t('amountPlaceholder')}
                   min="1"
                   step="0.01"
                   className={errors.amount ? 'error' : ''}
