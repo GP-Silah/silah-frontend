@@ -42,13 +42,13 @@ export default function Listings() {
   }, [t, i18n.language]);
 
   // Show tooltip for non-premium users
-  useEffect(() => {
-    if (!planLoading && !isPremium) {
-      setShowTooltip(true);
-      const timer = setTimeout(() => setShowTooltip(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isPremium]);
+ useEffect(() => {
+  if (!planLoading && !isPremium) {
+    setShowTooltip(true);
+    const timer = setTimeout(() => setShowTooltip(false), 3000);
+    return () => clearTimeout(timer);
+  }
+}, [isPremium, planLoading]);
 
   // Fetch all items
   const fetchItems = useCallback(async () => {
@@ -385,14 +385,16 @@ export default function Listings() {
               </th>
               <th>{t('columns.image')}</th>
               <th>{t('columns.name')}</th>
-              <th className={styles['wishlist-header']}>
-                <FaHeart className={styles['wishlist-header-icon']} />
-                {!isPremium && showTooltip && (
-                  <div className={styles['wishlist-tooltip']}>
-                    {t('wishlistBlur')}
-                  </div>
-                )}
-              </th>
+              <th className={`${styles['wishlist-header']} ${!isPremium && showTooltip ? styles['show-tooltip'] : ''}`}>
+  <FaHeart className={styles['wishlist-header-icon']} />
+
+  {/* Tooltip - visible on hover OR on load for Basic users */}
+  {!isPremium && (
+    <div className={styles['wishlist-tooltip']}>
+      {t('wishlistBlur')}
+    </div>
+  )}
+</th>
               <th>{t('columns.price')}</th>
               <th>{t('columns.stock')}</th>
               <th>{t('columns.status')}</th>
