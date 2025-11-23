@@ -304,3 +304,50 @@
   color: #8c8c8c;
   font-size: 15px;
 }
+
+.wishlist-header {
+  position: relative;
+  text-align: center; /* centers the icon horizontally */
+}
+
+.wishlist-header-icon {
+  color: #e91e63;
+  font-size: 16px;
+}
+
+.wishlist-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #6f42c1;
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 100;
+  margin-top: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  pointer-events: none;
+}
+
+.wishlist-header:hover .wishlist-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Optional: Show instantly on page load for Basic users */
+.wishlist-header.show-tooltip .wishlist-tooltip {
+  opacity: 1;
+  visibility: visible;
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0%, 80% { opacity: 1; visibility: visible; }
+  100% { opacity: 0; visibility: hidden; }
+}
