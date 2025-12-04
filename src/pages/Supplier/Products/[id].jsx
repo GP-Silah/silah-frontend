@@ -264,7 +264,7 @@ export default function SupplierProductDetails() {
       const data = await res.json();
       if (!res.ok)
         throw new Error(data?.error?.message || 'Failed to delete product');
-      navigate('/listings');
+      navigate('/supplier/listings');
     } catch (err) {
       console.error(err);
       setError(err.message);

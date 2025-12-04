@@ -176,8 +176,6 @@ export default function BrowseByCategoryItems() {
     );
   };
 
-  const EffectiveItemCard = ItemCard;
-
   return (
     <div
       className={`${styles['browse-by-category']} ${
@@ -237,17 +235,23 @@ export default function BrowseByCategoryItems() {
           )}
           {!loadingItems && !error && items.length > 0 && (
             <div className={styles['items-grid']}>
-              {items.map((it) => (
-                <div
-                  key={it.productId ?? it.serviceId ?? it.id}
-                  className={styles['item-wrapper']}
-                >
-                  <EffectiveItemCard
-                    item={it}
-                    isAvailable={it.productId ? it.stock > 0 : true}
-                  />
-                </div>
-              ))}
+              {items.map((it) => {
+                const isProduct = !!it.productId;
+                const itemType = isProduct ? 'product' : 'service';
+
+                return (
+                  <div
+                    key={it.productId ?? it.serviceId ?? it.id}
+                    className={styles['item-wrapper']}
+                  >
+                    <ItemCard
+                      item={it}
+                      type={itemType}
+                      isAvailable={isProduct ? it.stock > 0 : true}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </main>
