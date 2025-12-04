@@ -69,7 +69,6 @@ export function AuthProvider({ children }) {
       setSupplierStatus(null);
       setSupplierId(null);
       sessionStorage.removeItem(INACTIVE_NOTICE_KEY);
-      toast.success('Logged out successfully');
     } catch (err) {
       console.error('Logout failed:', err);
       toast.error('Logout failed. Please try again.');
