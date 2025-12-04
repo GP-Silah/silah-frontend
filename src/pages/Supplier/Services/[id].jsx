@@ -222,7 +222,7 @@ export default function SupplierServiceDetails() {
       const data = await res.json();
       if (!res.ok)
         throw new Error(data?.error?.message || 'Failed to delete service');
-      navigate('/listings');
+      navigate('/supplier/listings');
     } catch (err) {
       console.error(err);
       setError(err.message);

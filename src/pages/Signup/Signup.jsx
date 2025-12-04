@@ -65,7 +65,10 @@ function Signup() {
         if (!/^\d{10}$/.test(updatedValue)) error = t('errors.invalidNID');
         break;
       case 'city':
-        if (updatedValue && !/^[A-Za-z\s]+$/.test(updatedValue)) {
+        if (
+          updatedValue &&
+          !/^[\u0600-\u06FFa-zA-Z\s-]+$/u.test(updatedValue)
+        ) {
           error = t('errors.invalidCity');
         }
         break;
